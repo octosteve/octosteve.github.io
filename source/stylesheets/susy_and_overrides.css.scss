@@ -1,0 +1,16 @@
+@import 'susy';
+
+header {
+  @include container;
+}
+
+#container {
+  @include container;
+  aside {
+    @include span-columns(3, 12);
+  }
+  #main {
+    @include span-columns(9 omega, 12)
+  }
+}
+

@@ -1,0 +1,46 @@
+/*
+ *= require_self
+ *= require susy_and_overrides
+ *= require_tree .
+ */
+
+// fix code scrolling out
+.highlight {
+  overflow: auto;
+}
+
+body {
+  margin-top: 0;
+  header{
+    h1, h3{
+      margin-top: 0;
+      margin-bottom: .3em;
+    }
+  }
+  padding-top: 0;
+  background-color: #F1EEE7;
+  color: #023168;
+  a{
+    &:link{
+      color: #53A9BF;
+    }
+    &:visited{
+      color: #01002F;
+    }
+
+  }
+  aside {
+    ul, ol {
+      list-style-type: none;
+      padding: 0;
+      li{
+      }
+      &.tags {
+      }
+    }
+  }
+  .article-date{
+    display: block;
+    font-weight: bold;
+  }
+}

@@ -13,3 +13,5 @@ gem "builder", "~> 3.0"
 gem 'susy'
 
 gem 'redcarpet'
+
+gem 'pry'
