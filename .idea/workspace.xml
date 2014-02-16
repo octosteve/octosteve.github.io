@@ -2,15 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fbf76b6f-b25d-4a76-99d3-2abcade03ee5" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Gemfile.lock" afterPath="$PROJECT_DIR$/Gemfile.lock" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Gemfile" afterPath="$PROJECT_DIR$/Gemfile" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/HostileDeveloper.com.iml" afterPath="$PROJECT_DIR$/.idea/HostileDeveloper.com.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/source/stylesheets/application.css.scss" afterPath="$PROJECT_DIR$/source/stylesheets/application.css.scss" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config.rb" afterPath="$PROJECT_DIR$/config.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/source/index.html.erb" afterPath="$PROJECT_DIR$/source/index.html.erb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/source/layout.erb" afterPath="$PROJECT_DIR$/source/layout.erb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/source/stylesheets/susy_and_overrides.css.scss" afterPath="$PROJECT_DIR$/source/stylesheets/susy_and_overrides.css.scss" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="HostileDeveloper.com.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -51,10 +43,19 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="application.css.scss" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="application.css.scss" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/source/stylesheets/application.css.scss">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="51" column="9" selection-start="986" selection-end="986" vertical-scroll-proportion="0.8253095" vertical-offset="165" max-vertical-offset="1500">
+            <state line="51" column="9" selection-start="986" selection-end="986" vertical-scroll-proportion="-25.0" vertical-offset="165" max-vertical-offset="1500">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Gemfile" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Gemfile">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="8" column="24" selection-start="256" selection-end="256" vertical-scroll-proportion="0.15978695" vertical-offset="0" max-vertical-offset="751">
               <folding />
             </state>
           </provider>
@@ -95,10 +96,10 @@
         <option value="$PROJECT_DIR$/source/2013-10-19-keyboard-navigation.markdown" />
         <option value="$PROJECT_DIR$/source/stylesheets/susy_and_overrides.css.scss" />
         <option value="$PROJECT_DIR$/source/layout.erb" />
-        <option value="$PROJECT_DIR$/Gemfile" />
         <option value="$PROJECT_DIR$/config.rb" />
         <option value="$PROJECT_DIR$/source/index.html.erb" />
         <option value="$PROJECT_DIR$/source/stylesheets/application.css.scss" />
+        <option value="$PROJECT_DIR$/Gemfile" />
       </list>
     </option>
   </component>
@@ -369,13 +370,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Gemfile">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="16" column="12" selection-start="315" selection-end="323" vertical-scroll-proportion="0.3195739" vertical-offset="0" max-vertical-offset="751">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/.rvm/gems/ruby-2.1.0/gems/susy-1.0.9/lib/susy.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="751">
@@ -420,7 +414,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/source/stylesheets/application.css.scss">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="51" column="9" selection-start="986" selection-end="986" vertical-scroll-proportion="0.8253095" vertical-offset="165" max-vertical-offset="1500">
+        <state line="51" column="9" selection-start="986" selection-end="986" vertical-scroll-proportion="-25.0" vertical-offset="165" max-vertical-offset="1500">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Gemfile">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="8" column="24" selection-start="256" selection-end="256" vertical-scroll-proportion="0.15978695" vertical-offset="0" max-vertical-offset="751">
           <folding />
         </state>
       </provider>
