@@ -2,13 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fbf76b6f-b25d-4a76-99d3-2abcade03ee5" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/source/stylesheets/susy_and_overrides.css.scss" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/source/stylesheets/application.css" afterPath="$PROJECT_DIR$/source/stylesheets/application.css.scss" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Gemfile.lock" afterPath="$PROJECT_DIR$/Gemfile.lock" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Gemfile" afterPath="$PROJECT_DIR$/Gemfile" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/HostileDeveloper.com.iml" afterPath="$PROJECT_DIR$/.idea/HostileDeveloper.com.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/source/stylesheets/application.css.scss" afterPath="$PROJECT_DIR$/source/stylesheets/application.css.scss" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config.rb" afterPath="$PROJECT_DIR$/config.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/source/index.html.erb" afterPath="$PROJECT_DIR$/source/index.html.erb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/source/layout.erb" afterPath="$PROJECT_DIR$/source/layout.erb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/source/stylesheets/susy_and_overrides.css.scss" afterPath="$PROJECT_DIR$/source/stylesheets/susy_and_overrides.css.scss" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="HostileDeveloper.com.iws" />
@@ -32,78 +33,30 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="Gemfile" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Gemfile">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="16" column="8" selection-start="318" selection-end="318" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="345">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="susy.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$USER_HOME$/.rvm/gems/ruby-2.1.0/gems/susy-1.0.9/lib/susy.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="135">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="index.html.erb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/source/index.html.erb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="14" column="17" selection-start="352" selection-end="352" vertical-scroll-proportion="-8.75" vertical-offset="0" max-vertical-offset="465">
+            <state line="15" column="0" selection-start="373" selection-end="373" vertical-scroll-proportion="-9.375" vertical-offset="0" max-vertical-offset="450">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="layout.erb" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="layout.erb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/source/layout.erb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="43" column="0" selection-start="1263" selection-end="1263" vertical-scroll-proportion="0.8948864" vertical-offset="15" max-vertical-offset="855">
+            <state line="29" column="35" selection-start="852" selection-end="852" vertical-scroll-proportion="-16.25" vertical-offset="45" max-vertical-offset="840">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="helpers.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$USER_HOME$/.rvm/gems/ruby-2.1.0/gems/middleman-blog-3.5.1/lib/middleman-blog/helpers.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="91" column="10" selection-start="3763" selection-end="3763" vertical-scroll-proportion="0.0" vertical-offset="980" max-vertical-offset="2370">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="application.css.scss" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="application.css.scss" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/source/stylesheets/application.css.scss">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="15" column="20" selection-start="201" selection-end="201" vertical-scroll-proportion="-9.375" vertical-offset="0" max-vertical-offset="780">
+            <state line="51" column="9" selection-start="986" selection-end="986" vertical-scroll-proportion="0.8253095" vertical-offset="165" max-vertical-offset="1500">
               <folding />
             </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="susy_and_overrides.css.scss" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/source/stylesheets/susy_and_overrides.css.scss">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="4" column="0" selection-start="48" selection-end="48" vertical-scroll-proportion="-2.5" vertical-offset="0" max-vertical-offset="330">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="2013-10-19-keyboard-navigation.markdown" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/source/2013-10-19-keyboard-navigation.markdown">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="3" column="26" selection-start="82" selection-end="82" vertical-scroll-proportion="-1.6666666" vertical-offset="0" max-vertical-offset="1395">
-              <folding />
-            </state>
-          </provider>
-          <provider editor-type-id="MarkdownPreviewEditor">
-            <state />
           </provider>
         </entry>
       </file>
@@ -137,15 +90,15 @@
         <option value="$PROJECT_DIR$/source/stylesheets/foundation_and_overrides.css.scss" />
         <option value="$PROJECT_DIR$/_config.yml" />
         <option value="$PROJECT_DIR$/source/stylesheets/application.css" />
-        <option value="$PROJECT_DIR$/config.rb" />
         <option value="$PROJECT_DIR$/source/stylesheets/syntax.css.erb" />
         <option value="$PROJECT_DIR$/source/2014-02-15-custom-params-in-route-resources.html.markdown" />
         <option value="$PROJECT_DIR$/source/2013-10-19-keyboard-navigation.markdown" />
-        <option value="$PROJECT_DIR$/source/index.html.erb" />
-        <option value="$PROJECT_DIR$/Gemfile" />
         <option value="$PROJECT_DIR$/source/stylesheets/susy_and_overrides.css.scss" />
-        <option value="$PROJECT_DIR$/source/stylesheets/application.css.scss" />
         <option value="$PROJECT_DIR$/source/layout.erb" />
+        <option value="$PROJECT_DIR$/Gemfile" />
+        <option value="$PROJECT_DIR$/config.rb" />
+        <option value="$PROJECT_DIR$/source/index.html.erb" />
+        <option value="$PROJECT_DIR$/source/stylesheets/application.css.scss" />
       </list>
     </option>
   </component>
@@ -389,13 +342,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/config.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="87" column="64" selection-start="2012" selection-end="2012" vertical-scroll-proportion="0.5006658" vertical-offset="929" max-vertical-offset="1680">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/source/2014-02-15-custom-params-in-route-resources.html.markdown">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="-0.0" vertical-offset="0" max-vertical-offset="1950">
@@ -408,7 +354,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/source/2013-10-19-keyboard-navigation.markdown">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="3" column="26" selection-start="82" selection-end="82" vertical-scroll-proportion="-1.6666666" vertical-offset="0" max-vertical-offset="1395">
+        <state line="3" column="26" selection-start="82" selection-end="82" vertical-scroll-proportion="0.06540698" vertical-offset="0" max-vertical-offset="1395">
           <folding />
         </state>
       </provider>
@@ -416,9 +362,16 @@
         <state />
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/source/stylesheets/susy_and_overrides.css.scss">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="7" column="8" selection-start="114" selection-end="114" vertical-scroll-proportion="0.14914773" vertical-offset="0" max-vertical-offset="704">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Gemfile">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="16" column="8" selection-start="318" selection-end="318" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="345">
+        <state line="16" column="12" selection-start="315" selection-end="323" vertical-scroll-proportion="0.3195739" vertical-offset="0" max-vertical-offset="751">
           <folding />
         </state>
       </provider>
@@ -430,37 +383,44 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/.rvm/gems/ruby-2.1.0/gems/middleman-blog-3.5.1/lib/middleman-blog/helpers.rb">
+    <entry file="file://$PROJECT_DIR$/config.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="91" column="10" selection-start="3763" selection-end="3763" vertical-scroll-proportion="0.0" vertical-offset="980" max-vertical-offset="2370">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/source/stylesheets/susy_and_overrides.css.scss">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="4" column="0" selection-start="48" selection-end="48" vertical-scroll-proportion="-2.5" vertical-offset="0" max-vertical-offset="330">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/source/stylesheets/application.css.scss">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="20" selection-start="201" selection-end="201" vertical-scroll-proportion="-9.375" vertical-offset="0" max-vertical-offset="780">
+        <state line="25" column="2" selection-start="705" selection-end="705" vertical-scroll-proportion="0.49933422" vertical-offset="0" max-vertical-offset="1680">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/source/index.html.erb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="17" selection-start="352" selection-end="352" vertical-scroll-proportion="-8.75" vertical-offset="0" max-vertical-offset="465">
+        <state line="15" column="0" selection-start="373" selection-end="373" vertical-scroll-proportion="-9.375" vertical-offset="0" max-vertical-offset="450">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.rvm/gems/ruby-2.1.0/gems/middleman-core-3.2.2/lib/vendored-middleman-deps/padrino-helpers-0.11.4/lib/padrino-helpers/asset_tag_helpers.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="77" column="10" selection-start="3275" selection-end="3275" vertical-scroll-proportion="0.322237" vertical-offset="913" max-vertical-offset="6105">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.rvm/gems/ruby-2.1.0/gems/middleman-blog-3.5.1/lib/middleman-blog/helpers.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="91" column="10" selection-start="3763" selection-end="3763" vertical-scroll-proportion="0.5126498" vertical-offset="980" max-vertical-offset="2370">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/source/layout.erb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="43" column="0" selection-start="1263" selection-end="1263" vertical-scroll-proportion="0.8948864" vertical-offset="15" max-vertical-offset="855">
+        <state line="29" column="35" selection-start="852" selection-end="852" vertical-scroll-proportion="-16.25" vertical-offset="45" max-vertical-offset="840">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/source/stylesheets/application.css.scss">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="51" column="9" selection-start="986" selection-end="986" vertical-scroll-proportion="0.8253095" vertical-offset="165" max-vertical-offset="1500">
           <folding />
         </state>
       </provider>

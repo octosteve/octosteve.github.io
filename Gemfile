@@ -14,4 +14,4 @@ gem 'susy'
 
 gem 'redcarpet'
 
-gem 'pry'
+gem 'nokogiri'

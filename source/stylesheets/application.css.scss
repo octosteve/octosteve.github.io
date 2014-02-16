@@ -3,44 +3,92 @@
  *= require susy_and_overrides
  *= require_tree .
  */
-
 // fix code scrolling out
+@import url('http://fonts.googleapis.com/css?family=Press+Start+2P');
+@import url('http://fonts.googleapis.com/css?family=Roboto:400,700');
+
 .highlight {
   overflow: auto;
 }
 
 body {
-  margin-top: 0;
-  header{
-    h1, h3{
-      margin-top: 0;
-      margin-bottom: .3em;
-    }
-  }
-  padding-top: 0;
-  background-color: #F1EEE7;
-  color: #023168;
-  a{
-    &:link{
-      color: #53A9BF;
-    }
-    &:visited{
-      color: #01002F;
+  background-color: #01002F;
+  margin: 0 auto;
+
+  #container {
+    font-family: 'Roboto', sans-serif;
+    margin-top: 0;
+    background-color: #F1EEE7;
+    color: #023168;
+    article{
+      margin-bottom: 3em;
     }
 
-  }
-  aside {
-    ul, ol {
-      list-style-type: none;
-      padding: 0;
-      li{
+    header {
+      margin-bottom: 2em;
+      a:hover{
+        text-decoration: none;
       }
-      &.tags {
+      .brand {
+        padding-top: 20px;
+        margin-bottom: 0;
+        font-size: 4em;
+        font-family: 'Press Start 2P' cursive;
+      }
+      .tag-line {
+        padding: 0;
+        margin-top: 0;
+        margin-right: 0;
+        margin-left: 0;
+        margin-bottom: .2em;
+      }
+      h1, h3 {
+        margin-top: 0;
+        margin-bottom: .3em;
       }
     }
-  }
-  .article-date{
-    display: block;
-    font-weight: bold;
+
+    h1{
+      &.article-title{
+        margin-top: 0;
+        padding-top: 0;
+        font-family: 'Press Start 2P' cursive;
+
+      }
+    }
+
+    a {
+      &:link {
+        color: #53A9BF;
+        text-decoration: none;
+      }
+      &:visited {
+        color: #01002F;
+      }
+      &:hover {
+        text-decoration: underline;
+      }
+
+    }
+    aside {
+      ul, ol {
+        list-style-type: none;
+        padding: 0;
+        li {
+        }
+        &.tags {
+        }
+      }
+    }
+
+    h2{
+      margin-top: 0;
+      padding-top: 10px;
+    }
+    .article-date {
+      display: block;
+      font-weight: bold;
+      color: desaturate(#023168, 50);
+    }
   }
 }
