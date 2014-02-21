@@ -7,26 +7,31 @@
 @import url('http://fonts.googleapis.com/css?family=Press+Start+2P');
 @import url('http://fonts.googleapis.com/css?family=Roboto:400,700');
 
+$base: #01002F;
+$main: #F1EEE7;
+$base-font: #023168;
+$link: #53A9BF;
+
 .highlight {
   overflow: auto;
 }
 
 body {
-  background-color: #01002F;
+  background-color: $base;
   margin: 0 auto;
 
   #container {
     font-family: 'Roboto', sans-serif;
     margin-top: 0;
-    background-color: #F1EEE7;
-    color: #023168;
-    article{
+    background-color: $main;
+    color: $base-font;
+    article {
       margin-bottom: 3em;
     }
 
     header {
       margin-bottom: 2em;
-      a:hover{
+      a:hover {
         text-decoration: none;
       }
       .brand {
@@ -48,8 +53,8 @@ body {
       }
     }
 
-    h1{
-      &.article-title{
+    h1 {
+      &.article-title {
         margin-top: 0;
         padding-top: 0;
         font-family: 'Press Start 2P' cursive;
@@ -59,11 +64,11 @@ body {
 
     a {
       &:link {
-        color: #53A9BF;
+        color: $link;
         text-decoration: none;
       }
       &:visited {
-        color: #01002F;
+        color: $base;
       }
       &:hover {
         text-decoration: underline;
@@ -75,20 +80,30 @@ body {
         list-style-type: none;
         padding: 0;
         li {
+          border-style: solid;
+          border-width: 0 0 1px;
         }
-        &.tags {
-        }
+      }
+
+      section {
+        background-color: darken($main, 5);
+        padding: 5px 30px;
+        margin-bottom: 10px;
+      }
+      h2 {
+        border-style: double;
+        border-width: 0 0 3px;
       }
     }
 
-    h2{
+    h2 {
       margin-top: 0;
       padding-top: 10px;
     }
     .article-date {
       display: block;
       font-weight: bold;
-      color: desaturate(#023168, 50);
+      color: desaturate($base-font, 50);
     }
   }
 }

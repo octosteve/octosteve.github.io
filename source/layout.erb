@@ -10,13 +10,13 @@
 <body>
 <div id="container">
   <section>
-        <header>
-          <% link_to '/' do %>
+    <header>
+      <% link_to '/' do %>
           <h1 class="brand"><span class="hostile">Hostile</span> Developer</h1>
 
           <h3 class="tag-line">Rants and raves from a madman</h3>
-          <% end %>
-        </header>
+      <% end %>
+    </header>
   </section>
 
   <div id="main" role="main">
@@ -24,26 +24,33 @@
   </div>
 
   <aside>
-    <h2>Recent Articles</h2>
-    <ol class="articles">
-      <% blog.articles[0...10].each do |article| %>
-          <li><%= link_to article.title, article %>
-      <% end %>
-    </ol>
+    <section class="recent">
+      <h2>Recent Articles</h2>
+      <ol class="articles">
+        <% blog.articles[0...10].each do |article| %>
+            <li><%= link_to article.title, article %>
+        <% end %>
+      </ol>
+    </section>
 
-    <h2>Tags</h2>
-    <ol class="tags">
-      <% blog.tags.sort.each do |tag, articles| %>
-          <li><%= link_to tag, tag_path(tag) %> (<%= articles.size %>)</a></li>
-      <% end %>
-    </ol>
+    <section class="tags">
+      <h2>Tags</h2>
+      <ol>
+        <% blog.tags.sort.each do |tag, articles| %>
+            <li><%= link_to tag, tag_path(tag) %> (<%= articles.size %>)</a></li>
+        <% end %>
+      </ol>
+    </section>
 
-    <h2>By Month</h2>
-    <ol>
-      <% blog.articles.group_by { |a| [a.date.month, a.date.year] }.each do |(month, year), articles| %>
-          <li><%= link_to Date.new(year, month).strftime("%B %Y"), blog_month_path(year, month) %> (<%= articles.size %>)</a></li>
-      <% end %>
-    </ol>
+    <section class="by-month">
+      <h2>By Month</h2>
+      <ol>
+        <% blog.articles.group_by { |a| [a.date.month, a.date.year] }.each do |(month, year), articles| %>
+            <li><%= link_to Date.new(year, month).strftime("%B %Y"), blog_month_path(year, month) %>
+              (<%= articles.size %>)</a></li>
+        <% end %>
+      </ol>
+    </section>
   </aside>
 </div>
 </body>
