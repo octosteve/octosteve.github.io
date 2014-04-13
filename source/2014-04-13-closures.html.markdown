@@ -1,0 +1,197 @@
+---
+title: Closures
+date: 2014-04-13 18:20 UTC
+tags: closures, javascript, ruby
+---
+<blockquote class="twitter-tweet" data-partner="tweetdeck"><p>I UNDERSTAND CLOSURES!!! Blog post coming up!</p>&mdash; Steven Nunez (@_StevenNunez) <a href="https://twitter.com/_StevenNunez/statuses/455337355030069248">April 13, 2014</a></blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+I've been trying to gain an appreciation for JavaScript recently. Behind its
+semicolon ridden lines, and funky funky functions, I've found it has a bunch of
+cool stuff going on. I owe my appreciation for it to [Speaking
+JavaScript](http://speakingjs.com/) by Dr. Axel Rauschmayer. Great book. Go get
+it.
+
+## JavaScript and Me
+Up until recently, my JavaScript know-how didn't extend far beyond using jQuery
+to select some element, and apply some class. Now with an upcoming JavaScript
+module at [The Flatiron School
+Fellowship](http://flatironschool.com/nycworkforce1/) I had to get on it.
+Nothing motivates more than having to teach something to a group of students. 
+
+I did what you would normally do when picking up a new language. 
+
+* Learn about the language's objects and their methods
+* Learn about how to create and manage scope
+* Look for weird quirks
+* Be completely baffled by closures!?
+
+## Surprise confusion!
+I know ruby has closures through lambdas... I just had no idea what that
+meant. I just knew it was true! 
+
+In JavaScript, you can't hide from closures though. If you're confronted with a
+piece of code like this, you'll need to understand closures:
+
+``` javascript
+var step_by = function(step){                                                       
+  var total = 0;                                                                   
+  return function(){                                                               
+    return total += step                                                           
+  }                                                                                
+};                                                                                 
+
+var step_by_7 = step_by(7); 
+console.log(step_by_7()); // 7
+console.log(step_by_7()); // 14
+```
+
+### What is a closure?
+<blockquote cite='http://speakingjs.com/es5/ch01.html#_closures'>A closure is a 
+function plus the connection to the scope in which the function was created.
+  <footer>-
+    <cite>
+      <a href="http://speakingjs.com/es5/ch01.html#_closures">Dr. Axel Rauschmayer</a>
+    </cite>
+  </footer>
+</blockquote>
+
+Armed with this, I wanted to learn it on my own turf. Enter ruby.
+
+## Closures in ruby
+
+Any one that knows me will tell you I'm... fond of ruby. OK, I love ruby. OK, I
+think ruby is one of the greatest things humanity has produced. Suck it
+pyramids.
+
+Knowing ruby had closures and having a definition of what a closure was, I
+started devising some experiments.
+
+### Context of execution
+
+A closure's context of execution will always be the one it was created in. A
+few experiments.
+
+### Experiment 1
+``` ruby
+x = 5
+my_lambda = -> { x += 5 }
+my_lambda.call #=> 10
+my_lambda.call #=> 15
+```
+
+Cool. lambdas can call things around them. Setting the variable `x` and the
+lambda in the same scope allows you to call `x` from inside the lambda without
+passing it in. Let's try something else.
+
+### Experiment 2
+``` ruby
+x = 5
+my_lambda = -> { x += 5 }
+
+def my_method(closure)
+  x = 371_292
+  puts closure.call
+end
+
+my_method(my_lambda) #=> 10
+my_method(my_lambda) #=> 15
+```
+
+WHOA! It totally ignored the `x` defined in the method! Now I started
+connecting dots. That's why stuff like `instance_eval` exists. If we want to
+change the context of execution for the block to be the method's, we'll need to
+use `instance_eval` and pass it the block.
+
+``` ruby
+x = 5
+my_lambda = ->(obj) { obj.x += 5 }
+
+class MyClass
+  attr_accessor :x
+  def initialize
+    @x = 371_292
+  end
+
+  def my_method(closure)
+    instance_eval(&closure)
+  end
+end
+
+my_class = MyClass.new
+my_class.my_method(my_lambda) #=> 371297
+my_class.my_method(my_lambda) #=> 371302
+```
+
+`instance_eval` yields `self` to the lambda. Since `x += 5` is short hand for 
+`x = x + 5` we needed an accessor.
+
+## Back to JavaScript
+
+Armed with this knowledge, closures seemed to be a neat little feature that
+didn't really bloom in ruby, but found a home in JavaScript.
+
+The code from earlier is crystal clear now.
+
+``` javascript
+var step_by = function(step){                                                       
+  // setup empty total value. This gets reset everytime you call the step_by
+  // function
+  var total = 0;                                                                   
+  // this function is returned and because functions are closures, it will
+  // continue to have access to both total and step!
+  return function(){                                                               
+    return total += step                                                           
+  }                                                                                
+};                                                                                 
+
+var step_by_7 = step_by(7); 
+console.log(step_by_7()); // 7
+console.log(step_by_7()); // 14
+
+var step_by_5 = step_by(5); 
+console.log(step_by_5()); // 5
+console.log(step_by_5()); // 10
+```
+
+Each returned function has its own copy of `total` so you could do something
+like this and they won't interfere with each other:
+
+``` javascript
+var step_by_7 = step_by(7); 
+var step_by_5 = step_by(5); 
+console.log(step_by_7()); // 7
+console.log(step_by_5()); // 5
+console.log(step_by_7()); // 14
+console.log(step_by_5()); // 10
+```
+
+## For the curious
+Here's the same code in ruby
+
+``` ruby
+step_by = ->(step) do                                                           
+  total = 0                                                                     
+  -> { total += step }                                                          
+end                                                                             
+                                                                                
+step_by_7 = step_by.call(7)                                                     
+puts step_by_7.call #=> 7                                                       
+puts step_by_7.call #=> 14                                                      
+puts step_by_7.call #=> 21                                                      
+                                                                                
+step_by_5 = step_by.call(5)                                                     
+puts step_by_5.call #=> 5                                                       
+puts step_by_5.call #=> 10                                                      
+puts step_by_5.call #=> 15 
+```
+
+Currying would work in this case too, but that's another blog post...
+
+## Conclusion
+While I'm still not in love with JavaScript, there are some really cool things
+about it I'm excited to explore.
+
+I hope this was helpful!
+
+Happy Clacking
