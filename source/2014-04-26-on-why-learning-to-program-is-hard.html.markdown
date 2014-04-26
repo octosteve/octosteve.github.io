@@ -1,5 +1,5 @@
 ---
-title: On why learning to program is hard
+title: On why learning to program in hard
 date: 2014-04-26 20:22 UTC
 tags: learning, beginner, components of programming
 ---
@@ -44,7 +44,7 @@ To implement this in ruby, you'll have to know:
 1. How to create a lambda.
 2. How to interpolate strings.
 3. How to get the remainder from a number.
-4. Comparison operators.
+4. Comparison operators
 5. Statement modifier conditional statements.
 6. Ternary conditional statements.
 7. How to iterate.
