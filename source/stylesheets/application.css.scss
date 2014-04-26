@@ -66,6 +66,7 @@ body {
       &:link {
         color: $link;
         text-decoration: none;
+        font-weight: bold;
       }
       &:visited {
         color: $base;
