@@ -1,5 +1,5 @@
 ---
-title: On why learning to program in hard
+title: On why learning to program is hard
 date: 2014-04-26 20:22 UTC
 tags: learning, beginner, components of programming
 ---
