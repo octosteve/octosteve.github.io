@@ -1,0 +1,556 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta http-equiv='X-UA-Compatible' content='IE=edge;chrome=1'/>
+  <title>Hostile Developer</title>
+  <link href="/stylesheets/application.css" media="screen" rel="stylesheet" type="text/css" />
+  <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/feed.xml" />
+</head>
+<body>
+<div id="container">
+  <section>
+    <header>
+      <a href="/">
+          <h1 class="brand"><span class="hostile">Hostile</span> Developer</h1>
+
+          <h3 class="tag-line">Rants and raves from a madman</h3>
+      </a>
+    </header>
+  </section>
+
+  <div id="main" role="main">
+    
+    <article>
+      <h1 class="article-title"><a href="/2014/04/26/on-why-learning-to-program-is-hard.html">On why learning to program is hard</a></h1>
+      <p>The first mention of &lsquo;Objects&rsquo; with regard to some non-tangible thing was in <a href="http://en.wikipedia.org/wiki/Object-oriented_programming#History">the late 1950s</a>. Before that, &lsquo;Objects&rsquo; didn&rsquo;t exist. Once you realize that all concepts in programming are made up, you start to feel less bad about not understanding them right away. </p>
+
+<h1>Learn all the things!</h1>
+
+<p>To be clear, when I say &ldquo;Learn to program&rdquo; I don&rsquo;t mean following a tutorial. Quite the opposite. Learning to program means you are able to create experiences through a combination of your own internal understanding of your programming platform, and the knowledge to find the answers through your available resources.</p>
+
+<h3>FizzBuzz</h3>
+
+<p>Let&rsquo;s look at what you need to know to solve something like <a href="http://en.wikipedia.org/wiki/Fizz_buzz">Fizz Buzz</a></p>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre><pre class="lineno">8</pre></td><td class="code"><pre><span class="n">fizz_buzz</span> <span class="o">=</span> <span class="o">-&gt;</span><span class="p">(</span><span class="n">number</span><span class="p">)</span> <span class="k">do</span> 
+    <span class="s2">"</span><span class="si">#{</span><span class="s1">'Fizz'</span> <span class="k">if</span> <span class="p">(</span><span class="n">number</span> <span class="sx">% 3).zero?}#{'Buzz' </span><span class="k">if</span> <span class="p">(</span><span class="n">number</span> <span class="o">%</span> <span class="mi">5</span><span class="p">).</span><span class="nf">zero?</span><span class="si">}</span><span class="s2">"</span>
+<span class="k">end</span>
+
+<span class="mi">1</span><span class="p">.</span><span class="nf">upto</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">num</span><span class="o">|</span> 
+    <span class="n">result</span> <span class="o">=</span> <span class="n">fizz_buzz</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="n">num</span><span class="p">)</span> 
+    <span class="nb">puts</span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="nf">empty?</span> <span class="p">?</span> <span class="n">num</span> <span class="p">:</span> <span class="n">result</span><span class="p">)</span>
+<span class="k">end</span>
+</pre></td></tr></tbody></table></div>
+<h4>Reading</h4>
+
+<p>To read this code you&rsquo;ll need to know that:</p>
+
+<ol>
+<li>This program runs top to bottom.</li>
+<li>Expressions return values that can be assigned to variables.</li>
+<li>Variables.</li>
+<li>Iteration.</li>
+<li>Things can be sent to <a href="http://en.wikipedia.org/wiki/Standard_streams#Standard_output_.28stdout.29">Standard Out</a>.</li>
+<li>Conditionals.</li>
+</ol>
+
+<h4>Writing</h4>
+
+<p>Imagine you&rsquo;re instructing another developer to write this code. What things would they have to understand? </p>
+
+<p>&ldquo;Assign the result of a lambda expression taking one argument to the variable <code>fizz_buzz</code>. In the lambda, create a string that will interpolate &lsquo;Fizz&rsquo; if the argument is divisible by 3, and &lsquo;Buzz&rsquo; if the number is divisible by 5. Ensure the string can be &lsquo;FizzBuzz&rsquo; for numbers like 15. Then iterate from 1 to 100, calling the lambda with each number. If the result of the call is empty, return the number. Otherwise return the result&rdquo;.</p>
+
+<p>Implementing this requires you know specific things about the language you&rsquo;re writing in. Idioms, conventions, methods, objects&hellip;
+To implement this in ruby, you&rsquo;ll have to know:</p>
+
+<ol>
+<li>How to create a lambda.</li>
+<li>How to interpolate strings.</li>
+<li>How to get the remainder from a number.</li>
+<li>Comparison operators</li>
+<li>Statement modifier conditional statements.</li>
+<li>Ternary conditional statements.</li>
+<li>How to iterate.</li>
+</ol>
+
+<h4>Creating</h4>
+
+<p>To come up with this solution you&rsquo;ll need a completely different skill. Programmatic thinking. Programmatic thinking is the ability to take a problem and break it down into smaller pieces. To illustrate this, have someone teach a robot how to make a smoothie. Assuming the robot knows only the things you tell it forces you to create very detailed instructions.</p>
+
+<p>For FizzBuzz, the thought process is something like this.</p>
+
+<ol>
+<li>I need something that figures out if it needs to return &ldquo;Fizz&rdquo;, &ldquo;Buzz&rdquo; or &ldquo;FizzBuzz&rdquo;. I could create a class with methods, or just a method, or I can use a lambda. Let&rsquo;s use a lambda!</li>
+<li>I need to print the result out, let&rsquo;s loop up to 100 and call our lambda!</li>
+</ol>
+
+<h2>Break it down</h2>
+
+<iframe width="560" height="315" src="//www.youtube.com/embed/5MgBikgcWnY" frameborder="0" allowfullscreen></iframe>
+
+<p>Taking a problem apart and breaking it down into its components is the way to go. </p>
+
+<h3>Components of programming</h3>
+
+<p>When you&rsquo;re starting out, you know nothing. In order to build ANYTHING you&rsquo;ll need some of these things under your belt.
+The good news is you can can get better at each component separately.</p>
+
+<h4>Programming concepts</h4>
+
+<p>To get a better grasp on programming concepts <a href="http://www.confreaks.com/">watch talks</a>. <a href="https://twitter.com/readingcodegood">Read code</a>. Lots of it. Here you&rsquo;ll learn about design patterns, techniques like recursion, concepts like encapsulation, namespacing, and testing.</p>
+
+<h4>Programmatic thinking</h4>
+
+<p>This one requires work. Go to <a href="http://www.codewars.com">Code Wars</a>. Do problems on <a href="http://projecteuler.net">Project Euler</a>. Do problems on <a href="http://rubyquiz.com/">Ruby Quiz</a>. </p>
+
+<h4>Language specific stuff</h4>
+
+<p>Get good at your language. Read the docs. Try figuring out multiple ways to solve the same problem.</p>
+
+<h4>Which component does this serve?</h4>
+
+<p>Always be aware what you&rsquo;re working on is benefiting. Building software serves all 3, so when it doubt: BUILD!</p>
+
+<h2>Silver lining</h2>
+
+<p>When it comes time for you to learn a new language, all you&rsquo;ll really have to learn is the language specific stuff! You&rsquo;ll only have to learn one leg of this crazy process!</p>
+
+<h3>Note of caution</h3>
+
+<p>The trap seasoned developers fall prey to is mistaking language specific idioms/concept understandings for Programming Concepts. Just because you do it that way in C# doesn&rsquo;t mean that&rsquo;s how it&rsquo;s done in ruby!</p>
+
+<h2>The road is long and hard</h2>
+
+<p>&hellip; but along the way you pick up a rocket powered motorbike. Then you don&rsquo;t care how long the road is, just how much fuel you have in the tank.</p>
+
+<p>Happy Clacking.</p>
+
+    </article>
+    <article>
+      <h1 class="article-title"><a href="/2014/04/13/closures.html">Closures</a></h1>
+      <blockquote class="twitter-tweet" data-partner="tweetdeck"><p>I UNDERSTAND CLOSURES!!! Blog post coming up!</p>&mdash; Steven Nunez (@_StevenNunez) <a href="https://twitter.com/_StevenNunez/statuses/455337355030069248">April 13, 2014</a></blockquote>
+
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+<p>I&rsquo;ve been trying to gain an appreciation for JavaScript recently. Behind its
+semicolon ridden lines, and funky funky functions, I&rsquo;ve found it has a bunch of
+cool stuff going on. I owe my appreciation for it to <a href="http://speakingjs.com/">Speaking
+JavaScript</a> by Dr. Axel Rauschmayer. Great book. Go get
+it.</p>
+
+<h2>JavaScript and Me</h2>
+
+<p>Up until recently, my JavaScript know-how didn&rsquo;t extend far beyond using jQuery
+to select some element, and apply some class. Now with an upcoming JavaScript
+module at <a href="http://flatironschool.com/nycworkforce1/">The Flatiron School
+Fellowship</a> I had to get on it.
+Nothing motivates more than having to teach something to a group of students. </p>
+
+<p>I did what you would normally do when picking up a new language. </p>
+
+<ul>
+<li>Learn about the language&rsquo;s objects and their methods</li>
+<li>Learn about how to create and manage scope</li>
+<li>Look for weird quirks</li>
+<li>Be completely baffled by closures!?</li>
+</ul>
+
+<h2>Surprise confusion!</h2>
+
+<p>I know ruby has closures through lambdas&hellip; I just had no idea what that
+meant. I just knew it was true! </p>
+
+<p>In JavaScript, you can&rsquo;t hide from closures though. If you&rsquo;re confronted with a
+piece of code like this, you&rsquo;ll need to understand closures:</p>
+<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre><pre class="lineno">8</pre><pre class="lineno">9</pre><pre class="lineno">10</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">step_by</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">step</span><span class="p">){</span>                                                       
+  <span class="kd">var</span> <span class="nx">total</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>                                                                   
+  <span class="k">return</span> <span class="kd">function</span><span class="p">(){</span>                                                               
+    <span class="k">return</span> <span class="nx">total</span> <span class="o">+=</span> <span class="nx">step</span>                                                           
+  <span class="p">}</span>                                                                                
+<span class="p">};</span>                                                                                 
+
+<span class="kd">var</span> <span class="nx">step_by_7</span> <span class="o">=</span> <span class="nx">step_by</span><span class="p">(</span><span class="mi">7</span><span class="p">);</span> 
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">step_by_7</span><span class="p">());</span> <span class="c1">// 7
+</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">step_by_7</span><span class="p">());</span> <span class="c1">// 14
+</span></pre></td></tr></tbody></table></div>
+<h3>What is a closure?</h3>
+
+<blockquote cite='http://speakingjs.com/es5/ch01.html#_closures'>A closure is a 
+function plus the connection to the scope in which the function was created.
+  <footer>-
+    <cite>
+      <a href="http://speakingjs.com/es5/ch01.html#_closures">Dr. Axel Rauschmayer</a>
+    </cite>
+  </footer>
+</blockquote>
+
+<p>Armed with this, I wanted to learn it on my own turf. Enter ruby.</p>
+
+<h2>Closures in ruby</h2>
+
+<p>Any one that knows me will tell you I&rsquo;m&hellip; fond of ruby. OK, I love ruby. OK, I
+think ruby is one of the greatest things humanity has produced. Suck it
+pyramids.</p>
+
+<p>Knowing ruby had closures and having a definition of what a closure was, I
+started devising some experiments.</p>
+
+<h3>Context of execution</h3>
+
+<p>A closure&rsquo;s context of execution will always be the one it was created in. A
+few experiments.</p>
+
+<h3>Experiment 1</h3>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre></td><td class="code"><pre><span class="n">x</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">my_lambda</span> <span class="o">=</span> <span class="o">-&gt;</span> <span class="p">{</span> <span class="n">x</span> <span class="o">+=</span> <span class="mi">5</span> <span class="p">}</span>
+<span class="n">my_lambda</span><span class="p">.</span><span class="nf">call</span> <span class="c1">#=&gt; 10</span>
+<span class="n">my_lambda</span><span class="p">.</span><span class="nf">call</span> <span class="c1">#=&gt; 15</span>
+</pre></td></tr></tbody></table></div>
+<p>Cool. lambdas can call things around them. Setting the variable <code>x</code> and the
+lambda in the same scope allows you to call <code>x</code> from inside the lambda without
+passing it in. Let&rsquo;s try something else.</p>
+
+<h3>Experiment 2</h3>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre><pre class="lineno">8</pre><pre class="lineno">9</pre><pre class="lineno">10</pre></td><td class="code"><pre><span class="n">x</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">my_lambda</span> <span class="o">=</span> <span class="o">-&gt;</span> <span class="p">{</span> <span class="n">x</span> <span class="o">+=</span> <span class="mi">5</span> <span class="p">}</span>
+
+<span class="k">def</span> <span class="nf">my_method</span><span class="p">(</span><span class="n">closure</span><span class="p">)</span>
+  <span class="n">x</span> <span class="o">=</span> <span class="mi">371_292</span>
+  <span class="nb">puts</span> <span class="n">closure</span><span class="p">.</span><span class="nf">call</span>
+<span class="k">end</span>
+
+<span class="n">my_method</span><span class="p">(</span><span class="n">my_lambda</span><span class="p">)</span> <span class="c1">#=&gt; 10</span>
+<span class="n">my_method</span><span class="p">(</span><span class="n">my_lambda</span><span class="p">)</span> <span class="c1">#=&gt; 15</span>
+</pre></td></tr></tbody></table></div>
+<p>WHOA! It totally ignored the <code>x</code> defined in the method! Now I started
+connecting dots. That&rsquo;s why stuff like <code>instance_eval</code> exists. If we want to
+change the context of execution for the block to be the method&rsquo;s, we&rsquo;ll need to
+use <code>instance_eval</code> and pass it the block.</p>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre><pre class="lineno">8</pre><pre class="lineno">9</pre><pre class="lineno">10</pre><pre class="lineno">11</pre><pre class="lineno">12</pre><pre class="lineno">13</pre><pre class="lineno">14</pre><pre class="lineno">15</pre><pre class="lineno">16</pre><pre class="lineno">17</pre></td><td class="code"><pre><span class="n">x</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">my_lambda</span> <span class="o">=</span> <span class="o">-&gt;</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="p">{</span> <span class="n">obj</span><span class="p">.</span><span class="nf">x</span> <span class="o">+=</span> <span class="mi">5</span> <span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">MyClass</span>
+  <span class="kp">attr_accessor</span> <span class="ss">:x</span>
+  <span class="k">def</span> <span class="nf">initialize</span>
+    <span class="vi">@x</span> <span class="o">=</span> <span class="mi">371_292</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">my_method</span><span class="p">(</span><span class="n">closure</span><span class="p">)</span>
+    <span class="nb">instance_eval</span><span class="p">(</span><span class="o">&amp;</span><span class="n">closure</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="n">my_class</span> <span class="o">=</span> <span class="no">MyClass</span><span class="p">.</span><span class="nf">new</span>
+<span class="n">my_class</span><span class="p">.</span><span class="nf">my_method</span><span class="p">(</span><span class="n">my_lambda</span><span class="p">)</span> <span class="c1">#=&gt; 371297</span>
+<span class="n">my_class</span><span class="p">.</span><span class="nf">my_method</span><span class="p">(</span><span class="n">my_lambda</span><span class="p">)</span> <span class="c1">#=&gt; 371302</span>
+</pre></td></tr></tbody></table></div>
+<p><code>instance_eval</code> yields <code>self</code> to the lambda. Since <code>x += 5</code> is short hand for 
+<code>x = x + 5</code> we needed an accessor.</p>
+
+<h2>Back to JavaScript</h2>
+
+<p>Armed with this knowledge, closures seemed to be a neat little feature that
+didn&rsquo;t really bloom in ruby, but found a home in JavaScript.</p>
+
+<p>The code from earlier is crystal clear now.</p>
+<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre><pre class="lineno">8</pre><pre class="lineno">9</pre><pre class="lineno">10</pre><pre class="lineno">11</pre><pre class="lineno">12</pre><pre class="lineno">13</pre><pre class="lineno">14</pre><pre class="lineno">15</pre><pre class="lineno">16</pre><pre class="lineno">17</pre><pre class="lineno">18</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">step_by</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">step</span><span class="p">){</span>                                                       
+  <span class="c1">// setup empty total value. This gets reset everytime you call the step_by
+</span>  <span class="c1">// function
+</span>  <span class="kd">var</span> <span class="nx">total</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>                                                                   
+  <span class="c1">// this function is returned and because functions are closures, it will
+</span>  <span class="c1">// continue to have access to both total and step!
+</span>  <span class="k">return</span> <span class="kd">function</span><span class="p">(){</span>                                                               
+    <span class="k">return</span> <span class="nx">total</span> <span class="o">+=</span> <span class="nx">step</span>                                                           
+  <span class="p">}</span>                                                                                
+<span class="p">};</span>                                                                                 
+
+<span class="kd">var</span> <span class="nx">step_by_7</span> <span class="o">=</span> <span class="nx">step_by</span><span class="p">(</span><span class="mi">7</span><span class="p">);</span> 
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">step_by_7</span><span class="p">());</span> <span class="c1">// 7
+</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">step_by_7</span><span class="p">());</span> <span class="c1">// 14
+</span>
+<span class="kd">var</span> <span class="nx">step_by_5</span> <span class="o">=</span> <span class="nx">step_by</span><span class="p">(</span><span class="mi">5</span><span class="p">);</span> 
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">step_by_5</span><span class="p">());</span> <span class="c1">// 5
+</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">step_by_5</span><span class="p">());</span> <span class="c1">// 10
+</span></pre></td></tr></tbody></table></div>
+<p>Each returned function has its own copy of <code>total</code> so you could do something
+like this and they won&rsquo;t interfere with each other:</p>
+<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">step_by_7</span> <span class="o">=</span> <span class="nx">step_by</span><span class="p">(</span><span class="mi">7</span><span class="p">);</span> 
+<span class="kd">var</span> <span class="nx">step_by_5</span> <span class="o">=</span> <span class="nx">step_by</span><span class="p">(</span><span class="mi">5</span><span class="p">);</span> 
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">step_by_7</span><span class="p">());</span> <span class="c1">// 7
+</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">step_by_5</span><span class="p">());</span> <span class="c1">// 5
+</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">step_by_7</span><span class="p">());</span> <span class="c1">// 14
+</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">step_by_5</span><span class="p">());</span> <span class="c1">// 10
+</span></pre></td></tr></tbody></table></div>
+<h2>For the curious</h2>
+
+<p>Here&rsquo;s the same code in ruby</p>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre><pre class="lineno">8</pre><pre class="lineno">9</pre><pre class="lineno">10</pre><pre class="lineno">11</pre><pre class="lineno">12</pre><pre class="lineno">13</pre><pre class="lineno">14</pre></td><td class="code"><pre><span class="n">step_by</span> <span class="o">=</span> <span class="o">-&gt;</span><span class="p">(</span><span class="n">step</span><span class="p">)</span> <span class="k">do</span>                                                           
+  <span class="n">total</span> <span class="o">=</span> <span class="mi">0</span>                                                                     
+  <span class="o">-&gt;</span> <span class="p">{</span> <span class="n">total</span> <span class="o">+=</span> <span class="n">step</span> <span class="p">}</span>                                                          
+<span class="k">end</span>                                                                             
+
+<span class="n">step_by_7</span> <span class="o">=</span> <span class="n">step_by</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>                                                     
+<span class="nb">puts</span> <span class="n">step_by_7</span><span class="p">.</span><span class="nf">call</span> <span class="c1">#=&gt; 7                                                       </span>
+<span class="nb">puts</span> <span class="n">step_by_7</span><span class="p">.</span><span class="nf">call</span> <span class="c1">#=&gt; 14                                                      </span>
+<span class="nb">puts</span> <span class="n">step_by_7</span><span class="p">.</span><span class="nf">call</span> <span class="c1">#=&gt; 21                                                      </span>
+
+<span class="n">step_by_5</span> <span class="o">=</span> <span class="n">step_by</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>                                                     
+<span class="nb">puts</span> <span class="n">step_by_5</span><span class="p">.</span><span class="nf">call</span> <span class="c1">#=&gt; 5                                                       </span>
+<span class="nb">puts</span> <span class="n">step_by_5</span><span class="p">.</span><span class="nf">call</span> <span class="c1">#=&gt; 10                                                      </span>
+<span class="nb">puts</span> <span class="n">step_by_5</span><span class="p">.</span><span class="nf">call</span> <span class="c1">#=&gt; 15 </span>
+</pre></td></tr></tbody></table></div>
+<p>Currying would work in this case too, but that&rsquo;s another blog post&hellip;</p>
+
+<h2>Conclusion</h2>
+
+<p>While I&rsquo;m still not in love with JavaScript, there are some really cool things
+about it I&rsquo;m excited to explore.</p>
+
+<p>I hope this was helpful!</p>
+
+<p>Happy Clacking</p>
+
+    </article>
+    <article>
+      <h1 class="article-title"><a href="/2014/02/15/custom-params-in-route-resources.html">Custom params in route resources</a></h1>
+      <p>Anyone who knows me will tell you I&rsquo;m a huge rails fanboy. There are times when you get <em>stuck</em>.
+A name can&rsquo;t be changed because it&rsquo;s something the framework decided on. I ran
+into this recently when working with nested routes.</p>
+
+<h1>The problem</h1>
+
+<p>Working at <a href="http://flatironschool.com/">The Flatiron School</a> has been awesome. I&rsquo;ve gotten to work on some great projects.
+While working on a Progress Dashboard I came across this code for creating nested routes. WALL OF CODE COMING.</p>
+
+<h3>In my routes file</h3>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre></td><td class="code"><pre><span class="n">resources</span> <span class="ss">:dashboards</span><span class="p">,</span> <span class="ss">only: </span><span class="o">[</span><span class="ss">:show</span><span class="p">,</span> <span class="ss">:index</span><span class="o">]</span> <span class="k">do</span>
+  <span class="n">resources</span> <span class="ss">:assignments</span><span class="p">,</span> <span class="ss">only: </span><span class="o">[</span><span class="ss">:show</span><span class="o">]</span>
+  <span class="n">resources</span> <span class="ss">:students</span><span class="p">,</span> <span class="ss">only: </span><span class="o">[</span><span class="ss">:index</span><span class="p">,</span> <span class="ss">:show</span><span class="o">]</span>
+<span class="k">end</span>
+</pre></td></tr></tbody></table></div>
+<h3>Generated routes</h3>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre></td><td class="code"><pre><span class="n">dashboard_assignment</span> <span class="no">GET</span>        <span class="sr">/dashboards/</span><span class="ss">:dashboard_id</span><span class="o">/</span><span class="n">assignments</span><span class="o">/</span><span class="ss">:id</span><span class="p">(</span><span class="o">.</span><span class="ss">:format</span><span class="p">)</span> <span class="n">assignments</span><span class="c1">#show</span>
+  <span class="n">dashboard_students</span> <span class="no">GET</span>        <span class="sr">/dashboards/</span><span class="ss">:dashboard_id</span><span class="o">/</span><span class="n">students</span><span class="p">(</span><span class="o">.</span><span class="ss">:format</span><span class="p">)</span>        <span class="n">students</span><span class="c1">#index</span>
+   <span class="n">dashboard_student</span> <span class="no">GET</span>        <span class="sr">/dashboards/</span><span class="ss">:dashboard_id</span><span class="o">/</span><span class="n">students</span><span class="o">/</span><span class="ss">:id</span><span class="p">(</span><span class="o">.</span><span class="ss">:format</span><span class="p">)</span>    <span class="n">students</span><span class="c1">#show</span>
+          <span class="n">dashboards</span> <span class="no">GET</span>        <span class="sr">/dashboards(.:format)                               dashboards#index
+           dashboard GET        /</span><span class="n">dashboards</span><span class="o">/</span><span class="ss">:id</span><span class="p">(</span><span class="o">.</span><span class="ss">:format</span><span class="p">)</span>                           <span class="n">dashboards</span><span class="c1">#show</span>
+</pre></td></tr></tbody></table></div>
+<h3>Controller action</h3>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre></td><td class="code"><pre><span class="k">def</span> <span class="nf">show</span>
+  <span class="vi">@student_group</span> <span class="o">=</span> <span class="no">StudentGroup</span><span class="p">.</span><span class="nf">find_by</span><span class="p">(</span><span class="nb">name</span><span class="p">:</span> <span class="n">params</span><span class="o">[</span><span class="ss">:id</span><span class="o">]</span><span class="p">)</span>
+  <span class="vi">@assignments</span> <span class="o">=</span> <span class="vi">@student_group</span><span class="p">.</span><span class="nf">assignments</span><span class="p">.</span><span class="nf">order</span><span class="p">(</span><span class="s1">'created_at ASC'</span><span class="p">)</span>
+<span class="k">end</span>
+</pre></td></tr></tbody></table></div>
+<p>The problem was in an miscommunication between my routes and my controller. I was asking for the :id parameter, but was
+fetching the :name from the database. This became even MORE apparent when I worked on the nested controllers.</p>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre></td><td class="code"><pre><span class="k">def</span> <span class="nf">show</span>
+  <span class="vi">@student_group</span> <span class="o">=</span> <span class="no">StudentGroup</span><span class="p">.</span><span class="nf">find_by</span> <span class="nb">name</span><span class="p">:</span> <span class="n">params</span><span class="o">[</span><span class="ss">:dashboard_id</span><span class="o">]</span>
+  <span class="vi">@assignment</span> <span class="o">=</span> <span class="no">Assignment</span><span class="p">.</span><span class="nf">find</span> <span class="n">params</span><span class="o">[</span><span class="ss">:id</span><span class="o">]</span>
+<span class="k">end</span>
+</pre></td></tr></tbody></table></div>
+<p>There had to be a way to change that parameter to something better. Did the framework betray me?! Off to the docs</p>
+
+<h1>The Docs</h1>
+
+<p>So many options for routes! Each one deserves its own post.  The docs are incredibly great, until they&rsquo;re not. I searched
+and searched. and found NOTHING! Time to go code diving :-)</p>
+
+<h1>How to Spelunk</h1>
+
+<p>My preferred method of diving through code is using Rubymine&rsquo;s Command + B feature. I knew I needed to pass some param to
+resources in my routes file so I started there.</p>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre><pre class="lineno">8</pre></td><td class="code"><pre> <span class="k">def</span> <span class="nf">resources</span><span class="p">(</span><span class="o">*</span><span class="n">resources</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+  <span class="n">options</span> <span class="o">=</span> <span class="n">resources</span><span class="p">.</span><span class="nf">extract_options!</span><span class="p">.</span><span class="nf">dup</span>
+  <span class="p">.</span><span class="nf">.</span><span class="o">.</span>
+  <span class="n">resource_scope</span><span class="p">(</span><span class="ss">:resources</span><span class="p">,</span> <span class="no">Resource</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">resources</span><span class="p">.</span><span class="nf">pop</span><span class="p">,</span> <span class="n">options</span><span class="p">))</span> <span class="k">do</span>
+    <span class="p">.</span><span class="nf">.</span><span class="o">.</span>
+  <span class="k">end</span>
+  <span class="p">.</span><span class="nf">.</span><span class="o">.</span>
+<span class="k">end</span>
+</pre></td></tr></tbody></table></div>
+<p>Here I noticed we were creating a new Instance of the resource class with the options we passed in.</p>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre><pre class="lineno">8</pre><pre class="lineno">9</pre><pre class="lineno">10</pre><pre class="lineno">11</pre><pre class="lineno">12</pre><pre class="lineno">13</pre></td><td class="code"><pre><span class="k">class</span> <span class="nc">Resource</span> <span class="c1">#:nodoc:</span>
+  <span class="kp">attr_reader</span> <span class="ss">:controller</span><span class="p">,</span> <span class="ss">:path</span><span class="p">,</span> <span class="ss">:options</span><span class="p">,</span> <span class="ss">:param</span>
+
+  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">entities</span><span class="p">,</span> <span class="n">options</span> <span class="o">=</span> <span class="p">{})</span>
+    <span class="vi">@name</span>       <span class="o">=</span> <span class="n">entities</span><span class="p">.</span><span class="nf">to_s</span>
+    <span class="vi">@path</span>       <span class="o">=</span> <span class="p">(</span><span class="n">options</span><span class="o">[</span><span class="ss">:path</span><span class="o">]</span> <span class="o">||</span> <span class="vi">@name</span><span class="p">).</span><span class="nf">to_s</span>
+    <span class="vi">@controller</span> <span class="o">=</span> <span class="p">(</span><span class="n">options</span><span class="o">[</span><span class="ss">:controller</span><span class="o">]</span> <span class="o">||</span> <span class="vi">@name</span><span class="p">).</span><span class="nf">to_s</span>
+    <span class="vi">@as</span>         <span class="o">=</span> <span class="n">options</span><span class="o">[</span><span class="ss">:as</span><span class="o">]</span>
+    <span class="vi">@param</span>      <span class="o">=</span> <span class="p">(</span><span class="n">options</span><span class="o">[</span><span class="ss">:param</span><span class="o">]</span> <span class="o">||</span> <span class="ss">:id</span><span class="p">).</span><span class="nf">to_sym</span>
+    <span class="vi">@options</span>    <span class="o">=</span> <span class="n">options</span>
+  <span class="k">end</span>
+  <span class="p">.</span><span class="nf">.</span><span class="o">.</span>
+<span class="k">end</span>
+</pre></td></tr></tbody></table></div>
+<p>LOOK AT THAT! You can pass in :param to the the resource declaration!</p>
+
+<h1>The solution</h1>
+
+<p>Back in our routes file, we add the param option to the resource.</p>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre></td><td class="code"><pre><span class="n">resources</span> <span class="ss">:dashboards</span><span class="p">,</span> <span class="ss">only: </span><span class="o">[</span><span class="ss">:show</span><span class="p">,</span> <span class="ss">:index</span><span class="o">]</span><span class="p">,</span> <span class="ss">param: :name</span> <span class="k">do</span>
+  <span class="n">resources</span> <span class="ss">:assignments</span><span class="p">,</span> <span class="ss">only: </span><span class="o">[</span><span class="ss">:show</span><span class="o">]</span>
+  <span class="n">resources</span> <span class="ss">:students</span><span class="p">,</span> <span class="ss">only: </span><span class="o">[</span><span class="ss">:index</span><span class="p">,</span> <span class="ss">:show</span><span class="o">]</span>
+<span class="k">end</span>
+</pre></td></tr></tbody></table></div>
+<p>This generates these routes:</p>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre></td><td class="code"><pre><span class="n">dashboard_assignment</span> <span class="no">GET</span>        <span class="sr">/dashboards/</span><span class="ss">:dashboard_name</span><span class="o">/</span><span class="n">assignments</span><span class="o">/</span><span class="ss">:id</span><span class="p">(</span><span class="o">.</span><span class="ss">:format</span><span class="p">)</span> <span class="n">assignments</span><span class="c1">#show</span>
+  <span class="n">dashboard_students</span> <span class="no">GET</span>        <span class="sr">/dashboards/</span><span class="ss">:dashboard_name</span><span class="o">/</span><span class="n">students</span><span class="p">(</span><span class="o">.</span><span class="ss">:format</span><span class="p">)</span>        <span class="n">students</span><span class="c1">#index</span>
+   <span class="n">dashboard_student</span> <span class="no">GET</span>        <span class="sr">/dashboards/</span><span class="ss">:dashboard_name</span><span class="o">/</span><span class="n">students</span><span class="o">/</span><span class="ss">:id</span><span class="p">(</span><span class="o">.</span><span class="ss">:format</span><span class="p">)</span>    <span class="n">students</span><span class="c1">#show</span>
+          <span class="n">dashboards</span> <span class="no">GET</span>        <span class="sr">/dashboards(.:format)                                 dashboards#index
+           dashboard GET        /</span><span class="n">dashboards</span><span class="o">/</span><span class="ss">:name</span><span class="p">(</span><span class="o">.</span><span class="ss">:format</span><span class="p">)</span>                           <span class="n">dashboards</span><span class="c1">#show</span>
+</pre></td></tr></tbody></table></div>
+<p>And in our controllers:</p>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre></td><td class="code"><pre><span class="k">def</span> <span class="nf">show</span>
+  <span class="vi">@student_group</span> <span class="o">=</span> <span class="no">StudentGroup</span><span class="p">.</span><span class="nf">find_by</span> <span class="nb">name</span><span class="p">:</span> <span class="n">params</span><span class="o">[</span><span class="ss">:dashboard_name</span><span class="o">]</span>
+  <span class="vi">@assignment</span> <span class="o">=</span> <span class="no">Assignment</span><span class="p">.</span><span class="nf">find</span> <span class="n">params</span><span class="o">[</span><span class="ss">:id</span><span class="o">]</span>
+<span class="k">end</span>
+</pre></td></tr></tbody></table></div>
+<p>So much better! I hope you found this useful. It was definitely fund to figure out.</p>
+
+    </article>
+    <article>
+      <h1 class="article-title"><a href="/2013/10/19/keyboard-navigation.html">Keyboard Navigation</a></h1>
+      <h2>Get over here!</h2>
+
+<p>One of the unsung heroes of development is knowing how to use your keyboard. I don&rsquo;t just mean typing. That skill, while important, is still second to being able to move around. What do I mean by this?</p>
+
+<p>Let&rsquo;s say I&rsquo;m typing this obscenely long line of bash:</p>
+<div class="highlight shell"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre></td><td class="code"><pre>cat ~/schol/GA/BEWD_Curriculum/01_Dev_Workflow/README.md| grep -i git
+</pre></td></tr></tbody></table></div>
+<p>Oh NO! I&rsquo;ve misspelled <code>school</code>. Here we go: backspace backspace backspace… 59 backspaces! Even if you didn&rsquo;t erase it and just used left, it&rsquo;s still going to take a while.</p>
+
+<p>That&rsquo;s crazy. Let&rsquo;s try another way.</p>
+
+<p>A keyboard shortcut you can use is holding the <code>option</code> or <code>alt</code> (written <code>⌥</code>) key and pressing <code>left</code>. Do that 11 times, and you&rsquo;ll get to the <code>G</code> in <code>GA</code>. From there, it&rsquo;s just 2 taps of the <code>left</code> key and you&rsquo;re good to go. </p>
+
+<p>There&rsquo;s another way… There&rsquo;s always another way…</p>
+
+<p>You can jump to the beginning of the line by holding <code>Control</code> (written <code>Ctrl</code>, <code>^</code> ), and pressing <code>a</code>. From there, along with <code>option + right</code> you&rsquo;ve brought it down to 5 taps (^a, ⌥+right, <code>right</code>, <code>right</code>, <code>right</code> ).</p>
+
+<p><a href="http://lifehacker.com/5743814/become-a-command-line-ninja-with-these-time+saving-shortcuts">This article</a> has loads of cool stuff you can use to get around. </p>
+
+<p>My point is, make time to practice getting good. Think of it like golf. The less strokes, the better. Over time you&rsquo;ll see the lag between your intention and your computer screen shrink. Decide that it&rsquo;s important and it will make your development career amazing.</p>
+
+<h3>There&rsquo;s always another way</h3>
+
+<p>This would work too 
+<code>^schol^school</code></p>
+
+<p>You would submit the messed up line, it would give you an error. Then you would type that.</p>
+
+<h3>Editing Text</h3>
+
+<p>A lot of these things work in your editor of choice. A lot of developers use <a href="http://www.sublimetext.com/2">Sublime Text</a>. </p>
+
+<p>Let&rsquo;s look at getting around a small ruby file. It&rsquo;s from my <a href="https://github.com/StevenNunez/slide_hero">slide_hero gem</a>. Don&rsquo;t worry too much about what it does.</p>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre><pre class="lineno">8</pre><pre class="lineno">9</pre><pre class="lineno">10</pre><pre class="lineno">11</pre><pre class="lineno">12</pre><pre class="lineno">13</pre><pre class="lineno">14</pre><pre class="lineno">15</pre><pre class="lineno">16</pre><pre class="lineno">17</pre><pre class="lineno">18</pre><pre class="lineno">19</pre><pre class="lineno">20</pre><pre class="lineno">21</pre><pre class="lineno">22</pre><pre class="lineno">23</pre><pre class="lineno">24</pre><pre class="lineno">25</pre><pre class="lineno">26</pre><pre class="lineno">27</pre></td><td class="code"><pre><span class="k">module</span> <span class="nn">SlideHero</span>                                                                   
+  <span class="k">class</span> <span class="nc">Point</span>                                                                      
+    <span class="kp">attr_reader</span> <span class="ss">:text</span>                                                              
+    <span class="no">SUPPORTED_ANIMATIONS</span> <span class="o">=</span> <span class="sx">%w{grow shrink roll-in fade-out                         
+      highlight-red highlight-green highlight-blue}</span>                                
+
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="ss">animation: </span><span class="kp">nil</span><span class="p">)</span>                                           
+      <span class="vi">@text</span> <span class="o">=</span> <span class="n">text</span>                                                                 
+      <span class="vi">@animation</span> <span class="o">=</span> <span class="n">animation</span>                                                       
+    <span class="k">end</span>                                                                            
+
+    <span class="k">def</span> <span class="nf">compile</span>                                                                    
+      <span class="s2">"&lt;p</span><span class="si">#{</span><span class="n">animation</span><span class="si">}</span><span class="s2">&gt;</span><span class="si">#{</span><span class="n">text</span><span class="si">}</span><span class="s2">&lt;/p&gt;"</span>                                                 
+    <span class="k">end</span>                                                                            
+
+    <span class="kp">private</span>                                                                        
+    <span class="k">def</span> <span class="nf">animation</span>                                                                  
+      <span class="k">if</span> <span class="vi">@animation</span>                                                                
+        <span class="n">animation_markup</span> <span class="o">=</span> <span class="s1">' class="fragment '</span>                                     
+        <span class="k">if</span> <span class="no">SUPPORTED_ANIMATIONS</span><span class="p">.</span><span class="nf">include?</span> <span class="vi">@animation</span>                                
+          <span class="n">animation_markup</span> <span class="o">&lt;&lt;</span> <span class="vi">@animation</span>                                           
+        <span class="k">end</span>                                                                        
+        <span class="n">animation_markup</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\"</span><span class="s2">"</span>                                                    
+      <span class="k">end</span>                                                                          
+    <span class="k">end</span>                                                                            
+  <span class="k">end</span>                                                                              
+<span class="k">end</span>                        
+</pre></td></tr></tbody></table></div>
+<p>Let&rsquo;s say I want to jump to add another method (<code>def animation</code> is me defining a method). Since the editor usually opens at the top of the file, I&rsquo;ll have to press down 16 times or worse, USE MY MOUSE!  Looking at Sublime Text&rsquo;s <code>Goto</code> menu, I see ^G will let me specify what line to go to. Cool! Ok, well now I&rsquo;m on the line with <code>private</code> and need to get <em>after</em> it to enter my new method. We can use one of our old buddies <code>⌥+right</code> here! OK, <code>⌥+right</code>, <code>enter</code>, start typing!</p>
+
+<p>If you&rsquo;re planning on using Sublime Text, be sure to learn the <a href="http://docs.sublimetext.info/en/latest/reference/keyboard_shortcuts_osx.html">keyboard shortcuts!</a>. They&rsquo;re there because of you! Use them and be awesome.</p>
+
+<p>Another time saving shortcut is ⌘D on a Mac. Here&rsquo;s how it works. Say I want to replace every time the word <code>text</code> appears in my code example. I could use our fancy navigation to line 3, then 8 then 13, BUT there&rsquo;s another way. If you put your cursor on <code>text</code> (any of them), and press <code>⌘D</code>, it will start to highlight every instance of <code>text</code>. Now just start typing. It will erase all of them. What a time saver.</p>
+
+<p>In the end, it&rsquo;s your ability to move around effectively that will make you a great developer. All the other stuff you can learn as you go. There are times I have no idea how to solve something, but being able to run really fast experiments makes my life so much easier. </p>
+
+<p>That&rsquo;s all I have.</p>
+
+<p>Happy Clacking. </p>
+
+    </article>
+
+    
+
+  </div>
+
+  <aside>
+    <section class="recent">
+      <h2>Recent Articles</h2>
+      <ol class="articles">
+        
+            <li><a href="/2014/04/26/on-why-learning-to-program-is-hard.html">On why learning to program is hard</a>
+        
+            <li><a href="/2014/04/13/closures.html">Closures</a>
+        
+            <li><a href="/2014/02/15/custom-params-in-route-resources.html">Custom params in route resources</a>
+        
+            <li><a href="/2013/10/19/keyboard-navigation.html">Keyboard Navigation</a>
+        
+      </ol>
+    </section>
+
+    <section class="tags">
+      <h2>Tags</h2>
+      <ol>
+        
+            <li><a href="/tags/beginner.html">beginner</a> (1)</a></li>
+        
+            <li><a href="/tags/closures.html">closures</a> (1)</a></li>
+        
+            <li><a href="/tags/components-of-programming.html">components of programming</a> (1)</a></li>
+        
+            <li><a href="/tags/javascript.html">javascript</a> (1)</a></li>
+        
+            <li><a href="/tags/learning.html">learning</a> (1)</a></li>
+        
+            <li><a href="/tags/navigation.html">navigation</a> (1)</a></li>
+        
+            <li><a href="/tags/rails.html">rails</a> (1)</a></li>
+        
+            <li><a href="/tags/routing.html">routing</a> (1)</a></li>
+        
+            <li><a href="/tags/ruby.html">ruby</a> (2)</a></li>
+        
+            <li><a href="/tags/sharp-axe.html">sharp axe</a> (1)</a></li>
+        
+            <li><a href="/tags/web.html">web</a> (1)</a></li>
+        
+      </ol>
+    </section>
+
+    <section class="by-month">
+      <h2>By Month</h2>
+      <ol>
+        
+            <li><a href="/2014/04.html">April 2014</a>
+              (2)</a></li>
+        
+            <li><a href="/2014/02.html">February 2014</a>
+              (1)</a></li>
+        
+            <li><a href="/2013/10.html">October 2013</a>
+              (1)</a></li>
+        
+      </ol>
+    </section>
+  </aside>
+</div>
+</body>
+</html>

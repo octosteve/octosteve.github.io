@@ -1,0 +1,190 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta http-equiv='X-UA-Compatible' content='IE=edge;chrome=1'/>
+  <title>Hostile Developer - On why learning to program is hard</title>
+  <link href="/stylesheets/application.css" media="screen" rel="stylesheet" type="text/css" />
+  <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/feed.xml" />
+</head>
+<body>
+<div id="container">
+  <section>
+    <header>
+      <a href="/">
+          <h1 class="brand"><span class="hostile">Hostile</span> Developer</h1>
+
+          <h3 class="tag-line">Rants and raves from a madman</h3>
+      </a>
+    </header>
+  </section>
+
+  <div id="main" role="main">
+    <p>The first mention of &lsquo;Objects&rsquo; with regard to some non-tangible thing was in <a href="http://en.wikipedia.org/wiki/Object-oriented_programming#History">the late 1950s</a>. Before that, &lsquo;Objects&rsquo; didn&rsquo;t exist. Once you realize that all concepts in programming are made up, you start to feel less bad about not understanding them right away. </p>
+
+<h1>Learn all the things!</h1>
+
+<p>To be clear, when I say &ldquo;Learn to program&rdquo; I don&rsquo;t mean following a tutorial. Quite the opposite. Learning to program means you are able to create experiences through a combination of your own internal understanding of your programming platform, and the knowledge to find the answers through your available resources.</p>
+
+<h3>FizzBuzz</h3>
+
+<p>Let&rsquo;s look at what you need to know to solve something like <a href="http://en.wikipedia.org/wiki/Fizz_buzz">Fizz Buzz</a></p>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre><pre class="lineno">8</pre></td><td class="code"><pre><span class="n">fizz_buzz</span> <span class="o">=</span> <span class="o">-&gt;</span><span class="p">(</span><span class="n">number</span><span class="p">)</span> <span class="k">do</span> 
+    <span class="s2">"</span><span class="si">#{</span><span class="s1">'Fizz'</span> <span class="k">if</span> <span class="p">(</span><span class="n">number</span> <span class="sx">% 3).zero?}#{'Buzz' </span><span class="k">if</span> <span class="p">(</span><span class="n">number</span> <span class="o">%</span> <span class="mi">5</span><span class="p">).</span><span class="nf">zero?</span><span class="si">}</span><span class="s2">"</span>
+<span class="k">end</span>
+
+<span class="mi">1</span><span class="p">.</span><span class="nf">upto</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">num</span><span class="o">|</span> 
+    <span class="n">result</span> <span class="o">=</span> <span class="n">fizz_buzz</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="n">num</span><span class="p">)</span> 
+    <span class="nb">puts</span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="nf">empty?</span> <span class="p">?</span> <span class="n">num</span> <span class="p">:</span> <span class="n">result</span><span class="p">)</span>
+<span class="k">end</span>
+</pre></td></tr></tbody></table></div>
+<h4>Reading</h4>
+
+<p>To read this code you&rsquo;ll need to know that:</p>
+
+<ol>
+<li>This program runs top to bottom.</li>
+<li>Expressions return values that can be assigned to variables.</li>
+<li>Variables.</li>
+<li>Iteration.</li>
+<li>Things can be sent to <a href="http://en.wikipedia.org/wiki/Standard_streams#Standard_output_.28stdout.29">Standard Out</a>.</li>
+<li>Conditionals.</li>
+</ol>
+
+<h4>Writing</h4>
+
+<p>Imagine you&rsquo;re instructing another developer to write this code. What things would they have to understand? </p>
+
+<p>&ldquo;Assign the result of a lambda expression taking one argument to the variable <code>fizz_buzz</code>. In the lambda, create a string that will interpolate &lsquo;Fizz&rsquo; if the argument is divisible by 3, and &lsquo;Buzz&rsquo; if the number is divisible by 5. Ensure the string can be &lsquo;FizzBuzz&rsquo; for numbers like 15. Then iterate from 1 to 100, calling the lambda with each number. If the result of the call is empty, return the number. Otherwise return the result&rdquo;.</p>
+
+<p>Implementing this requires you know specific things about the language you&rsquo;re writing in. Idioms, conventions, methods, objects&hellip;
+To implement this in ruby, you&rsquo;ll have to know:</p>
+
+<ol>
+<li>How to create a lambda.</li>
+<li>How to interpolate strings.</li>
+<li>How to get the remainder from a number.</li>
+<li>Comparison operators</li>
+<li>Statement modifier conditional statements.</li>
+<li>Ternary conditional statements.</li>
+<li>How to iterate.</li>
+</ol>
+
+<h4>Creating</h4>
+
+<p>To come up with this solution you&rsquo;ll need a completely different skill. Programmatic thinking. Programmatic thinking is the ability to take a problem and break it down into smaller pieces. To illustrate this, have someone teach a robot how to make a smoothie. Assuming the robot knows only the things you tell it forces you to create very detailed instructions.</p>
+
+<p>For FizzBuzz, the thought process is something like this.</p>
+
+<ol>
+<li>I need something that figures out if it needs to return &ldquo;Fizz&rdquo;, &ldquo;Buzz&rdquo; or &ldquo;FizzBuzz&rdquo;. I could create a class with methods, or just a method, or I can use a lambda. Let&rsquo;s use a lambda!</li>
+<li>I need to print the result out, let&rsquo;s loop up to 100 and call our lambda!</li>
+</ol>
+
+<h2>Break it down</h2>
+
+<iframe width="560" height="315" src="//www.youtube.com/embed/5MgBikgcWnY" frameborder="0" allowfullscreen></iframe>
+
+<p>Taking a problem apart and breaking it down into its components is the way to go. </p>
+
+<h3>Components of programming</h3>
+
+<p>When you&rsquo;re starting out, you know nothing. In order to build ANYTHING you&rsquo;ll need some of these things under your belt.
+The good news is you can can get better at each component separately.</p>
+
+<h4>Programming concepts</h4>
+
+<p>To get a better grasp on programming concepts <a href="http://www.confreaks.com/">watch talks</a>. <a href="https://twitter.com/readingcodegood">Read code</a>. Lots of it. Here you&rsquo;ll learn about design patterns, techniques like recursion, concepts like encapsulation, namespacing, and testing.</p>
+
+<h4>Programmatic thinking</h4>
+
+<p>This one requires work. Go to <a href="http://www.codewars.com">Code Wars</a>. Do problems on <a href="http://projecteuler.net">Project Euler</a>. Do problems on <a href="http://rubyquiz.com/">Ruby Quiz</a>. </p>
+
+<h4>Language specific stuff</h4>
+
+<p>Get good at your language. Read the docs. Try figuring out multiple ways to solve the same problem.</p>
+
+<h4>Which component does this serve?</h4>
+
+<p>Always be aware what you&rsquo;re working on is benefiting. Building software serves all 3, so when it doubt: BUILD!</p>
+
+<h2>Silver lining</h2>
+
+<p>When it comes time for you to learn a new language, all you&rsquo;ll really have to learn is the language specific stuff! You&rsquo;ll only have to learn one leg of this crazy process!</p>
+
+<h3>Note of caution</h3>
+
+<p>The trap seasoned developers fall prey to is mistaking language specific idioms/concept understandings for Programming Concepts. Just because you do it that way in C# doesn&rsquo;t mean that&rsquo;s how it&rsquo;s done in ruby!</p>
+
+<h2>The road is long and hard</h2>
+
+<p>&hellip; but along the way you pick up a rocket powered motorbike. Then you don&rsquo;t care how long the road is, just how much fuel you have in the tank.</p>
+
+<p>Happy Clacking.</p>
+
+  </div>
+
+  <aside>
+    <section class="recent">
+      <h2>Recent Articles</h2>
+      <ol class="articles">
+        
+            <li><a href="/2014/04/26/on-why-learning-to-program-is-hard.html">On why learning to program is hard</a>
+        
+            <li><a href="/2014/04/13/closures.html">Closures</a>
+        
+            <li><a href="/2014/02/15/custom-params-in-route-resources.html">Custom params in route resources</a>
+        
+            <li><a href="/2013/10/19/keyboard-navigation.html">Keyboard Navigation</a>
+        
+      </ol>
+    </section>
+
+    <section class="tags">
+      <h2>Tags</h2>
+      <ol>
+        
+            <li><a href="/tags/beginner.html">beginner</a> (1)</a></li>
+        
+            <li><a href="/tags/closures.html">closures</a> (1)</a></li>
+        
+            <li><a href="/tags/components-of-programming.html">components of programming</a> (1)</a></li>
+        
+            <li><a href="/tags/javascript.html">javascript</a> (1)</a></li>
+        
+            <li><a href="/tags/learning.html">learning</a> (1)</a></li>
+        
+            <li><a href="/tags/navigation.html">navigation</a> (1)</a></li>
+        
+            <li><a href="/tags/rails.html">rails</a> (1)</a></li>
+        
+            <li><a href="/tags/routing.html">routing</a> (1)</a></li>
+        
+            <li><a href="/tags/ruby.html">ruby</a> (2)</a></li>
+        
+            <li><a href="/tags/sharp-axe.html">sharp axe</a> (1)</a></li>
+        
+            <li><a href="/tags/web.html">web</a> (1)</a></li>
+        
+      </ol>
+    </section>
+
+    <section class="by-month">
+      <h2>By Month</h2>
+      <ol>
+        
+            <li><a href="/2014/04.html">April 2014</a>
+              (2)</a></li>
+        
+            <li><a href="/2014/02.html">February 2014</a>
+              (1)</a></li>
+        
+            <li><a href="/2013/10.html">October 2013</a>
+              (1)</a></li>
+        
+      </ol>
+    </section>
+  </aside>
+</div>
+</body>
+</html>

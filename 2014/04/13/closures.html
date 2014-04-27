@@ -1,0 +1,270 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta http-equiv='X-UA-Compatible' content='IE=edge;chrome=1'/>
+  <title>Hostile Developer - Closures</title>
+  <link href="/stylesheets/application.css" media="screen" rel="stylesheet" type="text/css" />
+  <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/feed.xml" />
+</head>
+<body>
+<div id="container">
+  <section>
+    <header>
+      <a href="/">
+          <h1 class="brand"><span class="hostile">Hostile</span> Developer</h1>
+
+          <h3 class="tag-line">Rants and raves from a madman</h3>
+      </a>
+    </header>
+  </section>
+
+  <div id="main" role="main">
+    <blockquote class="twitter-tweet" data-partner="tweetdeck"><p>I UNDERSTAND CLOSURES!!! Blog post coming up!</p>&mdash; Steven Nunez (@_StevenNunez) <a href="https://twitter.com/_StevenNunez/statuses/455337355030069248">April 13, 2014</a></blockquote>
+
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+<p>I&rsquo;ve been trying to gain an appreciation for JavaScript recently. Behind its
+semicolon ridden lines, and funky funky functions, I&rsquo;ve found it has a bunch of
+cool stuff going on. I owe my appreciation for it to <a href="http://speakingjs.com/">Speaking
+JavaScript</a> by Dr. Axel Rauschmayer. Great book. Go get
+it.</p>
+
+<h2>JavaScript and Me</h2>
+
+<p>Up until recently, my JavaScript know-how didn&rsquo;t extend far beyond using jQuery
+to select some element, and apply some class. Now with an upcoming JavaScript
+module at <a href="http://flatironschool.com/nycworkforce1/">The Flatiron School
+Fellowship</a> I had to get on it.
+Nothing motivates more than having to teach something to a group of students. </p>
+
+<p>I did what you would normally do when picking up a new language. </p>
+
+<ul>
+<li>Learn about the language&rsquo;s objects and their methods</li>
+<li>Learn about how to create and manage scope</li>
+<li>Look for weird quirks</li>
+<li>Be completely baffled by closures!?</li>
+</ul>
+
+<h2>Surprise confusion!</h2>
+
+<p>I know ruby has closures through lambdas&hellip; I just had no idea what that
+meant. I just knew it was true! </p>
+
+<p>In JavaScript, you can&rsquo;t hide from closures though. If you&rsquo;re confronted with a
+piece of code like this, you&rsquo;ll need to understand closures:</p>
+<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre><pre class="lineno">8</pre><pre class="lineno">9</pre><pre class="lineno">10</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">step_by</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">step</span><span class="p">){</span>                                                       
+  <span class="kd">var</span> <span class="nx">total</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>                                                                   
+  <span class="k">return</span> <span class="kd">function</span><span class="p">(){</span>                                                               
+    <span class="k">return</span> <span class="nx">total</span> <span class="o">+=</span> <span class="nx">step</span>                                                           
+  <span class="p">}</span>                                                                                
+<span class="p">};</span>                                                                                 
+
+<span class="kd">var</span> <span class="nx">step_by_7</span> <span class="o">=</span> <span class="nx">step_by</span><span class="p">(</span><span class="mi">7</span><span class="p">);</span> 
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">step_by_7</span><span class="p">());</span> <span class="c1">// 7
+</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">step_by_7</span><span class="p">());</span> <span class="c1">// 14
+</span></pre></td></tr></tbody></table></div>
+<h3>What is a closure?</h3>
+
+<blockquote cite='http://speakingjs.com/es5/ch01.html#_closures'>A closure is a 
+function plus the connection to the scope in which the function was created.
+  <footer>-
+    <cite>
+      <a href="http://speakingjs.com/es5/ch01.html#_closures">Dr. Axel Rauschmayer</a>
+    </cite>
+  </footer>
+</blockquote>
+
+<p>Armed with this, I wanted to learn it on my own turf. Enter ruby.</p>
+
+<h2>Closures in ruby</h2>
+
+<p>Any one that knows me will tell you I&rsquo;m&hellip; fond of ruby. OK, I love ruby. OK, I
+think ruby is one of the greatest things humanity has produced. Suck it
+pyramids.</p>
+
+<p>Knowing ruby had closures and having a definition of what a closure was, I
+started devising some experiments.</p>
+
+<h3>Context of execution</h3>
+
+<p>A closure&rsquo;s context of execution will always be the one it was created in. A
+few experiments.</p>
+
+<h3>Experiment 1</h3>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre></td><td class="code"><pre><span class="n">x</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">my_lambda</span> <span class="o">=</span> <span class="o">-&gt;</span> <span class="p">{</span> <span class="n">x</span> <span class="o">+=</span> <span class="mi">5</span> <span class="p">}</span>
+<span class="n">my_lambda</span><span class="p">.</span><span class="nf">call</span> <span class="c1">#=&gt; 10</span>
+<span class="n">my_lambda</span><span class="p">.</span><span class="nf">call</span> <span class="c1">#=&gt; 15</span>
+</pre></td></tr></tbody></table></div>
+<p>Cool. lambdas can call things around them. Setting the variable <code>x</code> and the
+lambda in the same scope allows you to call <code>x</code> from inside the lambda without
+passing it in. Let&rsquo;s try something else.</p>
+
+<h3>Experiment 2</h3>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre><pre class="lineno">8</pre><pre class="lineno">9</pre><pre class="lineno">10</pre></td><td class="code"><pre><span class="n">x</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">my_lambda</span> <span class="o">=</span> <span class="o">-&gt;</span> <span class="p">{</span> <span class="n">x</span> <span class="o">+=</span> <span class="mi">5</span> <span class="p">}</span>
+
+<span class="k">def</span> <span class="nf">my_method</span><span class="p">(</span><span class="n">closure</span><span class="p">)</span>
+  <span class="n">x</span> <span class="o">=</span> <span class="mi">371_292</span>
+  <span class="nb">puts</span> <span class="n">closure</span><span class="p">.</span><span class="nf">call</span>
+<span class="k">end</span>
+
+<span class="n">my_method</span><span class="p">(</span><span class="n">my_lambda</span><span class="p">)</span> <span class="c1">#=&gt; 10</span>
+<span class="n">my_method</span><span class="p">(</span><span class="n">my_lambda</span><span class="p">)</span> <span class="c1">#=&gt; 15</span>
+</pre></td></tr></tbody></table></div>
+<p>WHOA! It totally ignored the <code>x</code> defined in the method! Now I started
+connecting dots. That&rsquo;s why stuff like <code>instance_eval</code> exists. If we want to
+change the context of execution for the block to be the method&rsquo;s, we&rsquo;ll need to
+use <code>instance_eval</code> and pass it the block.</p>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre><pre class="lineno">8</pre><pre class="lineno">9</pre><pre class="lineno">10</pre><pre class="lineno">11</pre><pre class="lineno">12</pre><pre class="lineno">13</pre><pre class="lineno">14</pre><pre class="lineno">15</pre><pre class="lineno">16</pre><pre class="lineno">17</pre></td><td class="code"><pre><span class="n">x</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">my_lambda</span> <span class="o">=</span> <span class="o">-&gt;</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="p">{</span> <span class="n">obj</span><span class="p">.</span><span class="nf">x</span> <span class="o">+=</span> <span class="mi">5</span> <span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">MyClass</span>
+  <span class="kp">attr_accessor</span> <span class="ss">:x</span>
+  <span class="k">def</span> <span class="nf">initialize</span>
+    <span class="vi">@x</span> <span class="o">=</span> <span class="mi">371_292</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">my_method</span><span class="p">(</span><span class="n">closure</span><span class="p">)</span>
+    <span class="nb">instance_eval</span><span class="p">(</span><span class="o">&amp;</span><span class="n">closure</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="n">my_class</span> <span class="o">=</span> <span class="no">MyClass</span><span class="p">.</span><span class="nf">new</span>
+<span class="n">my_class</span><span class="p">.</span><span class="nf">my_method</span><span class="p">(</span><span class="n">my_lambda</span><span class="p">)</span> <span class="c1">#=&gt; 371297</span>
+<span class="n">my_class</span><span class="p">.</span><span class="nf">my_method</span><span class="p">(</span><span class="n">my_lambda</span><span class="p">)</span> <span class="c1">#=&gt; 371302</span>
+</pre></td></tr></tbody></table></div>
+<p><code>instance_eval</code> yields <code>self</code> to the lambda. Since <code>x += 5</code> is short hand for 
+<code>x = x + 5</code> we needed an accessor.</p>
+
+<h2>Back to JavaScript</h2>
+
+<p>Armed with this knowledge, closures seemed to be a neat little feature that
+didn&rsquo;t really bloom in ruby, but found a home in JavaScript.</p>
+
+<p>The code from earlier is crystal clear now.</p>
+<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre><pre class="lineno">8</pre><pre class="lineno">9</pre><pre class="lineno">10</pre><pre class="lineno">11</pre><pre class="lineno">12</pre><pre class="lineno">13</pre><pre class="lineno">14</pre><pre class="lineno">15</pre><pre class="lineno">16</pre><pre class="lineno">17</pre><pre class="lineno">18</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">step_by</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">step</span><span class="p">){</span>                                                       
+  <span class="c1">// setup empty total value. This gets reset everytime you call the step_by
+</span>  <span class="c1">// function
+</span>  <span class="kd">var</span> <span class="nx">total</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>                                                                   
+  <span class="c1">// this function is returned and because functions are closures, it will
+</span>  <span class="c1">// continue to have access to both total and step!
+</span>  <span class="k">return</span> <span class="kd">function</span><span class="p">(){</span>                                                               
+    <span class="k">return</span> <span class="nx">total</span> <span class="o">+=</span> <span class="nx">step</span>                                                           
+  <span class="p">}</span>                                                                                
+<span class="p">};</span>                                                                                 
+
+<span class="kd">var</span> <span class="nx">step_by_7</span> <span class="o">=</span> <span class="nx">step_by</span><span class="p">(</span><span class="mi">7</span><span class="p">);</span> 
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">step_by_7</span><span class="p">());</span> <span class="c1">// 7
+</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">step_by_7</span><span class="p">());</span> <span class="c1">// 14
+</span>
+<span class="kd">var</span> <span class="nx">step_by_5</span> <span class="o">=</span> <span class="nx">step_by</span><span class="p">(</span><span class="mi">5</span><span class="p">);</span> 
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">step_by_5</span><span class="p">());</span> <span class="c1">// 5
+</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">step_by_5</span><span class="p">());</span> <span class="c1">// 10
+</span></pre></td></tr></tbody></table></div>
+<p>Each returned function has its own copy of <code>total</code> so you could do something
+like this and they won&rsquo;t interfere with each other:</p>
+<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">step_by_7</span> <span class="o">=</span> <span class="nx">step_by</span><span class="p">(</span><span class="mi">7</span><span class="p">);</span> 
+<span class="kd">var</span> <span class="nx">step_by_5</span> <span class="o">=</span> <span class="nx">step_by</span><span class="p">(</span><span class="mi">5</span><span class="p">);</span> 
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">step_by_7</span><span class="p">());</span> <span class="c1">// 7
+</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">step_by_5</span><span class="p">());</span> <span class="c1">// 5
+</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">step_by_7</span><span class="p">());</span> <span class="c1">// 14
+</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">step_by_5</span><span class="p">());</span> <span class="c1">// 10
+</span></pre></td></tr></tbody></table></div>
+<h2>For the curious</h2>
+
+<p>Here&rsquo;s the same code in ruby</p>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre><pre class="lineno">8</pre><pre class="lineno">9</pre><pre class="lineno">10</pre><pre class="lineno">11</pre><pre class="lineno">12</pre><pre class="lineno">13</pre><pre class="lineno">14</pre></td><td class="code"><pre><span class="n">step_by</span> <span class="o">=</span> <span class="o">-&gt;</span><span class="p">(</span><span class="n">step</span><span class="p">)</span> <span class="k">do</span>                                                           
+  <span class="n">total</span> <span class="o">=</span> <span class="mi">0</span>                                                                     
+  <span class="o">-&gt;</span> <span class="p">{</span> <span class="n">total</span> <span class="o">+=</span> <span class="n">step</span> <span class="p">}</span>                                                          
+<span class="k">end</span>                                                                             
+
+<span class="n">step_by_7</span> <span class="o">=</span> <span class="n">step_by</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>                                                     
+<span class="nb">puts</span> <span class="n">step_by_7</span><span class="p">.</span><span class="nf">call</span> <span class="c1">#=&gt; 7                                                       </span>
+<span class="nb">puts</span> <span class="n">step_by_7</span><span class="p">.</span><span class="nf">call</span> <span class="c1">#=&gt; 14                                                      </span>
+<span class="nb">puts</span> <span class="n">step_by_7</span><span class="p">.</span><span class="nf">call</span> <span class="c1">#=&gt; 21                                                      </span>
+
+<span class="n">step_by_5</span> <span class="o">=</span> <span class="n">step_by</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>                                                     
+<span class="nb">puts</span> <span class="n">step_by_5</span><span class="p">.</span><span class="nf">call</span> <span class="c1">#=&gt; 5                                                       </span>
+<span class="nb">puts</span> <span class="n">step_by_5</span><span class="p">.</span><span class="nf">call</span> <span class="c1">#=&gt; 10                                                      </span>
+<span class="nb">puts</span> <span class="n">step_by_5</span><span class="p">.</span><span class="nf">call</span> <span class="c1">#=&gt; 15 </span>
+</pre></td></tr></tbody></table></div>
+<p>Currying would work in this case too, but that&rsquo;s another blog post&hellip;</p>
+
+<h2>Conclusion</h2>
+
+<p>While I&rsquo;m still not in love with JavaScript, there are some really cool things
+about it I&rsquo;m excited to explore.</p>
+
+<p>I hope this was helpful!</p>
+
+<p>Happy Clacking</p>
+
+  </div>
+
+  <aside>
+    <section class="recent">
+      <h2>Recent Articles</h2>
+      <ol class="articles">
+        
+            <li><a href="/2014/04/26/on-why-learning-to-program-is-hard.html">On why learning to program is hard</a>
+        
+            <li><a href="/2014/04/13/closures.html">Closures</a>
+        
+            <li><a href="/2014/02/15/custom-params-in-route-resources.html">Custom params in route resources</a>
+        
+            <li><a href="/2013/10/19/keyboard-navigation.html">Keyboard Navigation</a>
+        
+      </ol>
+    </section>
+
+    <section class="tags">
+      <h2>Tags</h2>
+      <ol>
+        
+            <li><a href="/tags/beginner.html">beginner</a> (1)</a></li>
+        
+            <li><a href="/tags/closures.html">closures</a> (1)</a></li>
+        
+            <li><a href="/tags/components-of-programming.html">components of programming</a> (1)</a></li>
+        
+            <li><a href="/tags/javascript.html">javascript</a> (1)</a></li>
+        
+            <li><a href="/tags/learning.html">learning</a> (1)</a></li>
+        
+            <li><a href="/tags/navigation.html">navigation</a> (1)</a></li>
+        
+            <li><a href="/tags/rails.html">rails</a> (1)</a></li>
+        
+            <li><a href="/tags/routing.html">routing</a> (1)</a></li>
+        
+            <li><a href="/tags/ruby.html">ruby</a> (2)</a></li>
+        
+            <li><a href="/tags/sharp-axe.html">sharp axe</a> (1)</a></li>
+        
+            <li><a href="/tags/web.html">web</a> (1)</a></li>
+        
+      </ol>
+    </section>
+
+    <section class="by-month">
+      <h2>By Month</h2>
+      <ol>
+        
+            <li><a href="/2014/04.html">April 2014</a>
+              (2)</a></li>
+        
+            <li><a href="/2014/02.html">February 2014</a>
+              (1)</a></li>
+        
+            <li><a href="/2013/10.html">October 2013</a>
+              (1)</a></li>
+        
+      </ol>
+    </section>
+  </aside>
+</div>
+</body>
+</html>
