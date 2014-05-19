@@ -105,7 +105,27 @@ JavaScript also uses camelCase for its variables, vs ruby&rsquo;s snake case.</p
 <span class="kd">var</span> <span class="nx">bob</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Student</span><span class="p">(</span><span class="s2">"Bob"</span><span class="p">);</span>
 <span class="nx">bob</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span> <span class="c1">// "Bob"
 </span></pre></td></tr></tbody></table></div>
-<p>The Constructor Function can take arguments like any other function. Inside the constructor function, you have access to this mysterious <code>this</code> thing. A new <code>this</code> is created whenever you call a function with the <code>new</code> keyword. By convention, the function starts with a capital letter.</p>
+<p>The Constructor Function can take arguments like any other function.</p>
+
+<p>To add methods to the Factory, add them to the prototype. Then all instances will have access to those methods.</p>
+<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre><pre class="lineno">8</pre><pre class="lineno">9</pre><pre class="lineno">10</pre><pre class="lineno">11</pre><pre class="lineno">12</pre><pre class="lineno">13</pre><pre class="lineno">14</pre><pre class="lineno">15</pre><pre class="lineno">16</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">Student</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">){</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="nx">Student</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">grade</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
+  <span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">==</span> <span class="s2">"Steven"</span><span class="p">){</span>
+    <span class="k">return</span> <span class="s2">"A"</span><span class="p">;</span>
+  <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+    <span class="k">return</span> <span class="s2">"F"</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kd">var</span> <span class="nx">bob</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Student</span><span class="p">(</span><span class="s2">"Bob"</span><span class="p">);</span>
+<span class="nx">bob</span><span class="p">.</span><span class="nx">grade</span><span class="p">()</span> <span class="c1">// "F" sorry Crouton
+</span><span class="kd">var</span> <span class="nx">steven</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Student</span><span class="p">(</span><span class="s2">"Steven"</span><span class="p">);</span>
+<span class="nx">steven</span><span class="p">.</span><span class="nx">grade</span><span class="p">()</span> <span class="c1">// "A" obviously
+</span></pre></td></tr></tbody></table></div>
+<p>Inside the Constructor Function and prototype methods you have access to this mysterious <code>this</code> thing. A new <code>this</code> is created whenever you call a function with the <code>new</code> keyword. By convention, Constructor Functions start with a capital letter.</p>
 <div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">ThisOrThat</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">thang</span> <span class="o">=</span> <span class="s2">"This thang"</span><span class="p">;</span>
 <span class="p">}</span>
