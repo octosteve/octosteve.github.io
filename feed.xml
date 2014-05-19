@@ -5,16 +5,331 @@
   <id>http://blog.url.com/</id>
   <link href="http://blog.url.com/"/>
   <link href="http://blog.url.com/feed.xml" rel="self"/>
-  <updated>2014-04-26T20:22:00Z</updated>
+  <updated>2014-05-18T20:16:00Z</updated>
   <author>
     <name>Blog Author</name>
   </author>
+  <entry>
+    <title>Using Ruby to learn JavaScript</title>
+    <link rel="alternate" href="http://blog.url.com/2014/05/18/using-ruby-to-learn-javascript.html"/>
+    <id>http://blog.url.com/2014/05/18/using-ruby-to-learn-javascript.html</id>
+    <published>2014-05-18T20:16:00Z</published>
+    <updated>2014-05-18T22:33:07-04:00</updated>
+    <author>
+      <name>Article Author</name>
+    </author>
+    <content type="html">&lt;p&gt;I&amp;rsquo;ve written about why I believe &lt;a href="/2014/04/26/on-why-learning-to-program-is-hard.html"&gt;learning to program is hard&lt;/a&gt;. If you&amp;rsquo;ve made it to the other side, rejoice! It&amp;rsquo;s time for the easy part. Learning a new language. Let&amp;rsquo;s see how knowing ruby can help us learn a little JavaScript. (I&amp;rsquo;m assuming you know ruby for the duration of this post)&lt;/p&gt;
+
+&lt;h1&gt;ruby to JavaScript&lt;/h1&gt;
+
+&lt;p&gt;First, let&amp;rsquo;s find some similarities.
+Both are:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Dynamically Typed&lt;/li&gt;
+&lt;li&gt;Both are Object Oriented&lt;/li&gt;
+&lt;li&gt;Functions are first class citizens&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Let&amp;rsquo;s look at these first&lt;/p&gt;
+
+&lt;h2&gt;Dynamically Typed&lt;/h2&gt;
+&lt;div class="highlight ruby"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1&lt;/pre&gt;&lt;pre class="lineno"&gt;2&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="n"&gt;my_account&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{}&lt;/span&gt;
+&lt;span class="n"&gt;my_account&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;[]&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;
+&lt;p&gt;vs&lt;/p&gt;
+&lt;div class="highlight javascript"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1&lt;/pre&gt;&lt;pre class="lineno"&gt;2&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;myAccount&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{};&lt;/span&gt;
+&lt;span class="nx"&gt;myAccount&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[];&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;
+&lt;p&gt;With these 2 lines of code, we can start to identify some differences between the languages.&lt;/p&gt;
+
+&lt;h3&gt;The &lt;code&gt;var&lt;/code&gt; keyword&lt;/h3&gt;
+
+&lt;p&gt;Variables in JavaScript &lt;strong&gt;must&lt;/strong&gt; be declared. You &lt;strong&gt;must&lt;/strong&gt; communicate this intention, otherwise weird things start to happen. The following code works, but not like you think.&lt;/p&gt;
+
+&lt;p&gt;Run this in Developer Tools&lt;/p&gt;
+&lt;div class="highlight javascript"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1&lt;/pre&gt;&lt;pre class="lineno"&gt;2&lt;/pre&gt;&lt;pre class="lineno"&gt;3&lt;/pre&gt;&lt;pre class="lineno"&gt;4&lt;/pre&gt;&lt;pre class="lineno"&gt;5&lt;/pre&gt;&lt;pre class="lineno"&gt;6&lt;/pre&gt;&lt;pre class="lineno"&gt;7&lt;/pre&gt;&lt;pre class="lineno"&gt;8&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;varTest&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(){&lt;/span&gt;
+  &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;totallyFine&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;17&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="nx"&gt;ohMy&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;100&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="nx"&gt;varTest&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+
+&lt;span class="nx"&gt;console&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;log&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;ohMy&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt; &lt;span class="c1"&gt;// 100
+&lt;/span&gt;&lt;span class="nx"&gt;console&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;log&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;totallyFine&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt; &lt;span class="c1"&gt;// explosion!  
+&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;
+&lt;p&gt;Why&amp;rsquo;s this a big deal? This means that if any code, anywhere creates a variable in a function without the &lt;code&gt;var&lt;/code&gt; keyword, it&amp;rsquo;s with you for the rest of your app. Other things can change it. For a real life case of this biting someone, checkout &lt;a href="http://blog.safeshepherd.com/23/how-one-missing-var-ruined-our-launch/"&gt;this  post&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Strict mode prevents this tomfoolery.&lt;/p&gt;
+&lt;div class="highlight javascript"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1&lt;/pre&gt;&lt;pre class="lineno"&gt;2&lt;/pre&gt;&lt;pre class="lineno"&gt;3&lt;/pre&gt;&lt;pre class="lineno"&gt;4&lt;/pre&gt;&lt;pre class="lineno"&gt;5&lt;/pre&gt;&lt;pre class="lineno"&gt;6&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;varTest&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(){&lt;/span&gt;
+  &lt;span class="s1"&gt;'use strict'&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;totallyFine&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;17&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="nx"&gt;ohMy&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;100&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="nx"&gt;varTest&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt; &lt;span class="c1"&gt;// blows up here since ohMy is not defined
+&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;
+&lt;p&gt;Another difference are those semicolons! Semicolons are used to end a statement. It may be your first impulse to throw semicolons everywhere but &lt;a href="http://www.codecademy.com/blog/78-your-guide-to-semicolons-in-javascript"&gt;don&amp;rsquo;t&lt;/a&gt;.
+JavaScript also uses camelCase for its variables, vs ruby&amp;rsquo;s snake case.&lt;/p&gt;
+
+&lt;h2&gt;Object Orientation&lt;/h2&gt;
+
+&lt;p&gt;Both languages can create structures that act as templates for instances of itself.&lt;/p&gt;
+&lt;div class="highlight ruby"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1&lt;/pre&gt;&lt;pre class="lineno"&gt;2&lt;/pre&gt;&lt;pre class="lineno"&gt;3&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;Student&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;span class="n"&gt;bob&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="no"&gt;Student&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;new&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;
+&lt;p&gt;vs&lt;/p&gt;
+&lt;div class="highlight javascript"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1&lt;/pre&gt;&lt;pre class="lineno"&gt;2&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;Student&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(){};&lt;/span&gt;
+&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;bob&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="nx"&gt;Student&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;
+&lt;p&gt;In JavaScript, we supply what&amp;rsquo;s called a Constructor Function. One that responds to the &lt;code&gt;new&lt;/code&gt; keyword by returning an instance of the function. Let&amp;rsquo;s flesh this out some more.&lt;/p&gt;
+&lt;div class="highlight ruby"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1&lt;/pre&gt;&lt;pre class="lineno"&gt;2&lt;/pre&gt;&lt;pre class="lineno"&gt;3&lt;/pre&gt;&lt;pre class="lineno"&gt;4&lt;/pre&gt;&lt;pre class="lineno"&gt;5&lt;/pre&gt;&lt;pre class="lineno"&gt;6&lt;/pre&gt;&lt;pre class="lineno"&gt;7&lt;/pre&gt;&lt;pre class="lineno"&gt;8&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;Student&lt;/span&gt;
+  &lt;span class="kp"&gt;attr_reader&lt;/span&gt; &lt;span class="ss"&gt;:name&lt;/span&gt;
+  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;initialize&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;name&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="vi"&gt;@name&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;name&lt;/span&gt;
+  &lt;span class="k"&gt;end&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;span class="n"&gt;bob&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="no"&gt;Student&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;new&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;"Bob"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;bob&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;name&lt;/span&gt; &lt;span class="c1"&gt;# =&amp;gt; "Bob"&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;
+&lt;p&gt;vs&lt;/p&gt;
+&lt;div class="highlight javascript"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1&lt;/pre&gt;&lt;pre class="lineno"&gt;2&lt;/pre&gt;&lt;pre class="lineno"&gt;3&lt;/pre&gt;&lt;pre class="lineno"&gt;4&lt;/pre&gt;&lt;pre class="lineno"&gt;5&lt;/pre&gt;&lt;pre class="lineno"&gt;6&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;Student&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;name&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;
+  &lt;span class="k"&gt;this&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;name&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;name&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;};&lt;/span&gt;
+
+&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;bob&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="nx"&gt;Student&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;"Bob"&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="nx"&gt;bob&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;name&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="c1"&gt;// "Bob"
+&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;
+&lt;p&gt;The Constructor Function can take arguments like any other function. Inside the constructor function, you have access to this mysterious &lt;code&gt;this&lt;/code&gt; thing. A new &lt;code&gt;this&lt;/code&gt; is created whenever you call a function with the &lt;code&gt;new&lt;/code&gt; keyword. By convention, the function starts with a capital letter.&lt;/p&gt;
+&lt;div class="highlight javascript"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1&lt;/pre&gt;&lt;pre class="lineno"&gt;2&lt;/pre&gt;&lt;pre class="lineno"&gt;3&lt;/pre&gt;&lt;pre class="lineno"&gt;4&lt;/pre&gt;&lt;pre class="lineno"&gt;5&lt;/pre&gt;&lt;pre class="lineno"&gt;6&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;ThisOrThat&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(){&lt;/span&gt;
+  &lt;span class="k"&gt;this&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;thang&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;"This thang"&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+
+&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;thisThing&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="nx"&gt;ThisOrThat&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;span class="nx"&gt;thisThing&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;thang&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="c1"&gt;// "This Thang"
+&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;
+&lt;p&gt;There&amp;rsquo;s another way to make objects in JavaScript by using an object literal.&lt;/p&gt;
+&lt;div class="highlight javascript"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1&lt;/pre&gt;&lt;pre class="lineno"&gt;2&lt;/pre&gt;&lt;pre class="lineno"&gt;3&lt;/pre&gt;&lt;pre class="lineno"&gt;4&lt;/pre&gt;&lt;pre class="lineno"&gt;5&lt;/pre&gt;&lt;pre class="lineno"&gt;6&lt;/pre&gt;&lt;pre class="lineno"&gt;7&lt;/pre&gt;&lt;pre class="lineno"&gt;8&lt;/pre&gt;&lt;pre class="lineno"&gt;9&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;myObject&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="na"&gt;value1&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;"I'm a value"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="na"&gt;action&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(){&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="s2"&gt;"Live Action! "&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="k"&gt;this&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;value1&lt;/span&gt; &lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+
+&lt;span class="nx"&gt;myObject&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;value1&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="c1"&gt;// I'm a value
+&lt;/span&gt;&lt;span class="nx"&gt;myObject&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;action&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt; &lt;span class="c1"&gt;// "Live Action! I'm a value""
+&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;
+&lt;p&gt;Here, the &lt;code&gt;action&lt;/code&gt; method has access to other properties in the object through &lt;code&gt;this&lt;/code&gt;.&lt;/p&gt;
+&lt;div class="highlight javascript"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1&lt;/pre&gt;&lt;pre class="lineno"&gt;2&lt;/pre&gt;&lt;pre class="lineno"&gt;3&lt;/pre&gt;&lt;pre class="lineno"&gt;4&lt;/pre&gt;&lt;pre class="lineno"&gt;5&lt;/pre&gt;&lt;pre class="lineno"&gt;6&lt;/pre&gt;&lt;pre class="lineno"&gt;7&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;myObject&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="na"&gt;getThis&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(){&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="k"&gt;this&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+
+&lt;span class="nx"&gt;myObject&lt;/span&gt; &lt;span class="o"&gt;===&lt;/span&gt; &lt;span class="nx"&gt;myObject&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;getThis&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt; &lt;span class="c1"&gt;// true
+&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;
+&lt;p&gt;This is akin to creating an Object instance in ruby an attaching singleton methods.&lt;/p&gt;
+&lt;div class="highlight ruby"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1&lt;/pre&gt;&lt;pre class="lineno"&gt;2&lt;/pre&gt;&lt;pre class="lineno"&gt;3&lt;/pre&gt;&lt;pre class="lineno"&gt;4&lt;/pre&gt;&lt;pre class="lineno"&gt;5&lt;/pre&gt;&lt;pre class="lineno"&gt;6&lt;/pre&gt;&lt;pre class="lineno"&gt;7&lt;/pre&gt;&lt;pre class="lineno"&gt;8&lt;/pre&gt;&lt;pre class="lineno"&gt;9&lt;/pre&gt;&lt;pre class="lineno"&gt;10&lt;/pre&gt;&lt;pre class="lineno"&gt;11&lt;/pre&gt;&lt;pre class="lineno"&gt;12&lt;/pre&gt;&lt;pre class="lineno"&gt;13&lt;/pre&gt;&lt;pre class="lineno"&gt;14&lt;/pre&gt;&lt;pre class="lineno"&gt;15&lt;/pre&gt;&lt;pre class="lineno"&gt;16&lt;/pre&gt;&lt;pre class="lineno"&gt;17&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="n"&gt;my_object&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="no"&gt;Object&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;new&lt;/span&gt;
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nc"&gt;my_object&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;value1&lt;/span&gt;
+  &lt;span class="s2"&gt;"I'm a value"&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nc"&gt;my_object&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;action&lt;/span&gt;
+  &lt;span class="s2"&gt;"Live Action &lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="nb"&gt;self&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;value1&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;"&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nc"&gt;my_object&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;get_self&lt;/span&gt;
+  &lt;span class="nb"&gt;self&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+
+&lt;span class="n"&gt;my_object&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;value1&lt;/span&gt; &lt;span class="c1"&gt;# Same&lt;/span&gt;
+&lt;span class="n"&gt;my_object&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;action&lt;/span&gt; &lt;span class="c1"&gt;# As above&lt;/span&gt;
+&lt;span class="n"&gt;my_object&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="n"&gt;my_object&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;get_self&lt;/span&gt; &lt;span class="c1"&gt;# =&amp;gt; true&lt;/span&gt;
+
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;
+&lt;h3&gt;Properties in Ruby&lt;/h3&gt;
+
+&lt;p&gt;One thing you&amp;rsquo;ll notice is that ruby has no concept of &amp;lsquo;properties&amp;rsquo; on objects. Everything in ruby is responding to a message sent. Nothing is stopping you from adding new properties on an existing object in JavaScript.&lt;/p&gt;
+&lt;div class="highlight javascript"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1&lt;/pre&gt;&lt;pre class="lineno"&gt;2&lt;/pre&gt;&lt;pre class="lineno"&gt;3&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;myObject&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{};&lt;/span&gt;
+&lt;span class="nx"&gt;myObject&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;value1&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;"I'm a value"&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="nx"&gt;myObject&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;value1&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;
+&lt;p&gt;In ruby, it would break.&lt;/p&gt;
+&lt;div class="highlight ruby"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1&lt;/pre&gt;&lt;pre class="lineno"&gt;2&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="n"&gt;my_object&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="no"&gt;Object&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;new&lt;/span&gt;
+&lt;span class="n"&gt;my_object&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;value1&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;"I'm a value"&lt;/span&gt; &lt;span class="c1"&gt;# =&amp;gt; "NoMethodError"&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;
+&lt;p&gt;They behave more like ruby&amp;rsquo;s OpenStruct class&lt;/p&gt;
+&lt;div class="highlight ruby"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1&lt;/pre&gt;&lt;pre class="lineno"&gt;2&lt;/pre&gt;&lt;pre class="lineno"&gt;3&lt;/pre&gt;&lt;pre class="lineno"&gt;4&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="nb"&gt;require&lt;/span&gt; &lt;span class="s1"&gt;'ostruct'&lt;/span&gt;
+&lt;span class="n"&gt;my_object&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="no"&gt;OpenStruct&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;new&lt;/span&gt;
+&lt;span class="n"&gt;my_object&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;value1&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;"I'm a value"&lt;/span&gt;
+&lt;span class="n"&gt;my_object&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;value1&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;
+&lt;h2&gt;First Class Functions&lt;/h2&gt;
+
+&lt;p&gt;What the hell does that even mean?&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Specifically, this means the language supports passing functions as arguments to other functions, returning them as the values from other functions, and assigning them to variables or storing them in data structures.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;My post on &lt;a href="/2014/04/13/closures.html"&gt;closures&lt;/a&gt; shows that ruby has passable functions in the form of lambdas, but it&amp;rsquo;s used a lot more in JavaScript!!&lt;/p&gt;
+
+&lt;p&gt;Look at this JavaScript code that returns takes a function, and returns a new function based on the return value of that function.&lt;/p&gt;
+&lt;div class="highlight javascript"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1&lt;/pre&gt;&lt;pre class="lineno"&gt;2&lt;/pre&gt;&lt;pre class="lineno"&gt;3&lt;/pre&gt;&lt;pre class="lineno"&gt;4&lt;/pre&gt;&lt;pre class="lineno"&gt;5&lt;/pre&gt;&lt;pre class="lineno"&gt;6&lt;/pre&gt;&lt;pre class="lineno"&gt;7&lt;/pre&gt;&lt;pre class="lineno"&gt;8&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;poppaFunction&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;poppa&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;
+  &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;msg&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;
+    &lt;span class="nx"&gt;console&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;log&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'Hello, '&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="nx"&gt;poppa&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s2"&gt;"! "&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="nx"&gt;msg&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+
+&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;babyFunction&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;poppaFunction&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;"Big Papa"&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="nx"&gt;babyFunction&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;"Have a great night!"&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;
+&lt;p&gt;and the same in ruby&lt;/p&gt;
+&lt;div class="highlight ruby"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1&lt;/pre&gt;&lt;pre class="lineno"&gt;2&lt;/pre&gt;&lt;pre class="lineno"&gt;3&lt;/pre&gt;&lt;pre class="lineno"&gt;4&lt;/pre&gt;&lt;pre class="lineno"&gt;5&lt;/pre&gt;&lt;pre class="lineno"&gt;6&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="n"&gt;poppa_lambda&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;lambda&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;&lt;span class="n"&gt;poppa&lt;/span&gt;&lt;span class="o"&gt;|&lt;/span&gt;
+  &lt;span class="nb"&gt;lambda&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="o"&gt;|&lt;/span&gt;&lt;span class="n"&gt;msg&lt;/span&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="nb"&gt;puts&lt;/span&gt; &lt;span class="s2"&gt;"Hello &lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;poppa&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;! &lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;msg&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;"&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+
+&lt;span class="n"&gt;baby_lambda&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;poppa_lambda&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;call&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;"Big Papa"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;baby_lambda&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;call&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;"Have a great night!"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;
+&lt;h1&gt;Differences&lt;/h1&gt;
+
+&lt;p&gt;We&amp;rsquo;ve seen a few differences already. Some with syntax (semicolon use, variable declarations), others with the object model (ruby only responding to messages, and JavaScript taking any old property). In this section I want to dive into 2 things, primarily how these languages represent the current object, and equality.&lt;/p&gt;
+
+&lt;h2&gt;&lt;code&gt;self&lt;/code&gt; and &lt;code&gt;this&lt;/code&gt;&lt;/h2&gt;
+
+&lt;p&gt;Ruby&amp;rsquo;s rules for what changes self are pretty straight forward.&lt;/p&gt;
+&lt;div class="highlight ruby"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1&lt;/pre&gt;&lt;pre class="lineno"&gt;2&lt;/pre&gt;&lt;pre class="lineno"&gt;3&lt;/pre&gt;&lt;pre class="lineno"&gt;4&lt;/pre&gt;&lt;pre class="lineno"&gt;5&lt;/pre&gt;&lt;pre class="lineno"&gt;6&lt;/pre&gt;&lt;pre class="lineno"&gt;7&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;RubySelf&lt;/span&gt;
+  &lt;span class="nb"&gt;self&lt;/span&gt; &lt;span class="c1"&gt;# =&amp;gt; RubySelf&lt;/span&gt;
+  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;my_instance_method&lt;/span&gt;
+    &lt;span class="nb"&gt;self&lt;/span&gt; &lt;span class="c1"&gt;# =&amp;gt; the instance&lt;/span&gt;
+  &lt;span class="k"&gt;end&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;span class="nb"&gt;self&lt;/span&gt; &lt;span class="c1"&gt;# =&amp;gt; main&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;
+&lt;p&gt;That&amp;rsquo;s pretty much it. There&amp;rsquo;s also &lt;a href="http://www.jimmycuadra.com/posts/metaprogramming-ruby-class-eval-and-instance-eval"&gt;&lt;code&gt;instance_eval&lt;/code&gt; and &lt;code&gt;class_eval&lt;/code&gt;&lt;/a&gt;. A topic for another time.&lt;/p&gt;
+
+&lt;p&gt;In JavaScript it&amp;rsquo;s not so simple.&lt;/p&gt;
+
+&lt;p&gt;We&amp;rsquo;ve seen that &lt;code&gt;this&lt;/code&gt; points to current object inside an object.
+&amp;ldquo;`javascript
+var myObject = {
+  getThis: function(){
+    return this;
+  }
+}&lt;/p&gt;
+
+&lt;p&gt;myObject === myObject.getThis(); // true
+&amp;rdquo;`&lt;/p&gt;
+
+&lt;p&gt;But what about here?
+&amp;ldquo;` javascript
+var myFunction = function(){
+  this.value = &amp;quot;A value&amp;rdquo;;
+  return this
+};&lt;/p&gt;
+
+&lt;p&gt;var result = myFunction();
+value; // &amp;ldquo;A value&amp;rdquo; We put it on the global scope!!!!
+result === window // true OMG!!!
+&amp;ldquo;`&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;this&lt;/code&gt; inside a regular function points to the root object. In browser that&amp;rsquo;s &lt;code&gt;window&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Again, strict mode saves our butts here.&lt;/p&gt;
+&lt;div class="highlight javascript"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1&lt;/pre&gt;&lt;pre class="lineno"&gt;2&lt;/pre&gt;&lt;pre class="lineno"&gt;3&lt;/pre&gt;&lt;pre class="lineno"&gt;4&lt;/pre&gt;&lt;pre class="lineno"&gt;5&lt;/pre&gt;&lt;pre class="lineno"&gt;6&lt;/pre&gt;&lt;pre class="lineno"&gt;7&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;myFunction&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(){&lt;/span&gt;
+  &lt;span class="s1"&gt;'use strict'&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="k"&gt;this&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;value&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;"A value"&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="k"&gt;this&lt;/span&gt;
+&lt;span class="p"&gt;};&lt;/span&gt;
+
+&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;result&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;myFunction&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt; &lt;span class="c1"&gt;// TypeError: Cannot set property 'value' of undefined
+&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;
+&lt;p&gt;How about this one?&lt;/p&gt;
+&lt;div class="highlight javascript"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1&lt;/pre&gt;&lt;pre class="lineno"&gt;2&lt;/pre&gt;&lt;pre class="lineno"&gt;3&lt;/pre&gt;&lt;pre class="lineno"&gt;4&lt;/pre&gt;&lt;pre class="lineno"&gt;5&lt;/pre&gt;&lt;pre class="lineno"&gt;6&lt;/pre&gt;&lt;pre class="lineno"&gt;7&lt;/pre&gt;&lt;pre class="lineno"&gt;8&lt;/pre&gt;&lt;pre class="lineno"&gt;9&lt;/pre&gt;&lt;pre class="lineno"&gt;10&lt;/pre&gt;&lt;pre class="lineno"&gt;11&lt;/pre&gt;&lt;pre class="lineno"&gt;12&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;myObject&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="na"&gt;collection&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;
+  &lt;span class="na"&gt;iterate&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(){&lt;/span&gt;
+    &lt;span class="k"&gt;this&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;collection&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;forEach&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;item&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;
+      &lt;span class="k"&gt;this&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;collection&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;push&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;item&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="nx"&gt;item&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt; &lt;span class="c1"&gt;// This gon break.
+&lt;/span&gt;    &lt;span class="p"&gt;})&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;};&lt;/span&gt;
+
+&lt;span class="nx"&gt;myObject&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;collection&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="nx"&gt;myObject&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;iterate&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt; &lt;span class="c1"&gt;// TypeError: Cannot read property 'push' of undefined
+&lt;/span&gt;&lt;span class="nx"&gt;myObject&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;collection&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;
+&lt;p&gt;This new function changed &lt;code&gt;this&lt;/code&gt; back to the default &lt;code&gt;this&lt;/code&gt;, the &lt;code&gt;window&lt;/code&gt; in the case of the browser.&lt;/p&gt;
+
+&lt;p&gt;In cases like this we have to keep track of our previous self in a variable. Usually this variable is named &lt;code&gt;_that&lt;/code&gt; or &lt;code&gt;self&lt;/code&gt;.
+&amp;rdquo;`javascript
+var myObject = {
+  collection: [1,2,3],
+  iterate: function(){
+    var self = this;
+    this.collection.forEach(function(item){
+      self.collection.push(item * item); // This gon break.
+    })
+  }
+};&lt;/p&gt;
+
+&lt;p&gt;myObject.collection;
+myObject.iterate(); // TypeError: Cannot read property &amp;lsquo;push&amp;rsquo; of undefined
+myObject.collection; // [1, 2, 3, 1, 4, 9]
+&amp;ldquo;`&lt;/p&gt;
+
+&lt;p&gt;Sharp viewers know &lt;code&gt;forEach&lt;/code&gt; takes an optional argument for the object to stand in as &lt;code&gt;this&lt;/code&gt;.&lt;/p&gt;
+&lt;div class="highlight javascript"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1&lt;/pre&gt;&lt;pre class="lineno"&gt;2&lt;/pre&gt;&lt;pre class="lineno"&gt;3&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="k"&gt;this&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;collection&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;forEach&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;item&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;
+  &lt;span class="k"&gt;this&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;collection&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;push&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;item&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="nx"&gt;item&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt; &lt;span class="c1"&gt;// This gon break.
+&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="k"&gt;this&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="c1"&gt;// this this is the original this not that this. :-)
+&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;
+&lt;h2&gt;Equality&lt;/h2&gt;
+
+&lt;p&gt;Ruby&amp;rsquo;s equality comes in one of 2 forms. &lt;code&gt;==&lt;/code&gt; and &lt;code&gt;===&lt;/code&gt;. The &lt;code&gt;==&lt;/code&gt; tests for equality as defined by the object.&lt;/p&gt;
+&lt;div class="highlight ruby"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1&lt;/pre&gt;&lt;pre class="lineno"&gt;2&lt;/pre&gt;&lt;pre class="lineno"&gt;3&lt;/pre&gt;&lt;pre class="lineno"&gt;4&lt;/pre&gt;&lt;pre class="lineno"&gt;5&lt;/pre&gt;&lt;pre class="lineno"&gt;6&lt;/pre&gt;&lt;pre class="lineno"&gt;7&lt;/pre&gt;&lt;pre class="lineno"&gt;8&lt;/pre&gt;&lt;pre class="lineno"&gt;9&lt;/pre&gt;&lt;pre class="lineno"&gt;10&lt;/pre&gt;&lt;pre class="lineno"&gt;11&lt;/pre&gt;&lt;pre class="lineno"&gt;12&lt;/pre&gt;&lt;pre class="lineno"&gt;13&lt;/pre&gt;&lt;pre class="lineno"&gt;14&lt;/pre&gt;&lt;pre class="lineno"&gt;15&lt;/pre&gt;&lt;pre class="lineno"&gt;16&lt;/pre&gt;&lt;pre class="lineno"&gt;17&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="mi"&gt;5&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;
+&lt;span class="s2"&gt;"Steven"&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s2"&gt;"Steven"&lt;/span&gt;
+
+&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;MyObject&lt;/span&gt;
+  &lt;span class="kp"&gt;attr_reader&lt;/span&gt; &lt;span class="ss"&gt;:description&lt;/span&gt;
+  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;initialize&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;description&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="vi"&gt;@description&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;description&lt;/span&gt;
+  &lt;span class="k"&gt;end&lt;/span&gt;
+
+  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;==&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;other&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;other&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;is_a?&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="no"&gt;MyObject&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="nb"&gt;self&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;description&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="n"&gt;other&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;description&lt;/span&gt;
+  &lt;span class="k"&gt;end&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+
+&lt;span class="n"&gt;obj1&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="no"&gt;MyObject&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;new&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;"A plain object"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;obj2&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="no"&gt;MyObject&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;new&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;"A plain object"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;obj1&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="n"&gt;obj2&lt;/span&gt; &lt;span class="c1"&gt;# =&amp;gt; true&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;
+&lt;p&gt;And Case equality, used for &lt;code&gt;case&lt;/code&gt; statements. In a new object &lt;code&gt;===&lt;/code&gt; delegates to &lt;code&gt;==&lt;/code&gt;&lt;/p&gt;
+&lt;div class="highlight ruby"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1&lt;/pre&gt;&lt;pre class="lineno"&gt;2&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;===&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;
+&lt;span class="sr"&gt;/even/&lt;/span&gt; &lt;span class="o"&gt;===&lt;/span&gt; &lt;span class="s2"&gt;"Steven"&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;
+&lt;p&gt;JavaScript has no way to override equality on objects. You CAN use equality on primitives like strings and numbers, but here lies the danger. This is from JavaScript the good parts.&lt;/p&gt;
+&lt;div class="highlight javascript"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1&lt;/pre&gt;&lt;pre class="lineno"&gt;2&lt;/pre&gt;&lt;pre class="lineno"&gt;3&lt;/pre&gt;&lt;pre class="lineno"&gt;4&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="mi"&gt;0&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s1"&gt;''&lt;/span&gt; &lt;span class="c1"&gt;// true
+&lt;/span&gt;&lt;span class="kc"&gt;false&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s1"&gt;'false'&lt;/span&gt; &lt;span class="c1"&gt;// false
+&lt;/span&gt;&lt;span class="kc"&gt;false&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s1"&gt;'0'&lt;/span&gt; &lt;span class="c1"&gt;// true
+&lt;/span&gt;&lt;span class="kc"&gt;null&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="kc"&gt;undefined&lt;/span&gt; &lt;span class="c1"&gt;// true
+&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;
+&lt;p&gt;&lt;a href="https://www.destroyallsoftware.com/talks/wat"&gt;Wat&lt;/a&gt;. The &lt;code&gt;==&lt;/code&gt; in JavaScript tries to coerce or convert the things being compared to be the same type, which might sound helpful, but it&amp;rsquo;s not. Use &lt;code&gt;===&lt;/code&gt; and &lt;code&gt;!==&lt;/code&gt; to ensure you&amp;rsquo;re comparing type and value.&lt;/p&gt;
+&lt;div class="highlight javascript"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1&lt;/pre&gt;&lt;pre class="lineno"&gt;2&lt;/pre&gt;&lt;pre class="lineno"&gt;3&lt;/pre&gt;&lt;pre class="lineno"&gt;4&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="mi"&gt;0&lt;/span&gt; &lt;span class="o"&gt;===&lt;/span&gt; &lt;span class="s1"&gt;''&lt;/span&gt; &lt;span class="c1"&gt;// false
+&lt;/span&gt;&lt;span class="kc"&gt;false&lt;/span&gt; &lt;span class="o"&gt;===&lt;/span&gt; &lt;span class="s1"&gt;'false'&lt;/span&gt; &lt;span class="c1"&gt;// false
+&lt;/span&gt;&lt;span class="kc"&gt;false&lt;/span&gt; &lt;span class="o"&gt;===&lt;/span&gt; &lt;span class="s1"&gt;'0'&lt;/span&gt; &lt;span class="c1"&gt;// false
+&lt;/span&gt;&lt;span class="kc"&gt;null&lt;/span&gt; &lt;span class="o"&gt;===&lt;/span&gt; &lt;span class="kc"&gt;undefined&lt;/span&gt; &lt;span class="c1"&gt;// false as it should be!
+&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;
+&lt;p&gt;Learning your first programming language is hard. I hope I&amp;rsquo;ve shown you that learning your second one, isn&amp;rsquo;t that bad.&lt;/p&gt;
+
+&lt;p&gt;Happy Clacking!&lt;/p&gt;
+</content>
+  </entry>
   <entry>
     <title>On why learning to program is hard</title>
     <link rel="alternate" href="http://blog.url.com/2014/04/26/on-why-learning-to-program-is-hard.html"/>
     <id>http://blog.url.com/2014/04/26/on-why-learning-to-program-is-hard.html</id>
     <published>2014-04-26T20:22:00Z</published>
-    <updated>2014-04-26T20:20:47-04:00</updated>
+    <updated>2014-04-26T20:24:11-04:00</updated>
     <author>
       <name>Article Author</name>
     </author>
@@ -126,7 +441,7 @@ The good news is you can can get better at each component separately.&lt;/p&gt;
     <link rel="alternate" href="http://blog.url.com/2014/04/13/closures.html"/>
     <id>http://blog.url.com/2014/04/13/closures.html</id>
     <published>2014-04-13T18:20:00Z</published>
-    <updated>2014-04-26T20:20:47-04:00</updated>
+    <updated>2014-04-26T20:24:11-04:00</updated>
     <author>
       <name>Article Author</name>
     </author>
@@ -318,7 +633,7 @@ about it I&amp;rsquo;m excited to explore.&lt;/p&gt;
     <link rel="alternate" href="http://blog.url.com/2014/02/15/custom-params-in-route-resources.html"/>
     <id>http://blog.url.com/2014/02/15/custom-params-in-route-resources.html</id>
     <published>2014-02-15T21:09:00Z</published>
-    <updated>2014-04-26T20:20:47-04:00</updated>
+    <updated>2014-04-26T20:24:11-04:00</updated>
     <author>
       <name>Article Author</name>
     </author>
@@ -423,7 +738,7 @@ resources in my routes file so I started there.&lt;/p&gt;
     <link rel="alternate" href="http://blog.url.com/2013/10/19/keyboard-navigation.html"/>
     <id>http://blog.url.com/2013/10/19/keyboard-navigation.html</id>
     <published>2013-10-19T10:59:00Z</published>
-    <updated>2014-04-26T20:20:47-04:00</updated>
+    <updated>2014-04-26T20:24:11-04:00</updated>
     <author>
       <name>Article Author</name>
     </author>

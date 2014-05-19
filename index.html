@@ -21,6 +21,316 @@
 
   <div id="main" role="main">
     
+
+    
+    <article>
+      <h1 class="article-title"><a href="/2014/05/18/using-ruby-to-learn-javascript.html">Using Ruby to learn JavaScript</a></h1>
+      <p>I&rsquo;ve written about why I believe <a href="/2014/04/26/on-why-learning-to-program-is-hard.html">learning to program is hard</a>. If you&rsquo;ve made it to the other side, rejoice! It&rsquo;s time for the easy part. Learning a new language. Let&rsquo;s see how knowing ruby can help us learn a little JavaScript. (I&rsquo;m assuming you know ruby for the duration of this post)</p>
+
+<h1>ruby to JavaScript</h1>
+
+<p>First, let&rsquo;s find some similarities.
+Both are:</p>
+
+<ul>
+<li>Dynamically Typed</li>
+<li>Both are Object Oriented</li>
+<li>Functions are first class citizens</li>
+</ul>
+
+<p>Let&rsquo;s look at these first</p>
+
+<h2>Dynamically Typed</h2>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre></td><td class="code"><pre><span class="n">my_account</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">my_account</span> <span class="o">=</span> <span class="o">[]</span>
+</pre></td></tr></tbody></table></div>
+<p>vs</p>
+<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">myAccount</span> <span class="o">=</span> <span class="p">{};</span>
+<span class="nx">myAccount</span> <span class="o">=</span> <span class="p">[];</span>
+</pre></td></tr></tbody></table></div>
+<p>With these 2 lines of code, we can start to identify some differences between the languages.</p>
+
+<h3>The <code>var</code> keyword</h3>
+
+<p>Variables in JavaScript <strong>must</strong> be declared. You <strong>must</strong> communicate this intention, otherwise weird things start to happen. The following code works, but not like you think.</p>
+
+<p>Run this in Developer Tools</p>
+<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre><pre class="lineno">8</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">varTest</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
+  <span class="kd">var</span> <span class="nx">totallyFine</span> <span class="o">=</span> <span class="mi">17</span><span class="p">;</span>
+  <span class="nx">ohMy</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="nx">varTest</span><span class="p">();</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">ohMy</span><span class="p">);</span> <span class="c1">// 100
+</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">totallyFine</span><span class="p">);</span> <span class="c1">// explosion!  
+</span></pre></td></tr></tbody></table></div>
+<p>Why&rsquo;s this a big deal? This means that if any code, anywhere creates a variable in a function without the <code>var</code> keyword, it&rsquo;s with you for the rest of your app. Other things can change it. For a real life case of this biting someone, checkout <a href="http://blog.safeshepherd.com/23/how-one-missing-var-ruined-our-launch/">this  post</a>.</p>
+
+<p>Strict mode prevents this tomfoolery.</p>
+<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">varTest</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
+  <span class="s1">'use strict'</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">totallyFine</span> <span class="o">=</span> <span class="mi">17</span><span class="p">;</span>
+  <span class="nx">ohMy</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="nx">varTest</span><span class="p">();</span> <span class="c1">// blows up here since ohMy is not defined
+</span></pre></td></tr></tbody></table></div>
+<p>Another difference are those semicolons! Semicolons are used to end a statement. It may be your first impulse to throw semicolons everywhere but <a href="http://www.codecademy.com/blog/78-your-guide-to-semicolons-in-javascript">don&rsquo;t</a>.
+JavaScript also uses camelCase for its variables, vs ruby&rsquo;s snake case.</p>
+
+<h2>Object Orientation</h2>
+
+<p>Both languages can create structures that act as templates for instances of itself.</p>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre></td><td class="code"><pre><span class="k">class</span> <span class="nc">Student</span>
+<span class="k">end</span>
+<span class="n">bob</span> <span class="o">=</span> <span class="no">Student</span><span class="p">.</span><span class="nf">new</span>
+</pre></td></tr></tbody></table></div>
+<p>vs</p>
+<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">Student</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){};</span>
+<span class="kd">var</span> <span class="nx">bob</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Student</span><span class="p">;</span>
+</pre></td></tr></tbody></table></div>
+<p>In JavaScript, we supply what&rsquo;s called a Constructor Function. One that responds to the <code>new</code> keyword by returning an instance of the function. Let&rsquo;s flesh this out some more.</p>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre><pre class="lineno">8</pre></td><td class="code"><pre><span class="k">class</span> <span class="nc">Student</span>
+  <span class="kp">attr_reader</span> <span class="ss">:name</span>
+  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span>
+    <span class="vi">@name</span> <span class="o">=</span> <span class="nb">name</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+<span class="n">bob</span> <span class="o">=</span> <span class="no">Student</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"Bob"</span><span class="p">)</span>
+<span class="n">bob</span><span class="p">.</span><span class="nf">name</span> <span class="c1"># =&gt; "Bob"</span>
+</pre></td></tr></tbody></table></div>
+<p>vs</p>
+<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">Student</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">){</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="kd">var</span> <span class="nx">bob</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Student</span><span class="p">(</span><span class="s2">"Bob"</span><span class="p">);</span>
+<span class="nx">bob</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span> <span class="c1">// "Bob"
+</span></pre></td></tr></tbody></table></div>
+<p>The Constructor Function can take arguments like any other function. Inside the constructor function, you have access to this mysterious <code>this</code> thing. A new <code>this</code> is created whenever you call a function with the <code>new</code> keyword. By convention, the function starts with a capital letter.</p>
+<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">ThisOrThat</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">thang</span> <span class="o">=</span> <span class="s2">"This thang"</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">thisThing</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ThisOrThat</span><span class="p">();</span>
+<span class="nx">thisThing</span><span class="p">.</span><span class="nx">thang</span><span class="p">;</span> <span class="c1">// "This Thang"
+</span></pre></td></tr></tbody></table></div>
+<p>There&rsquo;s another way to make objects in JavaScript by using an object literal.</p>
+<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre><pre class="lineno">8</pre><pre class="lineno">9</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">myObject</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="na">value1</span><span class="p">:</span> <span class="s2">"I'm a value"</span><span class="p">,</span>
+  <span class="na">action</span><span class="p">:</span> <span class="kd">function</span><span class="p">(){</span>
+    <span class="k">return</span> <span class="s2">"Live Action! "</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">value1</span> <span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nx">myObject</span><span class="p">.</span><span class="nx">value1</span><span class="p">;</span> <span class="c1">// I'm a value
+</span><span class="nx">myObject</span><span class="p">.</span><span class="nx">action</span><span class="p">();</span> <span class="c1">// "Live Action! I'm a value""
+</span></pre></td></tr></tbody></table></div>
+<p>Here, the <code>action</code> method has access to other properties in the object through <code>this</code>.</p>
+<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">myObject</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="na">getThis</span><span class="p">:</span> <span class="kd">function</span><span class="p">(){</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nx">myObject</span> <span class="o">===</span> <span class="nx">myObject</span><span class="p">.</span><span class="nx">getThis</span><span class="p">();</span> <span class="c1">// true
+</span></pre></td></tr></tbody></table></div>
+<p>This is akin to creating an Object instance in ruby an attaching singleton methods.</p>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre><pre class="lineno">8</pre><pre class="lineno">9</pre><pre class="lineno">10</pre><pre class="lineno">11</pre><pre class="lineno">12</pre><pre class="lineno">13</pre><pre class="lineno">14</pre><pre class="lineno">15</pre><pre class="lineno">16</pre><pre class="lineno">17</pre></td><td class="code"><pre><span class="n">my_object</span> <span class="o">=</span> <span class="no">Object</span><span class="p">.</span><span class="nf">new</span>
+<span class="k">def</span> <span class="nc">my_object</span><span class="o">.</span><span class="nf">value1</span>
+  <span class="s2">"I'm a value"</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nc">my_object</span><span class="o">.</span><span class="nf">action</span>
+  <span class="s2">"Live Action </span><span class="si">#{</span><span class="nb">self</span><span class="p">.</span><span class="nf">value1</span><span class="si">}</span><span class="s2">"</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nc">my_object</span><span class="o">.</span><span class="nf">get_self</span>
+  <span class="nb">self</span>
+<span class="k">end</span>
+
+<span class="n">my_object</span><span class="p">.</span><span class="nf">value1</span> <span class="c1"># Same</span>
+<span class="n">my_object</span><span class="p">.</span><span class="nf">action</span> <span class="c1"># As above</span>
+<span class="n">my_object</span> <span class="o">==</span> <span class="n">my_object</span><span class="p">.</span><span class="nf">get_self</span> <span class="c1"># =&gt; true</span>
+
+</pre></td></tr></tbody></table></div>
+<h3>Properties in Ruby</h3>
+
+<p>One thing you&rsquo;ll notice is that ruby has no concept of &lsquo;properties&rsquo; on objects. Everything in ruby is responding to a message sent. Nothing is stopping you from adding new properties on an existing object in JavaScript.</p>
+<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">myObject</span> <span class="o">=</span> <span class="p">{};</span>
+<span class="nx">myObject</span><span class="p">.</span><span class="nx">value1</span> <span class="o">=</span> <span class="s2">"I'm a value"</span><span class="p">;</span>
+<span class="nx">myObject</span><span class="p">.</span><span class="nx">value1</span><span class="p">;</span>
+</pre></td></tr></tbody></table></div>
+<p>In ruby, it would break.</p>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre></td><td class="code"><pre><span class="n">my_object</span> <span class="o">=</span> <span class="no">Object</span><span class="p">.</span><span class="nf">new</span>
+<span class="n">my_object</span><span class="p">.</span><span class="nf">value1</span> <span class="o">=</span> <span class="s2">"I'm a value"</span> <span class="c1"># =&gt; "NoMethodError"</span>
+</pre></td></tr></tbody></table></div>
+<p>They behave more like ruby&rsquo;s OpenStruct class</p>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre></td><td class="code"><pre><span class="nb">require</span> <span class="s1">'ostruct'</span>
+<span class="n">my_object</span> <span class="o">=</span> <span class="no">OpenStruct</span><span class="p">.</span><span class="nf">new</span>
+<span class="n">my_object</span><span class="p">.</span><span class="nf">value1</span> <span class="o">=</span> <span class="s2">"I'm a value"</span>
+<span class="n">my_object</span><span class="p">.</span><span class="nf">value1</span>
+</pre></td></tr></tbody></table></div>
+<h2>First Class Functions</h2>
+
+<p>What the hell does that even mean?</p>
+
+<blockquote>
+<p>Specifically, this means the language supports passing functions as arguments to other functions, returning them as the values from other functions, and assigning them to variables or storing them in data structures.</p>
+</blockquote>
+
+<p>My post on <a href="/2014/04/13/closures.html">closures</a> shows that ruby has passable functions in the form of lambdas, but it&rsquo;s used a lot more in JavaScript!!</p>
+
+<p>Look at this JavaScript code that returns takes a function, and returns a new function based on the return value of that function.</p>
+<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre><pre class="lineno">8</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">poppaFunction</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">poppa</span><span class="p">){</span>
+  <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">){</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'Hello, '</span> <span class="o">+</span> <span class="nx">poppa</span> <span class="o">+</span> <span class="s2">"! "</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">babyFunction</span> <span class="o">=</span> <span class="nx">poppaFunction</span><span class="p">(</span><span class="s2">"Big Papa"</span><span class="p">);</span>
+<span class="nx">babyFunction</span><span class="p">(</span><span class="s2">"Have a great night!"</span><span class="p">);</span>
+</pre></td></tr></tbody></table></div>
+<p>and the same in ruby</p>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre></td><td class="code"><pre><span class="n">poppa_lambda</span> <span class="o">=</span> <span class="nb">lambda</span> <span class="k">do</span> <span class="o">|</span><span class="n">poppa</span><span class="o">|</span>
+  <span class="nb">lambda</span> <span class="p">{</span><span class="o">|</span><span class="n">msg</span><span class="o">|</span> <span class="nb">puts</span> <span class="s2">"Hello </span><span class="si">#{</span><span class="n">poppa</span><span class="si">}</span><span class="s2">! </span><span class="si">#{</span><span class="n">msg</span><span class="si">}</span><span class="s2">"</span><span class="p">}</span>
+<span class="k">end</span>
+
+<span class="n">baby_lambda</span> <span class="o">=</span> <span class="n">poppa_lambda</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="s2">"Big Papa"</span><span class="p">)</span>
+<span class="n">baby_lambda</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="s2">"Have a great night!"</span><span class="p">)</span>
+</pre></td></tr></tbody></table></div>
+<h1>Differences</h1>
+
+<p>We&rsquo;ve seen a few differences already. Some with syntax (semicolon use, variable declarations), others with the object model (ruby only responding to messages, and JavaScript taking any old property). In this section I want to dive into 2 things, primarily how these languages represent the current object, and equality.</p>
+
+<h2><code>self</code> and <code>this</code></h2>
+
+<p>Ruby&rsquo;s rules for what changes self are pretty straight forward.</p>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre></td><td class="code"><pre><span class="k">class</span> <span class="nc">RubySelf</span>
+  <span class="nb">self</span> <span class="c1"># =&gt; RubySelf</span>
+  <span class="k">def</span> <span class="nf">my_instance_method</span>
+    <span class="nb">self</span> <span class="c1"># =&gt; the instance</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+<span class="nb">self</span> <span class="c1"># =&gt; main</span>
+</pre></td></tr></tbody></table></div>
+<p>That&rsquo;s pretty much it. There&rsquo;s also <a href="http://www.jimmycuadra.com/posts/metaprogramming-ruby-class-eval-and-instance-eval"><code>instance_eval</code> and <code>class_eval</code></a>. A topic for another time.</p>
+
+<p>In JavaScript it&rsquo;s not so simple.</p>
+
+<p>We&rsquo;ve seen that <code>this</code> points to current object inside an object.
+&ldquo;`javascript
+var myObject = {
+  getThis: function(){
+    return this;
+  }
+}</p>
+
+<p>myObject === myObject.getThis(); // true
+&rdquo;`</p>
+
+<p>But what about here?
+&ldquo;` javascript
+var myFunction = function(){
+  this.value = &quot;A value&rdquo;;
+  return this
+};</p>
+
+<p>var result = myFunction();
+value; // &ldquo;A value&rdquo; We put it on the global scope!!!!
+result === window // true OMG!!!
+&ldquo;`</p>
+
+<p><code>this</code> inside a regular function points to the root object. In browser that&rsquo;s <code>window</code>.</p>
+
+<p>Again, strict mode saves our butts here.</p>
+<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">myFunction</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
+  <span class="s1">'use strict'</span><span class="p">;</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="s2">"A value"</span><span class="p">;</span>
+  <span class="k">return</span> <span class="k">this</span>
+<span class="p">};</span>
+
+<span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">myFunction</span><span class="p">();</span> <span class="c1">// TypeError: Cannot set property 'value' of undefined
+</span></pre></td></tr></tbody></table></div>
+<p>How about this one?</p>
+<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre><pre class="lineno">8</pre><pre class="lineno">9</pre><pre class="lineno">10</pre><pre class="lineno">11</pre><pre class="lineno">12</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">myObject</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="na">collection</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span>
+  <span class="na">iterate</span><span class="p">:</span> <span class="kd">function</span><span class="p">(){</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">collection</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">item</span><span class="p">){</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">collection</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">item</span> <span class="o">*</span> <span class="nx">item</span><span class="p">);</span> <span class="c1">// This gon break.
+</span>    <span class="p">})</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="nx">myObject</span><span class="p">.</span><span class="nx">collection</span><span class="p">;</span>
+<span class="nx">myObject</span><span class="p">.</span><span class="nx">iterate</span><span class="p">();</span> <span class="c1">// TypeError: Cannot read property 'push' of undefined
+</span><span class="nx">myObject</span><span class="p">.</span><span class="nx">collection</span><span class="p">;</span>
+</pre></td></tr></tbody></table></div>
+<p>This new function changed <code>this</code> back to the default <code>this</code>, the <code>window</code> in the case of the browser.</p>
+
+<p>In cases like this we have to keep track of our previous self in a variable. Usually this variable is named <code>_that</code> or <code>self</code>.
+&rdquo;`javascript
+var myObject = {
+  collection: [1,2,3],
+  iterate: function(){
+    var self = this;
+    this.collection.forEach(function(item){
+      self.collection.push(item * item); // This gon break.
+    })
+  }
+};</p>
+
+<p>myObject.collection;
+myObject.iterate(); // TypeError: Cannot read property &lsquo;push&rsquo; of undefined
+myObject.collection; // [1, 2, 3, 1, 4, 9]
+&ldquo;`</p>
+
+<p>Sharp viewers know <code>forEach</code> takes an optional argument for the object to stand in as <code>this</code>.</p>
+<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre></td><td class="code"><pre><span class="k">this</span><span class="p">.</span><span class="nx">collection</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">item</span><span class="p">){</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">collection</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">item</span> <span class="o">*</span> <span class="nx">item</span><span class="p">);</span> <span class="c1">// This gon break.
+</span><span class="p">},</span> <span class="k">this</span><span class="p">)</span> <span class="c1">// this this is the original this not that this. :-)
+</span></pre></td></tr></tbody></table></div>
+<h2>Equality</h2>
+
+<p>Ruby&rsquo;s equality comes in one of 2 forms. <code>==</code> and <code>===</code>. The <code>==</code> tests for equality as defined by the object.</p>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre><pre class="lineno">8</pre><pre class="lineno">9</pre><pre class="lineno">10</pre><pre class="lineno">11</pre><pre class="lineno">12</pre><pre class="lineno">13</pre><pre class="lineno">14</pre><pre class="lineno">15</pre><pre class="lineno">16</pre><pre class="lineno">17</pre></td><td class="code"><pre><span class="mi">5</span> <span class="o">==</span> <span class="mi">5</span>
+<span class="s2">"Steven"</span> <span class="o">==</span> <span class="s2">"Steven"</span>
+
+<span class="k">class</span> <span class="nc">MyObject</span>
+  <span class="kp">attr_reader</span> <span class="ss">:description</span>
+  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">description</span><span class="p">)</span>
+    <span class="vi">@description</span> <span class="o">=</span> <span class="n">description</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">==</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+    <span class="n">other</span><span class="p">.</span><span class="nf">is_a?</span><span class="p">(</span><span class="no">MyObject</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nb">self</span><span class="p">.</span><span class="nf">description</span> <span class="o">==</span> <span class="n">other</span><span class="p">.</span><span class="nf">description</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="n">obj1</span> <span class="o">=</span> <span class="no">MyObject</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"A plain object"</span><span class="p">)</span>
+<span class="n">obj2</span> <span class="o">=</span> <span class="no">MyObject</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"A plain object"</span><span class="p">)</span>
+<span class="n">obj1</span> <span class="o">==</span> <span class="n">obj2</span> <span class="c1"># =&gt; true</span>
+</pre></td></tr></tbody></table></div>
+<p>And Case equality, used for <code>case</code> statements. In a new object <code>===</code> delegates to <code>==</code></p>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre></td><td class="code"><pre><span class="p">(</span><span class="mi">1</span><span class="p">.</span><span class="nf">.</span><span class="mi">10</span><span class="p">)</span> <span class="o">===</span> <span class="mi">5</span>
+<span class="sr">/even/</span> <span class="o">===</span> <span class="s2">"Steven"</span>
+</pre></td></tr></tbody></table></div>
+<p>JavaScript has no way to override equality on objects. You CAN use equality on primitives like strings and numbers, but here lies the danger. This is from JavaScript the good parts.</p>
+<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre></td><td class="code"><pre><span class="mi">0</span> <span class="o">==</span> <span class="s1">''</span> <span class="c1">// true
+</span><span class="kc">false</span> <span class="o">==</span> <span class="s1">'false'</span> <span class="c1">// false
+</span><span class="kc">false</span> <span class="o">==</span> <span class="s1">'0'</span> <span class="c1">// true
+</span><span class="kc">null</span> <span class="o">==</span> <span class="kc">undefined</span> <span class="c1">// true
+</span></pre></td></tr></tbody></table></div>
+<p><a href="https://www.destroyallsoftware.com/talks/wat">Wat</a>. The <code>==</code> in JavaScript tries to coerce or convert the things being compared to be the same type, which might sound helpful, but it&rsquo;s not. Use <code>===</code> and <code>!==</code> to ensure you&rsquo;re comparing type and value.</p>
+<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre></td><td class="code"><pre><span class="mi">0</span> <span class="o">===</span> <span class="s1">''</span> <span class="c1">// false
+</span><span class="kc">false</span> <span class="o">===</span> <span class="s1">'false'</span> <span class="c1">// false
+</span><span class="kc">false</span> <span class="o">===</span> <span class="s1">'0'</span> <span class="c1">// false
+</span><span class="kc">null</span> <span class="o">===</span> <span class="kc">undefined</span> <span class="c1">// false as it should be!
+</span></pre></td></tr></tbody></table></div>
+<p>Learning your first programming language is hard. I hope I&rsquo;ve shown you that learning your second one, isn&rsquo;t that bad.</p>
+
+<p>Happy Clacking!</p>
+
+    </article>
     <article>
       <h1 class="article-title"><a href="/2014/04/26/on-why-learning-to-program-is-hard.html">On why learning to program is hard</a></h1>
       <p>The first mention of &lsquo;Objects&rsquo; with regard to some non-tangible thing was in <a href="http://en.wikipedia.org/wiki/Object-oriented_programming#History">the late 1950s</a>. Before that, &lsquo;Objects&rsquo; didn&rsquo;t exist. Once you realize that all concepts in programming are made up, you start to feel less bad about not understanding them right away. </p>
@@ -495,6 +805,8 @@ resources in my routes file so I started there.</p>
       <h2>Recent Articles</h2>
       <ol class="articles">
         
+            <li><a href="/2014/05/18/using-ruby-to-learn-javascript.html">Using Ruby to learn JavaScript</a>
+        
             <li><a href="/2014/04/26/on-why-learning-to-program-is-hard.html">On why learning to program is hard</a>
         
             <li><a href="/2014/04/13/closures.html">Closures</a>
@@ -538,6 +850,9 @@ resources in my routes file so I started there.</p>
     <section class="by-month">
       <h2>By Month</h2>
       <ol>
+        
+            <li><a href="/2014/05.html">May 2014</a>
+              (1)</a></li>
         
             <li><a href="/2014/04.html">April 2014</a>
               (2)</a></li>
