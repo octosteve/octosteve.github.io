@@ -218,6 +218,8 @@ JavaScript also uses camelCase for its variables, vs ruby&rsquo;s snake case.</p
 <span class="n">baby_lambda</span> <span class="o">=</span> <span class="n">poppa_lambda</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="s2">"Big Papa"</span><span class="p">)</span>
 <span class="n">baby_lambda</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="s2">"Have a great night!"</span><span class="p">)</span>
 </pre></td></tr></tbody></table></div>
+<p>One important distinction is the the differences in return values. In JavaScript, functions <strong>must</strong> return a value, otherwise they return <code>undefined</code>. In ruby, the last executed line of a method/lambda/block is what&rsquo;s returned, unless you use and explicit <code>return</code>.</p>
+
 <h1>Differences</h1>
 
 <p>We&rsquo;ve seen a few differences already. Some with syntax (semicolon use, variable declarations), others with the object model (ruby only responding to messages, and JavaScript taking any old property). In this section I want to dive into 2 things, primarily how these languages represent the current object, and equality.</p>
@@ -311,7 +313,7 @@ myObject.collection; // [1, 2, 3, 1, 4, 9]
 </span></pre></td></tr></tbody></table></div>
 <h2>Equality</h2>
 
-<p>Ruby&rsquo;s equality comes in one of 2 forms. <code>==</code> and <code>===</code>. The <code>==</code> tests for equality as defined by the object.</p>
+<p>Ruby&rsquo;s equality testing has 2 forms: <code>==</code> and <code>===</code>. The <code>==</code> tests for equality as defined by the object.</p>
 <div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre><pre class="lineno">8</pre><pre class="lineno">9</pre><pre class="lineno">10</pre><pre class="lineno">11</pre><pre class="lineno">12</pre><pre class="lineno">13</pre><pre class="lineno">14</pre><pre class="lineno">15</pre><pre class="lineno">16</pre><pre class="lineno">17</pre></td><td class="code"><pre><span class="mi">5</span> <span class="o">==</span> <span class="mi">5</span>
 <span class="s2">"Steven"</span> <span class="o">==</span> <span class="s2">"Steven"</span>
 
@@ -330,7 +332,7 @@ myObject.collection; // [1, 2, 3, 1, 4, 9]
 <span class="n">obj2</span> <span class="o">=</span> <span class="no">MyObject</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"A plain object"</span><span class="p">)</span>
 <span class="n">obj1</span> <span class="o">==</span> <span class="n">obj2</span> <span class="c1"># =&gt; true</span>
 </pre></td></tr></tbody></table></div>
-<p>And Case equality, used for <code>case</code> statements. In a new object <code>===</code> delegates to <code>==</code></p>
+<p>And Case equality, used for <code>case</code> statements. In a new object, <code>===</code> delegates to <code>==</code></p>
 <div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre></td><td class="code"><pre><span class="p">(</span><span class="mi">1</span><span class="p">.</span><span class="nf">.</span><span class="mi">10</span><span class="p">)</span> <span class="o">===</span> <span class="mi">5</span>
 <span class="sr">/even/</span> <span class="o">===</span> <span class="s2">"Steven"</span>
 </pre></td></tr></tbody></table></div>

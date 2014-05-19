@@ -14,7 +14,7 @@
     <link rel="alternate" href="http://blog.url.com/2014/05/18/using-ruby-to-learn-javascript.html"/>
     <id>http://blog.url.com/2014/05/18/using-ruby-to-learn-javascript.html</id>
     <published>2014-05-18T20:16:00Z</published>
-    <updated>2014-05-18T23:09:43-04:00</updated>
+    <updated>2014-05-19T09:18:54-04:00</updated>
     <author>
       <name>Article Author</name>
     </author>
@@ -211,6 +211,8 @@ JavaScript also uses camelCase for its variables, vs ruby&amp;rsquo;s snake case
 &lt;span class="n"&gt;baby_lambda&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;poppa_lambda&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;call&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;"Big Papa"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;span class="n"&gt;baby_lambda&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;call&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;"Have a great night!"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;
+&lt;p&gt;One important distinction is the the differences in return values. In JavaScript, functions &lt;strong&gt;must&lt;/strong&gt; return a value, otherwise they return &lt;code&gt;undefined&lt;/code&gt;. In ruby, the last executed line of a method/lambda/block is what&amp;rsquo;s returned, unless you use and explicit &lt;code&gt;return&lt;/code&gt;.&lt;/p&gt;
+
 &lt;h1&gt;Differences&lt;/h1&gt;
 
 &lt;p&gt;We&amp;rsquo;ve seen a few differences already. Some with syntax (semicolon use, variable declarations), others with the object model (ruby only responding to messages, and JavaScript taking any old property). In this section I want to dive into 2 things, primarily how these languages represent the current object, and equality.&lt;/p&gt;
@@ -304,7 +306,7 @@ myObject.collection; // [1, 2, 3, 1, 4, 9]
 &lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;
 &lt;h2&gt;Equality&lt;/h2&gt;
 
-&lt;p&gt;Ruby&amp;rsquo;s equality comes in one of 2 forms. &lt;code&gt;==&lt;/code&gt; and &lt;code&gt;===&lt;/code&gt;. The &lt;code&gt;==&lt;/code&gt; tests for equality as defined by the object.&lt;/p&gt;
+&lt;p&gt;Ruby&amp;rsquo;s equality testing has 2 forms: &lt;code&gt;==&lt;/code&gt; and &lt;code&gt;===&lt;/code&gt;. The &lt;code&gt;==&lt;/code&gt; tests for equality as defined by the object.&lt;/p&gt;
 &lt;div class="highlight ruby"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1&lt;/pre&gt;&lt;pre class="lineno"&gt;2&lt;/pre&gt;&lt;pre class="lineno"&gt;3&lt;/pre&gt;&lt;pre class="lineno"&gt;4&lt;/pre&gt;&lt;pre class="lineno"&gt;5&lt;/pre&gt;&lt;pre class="lineno"&gt;6&lt;/pre&gt;&lt;pre class="lineno"&gt;7&lt;/pre&gt;&lt;pre class="lineno"&gt;8&lt;/pre&gt;&lt;pre class="lineno"&gt;9&lt;/pre&gt;&lt;pre class="lineno"&gt;10&lt;/pre&gt;&lt;pre class="lineno"&gt;11&lt;/pre&gt;&lt;pre class="lineno"&gt;12&lt;/pre&gt;&lt;pre class="lineno"&gt;13&lt;/pre&gt;&lt;pre class="lineno"&gt;14&lt;/pre&gt;&lt;pre class="lineno"&gt;15&lt;/pre&gt;&lt;pre class="lineno"&gt;16&lt;/pre&gt;&lt;pre class="lineno"&gt;17&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="mi"&gt;5&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;
 &lt;span class="s2"&gt;"Steven"&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s2"&gt;"Steven"&lt;/span&gt;
 
@@ -323,7 +325,7 @@ myObject.collection; // [1, 2, 3, 1, 4, 9]
 &lt;span class="n"&gt;obj2&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="no"&gt;MyObject&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;new&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;"A plain object"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;span class="n"&gt;obj1&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="n"&gt;obj2&lt;/span&gt; &lt;span class="c1"&gt;# =&amp;gt; true&lt;/span&gt;
 &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;
-&lt;p&gt;And Case equality, used for &lt;code&gt;case&lt;/code&gt; statements. In a new object &lt;code&gt;===&lt;/code&gt; delegates to &lt;code&gt;==&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;And Case equality, used for &lt;code&gt;case&lt;/code&gt; statements. In a new object, &lt;code&gt;===&lt;/code&gt; delegates to &lt;code&gt;==&lt;/code&gt;&lt;/p&gt;
 &lt;div class="highlight ruby"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1&lt;/pre&gt;&lt;pre class="lineno"&gt;2&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;===&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;
 &lt;span class="sr"&gt;/even/&lt;/span&gt; &lt;span class="o"&gt;===&lt;/span&gt; &lt;span class="s2"&gt;"Steven"&lt;/span&gt;
 &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;
