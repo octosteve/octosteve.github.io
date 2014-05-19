@@ -101,7 +101,31 @@ var bob = new Student("Bob");
 bob.name; // "Bob"
 ```
 
-The Constructor Function can take arguments like any other function. Inside the constructor function, you have access to this mysterious `this` thing. A new `this` is created whenever you call a function with the `new` keyword. By convention, the function starts with a capital letter.
+The Constructor Function can take arguments like any other function.
+
+To add methods to the Factory, add them to the prototype. Then all instances will have access to those methods.
+
+``` javascript
+var Student = function(name){
+  this.name = name;
+};
+
+Student.prototype.grade = function(){
+  if(this.name == "Steven"){
+    return "A";
+  }else{
+    return "F";
+  }
+};
+
+var bob = new Student("Bob");
+bob.grade() // "F" sorry Crouton
+var steven = new Student("Steven");
+steven.grade() // "A" obviously
+```
+
+
+Inside the Constructor Function and prototype methods you have access to this mysterious `this` thing. A new `this` is created whenever you call a function with the `new` keyword. By convention, Constructor Functions start with a capital letter.
 
 ``` javascript
 var ThisOrThat = function(){
