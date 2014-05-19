@@ -239,6 +239,8 @@ baby_lambda = poppa_lambda.call("Big Papa")
 baby_lambda.call("Have a great night!")
 ```
 
+One important distinction is the the differences in return values. In JavaScript, functions **must** return a value, otherwise they return `undefined`. In ruby, the last executed line of a method/lambda/block is what's returned, unless you use and explicit `return`.
+
 # Differences
 
 We've seen a few differences already. Some with syntax (semicolon use, variable declarations), others with the object model (ruby only responding to messages, and JavaScript taking any old property). In this section I want to dive into 2 things, primarily how these languages represent the current object, and equality.
@@ -343,7 +345,7 @@ this.collection.forEach(function(item){
 ```
 
 ## Equality
-Ruby's equality comes in one of 2 forms. `==` and `===`. The `==` tests for equality as defined by the object.
+Ruby's equality testing has 2 forms: `==` and `===`. The `==` tests for equality as defined by the object.
 
 ```ruby
 5 == 5
@@ -365,7 +367,7 @@ obj2 = MyObject.new("A plain object")
 obj1 == obj2 # => true
 ```
 
-And Case equality, used for `case` statements. In a new object `===` delegates to `==`
+And Case equality, used for `case` statements. In a new object, `===` delegates to `==`
 
 ``` ruby
 (1..10) === 5
