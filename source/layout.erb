@@ -20,6 +20,10 @@
   </section>
 
   <div id="main" role="main">
+    <% if is_blog_article? %>
+      <h1 class="article-title"><%= link_to current_article.title, current_article %></h1>
+    <% end %>
+
     <%= yield %>
   </div>
 
