@@ -374,7 +374,7 @@ And Case equality, used for `case` statements. In a new object, `===` delegates 
 /even/ === "Steven"
 ```
 
-JavaScript has no way to override equality on objects. You CAN use equality on primitives like strings and numbers, but here lies the danger. This is from "JavaScript: The good parts."
+JavaScript has no way to override equality on objects. You CAN use equality on primitives like strings and numbers, but here lies the danger. This is from ["JavaScript: The Good Parts"](http://www.amazon.com/JavaScript-Good-Parts-Douglas-Crockford/dp/0596517742)
 
 ``` javascript
 0 == '' // true
