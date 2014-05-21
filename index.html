@@ -25,9 +25,9 @@
     
     <article>
       <h1 class="article-title"><a href="/2014/05/18/using-ruby-to-learn-javascript.html">Using Ruby to learn JavaScript</a></h1>
-      <p>I&rsquo;ve written about why I believe <a href="/2014/04/26/on-why-learning-to-program-is-hard.html">learning to program is hard</a>. If you&rsquo;ve made it to the other side, rejoice! It&rsquo;s time for the easy part. Learning a new language. Let&rsquo;s see how knowing ruby can help us learn a little JavaScript. (I&rsquo;m assuming you know ruby for the duration of this post)</p>
+      <p>I&rsquo;ve written about why I believe <a href="/2014/04/26/on-why-learning-to-program-is-hard.html">learning to program is hard</a>. If you&rsquo;ve made it to the other side, rejoice! It&rsquo;s time for the easy part. Learning a new language. Let&rsquo;s see how knowing Ruby can help us learn a little JavaScript. (I&rsquo;m assuming you know Ruby for the duration of this post)</p>
 
-<h1>ruby to JavaScript</h1>
+<h1>Ruby to JavaScript</h1>
 
 <p>First, let&rsquo;s find some similarities.
 Both are:</p>
@@ -75,7 +75,7 @@ Both are:</p>
 <span class="nx">varTest</span><span class="p">();</span> <span class="c1">// blows up here since ohMy is not defined
 </span></pre></td></tr></tbody></table></div>
 <p>Another difference are those semicolons! Semicolons are used to end a statement. It may be your first impulse to throw semicolons everywhere but <a href="http://www.codecademy.com/blog/78-your-guide-to-semicolons-in-javascript">don&rsquo;t</a>.
-JavaScript also uses camelCase for its variables, vs ruby&rsquo;s snake case.</p>
+JavaScript also uses camelCase for its variables, vs Ruby&rsquo;s snake case.</p>
 
 <h2>Object Orientation</h2>
 
@@ -154,7 +154,7 @@ JavaScript also uses camelCase for its variables, vs ruby&rsquo;s snake case.</p
 
 <span class="nx">myObject</span> <span class="o">===</span> <span class="nx">myObject</span><span class="p">.</span><span class="nx">getThis</span><span class="p">();</span> <span class="c1">// true
 </span></pre></td></tr></tbody></table></div>
-<p>This is akin to creating an Object instance in ruby an attaching singleton methods.</p>
+<p>This is akin to creating an Object instance in Ruby and attaching singleton methods.</p>
 <div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre><pre class="lineno">8</pre><pre class="lineno">9</pre><pre class="lineno">10</pre><pre class="lineno">11</pre><pre class="lineno">12</pre><pre class="lineno">13</pre><pre class="lineno">14</pre><pre class="lineno">15</pre><pre class="lineno">16</pre><pre class="lineno">17</pre></td><td class="code"><pre><span class="n">my_object</span> <span class="o">=</span> <span class="no">Object</span><span class="p">.</span><span class="nf">new</span>
 <span class="k">def</span> <span class="nc">my_object</span><span class="o">.</span><span class="nf">value1</span>
   <span class="s2">"I'm a value"</span>
@@ -175,16 +175,16 @@ JavaScript also uses camelCase for its variables, vs ruby&rsquo;s snake case.</p
 </pre></td></tr></tbody></table></div>
 <h3>Properties in Ruby</h3>
 
-<p>One thing you&rsquo;ll notice is that ruby has no concept of &lsquo;properties&rsquo; on objects. Everything in ruby is responding to a message sent. Nothing is stopping you from adding new properties on an existing object in JavaScript.</p>
+<p>One thing you&rsquo;ll notice is that Ruby has no concept of &lsquo;properties&rsquo; on objects. Everything in Ruby is responding to a message sent. Nothing is stopping you from adding new properties on an existing object in JavaScript.</p>
 <div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">myObject</span> <span class="o">=</span> <span class="p">{};</span>
 <span class="nx">myObject</span><span class="p">.</span><span class="nx">value1</span> <span class="o">=</span> <span class="s2">"I'm a value"</span><span class="p">;</span>
 <span class="nx">myObject</span><span class="p">.</span><span class="nx">value1</span><span class="p">;</span>
 </pre></td></tr></tbody></table></div>
-<p>In ruby, it would break.</p>
+<p>In Ruby, it would break.</p>
 <div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre></td><td class="code"><pre><span class="n">my_object</span> <span class="o">=</span> <span class="no">Object</span><span class="p">.</span><span class="nf">new</span>
 <span class="n">my_object</span><span class="p">.</span><span class="nf">value1</span> <span class="o">=</span> <span class="s2">"I'm a value"</span> <span class="c1"># =&gt; "NoMethodError"</span>
 </pre></td></tr></tbody></table></div>
-<p>They behave more like ruby&rsquo;s OpenStruct class</p>
+<p>They behave more like Ruby&rsquo;s OpenStruct class</p>
 <div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre></td><td class="code"><pre><span class="nb">require</span> <span class="s1">'ostruct'</span>
 <span class="n">my_object</span> <span class="o">=</span> <span class="no">OpenStruct</span><span class="p">.</span><span class="nf">new</span>
 <span class="n">my_object</span><span class="p">.</span><span class="nf">value1</span> <span class="o">=</span> <span class="s2">"I'm a value"</span>
@@ -198,9 +198,9 @@ JavaScript also uses camelCase for its variables, vs ruby&rsquo;s snake case.</p
 <p>Specifically, this means the language supports passing functions as arguments to other functions, returning them as the values from other functions, and assigning them to variables or storing them in data structures.</p>
 </blockquote>
 
-<p>My post on <a href="/2014/04/13/closures.html">closures</a> shows that ruby has passable functions in the form of lambdas, but it&rsquo;s used a lot more in JavaScript!!</p>
+<p>My post on <a href="/2014/04/13/closures.html">closures</a> shows that Ruby has passable functions in the form of lambdas, but it&rsquo;s used a lot more in JavaScript!!</p>
 
-<p>Look at this JavaScript code that returns takes a function, and returns a new function based on the return value of that function.</p>
+<p>Look at this JavaScript code that takes a function, and returns a new function based on the return value of the former function.</p>
 <div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre><pre class="lineno">8</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">poppaFunction</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">poppa</span><span class="p">){</span>
   <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">){</span>
     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'Hello, '</span> <span class="o">+</span> <span class="nx">poppa</span> <span class="o">+</span> <span class="s2">"! "</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">);</span>
@@ -210,7 +210,7 @@ JavaScript also uses camelCase for its variables, vs ruby&rsquo;s snake case.</p
 <span class="kd">var</span> <span class="nx">babyFunction</span> <span class="o">=</span> <span class="nx">poppaFunction</span><span class="p">(</span><span class="s2">"Big Papa"</span><span class="p">);</span>
 <span class="nx">babyFunction</span><span class="p">(</span><span class="s2">"Have a great night!"</span><span class="p">);</span>
 </pre></td></tr></tbody></table></div>
-<p>and the same in ruby</p>
+<p>and the same in Ruby</p>
 <div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre></td><td class="code"><pre><span class="n">poppa_lambda</span> <span class="o">=</span> <span class="nb">lambda</span> <span class="k">do</span> <span class="o">|</span><span class="n">poppa</span><span class="o">|</span>
   <span class="nb">lambda</span> <span class="p">{</span><span class="o">|</span><span class="n">msg</span><span class="o">|</span> <span class="nb">puts</span> <span class="s2">"Hello </span><span class="si">#{</span><span class="n">poppa</span><span class="si">}</span><span class="s2">! </span><span class="si">#{</span><span class="n">msg</span><span class="si">}</span><span class="s2">"</span><span class="p">}</span>
 <span class="k">end</span>
@@ -222,7 +222,7 @@ JavaScript also uses camelCase for its variables, vs ruby&rsquo;s snake case.</p
 
 <h1>Differences</h1>
 
-<p>We&rsquo;ve seen a few differences already. Some with syntax (semicolon use, variable declarations), others with the object model (ruby only responding to messages, and JavaScript taking any old property). In this section I want to dive into 2 things, primarily how these languages represent the current object, and equality.</p>
+<p>We&rsquo;ve seen a few differences already. Some with syntax (semicolon use, variable declarations), others with the object model (Ruby only responding to messages, and JavaScript taking any old property). In this section I want to dive into 2 things, primarily how these languages represent the current object, and equality.</p>
 
 <h2><code>self</code> and <code>this</code></h2>
 
@@ -336,7 +336,7 @@ myObject.collection; // [1, 2, 3, 1, 4, 9]
 <div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre></td><td class="code"><pre><span class="p">(</span><span class="mi">1</span><span class="p">.</span><span class="nf">.</span><span class="mi">10</span><span class="p">)</span> <span class="o">===</span> <span class="mi">5</span>
 <span class="sr">/even/</span> <span class="o">===</span> <span class="s2">"Steven"</span>
 </pre></td></tr></tbody></table></div>
-<p>JavaScript has no way to override equality on objects. You CAN use equality on primitives like strings and numbers, but here lies the danger. This is from JavaScript the good parts.</p>
+<p>JavaScript has no way to override equality on objects. You CAN use equality on primitives like strings and numbers, but here lies the danger. This is from <a href="http://www.amazon.com/JavaScript-Good-Parts-Douglas-Crockford/dp/0596517742">&quot;JavaScript: The Good Parts&rdquo;</a></p>
 <div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre></td><td class="code"><pre><span class="mi">0</span> <span class="o">==</span> <span class="s1">''</span> <span class="c1">// true
 </span><span class="kc">false</span> <span class="o">==</span> <span class="s1">'false'</span> <span class="c1">// false
 </span><span class="kc">false</span> <span class="o">==</span> <span class="s1">'0'</span> <span class="c1">// true
