@@ -4,9 +4,9 @@ date: 2014-05-18 20:16 UTC
 tags:
 ---
 
-I've written about why I believe [learning to program is hard](2014-04-26-on-why-learning-to-program-is-hard.html). If you've made it to the other side, rejoice! It's time for the easy part. Learning a new language. Let's see how knowing ruby can help us learn a little JavaScript. (I'm assuming you know ruby for the duration of this post)
+I've written about why I believe [learning to program is hard](2014-04-26-on-why-learning-to-program-is-hard.html). If you've made it to the other side, rejoice! It's time for the easy part. Learning a new language. Let's see how knowing Ruby can help us learn a little JavaScript. (I'm assuming you know Ruby for the duration of this post)
 
-# ruby to JavaScript
+# Ruby to JavaScript
 First, let's find some similarities.
 Both are:
 
@@ -59,7 +59,7 @@ var varTest = function(){
 varTest(); // blows up here since ohMy is not defined
 ```
 Another difference are those semicolons! Semicolons are used to end a statement. It may be your first impulse to throw semicolons everywhere but [don't](http://www.codecademy.com/blog/78-your-guide-to-semicolons-in-javascript).
-JavaScript also uses camelCase for its variables, vs ruby's snake case.
+JavaScript also uses camelCase for its variables, vs Ruby's snake case.
 
 ## Object Orientation
 Both languages can create structures that act as templates for instances of itself.
@@ -162,7 +162,7 @@ var myObject = {
 myObject === myObject.getThis(); // true
 ```
 
-This is akin to creating an Object instance in ruby an attaching singleton methods.
+This is akin to creating an Object instance in Ruby and attaching singleton methods.
 
 
 ``` ruby
@@ -186,7 +186,7 @@ my_object == my_object.get_self # => true
 ```
 ### Properties in Ruby
 
-One thing you'll notice is that ruby has no concept of 'properties' on objects. Everything in ruby is responding to a message sent. Nothing is stopping you from adding new properties on an existing object in JavaScript.
+One thing you'll notice is that Ruby has no concept of 'properties' on objects. Everything in Ruby is responding to a message sent. Nothing is stopping you from adding new properties on an existing object in JavaScript.
 
 ``` javascript
 var myObject = {};
@@ -194,14 +194,14 @@ myObject.value1 = "I'm a value";
 myObject.value1;
 ```
 
-In ruby, it would break.
+In Ruby, it would break.
 
 ``` ruby
 my_object = Object.new
 my_object.value1 = "I'm a value" # => "NoMethodError"
 ```
 
-They behave more like ruby's OpenStruct class
+They behave more like Ruby's OpenStruct class
 
 ``` ruby
 require 'ostruct'
@@ -214,9 +214,9 @@ my_object.value1
 What the hell does that even mean?
 > Specifically, this means the language supports passing functions as arguments to other functions, returning them as the values from other functions, and assigning them to variables or storing them in data structures.
 
-My post on [closures](2014-04-13-closures.html) shows that ruby has passable functions in the form of lambdas, but it's used a lot more in JavaScript!!
+My post on [closures](2014-04-13-closures.html) shows that Ruby has passable functions in the form of lambdas, but it's used a lot more in JavaScript!!
 
-Look at this JavaScript code that returns takes a function, and returns a new function based on the return value of that function.
+Look at this JavaScript code that takes a function, and returns a new function based on the return value of the former function.
 
 ```javascript
 var poppaFunction = function(poppa){
@@ -228,7 +228,7 @@ var poppaFunction = function(poppa){
 var babyFunction = poppaFunction("Big Papa");
 babyFunction("Have a great night!");
 ```
-and the same in ruby
+and the same in Ruby
 
 ```ruby
 poppa_lambda = lambda do |poppa|
@@ -243,7 +243,7 @@ One important distinction is the the differences in return values. In JavaScript
 
 # Differences
 
-We've seen a few differences already. Some with syntax (semicolon use, variable declarations), others with the object model (ruby only responding to messages, and JavaScript taking any old property). In this section I want to dive into 2 things, primarily how these languages represent the current object, and equality.
+We've seen a few differences already. Some with syntax (semicolon use, variable declarations), others with the object model (Ruby only responding to messages, and JavaScript taking any old property). In this section I want to dive into 2 things, primarily how these languages represent the current object, and equality.
 
 ## `self` and `this`
 
@@ -374,7 +374,7 @@ And Case equality, used for `case` statements. In a new object, `===` delegates 
 /even/ === "Steven"
 ```
 
-JavaScript has no way to override equality on objects. You CAN use equality on primitives like strings and numbers, but here lies the danger. This is from JavaScript the good parts.
+JavaScript has no way to override equality on objects. You CAN use equality on primitives like strings and numbers, but here lies the danger. This is from "JavaScript: The good parts."
 
 ``` javascript
 0 == '' // true
