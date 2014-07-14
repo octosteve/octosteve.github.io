@@ -6,6 +6,7 @@
   <title>Hostile Developer<%= ' - ' + current_article.title unless current_article.nil? %></title>
   <%= stylesheet_link_tag 'application' %>
   <%= feed_tag :atom, "#{blog.options.prefix.to_s}/feed.xml", title: "Atom Feed" %>
+
 </head>
 <body>
 <div id="container">
@@ -59,6 +60,7 @@
       </ol>
     </section>
   </aside>
+ <%= render :erb, 'google_analytics' %>
 </div>
 </body>
 </html>
