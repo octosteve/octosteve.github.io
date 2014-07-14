@@ -25,6 +25,9 @@
     <% end %>
 
     <%= yield %>
+    <% if is_blog_article? %>
+      <%= render :erb, 'disqus' %>
+    <% end %>
   </div>
 
   <aside>
