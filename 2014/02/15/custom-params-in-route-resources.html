@@ -35,31 +35,52 @@ into this recently when working with nested routes.</p>
 While working on a Progress Dashboard I came across this code for creating nested routes. WALL OF CODE COMING.</p>
 
 <h3>In my routes file</h3>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre></td><td class="code"><pre><span class="n">resources</span> <span class="ss">:dashboards</span><span class="p">,</span> <span class="ss">only: </span><span class="o">[</span><span class="ss">:show</span><span class="p">,</span> <span class="ss">:index</span><span class="o">]</span> <span class="k">do</span>
-  <span class="n">resources</span> <span class="ss">:assignments</span><span class="p">,</span> <span class="ss">only: </span><span class="o">[</span><span class="ss">:show</span><span class="o">]</span>
-  <span class="n">resources</span> <span class="ss">:students</span><span class="p">,</span> <span class="ss">only: </span><span class="o">[</span><span class="ss">:index</span><span class="p">,</span> <span class="ss">:show</span><span class="o">]</span>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4</pre></td><td class="code"><pre><span class="n">resources</span> <span class="ss">:dashboards</span><span class="p">,</span> <span class="ss">only: </span><span class="p">[</span><span class="ss">:show</span><span class="p">,</span> <span class="ss">:index</span><span class="p">]</span> <span class="k">do</span>
+  <span class="n">resources</span> <span class="ss">:assignments</span><span class="p">,</span> <span class="ss">only: </span><span class="p">[</span><span class="ss">:show</span><span class="p">]</span>
+  <span class="n">resources</span> <span class="ss">:students</span><span class="p">,</span> <span class="ss">only: </span><span class="p">[</span><span class="ss">:index</span><span class="p">,</span> <span class="ss">:show</span><span class="p">]</span>
 <span class="k">end</span>
-</pre></td></tr></tbody></table></div>
+</pre></td></tr></tbody></table>
+</div>
+
 <h3>Generated routes</h3>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre></td><td class="code"><pre><span class="n">dashboard_assignment</span> <span class="no">GET</span>        <span class="sr">/dashboards/</span><span class="ss">:dashboard_id</span><span class="o">/</span><span class="n">assignments</span><span class="o">/</span><span class="ss">:id</span><span class="p">(</span><span class="o">.</span><span class="ss">:format</span><span class="p">)</span> <span class="n">assignments</span><span class="c1">#show</span>
-  <span class="n">dashboard_students</span> <span class="no">GET</span>        <span class="sr">/dashboards/</span><span class="ss">:dashboard_id</span><span class="o">/</span><span class="n">students</span><span class="p">(</span><span class="o">.</span><span class="ss">:format</span><span class="p">)</span>        <span class="n">students</span><span class="c1">#index</span>
-   <span class="n">dashboard_student</span> <span class="no">GET</span>        <span class="sr">/dashboards/</span><span class="ss">:dashboard_id</span><span class="o">/</span><span class="n">students</span><span class="o">/</span><span class="ss">:id</span><span class="p">(</span><span class="o">.</span><span class="ss">:format</span><span class="p">)</span>    <span class="n">students</span><span class="c1">#show</span>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5</pre></td><td class="code"><pre><span class="n">dashboard_assignment</span> <span class="no">GET</span>        <span class="sr">/dashboards/</span><span class="p">:</span><span class="n">dashboard_id</span><span class="o">/</span><span class="n">assignments</span><span class="o">/</span><span class="ss">:id</span><span class="p">(</span><span class="o">.</span><span class="ss">:format</span><span class="p">)</span> <span class="n">assignments</span><span class="c1">#show</span>
+  <span class="n">dashboard_students</span> <span class="no">GET</span>        <span class="sr">/dashboards/</span><span class="p">:</span><span class="n">dashboard_id</span><span class="o">/</span><span class="n">students</span><span class="p">(</span><span class="o">.</span><span class="ss">:format</span><span class="p">)</span>        <span class="n">students</span><span class="c1">#index</span>
+   <span class="n">dashboard_student</span> <span class="no">GET</span>        <span class="sr">/dashboards/</span><span class="p">:</span><span class="n">dashboard_id</span><span class="o">/</span><span class="n">students</span><span class="o">/</span><span class="ss">:id</span><span class="p">(</span><span class="o">.</span><span class="ss">:format</span><span class="p">)</span>    <span class="n">students</span><span class="c1">#show</span>
           <span class="n">dashboards</span> <span class="no">GET</span>        <span class="sr">/dashboards(.:format)                               dashboards#index
            dashboard GET        /</span><span class="n">dashboards</span><span class="o">/</span><span class="ss">:id</span><span class="p">(</span><span class="o">.</span><span class="ss">:format</span><span class="p">)</span>                           <span class="n">dashboards</span><span class="c1">#show</span>
-</pre></td></tr></tbody></table></div>
+</pre></td></tr></tbody></table>
+</div>
+
 <h3>Controller action</h3>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre></td><td class="code"><pre><span class="k">def</span> <span class="nf">show</span>
-  <span class="vi">@student_group</span> <span class="o">=</span> <span class="no">StudentGroup</span><span class="p">.</span><span class="nf">find_by</span><span class="p">(</span><span class="nb">name</span><span class="p">:</span> <span class="n">params</span><span class="o">[</span><span class="ss">:id</span><span class="o">]</span><span class="p">)</span>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4</pre></td><td class="code"><pre><span class="k">def</span> <span class="nf">show</span>
+  <span class="vi">@student_group</span> <span class="o">=</span> <span class="no">StudentGroup</span><span class="p">.</span><span class="nf">find_by</span><span class="p">(</span><span class="ss">name: </span><span class="n">params</span><span class="p">[</span><span class="ss">:id</span><span class="p">])</span>
   <span class="vi">@assignments</span> <span class="o">=</span> <span class="vi">@student_group</span><span class="p">.</span><span class="nf">assignments</span><span class="p">.</span><span class="nf">order</span><span class="p">(</span><span class="s1">'created_at ASC'</span><span class="p">)</span>
 <span class="k">end</span>
-</pre></td></tr></tbody></table></div>
+</pre></td></tr></tbody></table>
+</div>
+
 <p>The problem was in an miscommunication between my routes and my controller. I was asking for the :id parameter, but was
 fetching the :name from the database. This became even MORE apparent when I worked on the nested controllers.</p>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre></td><td class="code"><pre><span class="k">def</span> <span class="nf">show</span>
-  <span class="vi">@student_group</span> <span class="o">=</span> <span class="no">StudentGroup</span><span class="p">.</span><span class="nf">find_by</span> <span class="nb">name</span><span class="p">:</span> <span class="n">params</span><span class="o">[</span><span class="ss">:dashboard_id</span><span class="o">]</span>
-  <span class="vi">@assignment</span> <span class="o">=</span> <span class="no">Assignment</span><span class="p">.</span><span class="nf">find</span> <span class="n">params</span><span class="o">[</span><span class="ss">:id</span><span class="o">]</span>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4</pre></td><td class="code"><pre><span class="k">def</span> <span class="nf">show</span>
+  <span class="vi">@student_group</span> <span class="o">=</span> <span class="no">StudentGroup</span><span class="p">.</span><span class="nf">find_by</span> <span class="ss">name: </span><span class="n">params</span><span class="p">[</span><span class="ss">:dashboard_id</span><span class="p">]</span>
+  <span class="vi">@assignment</span> <span class="o">=</span> <span class="no">Assignment</span><span class="p">.</span><span class="nf">find</span> <span class="n">params</span><span class="p">[</span><span class="ss">:id</span><span class="p">]</span>
 <span class="k">end</span>
-</pre></td></tr></tbody></table></div>
+</pre></td></tr></tbody></table>
+</div>
+
 <p>There had to be a way to change that parameter to something better. Did the framework betray me?! Off to the docs</p>
 
 <h1>The Docs</h1>
@@ -71,54 +92,93 @@ and searched. and found NOTHING! Time to go code diving :-)</p>
 
 <p>My preferred method of diving through code is using Rubymine&rsquo;s Command + B feature. I knew I needed to pass some param to
 resources in my routes file so I started there.</p>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre><pre class="lineno">8</pre></td><td class="code"><pre> <span class="k">def</span> <span class="nf">resources</span><span class="p">(</span><span class="o">*</span><span class="n">resources</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8</pre></td><td class="code"><pre> <span class="k">def</span> <span class="nf">resources</span><span class="p">(</span><span class="o">*</span><span class="n">resources</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
   <span class="n">options</span> <span class="o">=</span> <span class="n">resources</span><span class="p">.</span><span class="nf">extract_options!</span><span class="p">.</span><span class="nf">dup</span>
-  <span class="p">.</span><span class="nf">.</span><span class="o">.</span>
-  <span class="n">resource_scope</span><span class="p">(</span><span class="ss">:resources</span><span class="p">,</span> <span class="no">Resource</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">resources</span><span class="p">.</span><span class="nf">pop</span><span class="p">,</span> <span class="n">options</span><span class="p">))</span> <span class="k">do</span>
-    <span class="p">.</span><span class="nf">.</span><span class="o">.</span>
-  <span class="k">end</span>
-  <span class="p">.</span><span class="nf">.</span><span class="o">.</span>
-<span class="k">end</span>
-</pre></td></tr></tbody></table></div>
+  <span class="p">.</span><span class="nf">.</span><span class="p">.</span>
+  <span class="nf">resource_scope</span><span class="p">(</span><span class="ss">:resources</span><span class="p">,</span> <span class="no">Resource</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">resources</span><span class="p">.</span><span class="nf">pop</span><span class="p">,</span> <span class="n">options</span><span class="p">))</span> <span class="k">do</span>
+    <span class="p">.</span><span class="nf">.</span><span class="p">.</span>
+  <span class="nf">end</span>
+  <span class="p">.</span><span class="nf">.</span><span class="p">.</span>
+<span class="nf">end</span>
+</pre></td></tr></tbody></table>
+</div>
+
 <p>Here I noticed we were creating a new Instance of the resource class with the options we passed in.</p>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre><pre class="lineno">8</pre><pre class="lineno">9</pre><pre class="lineno">10</pre><pre class="lineno">11</pre><pre class="lineno">12</pre><pre class="lineno">13</pre></td><td class="code"><pre><span class="k">class</span> <span class="nc">Resource</span> <span class="c1">#:nodoc:</span>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13</pre></td><td class="code"><pre><span class="k">class</span> <span class="nc">Resource</span> <span class="c1">#:nodoc:</span>
   <span class="kp">attr_reader</span> <span class="ss">:controller</span><span class="p">,</span> <span class="ss">:path</span><span class="p">,</span> <span class="ss">:options</span><span class="p">,</span> <span class="ss">:param</span>
 
   <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">entities</span><span class="p">,</span> <span class="n">options</span> <span class="o">=</span> <span class="p">{})</span>
     <span class="vi">@name</span>       <span class="o">=</span> <span class="n">entities</span><span class="p">.</span><span class="nf">to_s</span>
-    <span class="vi">@path</span>       <span class="o">=</span> <span class="p">(</span><span class="n">options</span><span class="o">[</span><span class="ss">:path</span><span class="o">]</span> <span class="o">||</span> <span class="vi">@name</span><span class="p">).</span><span class="nf">to_s</span>
-    <span class="vi">@controller</span> <span class="o">=</span> <span class="p">(</span><span class="n">options</span><span class="o">[</span><span class="ss">:controller</span><span class="o">]</span> <span class="o">||</span> <span class="vi">@name</span><span class="p">).</span><span class="nf">to_s</span>
-    <span class="vi">@as</span>         <span class="o">=</span> <span class="n">options</span><span class="o">[</span><span class="ss">:as</span><span class="o">]</span>
-    <span class="vi">@param</span>      <span class="o">=</span> <span class="p">(</span><span class="n">options</span><span class="o">[</span><span class="ss">:param</span><span class="o">]</span> <span class="o">||</span> <span class="ss">:id</span><span class="p">).</span><span class="nf">to_sym</span>
+    <span class="vi">@path</span>       <span class="o">=</span> <span class="p">(</span><span class="n">options</span><span class="p">[</span><span class="ss">:path</span><span class="p">]</span> <span class="o">||</span> <span class="vi">@name</span><span class="p">).</span><span class="nf">to_s</span>
+    <span class="vi">@controller</span> <span class="o">=</span> <span class="p">(</span><span class="n">options</span><span class="p">[</span><span class="ss">:controller</span><span class="p">]</span> <span class="o">||</span> <span class="vi">@name</span><span class="p">).</span><span class="nf">to_s</span>
+    <span class="vi">@as</span>         <span class="o">=</span> <span class="n">options</span><span class="p">[</span><span class="ss">:as</span><span class="p">]</span>
+    <span class="vi">@param</span>      <span class="o">=</span> <span class="p">(</span><span class="n">options</span><span class="p">[</span><span class="ss">:param</span><span class="p">]</span> <span class="o">||</span> <span class="ss">:id</span><span class="p">).</span><span class="nf">to_sym</span>
     <span class="vi">@options</span>    <span class="o">=</span> <span class="n">options</span>
   <span class="k">end</span>
-  <span class="p">.</span><span class="nf">.</span><span class="o">.</span>
-<span class="k">end</span>
-</pre></td></tr></tbody></table></div>
+  <span class="p">.</span><span class="nf">.</span><span class="p">.</span>
+<span class="nf">end</span>
+</pre></td></tr></tbody></table>
+</div>
+
 <p>LOOK AT THAT! You can pass in :param to the the resource declaration!</p>
 
 <h1>The solution</h1>
 
 <p>Back in our routes file, we add the param option to the resource.</p>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre></td><td class="code"><pre><span class="n">resources</span> <span class="ss">:dashboards</span><span class="p">,</span> <span class="ss">only: </span><span class="o">[</span><span class="ss">:show</span><span class="p">,</span> <span class="ss">:index</span><span class="o">]</span><span class="p">,</span> <span class="ss">param: :name</span> <span class="k">do</span>
-  <span class="n">resources</span> <span class="ss">:assignments</span><span class="p">,</span> <span class="ss">only: </span><span class="o">[</span><span class="ss">:show</span><span class="o">]</span>
-  <span class="n">resources</span> <span class="ss">:students</span><span class="p">,</span> <span class="ss">only: </span><span class="o">[</span><span class="ss">:index</span><span class="p">,</span> <span class="ss">:show</span><span class="o">]</span>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4</pre></td><td class="code"><pre><span class="n">resources</span> <span class="ss">:dashboards</span><span class="p">,</span> <span class="ss">only: </span><span class="p">[</span><span class="ss">:show</span><span class="p">,</span> <span class="ss">:index</span><span class="p">],</span> <span class="ss">param: :name</span> <span class="k">do</span>
+  <span class="n">resources</span> <span class="ss">:assignments</span><span class="p">,</span> <span class="ss">only: </span><span class="p">[</span><span class="ss">:show</span><span class="p">]</span>
+  <span class="n">resources</span> <span class="ss">:students</span><span class="p">,</span> <span class="ss">only: </span><span class="p">[</span><span class="ss">:index</span><span class="p">,</span> <span class="ss">:show</span><span class="p">]</span>
 <span class="k">end</span>
-</pre></td></tr></tbody></table></div>
+</pre></td></tr></tbody></table>
+</div>
+
 <p>This generates these routes:</p>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre></td><td class="code"><pre><span class="n">dashboard_assignment</span> <span class="no">GET</span>        <span class="sr">/dashboards/</span><span class="ss">:dashboard_name</span><span class="o">/</span><span class="n">assignments</span><span class="o">/</span><span class="ss">:id</span><span class="p">(</span><span class="o">.</span><span class="ss">:format</span><span class="p">)</span> <span class="n">assignments</span><span class="c1">#show</span>
-  <span class="n">dashboard_students</span> <span class="no">GET</span>        <span class="sr">/dashboards/</span><span class="ss">:dashboard_name</span><span class="o">/</span><span class="n">students</span><span class="p">(</span><span class="o">.</span><span class="ss">:format</span><span class="p">)</span>        <span class="n">students</span><span class="c1">#index</span>
-   <span class="n">dashboard_student</span> <span class="no">GET</span>        <span class="sr">/dashboards/</span><span class="ss">:dashboard_name</span><span class="o">/</span><span class="n">students</span><span class="o">/</span><span class="ss">:id</span><span class="p">(</span><span class="o">.</span><span class="ss">:format</span><span class="p">)</span>    <span class="n">students</span><span class="c1">#show</span>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5</pre></td><td class="code"><pre><span class="n">dashboard_assignment</span> <span class="no">GET</span>        <span class="sr">/dashboards/</span><span class="p">:</span><span class="n">dashboard_name</span><span class="o">/</span><span class="n">assignments</span><span class="o">/</span><span class="ss">:id</span><span class="p">(</span><span class="o">.</span><span class="ss">:format</span><span class="p">)</span> <span class="n">assignments</span><span class="c1">#show</span>
+  <span class="n">dashboard_students</span> <span class="no">GET</span>        <span class="sr">/dashboards/</span><span class="p">:</span><span class="n">dashboard_name</span><span class="o">/</span><span class="n">students</span><span class="p">(</span><span class="o">.</span><span class="ss">:format</span><span class="p">)</span>        <span class="n">students</span><span class="c1">#index</span>
+   <span class="n">dashboard_student</span> <span class="no">GET</span>        <span class="sr">/dashboards/</span><span class="p">:</span><span class="n">dashboard_name</span><span class="o">/</span><span class="n">students</span><span class="o">/</span><span class="ss">:id</span><span class="p">(</span><span class="o">.</span><span class="ss">:format</span><span class="p">)</span>    <span class="n">students</span><span class="c1">#show</span>
           <span class="n">dashboards</span> <span class="no">GET</span>        <span class="sr">/dashboards(.:format)                                 dashboards#index
            dashboard GET        /</span><span class="n">dashboards</span><span class="o">/</span><span class="ss">:name</span><span class="p">(</span><span class="o">.</span><span class="ss">:format</span><span class="p">)</span>                           <span class="n">dashboards</span><span class="c1">#show</span>
-</pre></td></tr></tbody></table></div>
+</pre></td></tr></tbody></table>
+</div>
+
 <p>And in our controllers:</p>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre></td><td class="code"><pre><span class="k">def</span> <span class="nf">show</span>
-  <span class="vi">@student_group</span> <span class="o">=</span> <span class="no">StudentGroup</span><span class="p">.</span><span class="nf">find_by</span> <span class="nb">name</span><span class="p">:</span> <span class="n">params</span><span class="o">[</span><span class="ss">:dashboard_name</span><span class="o">]</span>
-  <span class="vi">@assignment</span> <span class="o">=</span> <span class="no">Assignment</span><span class="p">.</span><span class="nf">find</span> <span class="n">params</span><span class="o">[</span><span class="ss">:id</span><span class="o">]</span>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4</pre></td><td class="code"><pre><span class="k">def</span> <span class="nf">show</span>
+  <span class="vi">@student_group</span> <span class="o">=</span> <span class="no">StudentGroup</span><span class="p">.</span><span class="nf">find_by</span> <span class="ss">name: </span><span class="n">params</span><span class="p">[</span><span class="ss">:dashboard_name</span><span class="p">]</span>
+  <span class="vi">@assignment</span> <span class="o">=</span> <span class="no">Assignment</span><span class="p">.</span><span class="nf">find</span> <span class="n">params</span><span class="p">[</span><span class="ss">:id</span><span class="p">]</span>
 <span class="k">end</span>
-</pre></td></tr></tbody></table></div>
-<p>So much better! I hope you found this useful. It was definitely fund to figure out.</p>
+</pre></td></tr></tbody></table>
+</div>
+
+<p>So much better! I hope you found this useful. It was definitely fun to figure out.</p>
 
     
       <div id="disqus_thread"></div>

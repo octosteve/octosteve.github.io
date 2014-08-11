@@ -34,7 +34,14 @@
 <h3>FizzBuzz</h3>
 
 <p>Let&rsquo;s look at what you need to know to solve something like <a href="http://en.wikipedia.org/wiki/Fizz_buzz">Fizz Buzz</a></p>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre><pre class="lineno">8</pre></td><td class="code"><pre><span class="n">fizz_buzz</span> <span class="o">=</span> <span class="o">-&gt;</span><span class="p">(</span><span class="n">number</span><span class="p">)</span> <span class="k">do</span> 
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8</pre></td><td class="code"><pre><span class="n">fizz_buzz</span> <span class="o">=</span> <span class="o">-&gt;</span><span class="p">(</span><span class="n">number</span><span class="p">)</span> <span class="k">do</span> 
     <span class="s2">"</span><span class="si">#{</span><span class="s1">'Fizz'</span> <span class="k">if</span> <span class="p">(</span><span class="n">number</span> <span class="sx">% 3).zero?}#{'Buzz' </span><span class="k">if</span> <span class="p">(</span><span class="n">number</span> <span class="o">%</span> <span class="mi">5</span><span class="p">).</span><span class="nf">zero?</span><span class="si">}</span><span class="s2">"</span>
 <span class="k">end</span>
 
@@ -42,7 +49,9 @@
     <span class="n">result</span> <span class="o">=</span> <span class="n">fizz_buzz</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="n">num</span><span class="p">)</span> 
     <span class="nb">puts</span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="nf">empty?</span> <span class="p">?</span> <span class="n">num</span> <span class="p">:</span> <span class="n">result</span><span class="p">)</span>
 <span class="k">end</span>
-</pre></td></tr></tbody></table></div>
+</pre></td></tr></tbody></table>
+</div>
+
 <h4>Reading</h4>
 
 <p>To read this code you&rsquo;ll need to know that:</p>

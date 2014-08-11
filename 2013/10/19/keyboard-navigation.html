@@ -31,7 +31,9 @@
 
 <p>Let&rsquo;s say I&rsquo;m typing this obscenely long line of bash:</p>
 <div class="highlight shell"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre></td><td class="code"><pre>cat ~/schol/GA/BEWD_Curriculum/01_Dev_Workflow/README.md| grep -i git
-</pre></td></tr></tbody></table></div>
+</pre></td></tr></tbody></table>
+</div>
+
 <p>Oh NO! I&rsquo;ve misspelled <code>school</code>. Here we go: backspace backspace backspace… 59 backspaces! Even if you didn&rsquo;t erase it and just used left, it&rsquo;s still going to take a while.</p>
 
 <p>That&rsquo;s crazy. Let&rsquo;s try another way.</p>
@@ -58,7 +60,33 @@
 <p>A lot of these things work in your editor of choice. A lot of developers use <a href="http://www.sublimetext.com/2">Sublime Text</a>. </p>
 
 <p>Let&rsquo;s look at getting around a small ruby file. It&rsquo;s from my <a href="https://github.com/StevenNunez/slide_hero">slide_hero gem</a>. Don&rsquo;t worry too much about what it does.</p>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre><pre class="lineno">8</pre><pre class="lineno">9</pre><pre class="lineno">10</pre><pre class="lineno">11</pre><pre class="lineno">12</pre><pre class="lineno">13</pre><pre class="lineno">14</pre><pre class="lineno">15</pre><pre class="lineno">16</pre><pre class="lineno">17</pre><pre class="lineno">18</pre><pre class="lineno">19</pre><pre class="lineno">20</pre><pre class="lineno">21</pre><pre class="lineno">22</pre><pre class="lineno">23</pre><pre class="lineno">24</pre><pre class="lineno">25</pre><pre class="lineno">26</pre><pre class="lineno">27</pre></td><td class="code"><pre><span class="k">module</span> <span class="nn">SlideHero</span>                                                                   
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27</pre></td><td class="code"><pre><span class="k">module</span> <span class="nn">SlideHero</span>                                                                   
   <span class="k">class</span> <span class="nc">Point</span>                                                                      
     <span class="kp">attr_reader</span> <span class="ss">:text</span>                                                              
     <span class="no">SUPPORTED_ANIMATIONS</span> <span class="o">=</span> <span class="sx">%w{grow shrink roll-in fade-out                         
@@ -85,7 +113,9 @@
     <span class="k">end</span>                                                                            
   <span class="k">end</span>                                                                              
 <span class="k">end</span>                        
-</pre></td></tr></tbody></table></div>
+</pre></td></tr></tbody></table>
+</div>
+
 <p>Let&rsquo;s say I want to jump to add another method (<code>def animation</code> is me defining a method). Since the editor usually opens at the top of the file, I&rsquo;ll have to press down 16 times or worse, USE MY MOUSE!  Looking at Sublime Text&rsquo;s <code>Goto</code> menu, I see ^G will let me specify what line to go to. Cool! Ok, well now I&rsquo;m on the line with <code>private</code> and need to get <em>after</em> it to enter my new method. We can use one of our old buddies <code>⌥+right</code> here! OK, <code>⌥+right</code>, <code>enter</code>, start typing!</p>
 
 <p>If you&rsquo;re planning on using Sublime Text, be sure to learn the <a href="http://docs.sublimetext.info/en/latest/reference/keyboard_shortcuts_osx.html">keyboard shortcuts!</a>. They&rsquo;re there because of you! Use them and be awesome.</p>

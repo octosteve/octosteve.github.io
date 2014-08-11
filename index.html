@@ -42,13 +42,19 @@ Both are:</p>
 <p>Let&rsquo;s look at these first</p>
 
 <h2>Dynamically Typed</h2>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre></td><td class="code"><pre><span class="n">my_account</span> <span class="o">=</span> <span class="p">{}</span>
-<span class="n">my_account</span> <span class="o">=</span> <span class="o">[]</span>
-</pre></td></tr></tbody></table></div>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2</pre></td><td class="code"><pre><span class="n">my_account</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">my_account</span> <span class="o">=</span> <span class="p">[]</span>
+</pre></td></tr></tbody></table>
+</div>
+
 <p>vs</p>
-<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">myAccount</span> <span class="o">=</span> <span class="p">{};</span>
+<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">myAccount</span> <span class="o">=</span> <span class="p">{};</span>
 <span class="nx">myAccount</span> <span class="o">=</span> <span class="p">[];</span>
-</pre></td></tr></tbody></table></div>
+</pre></td></tr></tbody></table>
+</div>
+
 <p>With these 2 lines of code, we can start to identify some differences between the languages.</p>
 
 <h3>The <code>var</code> keyword</h3>
@@ -56,7 +62,14 @@ Both are:</p>
 <p>Variables in JavaScript <strong>must</strong> be declared. You <strong>must</strong> communicate this intention, otherwise weird things start to happen. The following code works, but not like you think.</p>
 
 <p>Run this in Developer Tools</p>
-<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre><pre class="lineno">8</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">varTest</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
+<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">varTest</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
   <span class="kd">var</span> <span class="nx">totallyFine</span> <span class="o">=</span> <span class="mi">17</span><span class="p">;</span>
   <span class="nx">ohMy</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>
 <span class="p">}</span>
@@ -64,33 +77,56 @@ Both are:</p>
 
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">ohMy</span><span class="p">);</span> <span class="c1">// 100
 </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">totallyFine</span><span class="p">);</span> <span class="c1">// explosion!  
-</span></pre></td></tr></tbody></table></div>
+</span></pre></td></tr></tbody></table>
+</div>
+
 <p>Why&rsquo;s this a big deal? This means that if any code, anywhere creates a variable in a function without the <code>var</code> keyword, it&rsquo;s with you for the rest of your app. Other things can change it. For a real life case of this biting someone, checkout <a href="http://blog.safeshepherd.com/23/how-one-missing-var-ruined-our-launch/">this  post</a>.</p>
 
 <p>Strict mode prevents this tomfoolery.</p>
-<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">varTest</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
+<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">varTest</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
   <span class="s1">'use strict'</span><span class="p">;</span>
   <span class="kd">var</span> <span class="nx">totallyFine</span> <span class="o">=</span> <span class="mi">17</span><span class="p">;</span>
   <span class="nx">ohMy</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>
 <span class="p">}</span>
 <span class="nx">varTest</span><span class="p">();</span> <span class="c1">// blows up here since ohMy is not defined
-</span></pre></td></tr></tbody></table></div>
+</span></pre></td></tr></tbody></table>
+</div>
+
 <p>Another difference are those semicolons! Semicolons are used to end a statement. It may be your first impulse to throw semicolons everywhere but <a href="http://www.codecademy.com/blog/78-your-guide-to-semicolons-in-javascript">don&rsquo;t</a>.
 JavaScript also uses camelCase for its variables, vs Ruby&rsquo;s snake case.</p>
 
 <h2>Object Orientation</h2>
 
 <p>Both languages can create structures that act as templates for instances of itself.</p>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre></td><td class="code"><pre><span class="k">class</span> <span class="nc">Student</span>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3</pre></td><td class="code"><pre><span class="k">class</span> <span class="nc">Student</span>
 <span class="k">end</span>
 <span class="n">bob</span> <span class="o">=</span> <span class="no">Student</span><span class="p">.</span><span class="nf">new</span>
-</pre></td></tr></tbody></table></div>
+</pre></td></tr></tbody></table>
+</div>
+
 <p>vs</p>
-<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">Student</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){};</span>
+<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">Student</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){};</span>
 <span class="kd">var</span> <span class="nx">bob</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Student</span><span class="p">;</span>
-</pre></td></tr></tbody></table></div>
+</pre></td></tr></tbody></table>
+</div>
+
 <p>In JavaScript, we supply what&rsquo;s called a Constructor Function. One that responds to the <code>new</code> keyword by returning an instance of the function. Let&rsquo;s flesh this out some more.</p>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre><pre class="lineno">8</pre></td><td class="code"><pre><span class="k">class</span> <span class="nc">Student</span>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8</pre></td><td class="code"><pre><span class="k">class</span> <span class="nc">Student</span>
   <span class="kp">attr_reader</span> <span class="ss">:name</span>
   <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span>
     <span class="vi">@name</span> <span class="o">=</span> <span class="nb">name</span>
@@ -98,19 +134,43 @@ JavaScript also uses camelCase for its variables, vs Ruby&rsquo;s snake case.</p
 <span class="k">end</span>
 <span class="n">bob</span> <span class="o">=</span> <span class="no">Student</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"Bob"</span><span class="p">)</span>
 <span class="n">bob</span><span class="p">.</span><span class="nf">name</span> <span class="c1"># =&gt; "Bob"</span>
-</pre></td></tr></tbody></table></div>
+</pre></td></tr></tbody></table>
+</div>
+
 <p>vs</p>
-<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">Student</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">){</span>
+<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">Student</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">){</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
 <span class="p">};</span>
 
 <span class="kd">var</span> <span class="nx">bob</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Student</span><span class="p">(</span><span class="s2">"Bob"</span><span class="p">);</span>
 <span class="nx">bob</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span> <span class="c1">// "Bob"
-</span></pre></td></tr></tbody></table></div>
+</span></pre></td></tr></tbody></table>
+</div>
+
 <p>The Constructor Function can take arguments like any other function.</p>
 
 <p>To add methods to the Factory, add them to the prototype. Then all instances will have access to those methods.</p>
-<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre><pre class="lineno">8</pre><pre class="lineno">9</pre><pre class="lineno">10</pre><pre class="lineno">11</pre><pre class="lineno">12</pre><pre class="lineno">13</pre><pre class="lineno">14</pre><pre class="lineno">15</pre><pre class="lineno">16</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">Student</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">){</span>
+<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">Student</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">){</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
 <span class="p">};</span>
 
@@ -126,17 +186,34 @@ JavaScript also uses camelCase for its variables, vs Ruby&rsquo;s snake case.</p
 <span class="nx">bob</span><span class="p">.</span><span class="nx">grade</span><span class="p">()</span> <span class="c1">// "F" sorry Crouton
 </span><span class="kd">var</span> <span class="nx">steven</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Student</span><span class="p">(</span><span class="s2">"Steven"</span><span class="p">);</span>
 <span class="nx">steven</span><span class="p">.</span><span class="nx">grade</span><span class="p">()</span> <span class="c1">// "A" obviously
-</span></pre></td></tr></tbody></table></div>
+</span></pre></td></tr></tbody></table>
+</div>
+
 <p>Inside the Constructor Function and prototype methods you have access to this mysterious <code>this</code> thing. A new <code>this</code> is created whenever you call a function with the <code>new</code> keyword. By convention, Constructor Functions start with a capital letter.</p>
-<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">ThisOrThat</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
+<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">ThisOrThat</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">thang</span> <span class="o">=</span> <span class="s2">"This thang"</span><span class="p">;</span>
 <span class="p">}</span>
 
 <span class="kd">var</span> <span class="nx">thisThing</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ThisOrThat</span><span class="p">();</span>
 <span class="nx">thisThing</span><span class="p">.</span><span class="nx">thang</span><span class="p">;</span> <span class="c1">// "This Thang"
-</span></pre></td></tr></tbody></table></div>
+</span></pre></td></tr></tbody></table>
+</div>
+
 <p>There&rsquo;s another way to make objects in JavaScript by using an object literal.</p>
-<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre><pre class="lineno">8</pre><pre class="lineno">9</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">myObject</span> <span class="o">=</span> <span class="p">{</span>
+<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">myObject</span> <span class="o">=</span> <span class="p">{</span>
   <span class="na">value1</span><span class="p">:</span> <span class="s2">"I'm a value"</span><span class="p">,</span>
   <span class="na">action</span><span class="p">:</span> <span class="kd">function</span><span class="p">(){</span>
     <span class="k">return</span> <span class="s2">"Live Action! "</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">value1</span> <span class="p">;</span>
@@ -145,18 +222,44 @@ JavaScript also uses camelCase for its variables, vs Ruby&rsquo;s snake case.</p
 
 <span class="nx">myObject</span><span class="p">.</span><span class="nx">value1</span><span class="p">;</span> <span class="c1">// I'm a value
 </span><span class="nx">myObject</span><span class="p">.</span><span class="nx">action</span><span class="p">();</span> <span class="c1">// "Live Action! I'm a value""
-</span></pre></td></tr></tbody></table></div>
+</span></pre></td></tr></tbody></table>
+</div>
+
 <p>Here, the <code>action</code> method has access to other properties in the object through <code>this</code>.</p>
-<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">myObject</span> <span class="o">=</span> <span class="p">{</span>
+<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">myObject</span> <span class="o">=</span> <span class="p">{</span>
   <span class="na">getThis</span><span class="p">:</span> <span class="kd">function</span><span class="p">(){</span>
     <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
   <span class="p">}</span>
 <span class="p">}</span>
 
 <span class="nx">myObject</span> <span class="o">===</span> <span class="nx">myObject</span><span class="p">.</span><span class="nx">getThis</span><span class="p">();</span> <span class="c1">// true
-</span></pre></td></tr></tbody></table></div>
+</span></pre></td></tr></tbody></table>
+</div>
+
 <p>This is akin to creating an Object instance in Ruby and attaching singleton methods.</p>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre><pre class="lineno">8</pre><pre class="lineno">9</pre><pre class="lineno">10</pre><pre class="lineno">11</pre><pre class="lineno">12</pre><pre class="lineno">13</pre><pre class="lineno">14</pre><pre class="lineno">15</pre><pre class="lineno">16</pre><pre class="lineno">17</pre></td><td class="code"><pre><span class="n">my_object</span> <span class="o">=</span> <span class="no">Object</span><span class="p">.</span><span class="nf">new</span>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17</pre></td><td class="code"><pre><span class="n">my_object</span> <span class="o">=</span> <span class="no">Object</span><span class="p">.</span><span class="nf">new</span>
 <span class="k">def</span> <span class="nc">my_object</span><span class="o">.</span><span class="nf">value1</span>
   <span class="s2">"I'm a value"</span>
 <span class="k">end</span>
@@ -173,24 +276,38 @@ JavaScript also uses camelCase for its variables, vs Ruby&rsquo;s snake case.</p
 <span class="n">my_object</span><span class="p">.</span><span class="nf">action</span> <span class="c1"># As above</span>
 <span class="n">my_object</span> <span class="o">==</span> <span class="n">my_object</span><span class="p">.</span><span class="nf">get_self</span> <span class="c1"># =&gt; true</span>
 
-</pre></td></tr></tbody></table></div>
+</pre></td></tr></tbody></table>
+</div>
+
 <h3>Properties in Ruby</h3>
 
 <p>One thing you&rsquo;ll notice is that Ruby has no concept of &lsquo;properties&rsquo; on objects. Everything in Ruby is responding to a message sent. Nothing is stopping you from adding new properties on an existing object in JavaScript.</p>
-<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">myObject</span> <span class="o">=</span> <span class="p">{};</span>
+<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">myObject</span> <span class="o">=</span> <span class="p">{};</span>
 <span class="nx">myObject</span><span class="p">.</span><span class="nx">value1</span> <span class="o">=</span> <span class="s2">"I'm a value"</span><span class="p">;</span>
 <span class="nx">myObject</span><span class="p">.</span><span class="nx">value1</span><span class="p">;</span>
-</pre></td></tr></tbody></table></div>
+</pre></td></tr></tbody></table>
+</div>
+
 <p>In Ruby, it would break.</p>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre></td><td class="code"><pre><span class="n">my_object</span> <span class="o">=</span> <span class="no">Object</span><span class="p">.</span><span class="nf">new</span>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2</pre></td><td class="code"><pre><span class="n">my_object</span> <span class="o">=</span> <span class="no">Object</span><span class="p">.</span><span class="nf">new</span>
 <span class="n">my_object</span><span class="p">.</span><span class="nf">value1</span> <span class="o">=</span> <span class="s2">"I'm a value"</span> <span class="c1"># =&gt; "NoMethodError"</span>
-</pre></td></tr></tbody></table></div>
+</pre></td></tr></tbody></table>
+</div>
+
 <p>They behave more like Ruby&rsquo;s OpenStruct class</p>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre></td><td class="code"><pre><span class="nb">require</span> <span class="s1">'ostruct'</span>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4</pre></td><td class="code"><pre><span class="nb">require</span> <span class="s1">'ostruct'</span>
 <span class="n">my_object</span> <span class="o">=</span> <span class="no">OpenStruct</span><span class="p">.</span><span class="nf">new</span>
 <span class="n">my_object</span><span class="p">.</span><span class="nf">value1</span> <span class="o">=</span> <span class="s2">"I'm a value"</span>
 <span class="n">my_object</span><span class="p">.</span><span class="nf">value1</span>
-</pre></td></tr></tbody></table></div>
+</pre></td></tr></tbody></table>
+</div>
+
 <h2>First Class Functions</h2>
 
 <p>What the hell does that even mean?</p>
@@ -202,7 +319,14 @@ JavaScript also uses camelCase for its variables, vs Ruby&rsquo;s snake case.</p
 <p>My post on <a href="/2014/04/13/closures.html">closures</a> shows that Ruby has passable functions in the form of lambdas, but it&rsquo;s used a lot more in JavaScript!!</p>
 
 <p>Look at this JavaScript code that takes a function, and returns a new function based on the return value of the former function.</p>
-<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre><pre class="lineno">8</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">poppaFunction</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">poppa</span><span class="p">){</span>
+<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">poppaFunction</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">poppa</span><span class="p">){</span>
   <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">){</span>
     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'Hello, '</span> <span class="o">+</span> <span class="nx">poppa</span> <span class="o">+</span> <span class="s2">"! "</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">);</span>
   <span class="p">}</span>
@@ -210,15 +334,24 @@ JavaScript also uses camelCase for its variables, vs Ruby&rsquo;s snake case.</p
 
 <span class="kd">var</span> <span class="nx">babyFunction</span> <span class="o">=</span> <span class="nx">poppaFunction</span><span class="p">(</span><span class="s2">"Big Papa"</span><span class="p">);</span>
 <span class="nx">babyFunction</span><span class="p">(</span><span class="s2">"Have a great night!"</span><span class="p">);</span>
-</pre></td></tr></tbody></table></div>
+</pre></td></tr></tbody></table>
+</div>
+
 <p>and the same in Ruby</p>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre></td><td class="code"><pre><span class="n">poppa_lambda</span> <span class="o">=</span> <span class="nb">lambda</span> <span class="k">do</span> <span class="o">|</span><span class="n">poppa</span><span class="o">|</span>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6</pre></td><td class="code"><pre><span class="n">poppa_lambda</span> <span class="o">=</span> <span class="nb">lambda</span> <span class="k">do</span> <span class="o">|</span><span class="n">poppa</span><span class="o">|</span>
   <span class="nb">lambda</span> <span class="p">{</span><span class="o">|</span><span class="n">msg</span><span class="o">|</span> <span class="nb">puts</span> <span class="s2">"Hello </span><span class="si">#{</span><span class="n">poppa</span><span class="si">}</span><span class="s2">! </span><span class="si">#{</span><span class="n">msg</span><span class="si">}</span><span class="s2">"</span><span class="p">}</span>
 <span class="k">end</span>
 
 <span class="n">baby_lambda</span> <span class="o">=</span> <span class="n">poppa_lambda</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="s2">"Big Papa"</span><span class="p">)</span>
 <span class="n">baby_lambda</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="s2">"Have a great night!"</span><span class="p">)</span>
-</pre></td></tr></tbody></table></div>
+</pre></td></tr></tbody></table>
+</div>
+
 <p>One important distinction is the the differences in return values. In JavaScript, functions <strong>must</strong> return a value, otherwise they return <code>undefined</code>. In ruby, the last executed line of a method/lambda/block is what&rsquo;s returned, unless you use and explicit <code>return</code>.</p>
 
 <h1>Differences</h1>
@@ -228,14 +361,22 @@ JavaScript also uses camelCase for its variables, vs Ruby&rsquo;s snake case.</p
 <h2><code>self</code> and <code>this</code></h2>
 
 <p>Ruby&rsquo;s rules for what changes self are pretty straight forward.</p>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre></td><td class="code"><pre><span class="k">class</span> <span class="nc">RubySelf</span>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7</pre></td><td class="code"><pre><span class="k">class</span> <span class="nc">RubySelf</span>
   <span class="nb">self</span> <span class="c1"># =&gt; RubySelf</span>
   <span class="k">def</span> <span class="nf">my_instance_method</span>
     <span class="nb">self</span> <span class="c1"># =&gt; the instance</span>
   <span class="k">end</span>
 <span class="k">end</span>
 <span class="nb">self</span> <span class="c1"># =&gt; main</span>
-</pre></td></tr></tbody></table></div>
+</pre></td></tr></tbody></table>
+</div>
+
 <p>That&rsquo;s pretty much it. There&rsquo;s also <a href="http://www.jimmycuadra.com/posts/metaprogramming-ruby-class-eval-and-instance-eval"><code>instance_eval</code> and <code>class_eval</code></a>. A topic for another time.</p>
 
 <p>In JavaScript it&rsquo;s not so simple.</p>
@@ -266,16 +407,35 @@ result === window // true OMG!!!
 <p><code>this</code> inside a regular function points to the root object. In browser that&rsquo;s <code>window</code>.</p>
 
 <p>Again, strict mode saves our butts here.</p>
-<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">myFunction</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
+<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">myFunction</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
   <span class="s1">'use strict'</span><span class="p">;</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="s2">"A value"</span><span class="p">;</span>
   <span class="k">return</span> <span class="k">this</span>
 <span class="p">};</span>
 
 <span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">myFunction</span><span class="p">();</span> <span class="c1">// TypeError: Cannot set property 'value' of undefined
-</span></pre></td></tr></tbody></table></div>
+</span></pre></td></tr></tbody></table>
+</div>
+
 <p>How about this one?</p>
-<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre><pre class="lineno">8</pre><pre class="lineno">9</pre><pre class="lineno">10</pre><pre class="lineno">11</pre><pre class="lineno">12</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">myObject</span> <span class="o">=</span> <span class="p">{</span>
+<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">myObject</span> <span class="o">=</span> <span class="p">{</span>
   <span class="na">collection</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span>
   <span class="na">iterate</span><span class="p">:</span> <span class="kd">function</span><span class="p">(){</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">collection</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">item</span><span class="p">){</span>
@@ -287,7 +447,9 @@ result === window // true OMG!!!
 <span class="nx">myObject</span><span class="p">.</span><span class="nx">collection</span><span class="p">;</span>
 <span class="nx">myObject</span><span class="p">.</span><span class="nx">iterate</span><span class="p">();</span> <span class="c1">// TypeError: Cannot read property 'push' of undefined
 </span><span class="nx">myObject</span><span class="p">.</span><span class="nx">collection</span><span class="p">;</span>
-</pre></td></tr></tbody></table></div>
+</pre></td></tr></tbody></table>
+</div>
+
 <p>This new function changed <code>this</code> back to the default <code>this</code>, the <code>window</code> in the case of the browser.</p>
 
 <p>In cases like this we have to keep track of our previous self in a variable. Usually this variable is named <code>_that</code> or <code>self</code>.
@@ -308,14 +470,34 @@ myObject.collection; // [1, 2, 3, 1, 4, 9]
 &ldquo;`</p>
 
 <p>Sharp viewers know <code>forEach</code> takes an optional argument for the object to stand in as <code>this</code>.</p>
-<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre></td><td class="code"><pre><span class="k">this</span><span class="p">.</span><span class="nx">collection</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">item</span><span class="p">){</span>
+<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3</pre></td><td class="code"><pre><span class="k">this</span><span class="p">.</span><span class="nx">collection</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">item</span><span class="p">){</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">collection</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">item</span> <span class="o">*</span> <span class="nx">item</span><span class="p">);</span> <span class="c1">// This gon break.
 </span><span class="p">},</span> <span class="k">this</span><span class="p">)</span> <span class="c1">// this this is the original this not that this. :-)
-</span></pre></td></tr></tbody></table></div>
+</span></pre></td></tr></tbody></table>
+</div>
+
 <h2>Equality</h2>
 
 <p>Ruby&rsquo;s equality testing has 2 forms: <code>==</code> and <code>===</code>. The <code>==</code> tests for equality as defined by the object.</p>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre><pre class="lineno">8</pre><pre class="lineno">9</pre><pre class="lineno">10</pre><pre class="lineno">11</pre><pre class="lineno">12</pre><pre class="lineno">13</pre><pre class="lineno">14</pre><pre class="lineno">15</pre><pre class="lineno">16</pre><pre class="lineno">17</pre></td><td class="code"><pre><span class="mi">5</span> <span class="o">==</span> <span class="mi">5</span>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17</pre></td><td class="code"><pre><span class="mi">5</span> <span class="o">==</span> <span class="mi">5</span>
 <span class="s2">"Steven"</span> <span class="o">==</span> <span class="s2">"Steven"</span>
 
 <span class="k">class</span> <span class="nc">MyObject</span>
@@ -332,23 +514,38 @@ myObject.collection; // [1, 2, 3, 1, 4, 9]
 <span class="n">obj1</span> <span class="o">=</span> <span class="no">MyObject</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"A plain object"</span><span class="p">)</span>
 <span class="n">obj2</span> <span class="o">=</span> <span class="no">MyObject</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"A plain object"</span><span class="p">)</span>
 <span class="n">obj1</span> <span class="o">==</span> <span class="n">obj2</span> <span class="c1"># =&gt; true</span>
-</pre></td></tr></tbody></table></div>
+</pre></td></tr></tbody></table>
+</div>
+
 <p>And Case equality, used for <code>case</code> statements. In a new object, <code>===</code> delegates to <code>==</code></p>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre></td><td class="code"><pre><span class="p">(</span><span class="mi">1</span><span class="p">.</span><span class="nf">.</span><span class="mi">10</span><span class="p">)</span> <span class="o">===</span> <span class="mi">5</span>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2</pre></td><td class="code"><pre><span class="p">(</span><span class="mi">1</span><span class="p">.</span><span class="nf">.</span><span class="mi">10</span><span class="p">)</span> <span class="o">===</span> <span class="mi">5</span>
 <span class="sr">/even/</span> <span class="o">===</span> <span class="s2">"Steven"</span>
-</pre></td></tr></tbody></table></div>
+</pre></td></tr></tbody></table>
+</div>
+
 <p>JavaScript has no way to override equality on objects. You CAN use equality on primitives like strings and numbers, but here lies the danger. This is from <a href="http://www.amazon.com/JavaScript-Good-Parts-Douglas-Crockford/dp/0596517742">&quot;JavaScript: The Good Parts&rdquo;</a></p>
-<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre></td><td class="code"><pre><span class="mi">0</span> <span class="o">==</span> <span class="s1">''</span> <span class="c1">// true
+<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4</pre></td><td class="code"><pre><span class="mi">0</span> <span class="o">==</span> <span class="s1">''</span> <span class="c1">// true
 </span><span class="kc">false</span> <span class="o">==</span> <span class="s1">'false'</span> <span class="c1">// false
 </span><span class="kc">false</span> <span class="o">==</span> <span class="s1">'0'</span> <span class="c1">// true
 </span><span class="kc">null</span> <span class="o">==</span> <span class="kc">undefined</span> <span class="c1">// true
-</span></pre></td></tr></tbody></table></div>
+</span></pre></td></tr></tbody></table>
+</div>
+
 <p><a href="https://www.destroyallsoftware.com/talks/wat">Wat</a>. The <code>==</code> in JavaScript tries to coerce or convert the things being compared to be the same type, which might sound helpful, but it&rsquo;s not. Use <code>===</code> and <code>!==</code> to ensure you&rsquo;re comparing type and value.</p>
-<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre></td><td class="code"><pre><span class="mi">0</span> <span class="o">===</span> <span class="s1">''</span> <span class="c1">// false
+<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4</pre></td><td class="code"><pre><span class="mi">0</span> <span class="o">===</span> <span class="s1">''</span> <span class="c1">// false
 </span><span class="kc">false</span> <span class="o">===</span> <span class="s1">'false'</span> <span class="c1">// false
 </span><span class="kc">false</span> <span class="o">===</span> <span class="s1">'0'</span> <span class="c1">// false
 </span><span class="kc">null</span> <span class="o">===</span> <span class="kc">undefined</span> <span class="c1">// false as it should be!
-</span></pre></td></tr></tbody></table></div>
+</span></pre></td></tr></tbody></table>
+</div>
+
 <p>Learning your first programming language is hard. I hope I&rsquo;ve shown you that learning your second one, isn&rsquo;t that bad.</p>
 
 <p>Happy Clacking!</p>
@@ -365,7 +562,14 @@ myObject.collection; // [1, 2, 3, 1, 4, 9]
 <h3>FizzBuzz</h3>
 
 <p>Let&rsquo;s look at what you need to know to solve something like <a href="http://en.wikipedia.org/wiki/Fizz_buzz">Fizz Buzz</a></p>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre><pre class="lineno">8</pre></td><td class="code"><pre><span class="n">fizz_buzz</span> <span class="o">=</span> <span class="o">-&gt;</span><span class="p">(</span><span class="n">number</span><span class="p">)</span> <span class="k">do</span> 
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8</pre></td><td class="code"><pre><span class="n">fizz_buzz</span> <span class="o">=</span> <span class="o">-&gt;</span><span class="p">(</span><span class="n">number</span><span class="p">)</span> <span class="k">do</span> 
     <span class="s2">"</span><span class="si">#{</span><span class="s1">'Fizz'</span> <span class="k">if</span> <span class="p">(</span><span class="n">number</span> <span class="sx">% 3).zero?}#{'Buzz' </span><span class="k">if</span> <span class="p">(</span><span class="n">number</span> <span class="o">%</span> <span class="mi">5</span><span class="p">).</span><span class="nf">zero?</span><span class="si">}</span><span class="s2">"</span>
 <span class="k">end</span>
 
@@ -373,7 +577,9 @@ myObject.collection; // [1, 2, 3, 1, 4, 9]
     <span class="n">result</span> <span class="o">=</span> <span class="n">fizz_buzz</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="n">num</span><span class="p">)</span> 
     <span class="nb">puts</span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="nf">empty?</span> <span class="p">?</span> <span class="n">num</span> <span class="p">:</span> <span class="n">result</span><span class="p">)</span>
 <span class="k">end</span>
-</pre></td></tr></tbody></table></div>
+</pre></td></tr></tbody></table>
+</div>
+
 <h4>Reading</h4>
 
 <p>To read this code you&rsquo;ll need to know that:</p>
@@ -495,7 +701,16 @@ meant. I just knew it was true! </p>
 
 <p>In JavaScript, you can&rsquo;t hide from closures though. If you&rsquo;re confronted with a
 piece of code like this, you&rsquo;ll need to understand closures:</p>
-<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre><pre class="lineno">8</pre><pre class="lineno">9</pre><pre class="lineno">10</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">step_by</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">step</span><span class="p">){</span>                                                       
+<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">step_by</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">step</span><span class="p">){</span>                                                       
   <span class="kd">var</span> <span class="nx">total</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>                                                                   
   <span class="k">return</span> <span class="kd">function</span><span class="p">(){</span>                                                               
     <span class="k">return</span> <span class="nx">total</span> <span class="o">+=</span> <span class="nx">step</span>                                                           
@@ -505,7 +720,9 @@ piece of code like this, you&rsquo;ll need to understand closures:</p>
 <span class="kd">var</span> <span class="nx">step_by_7</span> <span class="o">=</span> <span class="nx">step_by</span><span class="p">(</span><span class="mi">7</span><span class="p">);</span> 
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">step_by_7</span><span class="p">());</span> <span class="c1">// 7
 </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">step_by_7</span><span class="p">());</span> <span class="c1">// 14
-</span></pre></td></tr></tbody></table></div>
+</span></pre></td></tr></tbody></table>
+</div>
+
 <h3>What is a closure?</h3>
 
 <blockquote cite='http://speakingjs.com/es5/ch01.html#_closures'>A closure is a 
@@ -534,17 +751,31 @@ started devising some experiments.</p>
 few experiments.</p>
 
 <h3>Experiment 1</h3>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre></td><td class="code"><pre><span class="n">x</span> <span class="o">=</span> <span class="mi">5</span>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4</pre></td><td class="code"><pre><span class="n">x</span> <span class="o">=</span> <span class="mi">5</span>
 <span class="n">my_lambda</span> <span class="o">=</span> <span class="o">-&gt;</span> <span class="p">{</span> <span class="n">x</span> <span class="o">+=</span> <span class="mi">5</span> <span class="p">}</span>
 <span class="n">my_lambda</span><span class="p">.</span><span class="nf">call</span> <span class="c1">#=&gt; 10</span>
 <span class="n">my_lambda</span><span class="p">.</span><span class="nf">call</span> <span class="c1">#=&gt; 15</span>
-</pre></td></tr></tbody></table></div>
+</pre></td></tr></tbody></table>
+</div>
+
 <p>Cool. lambdas can call things around them. Setting the variable <code>x</code> and the
 lambda in the same scope allows you to call <code>x</code> from inside the lambda without
 passing it in. Let&rsquo;s try something else.</p>
 
 <h3>Experiment 2</h3>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre><pre class="lineno">8</pre><pre class="lineno">9</pre><pre class="lineno">10</pre></td><td class="code"><pre><span class="n">x</span> <span class="o">=</span> <span class="mi">5</span>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10</pre></td><td class="code"><pre><span class="n">x</span> <span class="o">=</span> <span class="mi">5</span>
 <span class="n">my_lambda</span> <span class="o">=</span> <span class="o">-&gt;</span> <span class="p">{</span> <span class="n">x</span> <span class="o">+=</span> <span class="mi">5</span> <span class="p">}</span>
 
 <span class="k">def</span> <span class="nf">my_method</span><span class="p">(</span><span class="n">closure</span><span class="p">)</span>
@@ -554,12 +785,30 @@ passing it in. Let&rsquo;s try something else.</p>
 
 <span class="n">my_method</span><span class="p">(</span><span class="n">my_lambda</span><span class="p">)</span> <span class="c1">#=&gt; 10</span>
 <span class="n">my_method</span><span class="p">(</span><span class="n">my_lambda</span><span class="p">)</span> <span class="c1">#=&gt; 15</span>
-</pre></td></tr></tbody></table></div>
+</pre></td></tr></tbody></table>
+</div>
+
 <p>WHOA! It totally ignored the <code>x</code> defined in the method! Now I started
 connecting dots. That&rsquo;s why stuff like <code>instance_eval</code> exists. If we want to
 change the context of execution for the block to be the method&rsquo;s, we&rsquo;ll need to
 use <code>instance_eval</code> and pass it the block.</p>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre><pre class="lineno">8</pre><pre class="lineno">9</pre><pre class="lineno">10</pre><pre class="lineno">11</pre><pre class="lineno">12</pre><pre class="lineno">13</pre><pre class="lineno">14</pre><pre class="lineno">15</pre><pre class="lineno">16</pre><pre class="lineno">17</pre></td><td class="code"><pre><span class="n">x</span> <span class="o">=</span> <span class="mi">5</span>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17</pre></td><td class="code"><pre><span class="n">x</span> <span class="o">=</span> <span class="mi">5</span>
 <span class="n">my_lambda</span> <span class="o">=</span> <span class="o">-&gt;</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="p">{</span> <span class="n">obj</span><span class="p">.</span><span class="nf">x</span> <span class="o">+=</span> <span class="mi">5</span> <span class="p">}</span>
 
 <span class="k">class</span> <span class="nc">MyClass</span>
@@ -576,7 +825,9 @@ use <code>instance_eval</code> and pass it the block.</p>
 <span class="n">my_class</span> <span class="o">=</span> <span class="no">MyClass</span><span class="p">.</span><span class="nf">new</span>
 <span class="n">my_class</span><span class="p">.</span><span class="nf">my_method</span><span class="p">(</span><span class="n">my_lambda</span><span class="p">)</span> <span class="c1">#=&gt; 371297</span>
 <span class="n">my_class</span><span class="p">.</span><span class="nf">my_method</span><span class="p">(</span><span class="n">my_lambda</span><span class="p">)</span> <span class="c1">#=&gt; 371302</span>
-</pre></td></tr></tbody></table></div>
+</pre></td></tr></tbody></table>
+</div>
+
 <p><code>instance_eval</code> yields <code>self</code> to the lambda. Since <code>x += 5</code> is short hand for 
 <code>x = x + 5</code> we needed an accessor.</p>
 
@@ -586,7 +837,24 @@ use <code>instance_eval</code> and pass it the block.</p>
 didn&rsquo;t really bloom in ruby, but found a home in JavaScript.</p>
 
 <p>The code from earlier is crystal clear now.</p>
-<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre><pre class="lineno">8</pre><pre class="lineno">9</pre><pre class="lineno">10</pre><pre class="lineno">11</pre><pre class="lineno">12</pre><pre class="lineno">13</pre><pre class="lineno">14</pre><pre class="lineno">15</pre><pre class="lineno">16</pre><pre class="lineno">17</pre><pre class="lineno">18</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">step_by</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">step</span><span class="p">){</span>                                                       
+<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">step_by</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">step</span><span class="p">){</span>                                                       
   <span class="c1">// setup empty total value. This gets reset everytime you call the step_by
 </span>  <span class="c1">// function
 </span>  <span class="kd">var</span> <span class="nx">total</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>                                                                   
@@ -604,20 +872,42 @@ didn&rsquo;t really bloom in ruby, but found a home in JavaScript.</p>
 <span class="kd">var</span> <span class="nx">step_by_5</span> <span class="o">=</span> <span class="nx">step_by</span><span class="p">(</span><span class="mi">5</span><span class="p">);</span> 
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">step_by_5</span><span class="p">());</span> <span class="c1">// 5
 </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">step_by_5</span><span class="p">());</span> <span class="c1">// 10
-</span></pre></td></tr></tbody></table></div>
+</span></pre></td></tr></tbody></table>
+</div>
+
 <p>Each returned function has its own copy of <code>total</code> so you could do something
 like this and they won&rsquo;t interfere with each other:</p>
-<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">step_by_7</span> <span class="o">=</span> <span class="nx">step_by</span><span class="p">(</span><span class="mi">7</span><span class="p">);</span> 
+<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">step_by_7</span> <span class="o">=</span> <span class="nx">step_by</span><span class="p">(</span><span class="mi">7</span><span class="p">);</span> 
 <span class="kd">var</span> <span class="nx">step_by_5</span> <span class="o">=</span> <span class="nx">step_by</span><span class="p">(</span><span class="mi">5</span><span class="p">);</span> 
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">step_by_7</span><span class="p">());</span> <span class="c1">// 7
 </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">step_by_5</span><span class="p">());</span> <span class="c1">// 5
 </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">step_by_7</span><span class="p">());</span> <span class="c1">// 14
 </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">step_by_5</span><span class="p">());</span> <span class="c1">// 10
-</span></pre></td></tr></tbody></table></div>
+</span></pre></td></tr></tbody></table>
+</div>
+
 <h2>For the curious</h2>
 
 <p>Here&rsquo;s the same code in ruby</p>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre><pre class="lineno">8</pre><pre class="lineno">9</pre><pre class="lineno">10</pre><pre class="lineno">11</pre><pre class="lineno">12</pre><pre class="lineno">13</pre><pre class="lineno">14</pre></td><td class="code"><pre><span class="n">step_by</span> <span class="o">=</span> <span class="o">-&gt;</span><span class="p">(</span><span class="n">step</span><span class="p">)</span> <span class="k">do</span>                                                           
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14</pre></td><td class="code"><pre><span class="n">step_by</span> <span class="o">=</span> <span class="o">-&gt;</span><span class="p">(</span><span class="n">step</span><span class="p">)</span> <span class="k">do</span>                                                           
   <span class="n">total</span> <span class="o">=</span> <span class="mi">0</span>                                                                     
   <span class="o">-&gt;</span> <span class="p">{</span> <span class="n">total</span> <span class="o">+=</span> <span class="n">step</span> <span class="p">}</span>                                                          
 <span class="k">end</span>                                                                             
@@ -631,7 +921,9 @@ like this and they won&rsquo;t interfere with each other:</p>
 <span class="nb">puts</span> <span class="n">step_by_5</span><span class="p">.</span><span class="nf">call</span> <span class="c1">#=&gt; 5                                                       </span>
 <span class="nb">puts</span> <span class="n">step_by_5</span><span class="p">.</span><span class="nf">call</span> <span class="c1">#=&gt; 10                                                      </span>
 <span class="nb">puts</span> <span class="n">step_by_5</span><span class="p">.</span><span class="nf">call</span> <span class="c1">#=&gt; 15 </span>
-</pre></td></tr></tbody></table></div>
+</pre></td></tr></tbody></table>
+</div>
+
 <p>Currying would work in this case too, but that&rsquo;s another blog post&hellip;</p>
 
 <h2>Conclusion</h2>
@@ -656,31 +948,52 @@ into this recently when working with nested routes.</p>
 While working on a Progress Dashboard I came across this code for creating nested routes. WALL OF CODE COMING.</p>
 
 <h3>In my routes file</h3>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre></td><td class="code"><pre><span class="n">resources</span> <span class="ss">:dashboards</span><span class="p">,</span> <span class="ss">only: </span><span class="o">[</span><span class="ss">:show</span><span class="p">,</span> <span class="ss">:index</span><span class="o">]</span> <span class="k">do</span>
-  <span class="n">resources</span> <span class="ss">:assignments</span><span class="p">,</span> <span class="ss">only: </span><span class="o">[</span><span class="ss">:show</span><span class="o">]</span>
-  <span class="n">resources</span> <span class="ss">:students</span><span class="p">,</span> <span class="ss">only: </span><span class="o">[</span><span class="ss">:index</span><span class="p">,</span> <span class="ss">:show</span><span class="o">]</span>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4</pre></td><td class="code"><pre><span class="n">resources</span> <span class="ss">:dashboards</span><span class="p">,</span> <span class="ss">only: </span><span class="p">[</span><span class="ss">:show</span><span class="p">,</span> <span class="ss">:index</span><span class="p">]</span> <span class="k">do</span>
+  <span class="n">resources</span> <span class="ss">:assignments</span><span class="p">,</span> <span class="ss">only: </span><span class="p">[</span><span class="ss">:show</span><span class="p">]</span>
+  <span class="n">resources</span> <span class="ss">:students</span><span class="p">,</span> <span class="ss">only: </span><span class="p">[</span><span class="ss">:index</span><span class="p">,</span> <span class="ss">:show</span><span class="p">]</span>
 <span class="k">end</span>
-</pre></td></tr></tbody></table></div>
+</pre></td></tr></tbody></table>
+</div>
+
 <h3>Generated routes</h3>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre></td><td class="code"><pre><span class="n">dashboard_assignment</span> <span class="no">GET</span>        <span class="sr">/dashboards/</span><span class="ss">:dashboard_id</span><span class="o">/</span><span class="n">assignments</span><span class="o">/</span><span class="ss">:id</span><span class="p">(</span><span class="o">.</span><span class="ss">:format</span><span class="p">)</span> <span class="n">assignments</span><span class="c1">#show</span>
-  <span class="n">dashboard_students</span> <span class="no">GET</span>        <span class="sr">/dashboards/</span><span class="ss">:dashboard_id</span><span class="o">/</span><span class="n">students</span><span class="p">(</span><span class="o">.</span><span class="ss">:format</span><span class="p">)</span>        <span class="n">students</span><span class="c1">#index</span>
-   <span class="n">dashboard_student</span> <span class="no">GET</span>        <span class="sr">/dashboards/</span><span class="ss">:dashboard_id</span><span class="o">/</span><span class="n">students</span><span class="o">/</span><span class="ss">:id</span><span class="p">(</span><span class="o">.</span><span class="ss">:format</span><span class="p">)</span>    <span class="n">students</span><span class="c1">#show</span>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5</pre></td><td class="code"><pre><span class="n">dashboard_assignment</span> <span class="no">GET</span>        <span class="sr">/dashboards/</span><span class="p">:</span><span class="n">dashboard_id</span><span class="o">/</span><span class="n">assignments</span><span class="o">/</span><span class="ss">:id</span><span class="p">(</span><span class="o">.</span><span class="ss">:format</span><span class="p">)</span> <span class="n">assignments</span><span class="c1">#show</span>
+  <span class="n">dashboard_students</span> <span class="no">GET</span>        <span class="sr">/dashboards/</span><span class="p">:</span><span class="n">dashboard_id</span><span class="o">/</span><span class="n">students</span><span class="p">(</span><span class="o">.</span><span class="ss">:format</span><span class="p">)</span>        <span class="n">students</span><span class="c1">#index</span>
+   <span class="n">dashboard_student</span> <span class="no">GET</span>        <span class="sr">/dashboards/</span><span class="p">:</span><span class="n">dashboard_id</span><span class="o">/</span><span class="n">students</span><span class="o">/</span><span class="ss">:id</span><span class="p">(</span><span class="o">.</span><span class="ss">:format</span><span class="p">)</span>    <span class="n">students</span><span class="c1">#show</span>
           <span class="n">dashboards</span> <span class="no">GET</span>        <span class="sr">/dashboards(.:format)                               dashboards#index
            dashboard GET        /</span><span class="n">dashboards</span><span class="o">/</span><span class="ss">:id</span><span class="p">(</span><span class="o">.</span><span class="ss">:format</span><span class="p">)</span>                           <span class="n">dashboards</span><span class="c1">#show</span>
-</pre></td></tr></tbody></table></div>
+</pre></td></tr></tbody></table>
+</div>
+
 <h3>Controller action</h3>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre></td><td class="code"><pre><span class="k">def</span> <span class="nf">show</span>
-  <span class="vi">@student_group</span> <span class="o">=</span> <span class="no">StudentGroup</span><span class="p">.</span><span class="nf">find_by</span><span class="p">(</span><span class="nb">name</span><span class="p">:</span> <span class="n">params</span><span class="o">[</span><span class="ss">:id</span><span class="o">]</span><span class="p">)</span>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4</pre></td><td class="code"><pre><span class="k">def</span> <span class="nf">show</span>
+  <span class="vi">@student_group</span> <span class="o">=</span> <span class="no">StudentGroup</span><span class="p">.</span><span class="nf">find_by</span><span class="p">(</span><span class="ss">name: </span><span class="n">params</span><span class="p">[</span><span class="ss">:id</span><span class="p">])</span>
   <span class="vi">@assignments</span> <span class="o">=</span> <span class="vi">@student_group</span><span class="p">.</span><span class="nf">assignments</span><span class="p">.</span><span class="nf">order</span><span class="p">(</span><span class="s1">'created_at ASC'</span><span class="p">)</span>
 <span class="k">end</span>
-</pre></td></tr></tbody></table></div>
+</pre></td></tr></tbody></table>
+</div>
+
 <p>The problem was in an miscommunication between my routes and my controller. I was asking for the :id parameter, but was
 fetching the :name from the database. This became even MORE apparent when I worked on the nested controllers.</p>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre></td><td class="code"><pre><span class="k">def</span> <span class="nf">show</span>
-  <span class="vi">@student_group</span> <span class="o">=</span> <span class="no">StudentGroup</span><span class="p">.</span><span class="nf">find_by</span> <span class="nb">name</span><span class="p">:</span> <span class="n">params</span><span class="o">[</span><span class="ss">:dashboard_id</span><span class="o">]</span>
-  <span class="vi">@assignment</span> <span class="o">=</span> <span class="no">Assignment</span><span class="p">.</span><span class="nf">find</span> <span class="n">params</span><span class="o">[</span><span class="ss">:id</span><span class="o">]</span>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4</pre></td><td class="code"><pre><span class="k">def</span> <span class="nf">show</span>
+  <span class="vi">@student_group</span> <span class="o">=</span> <span class="no">StudentGroup</span><span class="p">.</span><span class="nf">find_by</span> <span class="ss">name: </span><span class="n">params</span><span class="p">[</span><span class="ss">:dashboard_id</span><span class="p">]</span>
+  <span class="vi">@assignment</span> <span class="o">=</span> <span class="no">Assignment</span><span class="p">.</span><span class="nf">find</span> <span class="n">params</span><span class="p">[</span><span class="ss">:id</span><span class="p">]</span>
 <span class="k">end</span>
-</pre></td></tr></tbody></table></div>
+</pre></td></tr></tbody></table>
+</div>
+
 <p>There had to be a way to change that parameter to something better. Did the framework betray me?! Off to the docs</p>
 
 <h1>The Docs</h1>
@@ -692,54 +1005,93 @@ and searched. and found NOTHING! Time to go code diving :-)</p>
 
 <p>My preferred method of diving through code is using Rubymine&rsquo;s Command + B feature. I knew I needed to pass some param to
 resources in my routes file so I started there.</p>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre><pre class="lineno">8</pre></td><td class="code"><pre> <span class="k">def</span> <span class="nf">resources</span><span class="p">(</span><span class="o">*</span><span class="n">resources</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8</pre></td><td class="code"><pre> <span class="k">def</span> <span class="nf">resources</span><span class="p">(</span><span class="o">*</span><span class="n">resources</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
   <span class="n">options</span> <span class="o">=</span> <span class="n">resources</span><span class="p">.</span><span class="nf">extract_options!</span><span class="p">.</span><span class="nf">dup</span>
-  <span class="p">.</span><span class="nf">.</span><span class="o">.</span>
-  <span class="n">resource_scope</span><span class="p">(</span><span class="ss">:resources</span><span class="p">,</span> <span class="no">Resource</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">resources</span><span class="p">.</span><span class="nf">pop</span><span class="p">,</span> <span class="n">options</span><span class="p">))</span> <span class="k">do</span>
-    <span class="p">.</span><span class="nf">.</span><span class="o">.</span>
-  <span class="k">end</span>
-  <span class="p">.</span><span class="nf">.</span><span class="o">.</span>
-<span class="k">end</span>
-</pre></td></tr></tbody></table></div>
+  <span class="p">.</span><span class="nf">.</span><span class="p">.</span>
+  <span class="nf">resource_scope</span><span class="p">(</span><span class="ss">:resources</span><span class="p">,</span> <span class="no">Resource</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">resources</span><span class="p">.</span><span class="nf">pop</span><span class="p">,</span> <span class="n">options</span><span class="p">))</span> <span class="k">do</span>
+    <span class="p">.</span><span class="nf">.</span><span class="p">.</span>
+  <span class="nf">end</span>
+  <span class="p">.</span><span class="nf">.</span><span class="p">.</span>
+<span class="nf">end</span>
+</pre></td></tr></tbody></table>
+</div>
+
 <p>Here I noticed we were creating a new Instance of the resource class with the options we passed in.</p>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre><pre class="lineno">8</pre><pre class="lineno">9</pre><pre class="lineno">10</pre><pre class="lineno">11</pre><pre class="lineno">12</pre><pre class="lineno">13</pre></td><td class="code"><pre><span class="k">class</span> <span class="nc">Resource</span> <span class="c1">#:nodoc:</span>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13</pre></td><td class="code"><pre><span class="k">class</span> <span class="nc">Resource</span> <span class="c1">#:nodoc:</span>
   <span class="kp">attr_reader</span> <span class="ss">:controller</span><span class="p">,</span> <span class="ss">:path</span><span class="p">,</span> <span class="ss">:options</span><span class="p">,</span> <span class="ss">:param</span>
 
   <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">entities</span><span class="p">,</span> <span class="n">options</span> <span class="o">=</span> <span class="p">{})</span>
     <span class="vi">@name</span>       <span class="o">=</span> <span class="n">entities</span><span class="p">.</span><span class="nf">to_s</span>
-    <span class="vi">@path</span>       <span class="o">=</span> <span class="p">(</span><span class="n">options</span><span class="o">[</span><span class="ss">:path</span><span class="o">]</span> <span class="o">||</span> <span class="vi">@name</span><span class="p">).</span><span class="nf">to_s</span>
-    <span class="vi">@controller</span> <span class="o">=</span> <span class="p">(</span><span class="n">options</span><span class="o">[</span><span class="ss">:controller</span><span class="o">]</span> <span class="o">||</span> <span class="vi">@name</span><span class="p">).</span><span class="nf">to_s</span>
-    <span class="vi">@as</span>         <span class="o">=</span> <span class="n">options</span><span class="o">[</span><span class="ss">:as</span><span class="o">]</span>
-    <span class="vi">@param</span>      <span class="o">=</span> <span class="p">(</span><span class="n">options</span><span class="o">[</span><span class="ss">:param</span><span class="o">]</span> <span class="o">||</span> <span class="ss">:id</span><span class="p">).</span><span class="nf">to_sym</span>
+    <span class="vi">@path</span>       <span class="o">=</span> <span class="p">(</span><span class="n">options</span><span class="p">[</span><span class="ss">:path</span><span class="p">]</span> <span class="o">||</span> <span class="vi">@name</span><span class="p">).</span><span class="nf">to_s</span>
+    <span class="vi">@controller</span> <span class="o">=</span> <span class="p">(</span><span class="n">options</span><span class="p">[</span><span class="ss">:controller</span><span class="p">]</span> <span class="o">||</span> <span class="vi">@name</span><span class="p">).</span><span class="nf">to_s</span>
+    <span class="vi">@as</span>         <span class="o">=</span> <span class="n">options</span><span class="p">[</span><span class="ss">:as</span><span class="p">]</span>
+    <span class="vi">@param</span>      <span class="o">=</span> <span class="p">(</span><span class="n">options</span><span class="p">[</span><span class="ss">:param</span><span class="p">]</span> <span class="o">||</span> <span class="ss">:id</span><span class="p">).</span><span class="nf">to_sym</span>
     <span class="vi">@options</span>    <span class="o">=</span> <span class="n">options</span>
   <span class="k">end</span>
-  <span class="p">.</span><span class="nf">.</span><span class="o">.</span>
-<span class="k">end</span>
-</pre></td></tr></tbody></table></div>
+  <span class="p">.</span><span class="nf">.</span><span class="p">.</span>
+<span class="nf">end</span>
+</pre></td></tr></tbody></table>
+</div>
+
 <p>LOOK AT THAT! You can pass in :param to the the resource declaration!</p>
 
 <h1>The solution</h1>
 
 <p>Back in our routes file, we add the param option to the resource.</p>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre></td><td class="code"><pre><span class="n">resources</span> <span class="ss">:dashboards</span><span class="p">,</span> <span class="ss">only: </span><span class="o">[</span><span class="ss">:show</span><span class="p">,</span> <span class="ss">:index</span><span class="o">]</span><span class="p">,</span> <span class="ss">param: :name</span> <span class="k">do</span>
-  <span class="n">resources</span> <span class="ss">:assignments</span><span class="p">,</span> <span class="ss">only: </span><span class="o">[</span><span class="ss">:show</span><span class="o">]</span>
-  <span class="n">resources</span> <span class="ss">:students</span><span class="p">,</span> <span class="ss">only: </span><span class="o">[</span><span class="ss">:index</span><span class="p">,</span> <span class="ss">:show</span><span class="o">]</span>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4</pre></td><td class="code"><pre><span class="n">resources</span> <span class="ss">:dashboards</span><span class="p">,</span> <span class="ss">only: </span><span class="p">[</span><span class="ss">:show</span><span class="p">,</span> <span class="ss">:index</span><span class="p">],</span> <span class="ss">param: :name</span> <span class="k">do</span>
+  <span class="n">resources</span> <span class="ss">:assignments</span><span class="p">,</span> <span class="ss">only: </span><span class="p">[</span><span class="ss">:show</span><span class="p">]</span>
+  <span class="n">resources</span> <span class="ss">:students</span><span class="p">,</span> <span class="ss">only: </span><span class="p">[</span><span class="ss">:index</span><span class="p">,</span> <span class="ss">:show</span><span class="p">]</span>
 <span class="k">end</span>
-</pre></td></tr></tbody></table></div>
+</pre></td></tr></tbody></table>
+</div>
+
 <p>This generates these routes:</p>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre></td><td class="code"><pre><span class="n">dashboard_assignment</span> <span class="no">GET</span>        <span class="sr">/dashboards/</span><span class="ss">:dashboard_name</span><span class="o">/</span><span class="n">assignments</span><span class="o">/</span><span class="ss">:id</span><span class="p">(</span><span class="o">.</span><span class="ss">:format</span><span class="p">)</span> <span class="n">assignments</span><span class="c1">#show</span>
-  <span class="n">dashboard_students</span> <span class="no">GET</span>        <span class="sr">/dashboards/</span><span class="ss">:dashboard_name</span><span class="o">/</span><span class="n">students</span><span class="p">(</span><span class="o">.</span><span class="ss">:format</span><span class="p">)</span>        <span class="n">students</span><span class="c1">#index</span>
-   <span class="n">dashboard_student</span> <span class="no">GET</span>        <span class="sr">/dashboards/</span><span class="ss">:dashboard_name</span><span class="o">/</span><span class="n">students</span><span class="o">/</span><span class="ss">:id</span><span class="p">(</span><span class="o">.</span><span class="ss">:format</span><span class="p">)</span>    <span class="n">students</span><span class="c1">#show</span>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5</pre></td><td class="code"><pre><span class="n">dashboard_assignment</span> <span class="no">GET</span>        <span class="sr">/dashboards/</span><span class="p">:</span><span class="n">dashboard_name</span><span class="o">/</span><span class="n">assignments</span><span class="o">/</span><span class="ss">:id</span><span class="p">(</span><span class="o">.</span><span class="ss">:format</span><span class="p">)</span> <span class="n">assignments</span><span class="c1">#show</span>
+  <span class="n">dashboard_students</span> <span class="no">GET</span>        <span class="sr">/dashboards/</span><span class="p">:</span><span class="n">dashboard_name</span><span class="o">/</span><span class="n">students</span><span class="p">(</span><span class="o">.</span><span class="ss">:format</span><span class="p">)</span>        <span class="n">students</span><span class="c1">#index</span>
+   <span class="n">dashboard_student</span> <span class="no">GET</span>        <span class="sr">/dashboards/</span><span class="p">:</span><span class="n">dashboard_name</span><span class="o">/</span><span class="n">students</span><span class="o">/</span><span class="ss">:id</span><span class="p">(</span><span class="o">.</span><span class="ss">:format</span><span class="p">)</span>    <span class="n">students</span><span class="c1">#show</span>
           <span class="n">dashboards</span> <span class="no">GET</span>        <span class="sr">/dashboards(.:format)                                 dashboards#index
            dashboard GET        /</span><span class="n">dashboards</span><span class="o">/</span><span class="ss">:name</span><span class="p">(</span><span class="o">.</span><span class="ss">:format</span><span class="p">)</span>                           <span class="n">dashboards</span><span class="c1">#show</span>
-</pre></td></tr></tbody></table></div>
+</pre></td></tr></tbody></table>
+</div>
+
 <p>And in our controllers:</p>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre></td><td class="code"><pre><span class="k">def</span> <span class="nf">show</span>
-  <span class="vi">@student_group</span> <span class="o">=</span> <span class="no">StudentGroup</span><span class="p">.</span><span class="nf">find_by</span> <span class="nb">name</span><span class="p">:</span> <span class="n">params</span><span class="o">[</span><span class="ss">:dashboard_name</span><span class="o">]</span>
-  <span class="vi">@assignment</span> <span class="o">=</span> <span class="no">Assignment</span><span class="p">.</span><span class="nf">find</span> <span class="n">params</span><span class="o">[</span><span class="ss">:id</span><span class="o">]</span>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4</pre></td><td class="code"><pre><span class="k">def</span> <span class="nf">show</span>
+  <span class="vi">@student_group</span> <span class="o">=</span> <span class="no">StudentGroup</span><span class="p">.</span><span class="nf">find_by</span> <span class="ss">name: </span><span class="n">params</span><span class="p">[</span><span class="ss">:dashboard_name</span><span class="p">]</span>
+  <span class="vi">@assignment</span> <span class="o">=</span> <span class="no">Assignment</span><span class="p">.</span><span class="nf">find</span> <span class="n">params</span><span class="p">[</span><span class="ss">:id</span><span class="p">]</span>
 <span class="k">end</span>
-</pre></td></tr></tbody></table></div>
-<p>So much better! I hope you found this useful. It was definitely fund to figure out.</p>
+</pre></td></tr></tbody></table>
+</div>
+
+<p>So much better! I hope you found this useful. It was definitely fun to figure out.</p>
 
     </article>
     <article>
@@ -750,7 +1102,9 @@ resources in my routes file so I started there.</p>
 
 <p>Let&rsquo;s say I&rsquo;m typing this obscenely long line of bash:</p>
 <div class="highlight shell"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre></td><td class="code"><pre>cat ~/schol/GA/BEWD_Curriculum/01_Dev_Workflow/README.md| grep -i git
-</pre></td></tr></tbody></table></div>
+</pre></td></tr></tbody></table>
+</div>
+
 <p>Oh NO! I&rsquo;ve misspelled <code>school</code>. Here we go: backspace backspace backspace… 59 backspaces! Even if you didn&rsquo;t erase it and just used left, it&rsquo;s still going to take a while.</p>
 
 <p>That&rsquo;s crazy. Let&rsquo;s try another way.</p>
@@ -777,7 +1131,33 @@ resources in my routes file so I started there.</p>
 <p>A lot of these things work in your editor of choice. A lot of developers use <a href="http://www.sublimetext.com/2">Sublime Text</a>. </p>
 
 <p>Let&rsquo;s look at getting around a small ruby file. It&rsquo;s from my <a href="https://github.com/StevenNunez/slide_hero">slide_hero gem</a>. Don&rsquo;t worry too much about what it does.</p>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre><pre class="lineno">2</pre><pre class="lineno">3</pre><pre class="lineno">4</pre><pre class="lineno">5</pre><pre class="lineno">6</pre><pre class="lineno">7</pre><pre class="lineno">8</pre><pre class="lineno">9</pre><pre class="lineno">10</pre><pre class="lineno">11</pre><pre class="lineno">12</pre><pre class="lineno">13</pre><pre class="lineno">14</pre><pre class="lineno">15</pre><pre class="lineno">16</pre><pre class="lineno">17</pre><pre class="lineno">18</pre><pre class="lineno">19</pre><pre class="lineno">20</pre><pre class="lineno">21</pre><pre class="lineno">22</pre><pre class="lineno">23</pre><pre class="lineno">24</pre><pre class="lineno">25</pre><pre class="lineno">26</pre><pre class="lineno">27</pre></td><td class="code"><pre><span class="k">module</span> <span class="nn">SlideHero</span>                                                                   
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27</pre></td><td class="code"><pre><span class="k">module</span> <span class="nn">SlideHero</span>                                                                   
   <span class="k">class</span> <span class="nc">Point</span>                                                                      
     <span class="kp">attr_reader</span> <span class="ss">:text</span>                                                              
     <span class="no">SUPPORTED_ANIMATIONS</span> <span class="o">=</span> <span class="sx">%w{grow shrink roll-in fade-out                         
@@ -804,7 +1184,9 @@ resources in my routes file so I started there.</p>
     <span class="k">end</span>                                                                            
   <span class="k">end</span>                                                                              
 <span class="k">end</span>                        
-</pre></td></tr></tbody></table></div>
+</pre></td></tr></tbody></table>
+</div>
+
 <p>Let&rsquo;s say I want to jump to add another method (<code>def animation</code> is me defining a method). Since the editor usually opens at the top of the file, I&rsquo;ll have to press down 16 times or worse, USE MY MOUSE!  Looking at Sublime Text&rsquo;s <code>Goto</code> menu, I see ^G will let me specify what line to go to. Cool! Ok, well now I&rsquo;m on the line with <code>private</code> and need to get <em>after</em> it to enter my new method. We can use one of our old buddies <code>⌥+right</code> here! OK, <code>⌥+right</code>, <code>enter</code>, start typing!</p>
 
 <p>If you&rsquo;re planning on using Sublime Text, be sure to learn the <a href="http://docs.sublimetext.info/en/latest/reference/keyboard_shortcuts_osx.html">keyboard shortcuts!</a>. They&rsquo;re there because of you! Use them and be awesome.</p>
