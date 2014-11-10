@@ -14,7 +14,7 @@
     <link rel="alternate" href="http://blog.url.com/2014/05/18/using-ruby-to-learn-javascript.html"/>
     <id>http://blog.url.com/2014/05/18/using-ruby-to-learn-javascript.html</id>
     <published>2014-05-18T20:16:00Z</published>
-    <updated>2014-07-14T19:30:14-04:00</updated>
+    <updated>2014-11-10T13:49:06-05:00</updated>
     <author>
       <name>Article Author</name>
     </author>
@@ -385,7 +385,7 @@ var myObject = {
 &amp;rdquo;`&lt;/p&gt;
 
 &lt;p&gt;But what about here?
-&amp;ldquo;` javascript
+&amp;ldquo;`javascript
 var myFunction = function(){
   this.value = &amp;quot;A value&amp;rdquo;;
   return this
@@ -548,7 +548,7 @@ myObject.collection; // [1, 2, 3, 1, 4, 9]
     <link rel="alternate" href="http://blog.url.com/2014/04/26/on-why-learning-to-program-is-hard.html"/>
     <id>http://blog.url.com/2014/04/26/on-why-learning-to-program-is-hard.html</id>
     <published>2014-04-26T20:22:00Z</published>
-    <updated>2014-04-26T20:24:11-04:00</updated>
+    <updated>2014-11-10T13:49:06-05:00</updated>
     <author>
       <name>Article Author</name>
     </author>
@@ -669,7 +669,7 @@ The good news is you can can get better at each component separately.&lt;/p&gt;
     <link rel="alternate" href="http://blog.url.com/2014/04/13/closures.html"/>
     <id>http://blog.url.com/2014/04/13/closures.html</id>
     <published>2014-04-13T18:20:00Z</published>
-    <updated>2014-04-26T20:24:11-04:00</updated>
+    <updated>2014-11-10T13:49:06-05:00</updated>
     <author>
       <name>Article Author</name>
     </author>
@@ -947,7 +947,7 @@ about it I&amp;rsquo;m excited to explore.&lt;/p&gt;
     <link rel="alternate" href="http://blog.url.com/2014/02/15/custom-params-in-route-resources.html"/>
     <id>http://blog.url.com/2014/02/15/custom-params-in-route-resources.html</id>
     <published>2014-02-15T21:09:00Z</published>
-    <updated>2014-08-11T19:29:48-04:00</updated>
+    <updated>2014-11-10T13:49:06-05:00</updated>
     <author>
       <name>Article Author</name>
     </author>
@@ -1112,7 +1112,7 @@ resources in my routes file so I started there.&lt;/p&gt;
     <link rel="alternate" href="http://blog.url.com/2013/10/19/keyboard-navigation.html"/>
     <id>http://blog.url.com/2013/10/19/keyboard-navigation.html</id>
     <published>2013-10-19T10:59:00Z</published>
-    <updated>2014-04-26T20:24:11-04:00</updated>
+    <updated>2014-11-10T13:49:06-05:00</updated>
     <author>
       <name>Article Author</name>
     </author>
