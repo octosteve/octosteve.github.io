@@ -264,6 +264,7 @@ That's pretty much it. There's also [`instance_eval` and `class_eval`](http://ww
 In JavaScript it's not so simple.
 
 We've seen that `this` points to current object inside an object.
+
 ```javascript
 var myObject = {
   getThis: function(){
@@ -275,6 +276,7 @@ myObject === myObject.getThis(); // true
 ```
 
 But what about here?
+
 ```javascript
 var myFunction = function(){
   this.value = "A value";
@@ -320,6 +322,7 @@ myObject.collection;
 This new function changed `this` back to the default `this`, the `window` in the case of the browser.
 
 In cases like this we have to keep track of our previous self in a variable. Usually this variable is named `_that` or `self`.
+
 ```javascript
 var myObject = {
   collection: [1,2,3],
