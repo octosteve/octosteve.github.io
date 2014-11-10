@@ -218,7 +218,7 @@ My post on [closures](2014-04-13-closures.html) shows that Ruby has passable fun
 
 Look at this JavaScript code that takes a function, and returns a new function based on the return value of the former function.
 
-```javascript
+``` javascript
 var poppaFunction = function(poppa){
   return function(msg){
     console.log('Hello, ' + poppa + "! " + msg);
@@ -275,7 +275,7 @@ myObject === myObject.getThis(); // true
 ```
 
 But what about here?
-``` javascript
+```javascript
 var myFunction = function(){
   this.value = "A value";
   return this

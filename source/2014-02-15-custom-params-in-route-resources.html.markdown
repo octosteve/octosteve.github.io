@@ -121,4 +121,4 @@ def show
 end
 ```
 
-So much better! I hope you found this useful. It was definitely fund to figure out.
+So much better! I hope you found this useful. It was definitely fun to figure out.
