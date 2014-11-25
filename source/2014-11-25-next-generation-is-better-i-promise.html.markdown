@@ -100,7 +100,7 @@ A promise is a way of encapsulating how to handle asynchronous requests. The typ
 2. Create a callback to handle success
 3. Create a callback to handle failure
 
-A promise wraps all of these steps together and provides you with one object you can extract the resulting code from. Here's an example of wrapping a call to the reddit api in a promise:
+A promise wraps all of these steps together and provides you with one object you can extract the resulting code from. Here's an example of wrapping a call to the Reddit api in a promise:
 
 ``` javascript
 // Assuming you have jQuery :-)
@@ -133,7 +133,7 @@ By the time we get to POINT 4, we have a function that has access to the result 
 
 Ok, let's cook. Using promises and generators we can make code that is asynchronous but looks synchronous because we encapsulate all of async stuff.  We're going to build out a few functions, and use them to make some bad ass stuff.
 
-We'll be using a call to the reddit api in our example. We'll set up a promise that makes a call the reddit, but only returns the first 3 stories found.
+We'll be using a call to the Reddit api in our example. We'll set up a promise that makes a call the Reddit, but only returns the first 3 stories found.
 
 ``` javascript
 var top3FromReddit = new Promise(function(resolve, reject){
@@ -147,7 +147,7 @@ var top3FromReddit = new Promise(function(resolve, reject){
 
 In the success callback, we're going through the results from Reddit and only returning an array of 3 stories.
 
-Next, we'll create a generator that yields this promise, and allows the caller to return a new transformed value. We'll finish by printing the result.
+Next, we'll create a generator that yields this promise. Yielding the promise will help us later when we create our async wrapper function later to resolve the promise.
 
 ``` javascript
 function* redditGenerator(){
@@ -156,35 +156,32 @@ function* redditGenerator(){
 }
 ```
 
-Any callers of this generator will be yielded the promise we created earlier. In a bit, we're going to use this generator to return story titles, but first we'll need a small helper function.
+Now to build a small helper function that wraps our yielded promise
 
 This was inspired by the example [here](https://www.promisejs.org/generators/).
 
 ``` javascript
-function async(generatorFunction, callback){
+function async(generatorFunction){
   var generator = generatorFunction();
   var promise = generator.next().value;
   promise.then(function(result){
-    generator.next(callback(result));
+    generator.next(result);
   })
 }
 ```
 
-Our `async` function takes a generator function and a callback.
-We create a generator from the function, call `next` and `value` to get the promise yielded. We call the `then` function on our promise and pass the return value of our callback function BACK to the generator. This value will be set to `stories` inside the redditGenerator.
+Our `async` function takes a generator function.
+We create a generator from the function, call `next` and `value` to get the promise yielded. We call the `then` function on our promise and pass the return value of the resolved promise BACK to our generator. This value will be set to `stories` inside the redditGenerator.
 
- This is an insanely limted example. Checkout the link above for a better solution, but this one works for us.
+ _NOTE: This is an insanely limted example. Checkout the link above for a better solution, but this one works for us._
 
 
-And finally, make our call to reddit, wrapping the call in our `async` function.
+And finally, make our call to Reddit, wrapping the call in our `async` function.
 
 ``` javascript
-async(redditGenerator, function(result){
-  return result.map(function(story){
-    return story.data.title
-  })
-})
+async(redditGenerator)
 ```
+This fires off the generator, makes the async call, assigns the value of `stories` to the resolved promise and prints it. Not bad JavaScript... Not bad...
 
 # Recap
 
