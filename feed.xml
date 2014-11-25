@@ -14,7 +14,7 @@
     <link rel="alternate" href="http://blog.url.com/2014/11/25/next-generation-is-better-i-promise.html"/>
     <id>http://blog.url.com/2014/11/25/next-generation-is-better-i-promise.html</id>
     <published>2014-11-25T01:13:00Z</published>
-    <updated>2014-11-25T10:33:20-05:00</updated>
+    <updated>2014-11-25T12:38:32-05:00</updated>
     <author>
       <name>Article Author</name>
     </author>
@@ -280,7 +280,7 @@ We create a generator from the function, call &lt;code&gt;next&lt;/code&gt; and 
 
 &lt;p&gt;Generators are a really cool tool that lets you pause execution of javascript code, and coupled with promises can allow for the creation of expressive asynchronous code that appears synchronous.&lt;/p&gt;
 
-&lt;p&gt;You can play with a version of it here: &lt;iframe width="100%" height="300" src="http://jsfiddle.net/whcp3Ls9/embedded/" allowfullscreen="allowfullscreen" frameborder="0"&gt;&lt;/iframe&gt;
+&lt;p&gt;You can play with a version of it here: &lt;iframe width="100%" height="300" src="http://jsfiddle.net/whcp3Ls9/2/embedded/" allowfullscreen="allowfullscreen" frameborder="0"&gt;&lt;/iframe&gt;
 As of November 25th, this is known to run on Chrome Canary.&lt;/p&gt;
 
 &lt;p&gt;Happy Clacking.&lt;/p&gt;
