@@ -14,7 +14,7 @@
     <link rel="alternate" href="http://blog.url.com/2014/11/25/next-generation-is-better-i-promise.html"/>
     <id>http://blog.url.com/2014/11/25/next-generation-is-better-i-promise.html</id>
     <published>2014-11-25T01:13:00Z</published>
-    <updated>2014-11-24T22:54:01-05:00</updated>
+    <updated>2014-11-25T10:33:20-05:00</updated>
     <author>
       <name>Article Author</name>
     </author>
@@ -164,7 +164,7 @@
 &lt;li&gt;Create a callback to handle failure&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;A promise wraps all of these steps together and provides you with one object you can extract the resulting code from. Here&amp;rsquo;s an example of wrapping a call to the reddit api in a promise:&lt;/p&gt;
+&lt;p&gt;A promise wraps all of these steps together and provides you with one object you can extract the resulting code from. Here&amp;rsquo;s an example of wrapping a call to the Reddit api in a promise:&lt;/p&gt;
 &lt;div class="highlight javascript"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
 2
 3
@@ -215,7 +215,7 @@
 
 &lt;p&gt;Ok, let&amp;rsquo;s cook. Using promises and generators we can make code that is asynchronous but looks synchronous because we encapsulate all of async stuff.  We&amp;rsquo;re going to build out a few functions, and use them to make some bad ass stuff.&lt;/p&gt;
 
-&lt;p&gt;We&amp;rsquo;ll be using a call to the reddit api in our example. We&amp;rsquo;ll set up a promise that makes a call the reddit, but only returns the first 3 stories found.&lt;/p&gt;
+&lt;p&gt;We&amp;rsquo;ll be using a call to the Reddit api in our example. We&amp;rsquo;ll set up a promise that makes a call the Reddit, but only returns the first 3 stories found.&lt;/p&gt;
 &lt;div class="highlight javascript"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
 2
 3
@@ -234,7 +234,7 @@
 
 &lt;p&gt;In the success callback, we&amp;rsquo;re going through the results from Reddit and only returning an array of 3 stories.&lt;/p&gt;
 
-&lt;p&gt;Next, we&amp;rsquo;ll create a generator that yields this promise, and allows the caller to return a new transformed value. We&amp;rsquo;ll finish by printing the result.&lt;/p&gt;
+&lt;p&gt;Next, we&amp;rsquo;ll create a generator that yields this promise. Yielding the promise will help us later when we create our async wrapper function later to resolve the promise.&lt;/p&gt;
 &lt;div class="highlight javascript"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
 2
 3
@@ -245,7 +245,7 @@
 &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
 &lt;/div&gt;
 
-&lt;p&gt;Any callers of this generator will be yielded the promise we created earlier. In a bit, we&amp;rsquo;re going to use this generator to return story titles, but first we&amp;rsquo;ll need a small helper function.&lt;/p&gt;
+&lt;p&gt;Now to build a small helper function that wraps our yielded promise&lt;/p&gt;
 
 &lt;p&gt;This was inspired by the example &lt;a href="https://www.promisejs.org/generators/"&gt;here&lt;/a&gt;.&lt;/p&gt;
 &lt;div class="highlight javascript"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
@@ -254,37 +254,34 @@
 4
 5
 6
-7&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="kd"&gt;function&lt;/span&gt; &lt;span class="nx"&gt;async&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;generatorFunction&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;callback&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;
+7&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="kd"&gt;function&lt;/span&gt; &lt;span class="nx"&gt;async&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;generatorFunction&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;
   &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;generator&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;generatorFunction&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
   &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;promise&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;generator&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;next&lt;/span&gt;&lt;span class="p"&gt;().&lt;/span&gt;&lt;span class="nx"&gt;value&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
   &lt;span class="nx"&gt;promise&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;then&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;result&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;
-    &lt;span class="nx"&gt;generator&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;next&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;callback&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;result&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;
+    &lt;span class="nx"&gt;generator&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;next&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;result&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
   &lt;span class="p"&gt;})&lt;/span&gt;
 &lt;span class="p"&gt;}&lt;/span&gt;
 &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
 &lt;/div&gt;
 
-&lt;p&gt;Our &lt;code&gt;async&lt;/code&gt; function takes a generator function and a callback.
-We create a generator from the function, call &lt;code&gt;next&lt;/code&gt; and &lt;code&gt;value&lt;/code&gt; to get the promise yielded. We call the &lt;code&gt;then&lt;/code&gt; function on our promise and pass the return value of our callback function BACK to the generator. This value will be set to &lt;code&gt;stories&lt;/code&gt; inside the redditGenerator.&lt;/p&gt;
+&lt;p&gt;Our &lt;code&gt;async&lt;/code&gt; function takes a generator function.
+We create a generator from the function, call &lt;code&gt;next&lt;/code&gt; and &lt;code&gt;value&lt;/code&gt; to get the promise yielded. We call the &lt;code&gt;then&lt;/code&gt; function on our promise and pass the return value of the resolved promise BACK to our generator. This value will be set to &lt;code&gt;stories&lt;/code&gt; inside the redditGenerator.&lt;/p&gt;
 
-&lt;p&gt;This is an insanely limted example. Checkout the link above for a better solution, but this one works for us.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;NOTE: This is an insanely limted example. Checkout the link above for a better solution, but this one works for us.&lt;/em&gt;&lt;/p&gt;
 
-&lt;p&gt;And finally, make our call to reddit, wrapping the call in our &lt;code&gt;async&lt;/code&gt; function.&lt;/p&gt;
-&lt;div class="highlight javascript"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
-2
-3
-4
-5&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="nx"&gt;async&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;redditGenerator&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;result&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;
-  &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nx"&gt;result&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;map&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;story&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;
-    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nx"&gt;story&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;data&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;title&lt;/span&gt;
-  &lt;span class="p"&gt;})&lt;/span&gt;
-&lt;span class="p"&gt;})&lt;/span&gt;
+&lt;p&gt;And finally, make our call to Reddit, wrapping the call in our &lt;code&gt;async&lt;/code&gt; function.&lt;/p&gt;
+&lt;div class="highlight javascript"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="nx"&gt;async&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;redditGenerator&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
 &lt;/div&gt;
+
+&lt;p&gt;This fires off the generator, makes the async call, assigns the value of &lt;code&gt;stories&lt;/code&gt; to the resolved promise and prints it. Not bad JavaScript&amp;hellip; Not bad&amp;hellip;&lt;/p&gt;
 
 &lt;h1&gt;Recap&lt;/h1&gt;
 
 &lt;p&gt;Generators are a really cool tool that lets you pause execution of javascript code, and coupled with promises can allow for the creation of expressive asynchronous code that appears synchronous.&lt;/p&gt;
+
+&lt;p&gt;You can play with a version of it here: &lt;iframe width="100%" height="300" src="http://jsfiddle.net/whcp3Ls9/embedded/" allowfullscreen="allowfullscreen" frameborder="0"&gt;&lt;/iframe&gt;
+As of November 25th, this is known to run on Chrome Canary.&lt;/p&gt;
 
 &lt;p&gt;Happy Clacking.&lt;/p&gt;
 </content>
