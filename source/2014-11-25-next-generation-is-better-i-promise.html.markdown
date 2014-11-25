@@ -187,7 +187,7 @@ This fires off the generator, makes the async call, assigns the value of `storie
 
 Generators are a really cool tool that lets you pause execution of javascript code, and coupled with promises can allow for the creation of expressive asynchronous code that appears synchronous.
 
-You can play with a version of it here: <iframe width="100%" height="300" src="http://jsfiddle.net/whcp3Ls9/embedded/" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+You can play with a version of it here: <iframe width="100%" height="300" src="http://jsfiddle.net/whcp3Ls9/2/embedded/" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
 As of November 25th, this is known to run on Chrome Canary.
 
 Happy Clacking.
