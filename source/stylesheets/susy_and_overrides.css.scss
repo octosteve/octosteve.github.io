@@ -1,3 +1,4 @@
+@import 'compass';
 @import 'susy';
 
 #container {
@@ -9,4 +10,3 @@
     @include span-columns(9, 12)
   }
 }
-
