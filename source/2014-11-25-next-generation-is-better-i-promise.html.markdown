@@ -71,7 +71,7 @@ while(!current.done){
 // ***Prints***  I'm all done
 ```
 
-### It'll be back
+### I'll be back
 We saw how to pass values out of a function using `yield`, but we can also pass values back in and use it in our function. Here's an example:
 
 ``` javascript
