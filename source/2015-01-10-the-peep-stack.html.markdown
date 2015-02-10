@@ -2,6 +2,7 @@
 title: The PEEP Stack
 date: 2015-01-10 17:05 UTC
 tags: Postgres, Ember, Elixir, Phoenix Framework
+published: false
 ---
 # PEEP Stack
 
@@ -46,7 +47,7 @@ Installing Phoenix is easy. Run:
 ``` bash
 git clone https://github.com/phoenixframework/phoenix.git
 cd phoenix
-git checkout v0.7.2
+git checkout v0.8.0
 mix do deps.get, compile
 ```
 Checkout the [guide](http://www.phoenixframework.org/) for more details on what this does.
@@ -103,7 +104,7 @@ end
 
 This reads the Ember generated index file and returns it when someone asks for the root path.
 
-Fire up the Phoenix server with `mix phoenix.start`, and visit `http://localhost:4000`. There you should see the Ember Landing page.
+Fire up the Phoenix server with `mix phoenix.server`, and visit `http://localhost:4000`. There you should see the Ember Landing page.
 
 ### Push State and routing
 Ember's going to use HTML pushState by default meaning you won't get urls with #'s. For this to work, we're going to change a line in our route file to act as a catch all, this way if the user asks for / or /rooms/1, our app will always serve Ember's `index.html` file. We'll add to this later when we build our API out.
@@ -129,3 +130,32 @@ end
 ```
 
 This wild force all requests to respond with Ember's `index.html`
+
+### Showing all rooms
+
+NOTE:
+We'll be adding a bunch of ember code so be sure to run `ember build --watch` in your terminal so you're always getting the latest code.
+
+We're going to need a new route to show all of the rooms on the page. We'll add a new route, and create a template to be rendered.
+
+Replace the empty `Router.map` with this:
+
+``` javascript
+Router.map(function() {
+  this.resource('rooms');
+});
+```
+
+Add a link to the new `rooms` route in the application template in `web/client/app/templates/application.hbs` with:
+
+``` handlebars
+{{#link-to 'rooms'}}Rooms{{/link-to}}
+```
+
+For now, an empty `web/client/app/templates/rooms.hbs` will do.
+
+## Postgres with Ecto
+
+* Create Database
+* Create rooms table
+* Connect to Postgres
