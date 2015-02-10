@@ -5,167 +5,10 @@
   <id>http://blog.url.com/</id>
   <link href="http://blog.url.com/"/>
   <link href="http://blog.url.com/feed.xml" rel="self"/>
-  <updated>2015-01-10T12:05:00-05:00</updated>
+  <updated>2014-11-24T20:13:00-05:00</updated>
   <author>
     <name>Blog Author</name>
   </author>
-  <entry>
-    <title>The PEEP Stack</title>
-    <link rel="alternate" href="http://blog.url.com/2015/01/10/the-peep-stack.html"/>
-    <id>http://blog.url.com/2015/01/10/the-peep-stack.html</id>
-    <published>2015-01-10T12:05:00-05:00</published>
-    <updated>2015-02-10T16:42:52-05:00</updated>
-    <author>
-      <name>Article Author</name>
-    </author>
-    <content type="html">&lt;h1&gt;PEEP Stack&lt;/h1&gt;
-
-&lt;p&gt;Today I want to talk about building apps with the PEEP Stack. Postgres, Ember, Elixir, and the Phoenix Framework.&lt;/p&gt;
-
-&lt;h2&gt;Meet the team Postgres&lt;/h2&gt;
-
-&lt;p&gt;&lt;a href="http://www.postgresql.org/"&gt;Postgres&lt;/a&gt; is an extremely powerful RDMBS that supports clusturing, has full text search built in, and support for spacial data with PostGIS. Postgres is a beast. It&amp;rsquo;s my database of choice.&lt;/p&gt;
-
-&lt;h2&gt;Ember&lt;/h2&gt;
-
-&lt;p&gt;Let&amp;rsquo;s face it. The Javascript landscape is insanely volitile. Libraries die, or face huge rewrites from &lt;a href="eisenbergeffect.bluespire.com/all-about-angular-2-0"&gt;version to version&lt;/a&gt;. It&amp;rsquo;s hard to keep up.&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;We believe it&amp;rsquo;s possible to achieve stability without stagnation.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href="https://twitter.com/wycats"&gt;Yehuda Katz&lt;/a&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Ember gets it. I&amp;rsquo;ve taken apps written with a pre v1 version, swapped the version to the latests release, followed the deprecation notices in the console, and had it using the latest and greatest code. I&amp;rsquo;m impressed.&lt;/p&gt;
-
-&lt;p&gt;In addition, Ember is deeply conventions based, meaning there&amp;rsquo;s one true way to do something. I find this really appealing.&lt;/p&gt;
-
-&lt;h2&gt;Elixir&lt;/h2&gt;
-
-&lt;p&gt;I&amp;rsquo;m really excited about Elixir. It&amp;rsquo;s a beautiful language that takes a lot of the best features of today&amp;rsquo;s modern programming languages. Check out &lt;a href="http://www.confreaks.com/videos/5078-RubyConf2014-rubyists-have-a-sip-of-elixir"&gt;this talk&lt;/a&gt; from RubyConf to get an idea of its amazingness.&lt;/p&gt;
-
-&lt;p&gt;Another benefit of working with Elixir is you get to take advantage of Erlang&amp;rsquo;s ecosystem. Erlang was built for distributed, concurrent, and scalable programs. One of the most recent Erlang success stories was &lt;a href="https://www.whatsapp.com"&gt;What&amp;rsquo;s app&lt;/a&gt;. You can watch a great talk on Erlang&amp;rsquo;s scalability &lt;a href="https://www.youtube.com/watch?v=c12cYAUTXXs"&gt;here&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h3&gt;Performance YAGNI&lt;/h3&gt;
-
-&lt;p&gt;Before I go further, I&amp;rsquo;m sure some of you are thinking &amp;ldquo;My app probably won&amp;rsquo;t HAVE to support a billion users. Why bother writing it in a platform that&amp;rsquo;s built for those apps?&amp;rdquo;. Good point anonymous internet Joe. I&amp;rsquo;d agree with you if Elixir wasn&amp;rsquo;t such a joy to write. If you CAN have this amazing scalability option, at no real cost to you, why wouldn&amp;rsquo;t you take it?&lt;/p&gt;
-
-&lt;h2&gt;The Phoenix Framework&lt;/h2&gt;
-
-&lt;p&gt;&lt;a href="http://www.phoenixframework.org/"&gt;The Phoenix Framework&lt;/a&gt; is game changing. Modeling itself after &lt;a href="http://rubyonrails.org/"&gt;Ruby on Rails&lt;/a&gt; means moving over as a Rails dev is insanely simple. Having &lt;a href="https://twitter.com/josevalim"&gt;José Valim&lt;/a&gt; involved is bringing in some Rails conventions which I love.&lt;/p&gt;
-
-&lt;h2&gt;Build time&lt;/h2&gt;
-
-&lt;p&gt;Let&amp;rsquo;s set up a basic app with Phoenix and Ember. For Phoenix, we&amp;rsquo;ll be using the built in app generator, and for Ember, we&amp;rsquo;ll be using &lt;a href="ember-cli.com"&gt;Ember-Cli&lt;/a&gt;. We&amp;rsquo;ll be building the &lt;strong&gt;Hello World&lt;/strong&gt; of the web, a &lt;strong&gt;chat room&lt;/strong&gt;. It was a blog, but the world loves async stuff now.&lt;/p&gt;
-
-&lt;h3&gt;New Phoenix App&lt;/h3&gt;
-
-&lt;p&gt;I&amp;rsquo;m assuming you have Elixir installed. If not, go &lt;a href="http://elixir-lang.org/getting_started/1.html"&gt;here&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;Installing Phoenix is easy. Run:&lt;/p&gt;
-&lt;div class="highlight shell"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
-2
-3
-4&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;git clone https://github.com/phoenixframework/phoenix.git
-&lt;span class="nb"&gt;cd &lt;/span&gt;phoenix
-git checkout v0.7.2
-mix &lt;span class="k"&gt;do &lt;/span&gt;deps.get, compile
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/div&gt;
-
-&lt;p&gt;Checkout the &lt;a href="http://www.phoenixframework.org/"&gt;guide&lt;/a&gt; for more details on what this does.&lt;/p&gt;
-
-&lt;p&gt;Now to create a new app. From inside this directory run:&lt;/p&gt;
-&lt;div class="highlight shell"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
-2
-3&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;mix phoenix.new peep_chat ../peep_chat
-&lt;span class="nb"&gt;cd&lt;/span&gt; ../peep_chat
-mix &lt;span class="k"&gt;do &lt;/span&gt;deps.get, compile
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/div&gt;
-
-&lt;p&gt;We&amp;rsquo;ll modify a few things:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;delete the &lt;code&gt;page&lt;/code&gt; directory in &lt;code&gt;web/templates/&lt;/code&gt;. We won&amp;rsquo;t be rendering views with Phoenix, just an api.&lt;/li&gt;
-&lt;li&gt;delete &lt;code&gt;web/views/page_view.ex&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;open &lt;code&gt;web/router.ex&lt;/code&gt; and change references to PageController to HomeController.&lt;/li&gt;
-&lt;li&gt;Rename &lt;code&gt;web/controllers/page_controller.ex&lt;/code&gt; to &lt;code&gt;web/controllers/home_controller.ex&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;Change the controller name in &lt;code&gt;home_controller.ex&lt;/code&gt; to &lt;code&gt;PeepChat.HomeController&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;We&amp;rsquo;ll leave this here for now. After we have Ember set up, we&amp;rsquo;ll have this action load Ember&amp;rsquo;s generated &lt;code&gt;index.html&lt;/code&gt;.&lt;/p&gt;
-
-&lt;h2&gt;Ember-Cli&lt;/h2&gt;
-
-&lt;p&gt;Ember-Cli will be managing our assets. This allows us to work with stuff like Sass and Coffeescript with ease. I love this separation since we leave Ember-Cli to do what it&amp;rsquo;s good at: wrangling the JS chaos.&lt;/p&gt;
-
-&lt;p&gt;We&amp;rsquo;ll create a new Ember app inside our peep_chat app&amp;rsquo;s web directory named client.&lt;/p&gt;
-&lt;div class="highlight shell"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
-2&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="nb"&gt;cd &lt;/span&gt;web
-ember new client
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/div&gt;
-
-&lt;p&gt;The next step we&amp;rsquo;ll need is to change the configurations so Ember&amp;rsquo;s build step outputs to Phoenix&amp;rsquo;s &lt;code&gt;priv/static&lt;/code&gt; directory.&lt;/p&gt;
-
-&lt;p&gt;Add this to &lt;code&gt;peep_chat/web/client/.ember-cli&lt;/code&gt; under the &lt;code&gt;disableAnalytics&lt;/code&gt; setting.:&lt;/p&gt;
-&lt;div class="highlight json"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="s2"&gt;"output-path"&lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;"../../priv/static"&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/div&gt;
-
-&lt;p&gt;By running &lt;code&gt;ember build&lt;/code&gt; you should see a bunch of Ember files dumped in Phoenix&amp;rsquo;s &lt;code&gt;priv/static&lt;/code&gt; directory.&lt;/p&gt;
-
-&lt;h3&gt;Serving up Ember&lt;/h3&gt;
-
-&lt;p&gt;One last step to get the Ember generated page served. Open up &lt;code&gt;web/controllers/home_controller.ex&lt;/code&gt; and replace your index action with the following:&lt;/p&gt;
-&lt;div class="highlight elixir"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
-2
-3
-4&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;index&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;conn&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_params&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-  &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:ok&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;home_page&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="no"&gt;File&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;read&lt;/span&gt; &lt;span class="s1"&gt;'priv/static/index.html'&lt;/span&gt;
-  &lt;span class="n"&gt;html&lt;/span&gt; &lt;span class="n"&gt;conn&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;home_page&lt;/span&gt;
-&lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/div&gt;
-
-&lt;p&gt;This reads the Ember generated index file and returns it when someone asks for the root path.&lt;/p&gt;
-
-&lt;p&gt;Fire up the Phoenix server with &lt;code&gt;mix phoenix.start&lt;/code&gt;, and visit &lt;code&gt;http://localhost:4000&lt;/code&gt;. There you should see the Ember Landing page.&lt;/p&gt;
-
-&lt;h3&gt;Push State and routing&lt;/h3&gt;
-
-&lt;p&gt;Ember&amp;rsquo;s going to use HTML pushState by default meaning you won&amp;rsquo;t get urls with #&amp;rsquo;s. For this to work, we&amp;rsquo;re going to change a line in our route file to act as a catch all, this way if the user asks for / or /rooms/1, our app will always serve Ember&amp;rsquo;s &lt;code&gt;index.html&lt;/code&gt; file. We&amp;rsquo;ll add to this later when we build our API out.&lt;/p&gt;
-
-&lt;p&gt;Open &lt;code&gt;web/router.ex&lt;/code&gt; and edit this:&lt;/p&gt;
-&lt;div class="highlight elixir"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
-2
-3
-4
-5&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="n"&gt;scope&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;/"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="no"&gt;PeepChat&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-  &lt;span class="n"&gt;pipe_through&lt;/span&gt; &lt;span class="ss"&gt;:browser&lt;/span&gt; &lt;span class="c1"&gt;# Use the default browser stack&lt;/span&gt;
-
-  &lt;span class="n"&gt;get&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;/"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="no"&gt;HomeController&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:index&lt;/span&gt;
-&lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/div&gt;
-
-&lt;p&gt;to&lt;/p&gt;
-&lt;div class="highlight elixir"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
-2
-3
-4
-5&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="n"&gt;scope&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;/"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="no"&gt;PeepChat&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-  &lt;span class="n"&gt;pipe_through&lt;/span&gt; &lt;span class="ss"&gt;:browser&lt;/span&gt; &lt;span class="c1"&gt;# Use the default browser stack&lt;/span&gt;
-
-  &lt;span class="n"&gt;get&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;/*path"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="no"&gt;HomeController&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:index&lt;/span&gt;
-&lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/div&gt;
-
-&lt;p&gt;This wild force all requests to respond with Ember&amp;rsquo;s &lt;code&gt;index.html&lt;/code&gt;&lt;/p&gt;
-</content>
-  </entry>
   <entry>
     <title>Next generation is better. I promise</title>
     <link rel="alternate" href="http://blog.url.com/2014/11/25/next-generation-is-better-i-promise.html"/>
@@ -1564,6 +1407,119 @@ resources in my routes file so I started there.&lt;/p&gt;
 &lt;/div&gt;
 
 &lt;p&gt;So much better! I hope you found this useful. It was definitely fun to figure out.&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>Keyboard Navigation</title>
+    <link rel="alternate" href="http://blog.url.com/2013/10/19/keyboard-navigation.html"/>
+    <id>http://blog.url.com/2013/10/19/keyboard-navigation.html</id>
+    <published>2013-10-19T06:59:00-04:00</published>
+    <updated>2015-02-10T16:42:52-05:00</updated>
+    <author>
+      <name>Article Author</name>
+    </author>
+    <content type="html">&lt;h2&gt;Get over here!&lt;/h2&gt;
+
+&lt;p&gt;One of the unsung heroes of development is knowing how to use your keyboard. I don&amp;rsquo;t just mean typing. That skill, while important, is still second to being able to move around. What do I mean by this?&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s say I&amp;rsquo;m typing this obscenely long line of bash:&lt;/p&gt;
+&lt;div class="highlight shell"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;cat ~/schol/GA/BEWD_Curriculum/01_Dev_Workflow/README.md| grep -i git
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Oh NO! I&amp;rsquo;ve misspelled &lt;code&gt;school&lt;/code&gt;. Here we go: backspace backspace backspace… 59 backspaces! Even if you didn&amp;rsquo;t erase it and just used left, it&amp;rsquo;s still going to take a while.&lt;/p&gt;
+
+&lt;p&gt;That&amp;rsquo;s crazy. Let&amp;rsquo;s try another way.&lt;/p&gt;
+
+&lt;p&gt;A keyboard shortcut you can use is holding the &lt;code&gt;option&lt;/code&gt; or &lt;code&gt;alt&lt;/code&gt; (written &lt;code&gt;⌥&lt;/code&gt;) key and pressing &lt;code&gt;left&lt;/code&gt;. Do that 11 times, and you&amp;rsquo;ll get to the &lt;code&gt;G&lt;/code&gt; in &lt;code&gt;GA&lt;/code&gt;. From there, it&amp;rsquo;s just 2 taps of the &lt;code&gt;left&lt;/code&gt; key and you&amp;rsquo;re good to go. &lt;/p&gt;
+
+&lt;p&gt;There&amp;rsquo;s another way… There&amp;rsquo;s always another way…&lt;/p&gt;
+
+&lt;p&gt;You can jump to the beginning of the line by holding &lt;code&gt;Control&lt;/code&gt; (written &lt;code&gt;Ctrl&lt;/code&gt;, &lt;code&gt;^&lt;/code&gt; ), and pressing &lt;code&gt;a&lt;/code&gt;. From there, along with &lt;code&gt;option + right&lt;/code&gt; you&amp;rsquo;ve brought it down to 5 taps (^a, ⌥+right, &lt;code&gt;right&lt;/code&gt;, &lt;code&gt;right&lt;/code&gt;, &lt;code&gt;right&lt;/code&gt; ).&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="http://lifehacker.com/5743814/become-a-command-line-ninja-with-these-time+saving-shortcuts"&gt;This article&lt;/a&gt; has loads of cool stuff you can use to get around. &lt;/p&gt;
+
+&lt;p&gt;My point is, make time to practice getting good. Think of it like golf. The less strokes, the better. Over time you&amp;rsquo;ll see the lag between your intention and your computer screen shrink. Decide that it&amp;rsquo;s important and it will make your development career amazing.&lt;/p&gt;
+
+&lt;h3&gt;There&amp;rsquo;s always another way&lt;/h3&gt;
+
+&lt;p&gt;This would work too 
+&lt;code&gt;^schol^school&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;You would submit the messed up line, it would give you an error. Then you would type that.&lt;/p&gt;
+
+&lt;h3&gt;Editing Text&lt;/h3&gt;
+
+&lt;p&gt;A lot of these things work in your editor of choice. A lot of developers use &lt;a href="http://www.sublimetext.com/2"&gt;Sublime Text&lt;/a&gt;. &lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s look at getting around a small ruby file. It&amp;rsquo;s from my &lt;a href="https://github.com/StevenNunez/slide_hero"&gt;slide_hero gem&lt;/a&gt;. Don&amp;rsquo;t worry too much about what it does.&lt;/p&gt;
+&lt;div class="highlight ruby"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="k"&gt;module&lt;/span&gt; &lt;span class="nn"&gt;SlideHero&lt;/span&gt;                                                                   
+  &lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;Point&lt;/span&gt;                                                                      
+    &lt;span class="kp"&gt;attr_reader&lt;/span&gt; &lt;span class="ss"&gt;:text&lt;/span&gt;                                                              
+    &lt;span class="no"&gt;SUPPORTED_ANIMATIONS&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="sx"&gt;%w{grow shrink roll-in fade-out                         
+      highlight-red highlight-green highlight-blue}&lt;/span&gt;                                
+
+    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;initialize&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;text&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;animation: &lt;/span&gt;&lt;span class="kp"&gt;nil&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;                                           
+      &lt;span class="vi"&gt;@text&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;text&lt;/span&gt;                                                                 
+      &lt;span class="vi"&gt;@animation&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;animation&lt;/span&gt;                                                       
+    &lt;span class="k"&gt;end&lt;/span&gt;                                                                            
+
+    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;compile&lt;/span&gt;                                                                    
+      &lt;span class="s2"&gt;"&amp;lt;p&lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;animation&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&amp;gt;&lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;text&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&amp;lt;/p&amp;gt;"&lt;/span&gt;                                                 
+    &lt;span class="k"&gt;end&lt;/span&gt;                                                                            
+
+    &lt;span class="kp"&gt;private&lt;/span&gt;                                                                        
+    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;animation&lt;/span&gt;                                                                  
+      &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="vi"&gt;@animation&lt;/span&gt;                                                                
+        &lt;span class="n"&gt;animation_markup&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;' class="fragment '&lt;/span&gt;                                     
+        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="no"&gt;SUPPORTED_ANIMATIONS&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;include?&lt;/span&gt; &lt;span class="vi"&gt;@animation&lt;/span&gt;                                
+          &lt;span class="n"&gt;animation_markup&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="vi"&gt;@animation&lt;/span&gt;                                           
+        &lt;span class="k"&gt;end&lt;/span&gt;                                                                        
+        &lt;span class="n"&gt;animation_markup&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s2"&gt;"&lt;/span&gt;&lt;span class="se"&gt;\"&lt;/span&gt;&lt;span class="s2"&gt;"&lt;/span&gt;                                                    
+      &lt;span class="k"&gt;end&lt;/span&gt;                                                                          
+    &lt;span class="k"&gt;end&lt;/span&gt;                                                                            
+  &lt;span class="k"&gt;end&lt;/span&gt;                                                                              
+&lt;span class="k"&gt;end&lt;/span&gt;                        
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Let&amp;rsquo;s say I want to jump to add another method (&lt;code&gt;def animation&lt;/code&gt; is me defining a method). Since the editor usually opens at the top of the file, I&amp;rsquo;ll have to press down 16 times or worse, USE MY MOUSE!  Looking at Sublime Text&amp;rsquo;s &lt;code&gt;Goto&lt;/code&gt; menu, I see ^G will let me specify what line to go to. Cool! Ok, well now I&amp;rsquo;m on the line with &lt;code&gt;private&lt;/code&gt; and need to get &lt;em&gt;after&lt;/em&gt; it to enter my new method. We can use one of our old buddies &lt;code&gt;⌥+right&lt;/code&gt; here! OK, &lt;code&gt;⌥+right&lt;/code&gt;, &lt;code&gt;enter&lt;/code&gt;, start typing!&lt;/p&gt;
+
+&lt;p&gt;If you&amp;rsquo;re planning on using Sublime Text, be sure to learn the &lt;a href="http://docs.sublimetext.info/en/latest/reference/keyboard_shortcuts_osx.html"&gt;keyboard shortcuts!&lt;/a&gt;. They&amp;rsquo;re there because of you! Use them and be awesome.&lt;/p&gt;
+
+&lt;p&gt;Another time saving shortcut is ⌘D on a Mac. Here&amp;rsquo;s how it works. Say I want to replace every time the word &lt;code&gt;text&lt;/code&gt; appears in my code example. I could use our fancy navigation to line 3, then 8 then 13, BUT there&amp;rsquo;s another way. If you put your cursor on &lt;code&gt;text&lt;/code&gt; (any of them), and press &lt;code&gt;⌘D&lt;/code&gt;, it will start to highlight every instance of &lt;code&gt;text&lt;/code&gt;. Now just start typing. It will erase all of them. What a time saver.&lt;/p&gt;
+
+&lt;p&gt;In the end, it&amp;rsquo;s your ability to move around effectively that will make you a great developer. All the other stuff you can learn as you go. There are times I have no idea how to solve something, but being able to run really fast experiments makes my life so much easier. &lt;/p&gt;
+
+&lt;p&gt;That&amp;rsquo;s all I have.&lt;/p&gt;
+
+&lt;p&gt;Happy Clacking. &lt;/p&gt;
 </content>
   </entry>
 </feed>
