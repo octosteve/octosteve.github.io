@@ -1,0 +1,258 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta http-equiv='X-UA-Compatible' content='IE=edge;chrome=1'/>
+  <title>Hostile Developer - The PEEP Stack</title>
+  <link href="/stylesheets/application.css" rel="stylesheet" type="text/css" />
+  <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/feed.xml" />
+
+</head>
+<body>
+<div id="container">
+  <section>
+    <header>
+<a href="/">          <h1 class="brand"><span class="hostile">Hostile</span> Developer</h1>
+
+          <h3 class="tag-line">I am Steven. Hear me Rant.</h3>
+</a>    </header>
+  </section>
+
+  <div id="main" role="main">
+      <h1 class="article-title"><a href="/2015/01/10/the-peep-stack.html">The PEEP Stack</a></h1>
+
+    <h1>PEEP Stack</h1>
+
+<p>Today I want to talk about building apps with the PEEP Stack. Postgres, Ember, Elixir, and the Phoenix Framework.</p>
+
+<h2>Meet the team Postgres</h2>
+
+<p><a href="http://www.postgresql.org/">Postgres</a> is an extremely powerful RDMBS that supports clusturing, has full text search built in, and support for spacial data with PostGIS. Postgres is a beast. It&rsquo;s my database of choice.</p>
+
+<h2>Ember</h2>
+
+<p>Let&rsquo;s face it. The Javascript landscape is insanely volitile. Libraries die, or face huge rewrites from <a href="eisenbergeffect.bluespire.com/all-about-angular-2-0">version to version</a>. It&rsquo;s hard to keep up.</p>
+
+<blockquote>
+<p>We believe it&rsquo;s possible to achieve stability without stagnation.</p>
+
+<p><a href="https://twitter.com/wycats">Yehuda Katz</a></p>
+</blockquote>
+
+<p>Ember gets it. I&rsquo;ve taken apps written with a pre v1 version, swapped the version to the latests release, followed the deprecation notices in the console, and had it using the latest and greatest code. I&rsquo;m impressed.</p>
+
+<p>In addition, Ember is deeply conventions based, meaning there&rsquo;s one true way to do something. I find this really appealing.</p>
+
+<h2>Elixir</h2>
+
+<p>I&rsquo;m really excited about Elixir. It&rsquo;s a beautiful language that takes a lot of the best features of today&rsquo;s modern programming languages. Check out <a href="http://www.confreaks.com/videos/5078-RubyConf2014-rubyists-have-a-sip-of-elixir">this talk</a> from RubyConf to get an idea of its amazingness.</p>
+
+<p>Another benefit of working with Elixir is you get to take advantage of Erlang&rsquo;s ecosystem. Erlang was built for distributed, concurrent, and scalable programs. One of the most recent Erlang success stories was <a href="https://www.whatsapp.com">What&rsquo;s app</a>. You can watch a great talk on Erlang&rsquo;s scalability <a href="https://www.youtube.com/watch?v=c12cYAUTXXs">here</a>.</p>
+
+<h3>Performance YAGNI</h3>
+
+<p>Before I go further, I&rsquo;m sure some of you are thinking &ldquo;My app probably won&rsquo;t HAVE to support a billion users. Why bother writing it in a platform that&rsquo;s built for those apps?&rdquo;. Good point anonymous internet Joe. I&rsquo;d agree with you if Elixir wasn&rsquo;t such a joy to write. If you CAN have this amazing scalability option, at no real cost to you, why wouldn&rsquo;t you take it?</p>
+
+<h2>The Phoenix Framework</h2>
+
+<p><a href="http://www.phoenixframework.org/">The Phoenix Framework</a> is game changing. Modeling itself after <a href="http://rubyonrails.org/">Ruby on Rails</a> means moving over as a Rails dev is insanely simple. Having <a href="https://twitter.com/josevalim">José Valim</a> involved is bringing in some Rails conventions which I love.</p>
+
+<h2>Build time</h2>
+
+<p>Let&rsquo;s set up a basic app with Phoenix and Ember. For Phoenix, we&rsquo;ll be using the built in app generator, and for Ember, we&rsquo;ll be using <a href="ember-cli.com">Ember-Cli</a>. We&rsquo;ll be building the <strong>Hello World</strong> of the web, a <strong>chat room</strong>. It was a blog, but the world loves async stuff now.</p>
+
+<h3>New Phoenix App</h3>
+
+<p>I&rsquo;m assuming you have Elixir installed. If not, go <a href="http://elixir-lang.org/getting_started/1.html">here</a>.</p>
+
+<p>Installing Phoenix is easy. Run:</p>
+<div class="highlight shell"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4</pre></td><td class="code"><pre>git clone https://github.com/phoenixframework/phoenix.git
+<span class="nb">cd </span>phoenix
+git checkout v0.7.2
+mix <span class="k">do </span>deps.get, compile
+</pre></td></tr></tbody></table>
+</div>
+
+<p>Checkout the <a href="http://www.phoenixframework.org/">guide</a> for more details on what this does.</p>
+
+<p>Now to create a new app. From inside this directory run:</p>
+<div class="highlight shell"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3</pre></td><td class="code"><pre>mix phoenix.new peep_chat ../peep_chat
+<span class="nb">cd</span> ../peep_chat
+mix <span class="k">do </span>deps.get, compile
+</pre></td></tr></tbody></table>
+</div>
+
+<p>We&rsquo;ll modify a few things:</p>
+
+<ul>
+<li>delete the <code>page</code> directory in <code>web/templates/</code>. We won&rsquo;t be rendering views with Phoenix, just an api.</li>
+<li>delete <code>web/views/page_view.ex</code></li>
+<li>open <code>web/router.ex</code> and change references to PageController to HomeController.</li>
+<li>Rename <code>web/controllers/page_controller.ex</code> to <code>web/controllers/home_controller.ex</code></li>
+<li>Change the controller name in <code>home_controller.ex</code> to <code>PeepChat.HomeController</code></li>
+</ul>
+
+<p>We&rsquo;ll leave this here for now. After we have Ember set up, we&rsquo;ll have this action load Ember&rsquo;s generated <code>index.html</code>.</p>
+
+<h2>Ember-Cli</h2>
+
+<p>Ember-Cli will be managing our assets. This allows us to work with stuff like Sass and Coffeescript with ease. I love this separation since we leave Ember-Cli to do what it&rsquo;s good at: wrangling the JS chaos.</p>
+
+<p>We&rsquo;ll create a new Ember app inside our peep_chat app&rsquo;s web directory named client.</p>
+<div class="highlight shell"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2</pre></td><td class="code"><pre><span class="nb">cd </span>web
+ember new client
+</pre></td></tr></tbody></table>
+</div>
+
+<p>The next step we&rsquo;ll need is to change the configurations so Ember&rsquo;s build step outputs to Phoenix&rsquo;s <code>priv/static</code> directory.</p>
+
+<p>Add this to <code>peep_chat/web/client/.ember-cli</code> under the <code>disableAnalytics</code> setting.:</p>
+<div class="highlight json"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre></td><td class="code"><pre><span class="s2">"output-path"</span><span class="err">:</span><span class="w"> </span><span class="s2">"../../priv/static"</span><span class="w">
+</span></pre></td></tr></tbody></table>
+</div>
+
+<p>By running <code>ember build</code> you should see a bunch of Ember files dumped in Phoenix&rsquo;s <code>priv/static</code> directory.</p>
+
+<h3>Serving up Ember</h3>
+
+<p>One last step to get the Ember generated page served. Open up <code>web/controllers/home_controller.ex</code> and replace your index action with the following:</p>
+<div class="highlight elixir"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4</pre></td><td class="code"><pre><span class="k">def</span> <span class="n">index</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">_params</span><span class="p">)</span> <span class="k">do</span>
+  <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">home_page</span><span class="p">}</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">read</span> <span class="s1">'priv/static/index.html'</span>
+  <span class="n">html</span> <span class="n">conn</span><span class="p">,</span> <span class="n">home_page</span>
+<span class="k">end</span>
+</pre></td></tr></tbody></table>
+</div>
+
+<p>This reads the Ember generated index file and returns it when someone asks for the root path.</p>
+
+<p>Fire up the Phoenix server with <code>mix phoenix.start</code>, and visit <code>http://localhost:4000</code>. There you should see the Ember Landing page.</p>
+
+<h3>Push State and routing</h3>
+
+<p>Ember&rsquo;s going to use HTML pushState by default meaning you won&rsquo;t get urls with #&rsquo;s. For this to work, we&rsquo;re going to change a line in our route file to act as a catch all, this way if the user asks for / or /rooms/1, our app will always serve Ember&rsquo;s <code>index.html</code> file. We&rsquo;ll add to this later when we build our API out.</p>
+
+<p>Open <code>web/router.ex</code> and edit this:</p>
+<div class="highlight elixir"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5</pre></td><td class="code"><pre><span class="n">scope</span> <span class="sd">"</span><span class="s2">/"</span><span class="p">,</span> <span class="no">PeepChat</span> <span class="k">do</span>
+  <span class="n">pipe_through</span> <span class="ss">:browser</span> <span class="c1"># Use the default browser stack</span>
+
+  <span class="n">get</span> <span class="sd">"</span><span class="s2">/"</span><span class="p">,</span> <span class="no">HomeController</span><span class="p">,</span> <span class="ss">:index</span>
+<span class="k">end</span>
+</pre></td></tr></tbody></table>
+</div>
+
+<p>to</p>
+<div class="highlight elixir"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5</pre></td><td class="code"><pre><span class="n">scope</span> <span class="sd">"</span><span class="s2">/"</span><span class="p">,</span> <span class="no">PeepChat</span> <span class="k">do</span>
+  <span class="n">pipe_through</span> <span class="ss">:browser</span> <span class="c1"># Use the default browser stack</span>
+
+  <span class="n">get</span> <span class="sd">"</span><span class="s2">/*path"</span><span class="p">,</span> <span class="no">HomeController</span><span class="p">,</span> <span class="ss">:index</span>
+<span class="k">end</span>
+</pre></td></tr></tbody></table>
+</div>
+
+<p>This wild force all requests to respond with Ember&rsquo;s <code>index.html</code></p>
+
+
+      <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'hostiledeveloper'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+  </div>
+
+  <aside>
+    <section class="recent">
+      <h2>Recent Articles</h2>
+      <ol class="articles">
+            <li><a href="/2015/01/10/the-peep-stack.html">The PEEP Stack</a>
+            <li><a href="/2014/11/25/next-generation-is-better-i-promise.html">Next generation is better. I promise</a>
+            <li><a href="/2014/05/18/using-ruby-to-learn-javascript.html">Using Ruby to learn JavaScript</a>
+            <li><a href="/2014/04/26/on-why-learning-to-program-is-hard.html">On why learning to program is hard</a>
+            <li><a href="/2014/04/13/closures.html">Closures</a>
+            <li><a href="/2014/02/15/custom-params-in-route-resources.html">Custom params in route resources</a>
+            <li><a href="/2013/10/19/keyboard-navigation.html">Keyboard Navigation</a>
+      </ol>
+    </section>
+
+    <section class="tags">
+      <h2>Tags</h2>
+      <ol>
+            <li><a href="/tags/elixir.html">Elixir</a> (1)</a></li>
+            <li><a href="/tags/ember.html">Ember</a> (1)</a></li>
+            <li><a href="/tags/phoenix-framework.html">Phoenix Framework</a> (1)</a></li>
+            <li><a href="/tags/postgres.html">Postgres</a> (1)</a></li>
+            <li><a href="/tags/beginner.html">beginner</a> (1)</a></li>
+            <li><a href="/tags/closures.html">closures</a> (1)</a></li>
+            <li><a href="/tags/components-of-programming.html">components of programming</a> (1)</a></li>
+            <li><a href="/tags/generators.html">generators</a> (1)</a></li>
+            <li><a href="/tags/javascript.html">javascript</a> (3)</a></li>
+            <li><a href="/tags/learning.html">learning</a> (1)</a></li>
+            <li><a href="/tags/navigation.html">navigation</a> (1)</a></li>
+            <li><a href="/tags/polyglot.html">polyglot</a> (1)</a></li>
+            <li><a href="/tags/promises.html">promises</a> (1)</a></li>
+            <li><a href="/tags/rails.html">rails</a> (1)</a></li>
+            <li><a href="/tags/routing.html">routing</a> (1)</a></li>
+            <li><a href="/tags/ruby.html">ruby</a> (3)</a></li>
+            <li><a href="/tags/sharp-axe.html">sharp axe</a> (1)</a></li>
+            <li><a href="/tags/web.html">web</a> (1)</a></li>
+      </ol>
+    </section>
+
+    <section class="by-month">
+      <h2>By Month</h2>
+      <ol>
+            <li><a href="/2015/01.html">January 2015</a>
+              (1)</a></li>
+            <li><a href="/2014/11.html">November 2014</a>
+              (1)</a></li>
+            <li><a href="/2014/05.html">May 2014</a>
+              (1)</a></li>
+            <li><a href="/2014/04.html">April 2014</a>
+              (2)</a></li>
+            <li><a href="/2014/02.html">February 2014</a>
+              (1)</a></li>
+            <li><a href="/2013/10.html">October 2013</a>
+              (1)</a></li>
+      </ol>
+    </section>
+  </aside>
+ <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-48123503-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+</div>
+</body>
+</html>

@@ -4,7 +4,7 @@
   <meta charset="utf-8"/>
   <meta http-equiv='X-UA-Compatible' content='IE=edge;chrome=1'/>
   <title>Hostile Developer - On why learning to program is hard</title>
-  <link href="/stylesheets/application.css" media="screen" rel="stylesheet" type="text/css" />
+  <link href="/stylesheets/application.css" rel="stylesheet" type="text/css" />
   <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/feed.xml" />
 
 </head>
@@ -12,20 +12,16 @@
 <div id="container">
   <section>
     <header>
-      <a href="/">
-          <h1 class="brand"><span class="hostile">Hostile</span> Developer</h1>
+<a href="/">          <h1 class="brand"><span class="hostile">Hostile</span> Developer</h1>
 
           <h3 class="tag-line">I am Steven. Hear me Rant.</h3>
-      </a>
-    </header>
+</a>    </header>
   </section>
 
   <div id="main" role="main">
-    
       <h1 class="article-title"><a href="/2014/04/26/on-why-learning-to-program-is-hard.html">On why learning to program is hard</a></h1>
-    
 
-    <p>The first mention of &lsquo;Objects&rsquo; with regard to some non-tangible thing was in <a href="http://en.wikipedia.org/wiki/Object-oriented_programming#History">the late 1950s</a>. Before that, &lsquo;Objects&rsquo; didn&rsquo;t exist. Once you realize that all concepts in programming are made up, you start to feel less bad about not understanding them right away. </p>
+    <p>The first mention of &lsquo;Objects&rsquo; with regard to some non-tangible thing was in <a href="http://en.wikipedia.org/wiki/Object-oriented_programming#History">the late 1950s</a>. Before that, &#39;Objects&rsquo; didn&rsquo;t exist. Once you realize that all concepts in programming are made up, you start to feel less bad about not understanding them right away. </p>
 
 <h1>Learn all the things!</h1>
 
@@ -42,7 +38,7 @@
 6
 7
 8</pre></td><td class="code"><pre><span class="n">fizz_buzz</span> <span class="o">=</span> <span class="o">-&gt;</span><span class="p">(</span><span class="n">number</span><span class="p">)</span> <span class="k">do</span> 
-    <span class="s2">"</span><span class="si">#{</span><span class="s1">'Fizz'</span> <span class="k">if</span> <span class="p">(</span><span class="n">number</span> <span class="sx">% 3).zero?}#{'Buzz' </span><span class="k">if</span> <span class="p">(</span><span class="n">number</span> <span class="o">%</span> <span class="mi">5</span><span class="p">).</span><span class="nf">zero?</span><span class="si">}</span><span class="s2">"</span>
+    <span class="s2">"</span><span class="si">#{</span><span class="s1">'Fizz'</span> <span class="k">if</span> <span class="p">(</span><span class="n">number</span> <span class="o">%</span> <span class="mi">3</span><span class="p">).</span><span class="nf">zero?</span><span class="si">}#{</span><span class="s1">'Buzz'</span> <span class="k">if</span> <span class="p">(</span><span class="n">number</span> <span class="o">%</span> <span class="mi">5</span><span class="p">).</span><span class="nf">zero?</span><span class="si">}</span><span class="s2">"</span>
 <span class="k">end</span>
 
 <span class="mi">1</span><span class="p">.</span><span class="nf">upto</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">num</span><span class="o">|</span> 
@@ -69,7 +65,7 @@
 
 <p>Imagine you&rsquo;re instructing another developer to write this code. What things would they have to understand? </p>
 
-<p>&ldquo;Assign the result of a lambda expression taking one argument to the variable <code>fizz_buzz</code>. In the lambda, create a string that will interpolate &lsquo;Fizz&rsquo; if the argument is divisible by 3, and &lsquo;Buzz&rsquo; if the number is divisible by 5. Ensure the string can be &lsquo;FizzBuzz&rsquo; for numbers like 15. Then iterate from 1 to 100, calling the lambda with each number. If the result of the call is empty, return the number. Otherwise return the result&rdquo;.</p>
+<p>&ldquo;Assign the result of a lambda expression taking one argument to the variable <code>fizz_buzz</code>. In the lambda, create a string that will interpolate &#39;Fizz&rsquo; if the argument is divisible by 3, and &#39;Buzz&rsquo; if the number is divisible by 5. Ensure the string can be &#39;FizzBuzz&rsquo; for numbers like 15. Then iterate from 1 to 100, calling the lambda with each number. If the result of the call is empty, return the number. Otherwise return the result&rdquo;.</p>
 
 <p>Implementing this requires you know specific things about the language you&rsquo;re writing in. Idioms, conventions, methods, objects&hellip;
 To implement this in ruby, you&rsquo;ll have to know:</p>
@@ -136,7 +132,7 @@ The good news is you can can get better at each component separately.</p>
 
 <p>Happy Clacking.</p>
 
-    
+
       <div id="disqus_thread"></div>
 <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
@@ -152,83 +148,61 @@ The good news is you can can get better at each component separately.</p>
 <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
 
-    
   </div>
 
   <aside>
     <section class="recent">
       <h2>Recent Articles</h2>
       <ol class="articles">
-        
+            <li><a href="/2015/01/10/the-peep-stack.html">The PEEP Stack</a>
             <li><a href="/2014/11/25/next-generation-is-better-i-promise.html">Next generation is better. I promise</a>
-        
             <li><a href="/2014/05/18/using-ruby-to-learn-javascript.html">Using Ruby to learn JavaScript</a>
-        
             <li><a href="/2014/04/26/on-why-learning-to-program-is-hard.html">On why learning to program is hard</a>
-        
             <li><a href="/2014/04/13/closures.html">Closures</a>
-        
             <li><a href="/2014/02/15/custom-params-in-route-resources.html">Custom params in route resources</a>
-        
             <li><a href="/2013/10/19/keyboard-navigation.html">Keyboard Navigation</a>
-        
       </ol>
     </section>
 
     <section class="tags">
       <h2>Tags</h2>
       <ol>
-        
+            <li><a href="/tags/elixir.html">Elixir</a> (1)</a></li>
+            <li><a href="/tags/ember.html">Ember</a> (1)</a></li>
+            <li><a href="/tags/phoenix-framework.html">Phoenix Framework</a> (1)</a></li>
+            <li><a href="/tags/postgres.html">Postgres</a> (1)</a></li>
             <li><a href="/tags/beginner.html">beginner</a> (1)</a></li>
-        
             <li><a href="/tags/closures.html">closures</a> (1)</a></li>
-        
             <li><a href="/tags/components-of-programming.html">components of programming</a> (1)</a></li>
-        
             <li><a href="/tags/generators.html">generators</a> (1)</a></li>
-        
             <li><a href="/tags/javascript.html">javascript</a> (3)</a></li>
-        
             <li><a href="/tags/learning.html">learning</a> (1)</a></li>
-        
             <li><a href="/tags/navigation.html">navigation</a> (1)</a></li>
-        
             <li><a href="/tags/polyglot.html">polyglot</a> (1)</a></li>
-        
             <li><a href="/tags/promises.html">promises</a> (1)</a></li>
-        
             <li><a href="/tags/rails.html">rails</a> (1)</a></li>
-        
             <li><a href="/tags/routing.html">routing</a> (1)</a></li>
-        
             <li><a href="/tags/ruby.html">ruby</a> (3)</a></li>
-        
             <li><a href="/tags/sharp-axe.html">sharp axe</a> (1)</a></li>
-        
             <li><a href="/tags/web.html">web</a> (1)</a></li>
-        
       </ol>
     </section>
 
     <section class="by-month">
       <h2>By Month</h2>
       <ol>
-        
+            <li><a href="/2015/01.html">January 2015</a>
+              (1)</a></li>
             <li><a href="/2014/11.html">November 2014</a>
               (1)</a></li>
-        
             <li><a href="/2014/05.html">May 2014</a>
               (1)</a></li>
-        
             <li><a href="/2014/04.html">April 2014</a>
               (2)</a></li>
-        
             <li><a href="/2014/02.html">February 2014</a>
               (1)</a></li>
-        
             <li><a href="/2013/10.html">October 2013</a>
               (1)</a></li>
-        
       </ol>
     </section>
   </aside>

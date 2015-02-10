@@ -4,7 +4,7 @@
   <meta charset="utf-8"/>
   <meta http-equiv='X-UA-Compatible' content='IE=edge;chrome=1'/>
   <title>Hostile Developer - Next generation is better. I promise</title>
-  <link href="/stylesheets/application.css" media="screen" rel="stylesheet" type="text/css" />
+  <link href="/stylesheets/application.css" rel="stylesheet" type="text/css" />
   <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/feed.xml" />
 
 </head>
@@ -12,18 +12,14 @@
 <div id="container">
   <section>
     <header>
-      <a href="/">
-          <h1 class="brand"><span class="hostile">Hostile</span> Developer</h1>
+<a href="/">          <h1 class="brand"><span class="hostile">Hostile</span> Developer</h1>
 
           <h3 class="tag-line">I am Steven. Hear me Rant.</h3>
-      </a>
-    </header>
+</a>    </header>
   </section>
 
   <div id="main" role="main">
-    
       <h1 class="article-title"><a href="/2014/11/25/next-generation-is-better-i-promise.html">Next generation is better. I promise</a></h1>
-    
 
     <h1>Yey!&hellip;.?</h1>
 
@@ -55,11 +51,11 @@
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"Current Color: "</span> <span class="o">+</span> <span class="nx">lameRainbow</span><span class="p">.</span><span class="nx">next</span><span class="p">().</span><span class="nx">value</span><span class="p">);</span>
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"Current Color: "</span> <span class="o">+</span> <span class="nx">lameRainbow</span><span class="p">.</span><span class="nx">next</span><span class="p">().</span><span class="nx">value</span><span class="p">);</span>
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"Current Color: "</span> <span class="o">+</span> <span class="nx">lameRainbow</span><span class="p">.</span><span class="nx">next</span><span class="p">().</span><span class="nx">value</span><span class="p">);</span>
-<span class="c1">// ***Prints***  Current Color: Red
-// ***Prints***  Current Color: Orange
-// ***Prints***  I'm all done
-// ***Prints***  Current Color: undefined
-</span></pre></td></tr></tbody></table>
+<span class="c1">// ***Prints***  Current Color: Red</span>
+<span class="c1">// ***Prints***  Current Color: Orange</span>
+<span class="c1">// ***Prints***  I'm all done</span>
+<span class="c1">// ***Prints***  Current Color: undefined</span>
+</pre></td></tr></tbody></table>
 </div>
 
 <p>This is pretty nice! But by itself, it&rsquo;s kind of useless. We&rsquo;ll need to learn a bit more about what gets returned when we call <code>next</code>.</p>
@@ -87,12 +83,12 @@
 
 <span class="kd">var</span> <span class="nx">lameRainbow</span> <span class="o">=</span> <span class="nx">rainbow</span><span class="p">();</span>
 <span class="nx">lameRainbow</span><span class="p">.</span><span class="nx">next</span><span class="p">();</span>
-<span class="c1">// Object {value: "Red", done: false}
-</span><span class="nx">lameRainbow</span><span class="p">.</span><span class="nx">next</span><span class="p">();</span>
-<span class="c1">// Object {value: "Orange", done: false}
-</span><span class="nx">lameRainbow</span><span class="p">.</span><span class="nx">next</span><span class="p">();</span>
-<span class="c1">// Object {value: undefined, done: true}
-</span></pre></td></tr></tbody></table>
+<span class="c1">// Object {value: "Red", done: false}</span>
+<span class="nx">lameRainbow</span><span class="p">.</span><span class="nx">next</span><span class="p">();</span>
+<span class="c1">// Object {value: "Orange", done: false}</span>
+<span class="nx">lameRainbow</span><span class="p">.</span><span class="nx">next</span><span class="p">();</span>
+<span class="c1">// Object {value: undefined, done: true}</span>
+</pre></td></tr></tbody></table>
 </div>
 
 <p>With this in mind, it&rsquo;s pretty easy to go through all of the generator values in a loop:</p>
@@ -122,13 +118,13 @@
   <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"Current Color: "</span> <span class="o">+</span> <span class="nx">current</span><span class="p">.</span><span class="nx">value</span><span class="p">);</span>
   <span class="nx">current</span> <span class="o">=</span> <span class="nx">lameRainbow</span><span class="p">.</span><span class="nx">next</span><span class="p">();</span>
 <span class="p">}</span>
-<span class="c1">// ***Prints***  Current Color: Red
-// ***Prints***  Current Color: Orange
-// ***Prints***  I'm all done
-</span></pre></td></tr></tbody></table>
+<span class="c1">// ***Prints***  Current Color: Red</span>
+<span class="c1">// ***Prints***  Current Color: Orange</span>
+<span class="c1">// ***Prints***  I'm all done</span>
+</pre></td></tr></tbody></table>
 </div>
 
-<h3>It&rsquo;ll be back</h3>
+<h3>I&rsquo;ll be back</h3>
 
 <p>We saw how to pass values out of a function using <code>yield</code>, but we can also pass values back in and use it in our function. Here&rsquo;s an example:</p>
 <div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
@@ -152,9 +148,9 @@
 <span class="p">}</span>
 
 <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">brat</span><span class="p">();</span>
-<span class="nx">a</span><span class="p">.</span><span class="nx">next</span><span class="p">();</span> <span class="c1">// returns "What are you giving me?" in an object
-</span><span class="nx">a</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="s2">"diamonds"</span><span class="p">);</span> <span class="c1">// Passes "diamonds" and assigns it to our gift variable.
-</span></pre></td></tr></tbody></table>
+<span class="nx">a</span><span class="p">.</span><span class="nx">next</span><span class="p">();</span> <span class="c1">// returns "What are you giving me?" in an object</span>
+<span class="nx">a</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="s2">"diamonds"</span><span class="p">);</span> <span class="c1">// Passes "diamonds" and assigns it to our gift variable.</span>
+</pre></td></tr></tbody></table>
 </div>
 
 <h2>This is going to be awesome: Promise</h2>
@@ -191,27 +187,27 @@
 17
 18
 19
-20</pre></td><td class="code"><pre><span class="c1">// Assuming you have jQuery :-)
-// POINT 1
-</span><span class="kd">var</span> <span class="nx">getReddit</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Promise</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">){</span>
+20</pre></td><td class="code"><pre><span class="c1">// Assuming you have jQuery :-)</span>
+<span class="c1">// POINT 1</span>
+<span class="kd">var</span> <span class="nx">getReddit</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Promise</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">){</span>
   <span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="s1">'http://reddit.com/r/science.json?jsonp=?'</span><span class="p">).</span>
   <span class="nx">success</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">result</span><span class="p">){</span>
-    <span class="c1">// POINT 2
-</span>      <span class="nx">resolve</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span>
+    <span class="c1">// POINT 2</span>
+      <span class="nx">resolve</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span>
   <span class="p">}).</span>
   <span class="nx">error</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
-    <span class="c1">// POINT 3
-</span>    <span class="nx">reject</span><span class="p">(</span><span class="nb">Error</span><span class="p">(</span><span class="s2">"Explosion!"</span><span class="p">))})</span>
+    <span class="c1">// POINT 3</span>
+    <span class="nx">reject</span><span class="p">(</span><span class="nb">Error</span><span class="p">(</span><span class="s2">"Explosion!"</span><span class="p">))})</span>
   <span class="p">});</span>
 
-<span class="c1">// POINT 4
-</span><span class="nx">getReddit</span><span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">result</span><span class="p">){</span>
+<span class="c1">// POINT 4</span>
+<span class="nx">getReddit</span><span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">result</span><span class="p">){</span>
      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span>
    <span class="p">}).</span><span class="k">catch</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">error</span><span class="p">){</span>
      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">error</span><span class="p">)</span>
    <span class="p">});</span>
-<span class="c1">// Gets you a reddit
-</span></pre></td></tr></tbody></table>
+<span class="c1">// Gets you a reddit</span>
+</pre></td></tr></tbody></table>
 </div>
 
 <p>At POINT 1 we&rsquo;re creating a new promise. Promises take a function that expects 2 arguments: a <code>resolve</code> function, and a <code>reject</code> function. Inside the promise, you write your normal callback laden code, dealing with success, and failure cases. With a promise, you&rsquo;re preparing the data, and calling the <code>resolve</code> function when it&rsquo;s done being processed. In our case, we aren&rsquo;t processing the results, so we just pass them into the <code>resolve</code> function at POINT 2. At POINT 3 we deal with errors by passing a new <code>Error</code> to the <code>reject</code> function.</p>
@@ -292,7 +288,7 @@ As of November 25th, this is known to run on Chrome Canary.</p>
 
 <p>Happy Clacking.</p>
 
-    
+
       <div id="disqus_thread"></div>
 <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
@@ -308,83 +304,61 @@ As of November 25th, this is known to run on Chrome Canary.</p>
 <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
 
-    
   </div>
 
   <aside>
     <section class="recent">
       <h2>Recent Articles</h2>
       <ol class="articles">
-        
+            <li><a href="/2015/01/10/the-peep-stack.html">The PEEP Stack</a>
             <li><a href="/2014/11/25/next-generation-is-better-i-promise.html">Next generation is better. I promise</a>
-        
             <li><a href="/2014/05/18/using-ruby-to-learn-javascript.html">Using Ruby to learn JavaScript</a>
-        
             <li><a href="/2014/04/26/on-why-learning-to-program-is-hard.html">On why learning to program is hard</a>
-        
             <li><a href="/2014/04/13/closures.html">Closures</a>
-        
             <li><a href="/2014/02/15/custom-params-in-route-resources.html">Custom params in route resources</a>
-        
             <li><a href="/2013/10/19/keyboard-navigation.html">Keyboard Navigation</a>
-        
       </ol>
     </section>
 
     <section class="tags">
       <h2>Tags</h2>
       <ol>
-        
+            <li><a href="/tags/elixir.html">Elixir</a> (1)</a></li>
+            <li><a href="/tags/ember.html">Ember</a> (1)</a></li>
+            <li><a href="/tags/phoenix-framework.html">Phoenix Framework</a> (1)</a></li>
+            <li><a href="/tags/postgres.html">Postgres</a> (1)</a></li>
             <li><a href="/tags/beginner.html">beginner</a> (1)</a></li>
-        
             <li><a href="/tags/closures.html">closures</a> (1)</a></li>
-        
             <li><a href="/tags/components-of-programming.html">components of programming</a> (1)</a></li>
-        
             <li><a href="/tags/generators.html">generators</a> (1)</a></li>
-        
             <li><a href="/tags/javascript.html">javascript</a> (3)</a></li>
-        
             <li><a href="/tags/learning.html">learning</a> (1)</a></li>
-        
             <li><a href="/tags/navigation.html">navigation</a> (1)</a></li>
-        
             <li><a href="/tags/polyglot.html">polyglot</a> (1)</a></li>
-        
             <li><a href="/tags/promises.html">promises</a> (1)</a></li>
-        
             <li><a href="/tags/rails.html">rails</a> (1)</a></li>
-        
             <li><a href="/tags/routing.html">routing</a> (1)</a></li>
-        
             <li><a href="/tags/ruby.html">ruby</a> (3)</a></li>
-        
             <li><a href="/tags/sharp-axe.html">sharp axe</a> (1)</a></li>
-        
             <li><a href="/tags/web.html">web</a> (1)</a></li>
-        
       </ol>
     </section>
 
     <section class="by-month">
       <h2>By Month</h2>
       <ol>
-        
+            <li><a href="/2015/01.html">January 2015</a>
+              (1)</a></li>
             <li><a href="/2014/11.html">November 2014</a>
               (1)</a></li>
-        
             <li><a href="/2014/05.html">May 2014</a>
               (1)</a></li>
-        
             <li><a href="/2014/04.html">April 2014</a>
               (2)</a></li>
-        
             <li><a href="/2014/02.html">February 2014</a>
               (1)</a></li>
-        
             <li><a href="/2013/10.html">October 2013</a>
               (1)</a></li>
-        
       </ol>
     </section>
   </aside>
