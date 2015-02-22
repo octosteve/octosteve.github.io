@@ -88,6 +88,11 @@ body {
       display: block;
       font-weight: bold;
       color: #1c334e; }
+  /* line 111, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/application.css.scss */
+  body blockquote {
+    background: white;
+    padding: 10px 50px;
+    font-family: 'Press Start 2P' cursive; }
 /* line 4, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/susy_and_overrides.css.scss */
 #container {
   *zoom: 1;

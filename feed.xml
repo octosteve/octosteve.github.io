@@ -14,13 +14,19 @@
     <link rel="alternate" href="http://blog.url.com/2015/02/22/let-me-find-out.html"/>
     <id>http://blog.url.com/2015/02/22/let-me-find-out.html</id>
     <published>2015-02-21T22:41:00-05:00</published>
-    <updated>2015-02-21T23:55:24-05:00</updated>
+    <updated>2015-02-22T15:50:24-05:00</updated>
     <author>
       <name>Article Author</name>
     </author>
     <content type="html">&lt;h1&gt;Finders keepers&lt;/h1&gt;
 
-&lt;p&gt;The &lt;code&gt;find&lt;/code&gt; method is one of the first methods I suggest people use when they&amp;rsquo;re suffering from &lt;strong&gt;eachitis&lt;/strong&gt;, the condition where all solutions involving collections are solved by using the &lt;code&gt;each&lt;/code&gt; method. One problem with &lt;code&gt;find&lt;/code&gt; is how to interpret the funky method signature.&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;find&lt;/code&gt; method is one of the first methods I suggest people use when they&amp;rsquo;re suffering from &lt;strong&gt;eachitis&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;EACHITIS&lt;/strong&gt;: A condition where all solutions involving collections are solved using the &lt;code&gt;each&lt;/code&gt; method.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;One problem with &lt;code&gt;find&lt;/code&gt; is how to interpret the funky method signature.&lt;/p&gt;
 &lt;div class="highlight ruby"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="n"&gt;find&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;ifnone&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kp"&gt;nil&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;&lt;span class="n"&gt;obj&lt;/span&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;block&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="err"&gt;→&lt;/span&gt; &lt;span class="n"&gt;obj&lt;/span&gt; &lt;span class="n"&gt;or&lt;/span&gt; &lt;span class="kp"&gt;nil&lt;/span&gt;
 &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
 &lt;/div&gt;
@@ -134,7 +140,7 @@
 
 &lt;h2&gt;Conclusion&lt;/h2&gt;
 
-&lt;p&gt;Ruby&amp;rsquo;s language features are one of the most robust I&amp;rsquo;ve had the pleasure to work with. This relatively mundane method offers a nice splash of awesome by taking a callable object as its requirement.&lt;/p&gt;
+&lt;p&gt;Ruby&amp;rsquo;s language features are one of the most robust I&amp;rsquo;ve had the pleasure to work with. This mundane method offers a nice splash of awesome by taking a callable object as its requirement.&lt;/p&gt;
 </content>
   </entry>
   <entry>
