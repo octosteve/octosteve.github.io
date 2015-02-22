@@ -1,12 +1,16 @@
 ---
 title: Let me find out
 date: 2015-02-22 03:41 UTC
-tags:
+tags: ruby, enumerable, find
 ---
 
 # Finders keepers
 
-The `find` method is one of the first methods I suggest people use when they're suffering from __eachitis__, the condition where all solutions involving collections are solved by using the `each` method. One problem with `find` is how to interpret the funky method signature.
+The `find` method is one of the first methods I suggest people use when they're suffering from __eachitis__.
+
+>__EACHITIS__: A condition where all solutions involving collections are solved using the `each` method.
+
+One problem with `find` is how to interpret the funky method signature.
 
 ``` ruby
 find(ifnone = nil) { |obj| block } → obj or nil
@@ -84,4 +88,4 @@ Calling `search` fails, it calls the `retry_search` method. It literally
  calls the ruby `Method` object. Pretty freakin' sweet.
 
 ## Conclusion
-Ruby's language features are one of the most robust I've had the pleasure to work with. This relatively mundane method offers a nice splash of awesome by taking a callable object as its requirement.
+Ruby's language features are one of the most robust I've had the pleasure to work with. This mundane method offers a nice splash of awesome by taking a callable object as its requirement.
