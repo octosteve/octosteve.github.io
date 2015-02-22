@@ -56,40 +56,48 @@ Now to create a new app. From inside this directory run:
 
 
 ``` bash
-mix phoenix.new peep_chat ../peep_chat
-cd ../peep_chat
-mix do deps.get, compile
+mix phoenix.new peep_chat ../peep_chat && cd ../peep_chat && mix do deps.get, compile
 ```
 
 We'll modify a few things:
 
 * delete the `page` directory in `web/templates/`. We won't be rendering views with Phoenix, just an api.
-* delete `web/views/page_view.ex`
+* delete `web/views/page_view.ex`.
 * open `web/router.ex` and change references to PageController to HomeController.
 * Rename `web/controllers/page_controller.ex` to `web/controllers/home_controller.ex`
-* Change the controller name in `home_controller.ex` to `PeepChat.HomeController`
+* Change the controller name in `web/controllers/home_controller.ex` from `PeepChat.PageController` to `PeepChat.HomeController`
+
+For the 1337 hax0rs
+
+```
+rm -rf web/templates/page/
+rm web/views/page_view.ex
+sed -i "" s/PageController/HomeController/g web/router.ex
+mv web/controllers/{page,home}_controller.ex
+sed -i "" s/PageController/HomeController/g web/controllers/home_controller.ex
+```
 
 We'll leave this here for now. After we have Ember set up, we'll have this action load Ember's generated `index.html`.
 
 ## Ember-Cli
 
-Ember-Cli will be managing our assets. This allows us to work with stuff like Sass and Coffeescript with ease. I love this separation since we leave Ember-Cli to do what it's good at: wrangling the JS chaos.
+Ember-Cli will be managing our assets. This allows us to work with stuff like Sass and CoffeeScript with ease. I love this separation since we leave Ember-Cli to do what it's good at: wrangling the JS chaos.
 
-We'll create a new Ember app inside our peep_chat app's web directory named client.
+We'll create a new Ember app inside our peep_chat app's root directory named client.
 
 ``` bash
-cd web
 ember new client
 ```
 
 The next step we'll need is to change the configurations so Ember's build step outputs to Phoenix's `priv/static` directory.
 
-Add this to `peep_chat/web/client/.ember-cli` under the `disableAnalytics` setting.:
+Add this to `peep_chat/client/.ember-cli` under the `disableAnalytics` setting.:
 
 ``` json
-"output-path": "../../priv/static"
+"output-path": "../priv/static"
 ```
 
+Copy the priv/static/vendor/phoenix.js into client/vendor
 By running `ember build` you should see a bunch of Ember files dumped in Phoenix's `priv/static` directory.
 
 ### Serving up Ember
@@ -129,30 +137,31 @@ scope "/", PeepChat do
 end
 ```
 
-This wild force all requests to respond with Ember's `index.html`
+This wildcard forces all requests to respond with Ember's `index.html`
 
-### Showing all rooms
+### Setting up a channel
+
+Phoenix Channels were built before they had a view layer. They take channels seriously. We're going to create a new channel to handle our chat messages.
+
+In Phoenix, we'll do 2 things. First we'll add a channel to the `web/router.ex` file.
+
+``` elixir
+socket "/ws", PeepChat do
+  channel "elixir_chat:*", ElixirChatChannel
+end  
+```
+
+Then create a corresponding Channel in `web/channels` named `elixir_chat_channel`. It should look like this:
+
+``` elixir
+defmodule PeepChat.ElixirChatChannel do
+  use Phoenix.Channel
+end
+```
+https://raw.githubusercontent.com/phoenixframework/phoenix/45e83bd90343be693a4e92492b85b11aec390b92/priv/static/js/phoenix.js
 
 NOTE:
 We'll be adding a bunch of ember code so be sure to run `ember build --watch` in your terminal so you're always getting the latest code.
-
-We're going to need a new route to show all of the rooms on the page. We'll add a new route, and create a template to be rendered.
-
-Replace the empty `Router.map` with this:
-
-``` javascript
-Router.map(function() {
-  this.resource('rooms');
-});
-```
-
-Add a link to the new `rooms` route in the application template in `web/client/app/templates/application.hbs` with:
-
-``` handlebars
-{{#link-to 'rooms'}}Rooms{{/link-to}}
-```
-
-For now, an empty `web/client/app/templates/rooms.hbs` will do.
 
 ## Postgres with Ecto
 
