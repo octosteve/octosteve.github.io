@@ -5,10 +5,138 @@
   <id>http://blog.url.com/</id>
   <link href="http://blog.url.com/"/>
   <link href="http://blog.url.com/feed.xml" rel="self"/>
-  <updated>2014-11-24T20:13:00-05:00</updated>
+  <updated>2015-02-21T22:41:00-05:00</updated>
   <author>
     <name>Blog Author</name>
   </author>
+  <entry>
+    <title>Let me find out</title>
+    <link rel="alternate" href="http://blog.url.com/2015/02/22/let-me-find-out.html"/>
+    <id>http://blog.url.com/2015/02/22/let-me-find-out.html</id>
+    <published>2015-02-21T22:41:00-05:00</published>
+    <updated>2015-02-21T23:55:24-05:00</updated>
+    <author>
+      <name>Article Author</name>
+    </author>
+    <content type="html">&lt;h1&gt;Finders keepers&lt;/h1&gt;
+
+&lt;p&gt;The &lt;code&gt;find&lt;/code&gt; method is one of the first methods I suggest people use when they&amp;rsquo;re suffering from &lt;strong&gt;eachitis&lt;/strong&gt;, the condition where all solutions involving collections are solved by using the &lt;code&gt;each&lt;/code&gt; method. One problem with &lt;code&gt;find&lt;/code&gt; is how to interpret the funky method signature.&lt;/p&gt;
+&lt;div class="highlight ruby"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="n"&gt;find&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;ifnone&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kp"&gt;nil&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;&lt;span class="n"&gt;obj&lt;/span&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;block&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="err"&gt;→&lt;/span&gt; &lt;span class="n"&gt;obj&lt;/span&gt; &lt;span class="n"&gt;or&lt;/span&gt; &lt;span class="kp"&gt;nil&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;From this signature, you might think you could just give an argument to &lt;code&gt;find&lt;/code&gt; and it will be returned if no value is found. But that&amp;rsquo;s when disaster strikes.&lt;/p&gt;
+&lt;div class="highlight ruby"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+2&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;).&lt;/span&gt;&lt;span class="nf"&gt;find&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;"nope"&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;&lt;span class="o"&gt;|&lt;/span&gt;&lt;span class="n"&gt;num&lt;/span&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;num&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="mi"&gt;9000&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="c1"&gt;# =&amp;gt; NoMethodError: undefined method `call' for "nope":String&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Rude! It turns out, Ruby wants a &lt;code&gt;call&lt;/code&gt;able object to be passed in as an argument, which unfortunately, a string is not. The first callable object that comes to mind is the terrorizing &lt;code&gt;lambda&lt;/code&gt;. Let&amp;rsquo;s see what happens if we wrap our default value in a lambda instead of passing a string. We&amp;rsquo;ll use the stabby lambda syntax to keep it short.&lt;/p&gt;
+&lt;div class="highlight ruby"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+2&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;).&lt;/span&gt;&lt;span class="nf"&gt;find&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;"nope"&lt;/span&gt;&lt;span class="p"&gt;}){&lt;/span&gt;&lt;span class="o"&gt;|&lt;/span&gt;&lt;span class="n"&gt;num&lt;/span&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;num&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="mi"&gt;9000&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="c1"&gt;# =&amp;gt; "nope"&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Great! You might be asking yourself, &amp;ldquo;Why the hell is this a thing?&amp;rdquo;. Well reader, checkout this example to see if it makes more sense.&lt;/p&gt;
+&lt;div class="highlight ruby"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+2&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;).&lt;/span&gt;&lt;span class="nf"&gt;find&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="k"&gt;raise&lt;/span&gt; &lt;span class="s2"&gt;"hell"&lt;/span&gt;&lt;span class="p"&gt;}){&lt;/span&gt;&lt;span class="o"&gt;|&lt;/span&gt;&lt;span class="n"&gt;num&lt;/span&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;num&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="mi"&gt;9000&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="c1"&gt;# =&amp;gt; Hell has been raised&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Lambdas are a way of delaying execution. Here we&amp;rsquo;re delaying the calling of an exception until it&amp;rsquo;s necessary. You can also use this to make calls to an API only when needed.&lt;/p&gt;
+
+&lt;h2&gt;The wheels are turning&lt;/h2&gt;
+
+&lt;p&gt;The beauty of Duck Typing is that all we need is an object that responds to &lt;code&gt;call&lt;/code&gt;. That means we can do some pretty crazy stuff.&lt;/p&gt;
+
+&lt;p&gt;Take this class for example:&lt;/p&gt;
+&lt;div class="highlight ruby"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="nb"&gt;require&lt;/span&gt; &lt;span class="s1"&gt;'json'&lt;/span&gt;
+&lt;span class="nb"&gt;require&lt;/span&gt; &lt;span class="s1"&gt;'rest-client'&lt;/span&gt;
+&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;PostNotFound&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="no"&gt;StandardError&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;end&lt;/span&gt;
+&lt;span class="no"&gt;Post&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="no"&gt;Struct&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;new&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;:title&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:url&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;Reddit&lt;/span&gt;
+  &lt;span class="kp"&gt;attr_reader&lt;/span&gt; &lt;span class="ss"&gt;:subreddit&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:posts&lt;/span&gt;
+  &lt;span class="kp"&gt;attr_accessor&lt;/span&gt; &lt;span class="ss"&gt;:last_term&lt;/span&gt;
+
+  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;initialize&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;subreddit&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="vi"&gt;@subreddit&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;subreddit&lt;/span&gt;
+    &lt;span class="vi"&gt;@posts&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[]&lt;/span&gt;
+  &lt;span class="k"&gt;end&lt;/span&gt;
+
+  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;search&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;term&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;not_found&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nb"&gt;method&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;:retry_search&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+    &lt;span class="nb"&gt;self&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;last_term&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;term&lt;/span&gt;
+    &lt;span class="n"&gt;posts&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;find&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;not_found&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;&lt;span class="o"&gt;|&lt;/span&gt;&lt;span class="n"&gt;post&lt;/span&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;post&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;title&lt;/span&gt; &lt;span class="o"&gt;=~&lt;/span&gt; &lt;span class="sr"&gt;/&lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;last_term&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="sr"&gt;/&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+  &lt;span class="k"&gt;end&lt;/span&gt;
+
+  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;refresh&lt;/span&gt;
+    &lt;span class="n"&gt;results&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="no"&gt;JSON&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;parse&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="no"&gt;RestClient&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;get&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;"http://www.reddit.com/r/&lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;subreddit&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;.json"&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+    &lt;span class="n"&gt;posts&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;concat&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;to_posts&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;results&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;"data"&lt;/span&gt;&lt;span class="p"&gt;][&lt;/span&gt;&lt;span class="s2"&gt;"children"&lt;/span&gt;&lt;span class="p"&gt;])).&lt;/span&gt;&lt;span class="nf"&gt;uniq&lt;/span&gt;
+  &lt;span class="k"&gt;end&lt;/span&gt;
+
+  &lt;span class="kp"&gt;private&lt;/span&gt;
+  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;retry_search&lt;/span&gt;
+    &lt;span class="n"&gt;refresh&lt;/span&gt;
+    &lt;span class="n"&gt;search&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;last_term&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="k"&gt;raise&lt;/span&gt; &lt;span class="no"&gt;PostNotFound&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt;
+  &lt;span class="k"&gt;end&lt;/span&gt;
+
+  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;to_posts&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;post_collection&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;post_collection&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;map&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="o"&gt;|&lt;/span&gt;&lt;span class="n"&gt;post&lt;/span&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="no"&gt;Post&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;new&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;post&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;"data"&lt;/span&gt;&lt;span class="p"&gt;][&lt;/span&gt;&lt;span class="s2"&gt;"title"&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="n"&gt;post&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;"data"&lt;/span&gt;&lt;span class="p"&gt;][&lt;/span&gt;&lt;span class="s2"&gt;"url"&lt;/span&gt;&lt;span class="p"&gt;])}&lt;/span&gt;
+  &lt;span class="k"&gt;end&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+
+&lt;span class="n"&gt;client&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="no"&gt;Reddit&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;new&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'vegetarianism'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;client&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;search&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;"Ham"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Calling &lt;code&gt;search&lt;/code&gt; fails, it calls the &lt;code&gt;retry_search&lt;/code&gt; method. It literally
+ calls the ruby &lt;code&gt;Method&lt;/code&gt; object. Pretty freakin&amp;rsquo; sweet.&lt;/p&gt;
+
+&lt;h2&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;Ruby&amp;rsquo;s language features are one of the most robust I&amp;rsquo;ve had the pleasure to work with. This relatively mundane method offers a nice splash of awesome by taking a callable object as its requirement.&lt;/p&gt;
+</content>
+  </entry>
   <entry>
     <title>Next generation is better. I promise</title>
     <link rel="alternate" href="http://blog.url.com/2014/11/25/next-generation-is-better-i-promise.html"/>
@@ -1407,119 +1535,6 @@ resources in my routes file so I started there.&lt;/p&gt;
 &lt;/div&gt;
 
 &lt;p&gt;So much better! I hope you found this useful. It was definitely fun to figure out.&lt;/p&gt;
-</content>
-  </entry>
-  <entry>
-    <title>Keyboard Navigation</title>
-    <link rel="alternate" href="http://blog.url.com/2013/10/19/keyboard-navigation.html"/>
-    <id>http://blog.url.com/2013/10/19/keyboard-navigation.html</id>
-    <published>2013-10-19T06:59:00-04:00</published>
-    <updated>2015-02-10T16:42:52-05:00</updated>
-    <author>
-      <name>Article Author</name>
-    </author>
-    <content type="html">&lt;h2&gt;Get over here!&lt;/h2&gt;
-
-&lt;p&gt;One of the unsung heroes of development is knowing how to use your keyboard. I don&amp;rsquo;t just mean typing. That skill, while important, is still second to being able to move around. What do I mean by this?&lt;/p&gt;
-
-&lt;p&gt;Let&amp;rsquo;s say I&amp;rsquo;m typing this obscenely long line of bash:&lt;/p&gt;
-&lt;div class="highlight shell"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;cat ~/schol/GA/BEWD_Curriculum/01_Dev_Workflow/README.md| grep -i git
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/div&gt;
-
-&lt;p&gt;Oh NO! I&amp;rsquo;ve misspelled &lt;code&gt;school&lt;/code&gt;. Here we go: backspace backspace backspace… 59 backspaces! Even if you didn&amp;rsquo;t erase it and just used left, it&amp;rsquo;s still going to take a while.&lt;/p&gt;
-
-&lt;p&gt;That&amp;rsquo;s crazy. Let&amp;rsquo;s try another way.&lt;/p&gt;
-
-&lt;p&gt;A keyboard shortcut you can use is holding the &lt;code&gt;option&lt;/code&gt; or &lt;code&gt;alt&lt;/code&gt; (written &lt;code&gt;⌥&lt;/code&gt;) key and pressing &lt;code&gt;left&lt;/code&gt;. Do that 11 times, and you&amp;rsquo;ll get to the &lt;code&gt;G&lt;/code&gt; in &lt;code&gt;GA&lt;/code&gt;. From there, it&amp;rsquo;s just 2 taps of the &lt;code&gt;left&lt;/code&gt; key and you&amp;rsquo;re good to go. &lt;/p&gt;
-
-&lt;p&gt;There&amp;rsquo;s another way… There&amp;rsquo;s always another way…&lt;/p&gt;
-
-&lt;p&gt;You can jump to the beginning of the line by holding &lt;code&gt;Control&lt;/code&gt; (written &lt;code&gt;Ctrl&lt;/code&gt;, &lt;code&gt;^&lt;/code&gt; ), and pressing &lt;code&gt;a&lt;/code&gt;. From there, along with &lt;code&gt;option + right&lt;/code&gt; you&amp;rsquo;ve brought it down to 5 taps (^a, ⌥+right, &lt;code&gt;right&lt;/code&gt;, &lt;code&gt;right&lt;/code&gt;, &lt;code&gt;right&lt;/code&gt; ).&lt;/p&gt;
-
-&lt;p&gt;&lt;a href="http://lifehacker.com/5743814/become-a-command-line-ninja-with-these-time+saving-shortcuts"&gt;This article&lt;/a&gt; has loads of cool stuff you can use to get around. &lt;/p&gt;
-
-&lt;p&gt;My point is, make time to practice getting good. Think of it like golf. The less strokes, the better. Over time you&amp;rsquo;ll see the lag between your intention and your computer screen shrink. Decide that it&amp;rsquo;s important and it will make your development career amazing.&lt;/p&gt;
-
-&lt;h3&gt;There&amp;rsquo;s always another way&lt;/h3&gt;
-
-&lt;p&gt;This would work too 
-&lt;code&gt;^schol^school&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;You would submit the messed up line, it would give you an error. Then you would type that.&lt;/p&gt;
-
-&lt;h3&gt;Editing Text&lt;/h3&gt;
-
-&lt;p&gt;A lot of these things work in your editor of choice. A lot of developers use &lt;a href="http://www.sublimetext.com/2"&gt;Sublime Text&lt;/a&gt;. &lt;/p&gt;
-
-&lt;p&gt;Let&amp;rsquo;s look at getting around a small ruby file. It&amp;rsquo;s from my &lt;a href="https://github.com/StevenNunez/slide_hero"&gt;slide_hero gem&lt;/a&gt;. Don&amp;rsquo;t worry too much about what it does.&lt;/p&gt;
-&lt;div class="highlight ruby"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="k"&gt;module&lt;/span&gt; &lt;span class="nn"&gt;SlideHero&lt;/span&gt;                                                                   
-  &lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;Point&lt;/span&gt;                                                                      
-    &lt;span class="kp"&gt;attr_reader&lt;/span&gt; &lt;span class="ss"&gt;:text&lt;/span&gt;                                                              
-    &lt;span class="no"&gt;SUPPORTED_ANIMATIONS&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="sx"&gt;%w{grow shrink roll-in fade-out                         
-      highlight-red highlight-green highlight-blue}&lt;/span&gt;                                
-
-    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;initialize&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;text&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;animation: &lt;/span&gt;&lt;span class="kp"&gt;nil&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;                                           
-      &lt;span class="vi"&gt;@text&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;text&lt;/span&gt;                                                                 
-      &lt;span class="vi"&gt;@animation&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;animation&lt;/span&gt;                                                       
-    &lt;span class="k"&gt;end&lt;/span&gt;                                                                            
-
-    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;compile&lt;/span&gt;                                                                    
-      &lt;span class="s2"&gt;"&amp;lt;p&lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;animation&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&amp;gt;&lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;text&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&amp;lt;/p&amp;gt;"&lt;/span&gt;                                                 
-    &lt;span class="k"&gt;end&lt;/span&gt;                                                                            
-
-    &lt;span class="kp"&gt;private&lt;/span&gt;                                                                        
-    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;animation&lt;/span&gt;                                                                  
-      &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="vi"&gt;@animation&lt;/span&gt;                                                                
-        &lt;span class="n"&gt;animation_markup&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;' class="fragment '&lt;/span&gt;                                     
-        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="no"&gt;SUPPORTED_ANIMATIONS&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;include?&lt;/span&gt; &lt;span class="vi"&gt;@animation&lt;/span&gt;                                
-          &lt;span class="n"&gt;animation_markup&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="vi"&gt;@animation&lt;/span&gt;                                           
-        &lt;span class="k"&gt;end&lt;/span&gt;                                                                        
-        &lt;span class="n"&gt;animation_markup&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s2"&gt;"&lt;/span&gt;&lt;span class="se"&gt;\"&lt;/span&gt;&lt;span class="s2"&gt;"&lt;/span&gt;                                                    
-      &lt;span class="k"&gt;end&lt;/span&gt;                                                                          
-    &lt;span class="k"&gt;end&lt;/span&gt;                                                                            
-  &lt;span class="k"&gt;end&lt;/span&gt;                                                                              
-&lt;span class="k"&gt;end&lt;/span&gt;                        
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/div&gt;
-
-&lt;p&gt;Let&amp;rsquo;s say I want to jump to add another method (&lt;code&gt;def animation&lt;/code&gt; is me defining a method). Since the editor usually opens at the top of the file, I&amp;rsquo;ll have to press down 16 times or worse, USE MY MOUSE!  Looking at Sublime Text&amp;rsquo;s &lt;code&gt;Goto&lt;/code&gt; menu, I see ^G will let me specify what line to go to. Cool! Ok, well now I&amp;rsquo;m on the line with &lt;code&gt;private&lt;/code&gt; and need to get &lt;em&gt;after&lt;/em&gt; it to enter my new method. We can use one of our old buddies &lt;code&gt;⌥+right&lt;/code&gt; here! OK, &lt;code&gt;⌥+right&lt;/code&gt;, &lt;code&gt;enter&lt;/code&gt;, start typing!&lt;/p&gt;
-
-&lt;p&gt;If you&amp;rsquo;re planning on using Sublime Text, be sure to learn the &lt;a href="http://docs.sublimetext.info/en/latest/reference/keyboard_shortcuts_osx.html"&gt;keyboard shortcuts!&lt;/a&gt;. They&amp;rsquo;re there because of you! Use them and be awesome.&lt;/p&gt;
-
-&lt;p&gt;Another time saving shortcut is ⌘D on a Mac. Here&amp;rsquo;s how it works. Say I want to replace every time the word &lt;code&gt;text&lt;/code&gt; appears in my code example. I could use our fancy navigation to line 3, then 8 then 13, BUT there&amp;rsquo;s another way. If you put your cursor on &lt;code&gt;text&lt;/code&gt; (any of them), and press &lt;code&gt;⌘D&lt;/code&gt;, it will start to highlight every instance of &lt;code&gt;text&lt;/code&gt;. Now just start typing. It will erase all of them. What a time saver.&lt;/p&gt;
-
-&lt;p&gt;In the end, it&amp;rsquo;s your ability to move around effectively that will make you a great developer. All the other stuff you can learn as you go. There are times I have no idea how to solve something, but being able to run really fast experiments makes my life so much easier. &lt;/p&gt;
-
-&lt;p&gt;That&amp;rsquo;s all I have.&lt;/p&gt;
-
-&lt;p&gt;Happy Clacking. &lt;/p&gt;
 </content>
   </entry>
 </feed>
