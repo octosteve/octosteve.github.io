@@ -108,4 +108,9 @@ body {
       color: desaturate($base-font, 50);
     }
   }
+  blockquote {
+    background: white;
+    padding: 10px 50px;
+    font-family: 'Press Start 2P' cursive;
+  }
 }
