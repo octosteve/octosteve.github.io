@@ -25,17 +25,17 @@
       width: 1170px; } }
 
 /* line 30, /Users/StevenNunez/.gem/ruby/2.2.0/gems/bootstrap-sass-3.3.3/assets/stylesheets/bootstrap/_grid.scss */
-.container-fluid {
+.container-fluid, #container #header {
   margin-right: auto;
   margin-left: auto;
   padding-left: 15px;
   padding-right: 15px; }
   /* line 14, /Users/StevenNunez/.gem/ruby/2.2.0/gems/bootstrap-sass-3.3.3/assets/stylesheets/bootstrap/mixins/_clearfix.scss */
-  .container-fluid:before, .container-fluid:after {
+  .container-fluid:before, #container #header:before, .container-fluid:after, #container #header:after {
     content: " ";
     display: table; }
   /* line 19, /Users/StevenNunez/.gem/ruby/2.2.0/gems/bootstrap-sass-3.3.3/assets/stylesheets/bootstrap/mixins/_clearfix.scss */
-  .container-fluid:after {
+  .container-fluid:after, #container #header:after {
     clear: both; }
 
 /* line 39, /Users/StevenNunez/.gem/ruby/2.2.0/gems/bootstrap-sass-3.3.3/assets/stylesheets/bootstrap/_grid.scss */
@@ -889,7 +889,15 @@
   /* line 60, /Users/StevenNunez/.gem/ruby/2.2.0/gems/bootstrap-sass-3.3.3/assets/stylesheets/bootstrap/mixins/_grid-framework.scss */
   .col-lg-offset-12 {
     margin-left: 100%; } }
-/* line 7, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/bootstrap_and_overrides.css.scss */
+/* line 9, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/bootstrap_and_overrides.css.scss */
+#container #header header {
+  position: relative;
+  float: left;
+  width: 50%;
+  min-height: 1px;
+  padding-left: 15px;
+  padding-right: 15px; }
+/* line 13, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/bootstrap_and_overrides.css.scss */
 #container aside {
   position: relative;
   float: left;
@@ -898,8 +906,8 @@
   padding-left: 15px;
   padding-right: 15px;
   margin-left: 8.33333333%; }
-/* line 11, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/bootstrap_and_overrides.css.scss */
-#container #main {
+/* line 17, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/bootstrap_and_overrides.css.scss */
+#container main {
   position: relative;
   float: left;
   width: 58.33333333%;
