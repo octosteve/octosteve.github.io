@@ -10,7 +10,7 @@
 </head>
 <body>
 <div id="container">
-  <section>
+  <section id="header">
     <header>
       <% link_to '/' do %>
           <h1 class="brand"><span class="hostile">Hostile</span> Developer</h1>
@@ -20,7 +20,7 @@
     </header>
   </section>
 
-  <div id="main" role="main">
+  <main id="main" role="main">
     <% if is_blog_article? %>
       <h1 class="article-title"><%= link_to current_article.title, current_article %></h1>
     <% end %>
@@ -30,7 +30,7 @@
     <% if is_blog_article? %>
       <%= partial 'disqus' %>
     <% end %>
-  </div>
+  </main>
 
   <aside>
     <section class="recent">

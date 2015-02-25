@@ -4,11 +4,17 @@
 
 #container {
   @extend .container;
+  #header {
+    @extend .container-fluid;
+    header{
+      @include make-xs-column(6)
+    }
+  }
     aside {
       @include make-xs-column(3);
       @include make-xs-column-offset(1);
     }
-    #main {
+    main {
       @include make-xs-column(7);
   }
 }
