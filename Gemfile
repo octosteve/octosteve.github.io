@@ -11,7 +11,7 @@ gem 'middleman-gh-pages'
 # For feed.xml.builder
 gem "builder", "~> 3.0"
 
-gem 'susy', '~> 1.0.9'
+gem 'bootstrap-sass', '~> 3.3.3'
 
 gem 'redcarpet'
 

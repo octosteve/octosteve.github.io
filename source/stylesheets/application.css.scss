@@ -1,9 +1,10 @@
 /*
  *= require_self
- *= require susy_and_overrides
- *= require_tree .
+ *= require bootstrap_and_overrides
+ *= require syntax
  */
 // fix code scrolling out
+
 @import url('http://fonts.googleapis.com/css?family=Press+Start+2P');
 @import url('http://fonts.googleapis.com/css?family=Roboto:400,700');
 

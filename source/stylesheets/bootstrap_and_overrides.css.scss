@@ -1,0 +1,14 @@
+@import "bootstrap/variables";
+@import "bootstrap/mixins";
+@import "bootstrap/grid";
+
+#container {
+  @extend .container;
+    aside {
+      @include make-xs-column(3);
+      @include make-xs-column-offset(1);
+    }
+    #main {
+      @include make-xs-column(7);
+  }
+}
