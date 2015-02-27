@@ -2360,80 +2360,94 @@ body {
     background-color: #F1EEE7;
     color: #023168; }
     /* line 31, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/application.css.scss */
+    body #container #articles {
+      margin-top: 2em; }
+    /* line 35, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/application.css.scss */
     body #container article {
       margin-bottom: 3em; }
-    /* line 36, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/application.css.scss */
-    body #container #header header {
-      margin-bottom: 2em; }
-      /* line 38, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/application.css.scss */
-      body #container #header header a:hover {
-        text-decoration: none; }
-      /* line 41, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/application.css.scss */
-      body #container #header header .brand {
-        padding-top: 20px;
-        margin-bottom: 0;
-        font-size: 4em;
-        font-family: 'Press Start 2P' cursive; }
-      /* line 47, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/application.css.scss */
-      body #container #header header .tag-line {
-        padding: 0;
-        margin-top: 0;
-        margin-right: 0;
-        margin-left: 0;
-        margin-bottom: .2em; }
-      /* line 54, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/application.css.scss */
-      body #container #header header h1, body #container #header header h3 {
-        margin-top: 0;
-        margin-bottom: .3em; }
-    /* line 59, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/application.css.scss */
+    /* line 41, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/application.css.scss */
+    body #container #header header a:hover {
+      text-decoration: none; }
+    /* line 44, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/application.css.scss */
+    body #container #header header .brand {
+      padding-top: 20px;
+      margin-bottom: 0;
+      font-size: 4em;
+      font-family: 'Press Start 2P' cursive; }
+    /* line 50, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/application.css.scss */
+    body #container #header header .tag-line {
+      padding: 0;
+      margin-top: 0;
+      margin-right: 0;
+      margin-left: 0;
+      margin-bottom: .2em; }
+    /* line 57, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/application.css.scss */
+    body #container #header header h1, body #container #header header h3 {
+      margin-top: 0;
+      margin-bottom: .3em; }
+    /* line 62, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/application.css.scss */
     body #container #header .social {
       font-size: 10em; }
-      /* line 62, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/application.css.scss */
+      /* line 65, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/application.css.scss */
       body #container #header .social a:hover {
         color: #78bccd; }
-    /* line 71, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/application.css.scss */
+    /* line 70, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/application.css.scss */
+    body #container #header nav {
+      border-top: solid 1px;
+      border-bottom: solid 1px; }
+      /* line 73, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/application.css.scss */
+      body #container #header nav .links {
+        padding-left: 0;
+        list-style: none;
+        margin-left: -5px; }
+        /* line 78, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/application.css.scss */
+        body #container #header nav .links > li {
+          display: inline-block;
+          padding-left: 5px;
+          padding-right: 5px; }
+    /* line 88, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/application.css.scss */
     body #container h1.article-title {
       margin-top: 0;
       padding-top: 0;
       font-family: 'Press Start 2P' cursive; }
-    /* line 80, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/application.css.scss */
+    /* line 97, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/application.css.scss */
     body #container a:link {
       color: #53A9BF;
       text-decoration: none;
       font-weight: bold; }
-    /* line 85, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/application.css.scss */
+    /* line 102, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/application.css.scss */
     body #container a:visited {
       color: #01002F; }
-    /* line 88, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/application.css.scss */
+    /* line 105, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/application.css.scss */
     body #container a:hover {
       text-decoration: underline; }
-    /* line 94, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/application.css.scss */
+    /* line 111, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/application.css.scss */
     body #container aside ul, body #container aside ol {
       list-style-type: none;
       padding: 0; }
-      /* line 97, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/application.css.scss */
+      /* line 114, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/application.css.scss */
       body #container aside ul li, body #container aside ol li {
         border-style: solid;
         border-width: 0 0 1px; }
-    /* line 103, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/application.css.scss */
+    /* line 120, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/application.css.scss */
     body #container aside section {
       background-color: #e8e3d7;
       padding: 5px 30px;
       margin-bottom: 10px; }
-    /* line 108, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/application.css.scss */
+    /* line 125, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/application.css.scss */
     body #container aside h2 {
       border-style: double;
       border-width: 0 0 3px; }
-    /* line 114, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/application.css.scss */
+    /* line 131, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/application.css.scss */
     body #container h2 {
       margin-top: 0;
       padding-top: 10px; }
-    /* line 118, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/application.css.scss */
+    /* line 135, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/application.css.scss */
     body #container .article-date {
       display: block;
       font-weight: bold;
       color: #1c334e; }
-  /* line 124, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/application.css.scss */
+  /* line 141, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/application.css.scss */
   body blockquote {
     background: white;
     padding: 10px 50px;
@@ -3329,7 +3343,7 @@ body {
   /* line 60, /Users/StevenNunez/.gem/ruby/2.2.0/gems/bootstrap-sass-3.3.3/assets/stylesheets/bootstrap/mixins/_grid-framework.scss */
   .col-lg-offset-12 {
     margin-left: 100%; } }
-/* line 9, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/bootstrap_and_overrides.css.scss */
+/* line 10, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/bootstrap_and_overrides.css.scss */
 #container #header header {
   position: relative;
   min-height: 1px;
@@ -3342,11 +3356,11 @@ body {
   padding-left: 15px;
   padding-right: 15px; }
   @media (min-width: 992px) {
-    /* line 9, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/bootstrap_and_overrides.css.scss */
+    /* line 10, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/bootstrap_and_overrides.css.scss */
     #container #header header {
       float: left;
       width: 50%; } }
-/* line 13, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/bootstrap_and_overrides.css.scss */
+/* line 15, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/bootstrap_and_overrides.css.scss */
 #container #header .social {
   position: relative;
   min-height: 1px;
@@ -3359,12 +3373,20 @@ body {
   padding-left: 15px;
   padding-right: 15px; }
   @media (min-width: 992px) {
-    /* line 13, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/bootstrap_and_overrides.css.scss */
+    /* line 15, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/bootstrap_and_overrides.css.scss */
     #container #header .social {
       float: left;
       width: 41.66666667%; } }
-/* line 18, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/bootstrap_and_overrides.css.scss */
-#container aside {
+/* line 19, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/bootstrap_and_overrides.css.scss */
+#container #header nav {
+  position: relative;
+  float: left;
+  width: 16.66666667%;
+  min-height: 1px;
+  padding-left: 15px;
+  padding-right: 15px; }
+/* line 23, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/bootstrap_and_overrides.css.scss */
+#container #history {
   position: relative;
   float: left;
   width: 25%;
@@ -3372,11 +3394,29 @@ body {
   padding-left: 15px;
   padding-right: 15px;
   margin-left: 8.33333333%; }
-/* line 22, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/bootstrap_and_overrides.css.scss */
-#container main {
+/* line 28, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/bootstrap_and_overrides.css.scss */
+#container #articles {
   position: relative;
   float: left;
   width: 58.33333333%;
+  min-height: 1px;
+  padding-left: 15px;
+  padding-right: 15px; }
+/* line 32, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/bootstrap_and_overrides.css.scss */
+#container .big-head img {
+  position: relative;
+  float: left;
+  width: 25%;
+  min-height: 1px;
+  padding-left: 15px;
+  padding-right: 15px; }
+/* line 35, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/bootstrap_and_overrides.css.scss */
+#container .big-head .highlight {
+  font-size: 3em;
+  padding: 1em 0;
+  position: relative;
+  float: left;
+  width: 66.66666667%;
   min-height: 1px;
   padding-left: 15px;
   padding-right: 15px; }

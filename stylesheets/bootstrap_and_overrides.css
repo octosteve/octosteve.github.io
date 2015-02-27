@@ -889,7 +889,7 @@
   /* line 60, /Users/StevenNunez/.gem/ruby/2.2.0/gems/bootstrap-sass-3.3.3/assets/stylesheets/bootstrap/mixins/_grid-framework.scss */
   .col-lg-offset-12 {
     margin-left: 100%; } }
-/* line 9, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/bootstrap_and_overrides.css.scss */
+/* line 10, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/bootstrap_and_overrides.css.scss */
 #container #header header {
   position: relative;
   min-height: 1px;
@@ -902,11 +902,11 @@
   padding-left: 15px;
   padding-right: 15px; }
   @media (min-width: 992px) {
-    /* line 9, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/bootstrap_and_overrides.css.scss */
+    /* line 10, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/bootstrap_and_overrides.css.scss */
     #container #header header {
       float: left;
       width: 50%; } }
-/* line 13, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/bootstrap_and_overrides.css.scss */
+/* line 15, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/bootstrap_and_overrides.css.scss */
 #container #header .social {
   position: relative;
   min-height: 1px;
@@ -919,12 +919,20 @@
   padding-left: 15px;
   padding-right: 15px; }
   @media (min-width: 992px) {
-    /* line 13, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/bootstrap_and_overrides.css.scss */
+    /* line 15, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/bootstrap_and_overrides.css.scss */
     #container #header .social {
       float: left;
       width: 41.66666667%; } }
-/* line 18, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/bootstrap_and_overrides.css.scss */
-#container aside {
+/* line 19, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/bootstrap_and_overrides.css.scss */
+#container #header nav {
+  position: relative;
+  float: left;
+  width: 16.66666667%;
+  min-height: 1px;
+  padding-left: 15px;
+  padding-right: 15px; }
+/* line 23, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/bootstrap_and_overrides.css.scss */
+#container #history {
   position: relative;
   float: left;
   width: 25%;
@@ -932,11 +940,29 @@
   padding-left: 15px;
   padding-right: 15px;
   margin-left: 8.33333333%; }
-/* line 22, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/bootstrap_and_overrides.css.scss */
-#container main {
+/* line 28, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/bootstrap_and_overrides.css.scss */
+#container #articles {
   position: relative;
   float: left;
   width: 58.33333333%;
+  min-height: 1px;
+  padding-left: 15px;
+  padding-right: 15px; }
+/* line 32, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/bootstrap_and_overrides.css.scss */
+#container .big-head img {
+  position: relative;
+  float: left;
+  width: 25%;
+  min-height: 1px;
+  padding-left: 15px;
+  padding-right: 15px; }
+/* line 35, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/bootstrap_and_overrides.css.scss */
+#container .big-head .highlight {
+  font-size: 3em;
+  padding: 1em 0;
+  position: relative;
+  float: left;
+  width: 66.66666667%;
   min-height: 1px;
   padding-left: 15px;
   padding-right: 15px; }
