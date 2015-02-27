@@ -7,10 +7,12 @@
   #header {
     @extend .container-fluid;
     header{
-      @include make-xs-column(6)
+      @include make-md-column(6);
+      @include make-xs-column(12);
     }
     .social{
-        @include make-xs-column(5)
+        @include make-md-column(5);
+        @include make-xs-column(12);
     }
   }
     aside {
