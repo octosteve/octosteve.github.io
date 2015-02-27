@@ -897,7 +897,15 @@
   min-height: 1px;
   padding-left: 15px;
   padding-right: 15px; }
-/* line 13, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/bootstrap_and_overrides.css.scss */
+/* line 12, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/bootstrap_and_overrides.css.scss */
+#container #header .social {
+  position: relative;
+  float: left;
+  width: 41.66666667%;
+  min-height: 1px;
+  padding-left: 15px;
+  padding-right: 15px; }
+/* line 16, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/bootstrap_and_overrides.css.scss */
 #container aside {
   position: relative;
   float: left;
@@ -906,7 +914,7 @@
   padding-left: 15px;
   padding-right: 15px;
   margin-left: 8.33333333%; }
-/* line 17, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/bootstrap_and_overrides.css.scss */
+/* line 20, /Users/StevenNunez/Documents/hostiledeveloper.com/source/stylesheets/bootstrap_and_overrides.css.scss */
 #container main {
   position: relative;
   float: left;
