@@ -9,6 +9,9 @@
     header{
       @include make-xs-column(6)
     }
+    .social{
+        @include make-xs-column(5)
+    }
   }
     aside {
       @include make-xs-column(3);

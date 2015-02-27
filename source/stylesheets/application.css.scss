@@ -7,6 +7,7 @@
 
 @import url('http://fonts.googleapis.com/css?family=Press+Start+2P');
 @import url('http://fonts.googleapis.com/css?family=Roboto:400,700');
+@import "font-awesome";
 
 $base: #01002F;
 $main: #F1EEE7;
@@ -31,27 +32,41 @@ body {
       margin-bottom: 3em;
     }
 
-    header {
-      margin-bottom: 2em;
-      a:hover {
-        text-decoration: none;
+    #header{
+      header {
+        margin-bottom: 2em;
+        a:hover {
+          text-decoration: none;
+        }
+        .brand {
+          padding-top: 20px;
+          margin-bottom: 0;
+          font-size: 4em;
+          font-family: 'Press Start 2P' cursive;
+        }
+        .tag-line {
+          padding: 0;
+          margin-top: 0;
+          margin-right: 0;
+          margin-left: 0;
+          margin-bottom: .2em;
+        }
+        h1, h3 {
+          margin-top: 0;
+          margin-bottom: .3em;
+        }
       }
-      .brand {
-        padding-top: 20px;
-        margin-bottom: 0;
-        font-size: 4em;
-        font-family: 'Press Start 2P' cursive;
-      }
-      .tag-line {
-        padding: 0;
-        margin-top: 0;
-        margin-right: 0;
-        margin-left: 0;
-        margin-bottom: .2em;
-      }
-      h1, h3 {
-        margin-top: 0;
-        margin-bottom: .3em;
+      .social {
+        position: absolute;
+        top: 0;
+        right: 0;
+        font-size: 10em;
+        a {
+          &:hover {
+            color: lighten($link, 10%);
+          }
+
+        }
       }
     }
 

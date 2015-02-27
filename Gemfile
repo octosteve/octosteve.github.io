@@ -12,6 +12,7 @@ gem 'middleman-gh-pages'
 gem "builder", "~> 3.0"
 
 gem 'bootstrap-sass', '~> 3.3.3'
+gem 'font-awesome-sass', '~> 4.3.0'
 
 gem 'redcarpet'
 
