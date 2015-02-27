@@ -6,20 +6,37 @@
   @extend .container;
   #header {
     @extend .container-fluid;
+
     header{
       @include make-md-column(6);
       @include make-xs-column(12);
     }
+
     .social{
-        @include make-md-column(5);
-        @include make-xs-column(12);
+      @include make-md-column(5);
+      @include make-xs-column(12);
+    }
+    nav{
+      @include make-xs-column(2);
     }
   }
-    aside {
+  #history {
+    @include make-xs-column(3);
+    @include make-xs-column-offset(1);
+  }
+
+  #articles {
+    @include make-xs-column(7);
+  }
+  .big-head{
+    img{
       @include make-xs-column(3);
-      @include make-xs-column-offset(1);
     }
-    main {
-      @include make-xs-column(7);
+    .highlight{
+      font-size: 3em;
+      padding: 1em 0;
+      @include make-xs-column(8);
+    }
   }
+
 }

@@ -6,9 +6,15 @@
         <h3 class="tag-line">I am Steven. Hear me Rant.</h3>
     <% end %>
   </header>
-  
+
   <section class='social'>
     <% link_to "http://twitter.com/_StevenNunez/", target: "_blank" do %><i class="fa fa-twitter"></i><% end %>
     <% link_to "https://github.com/StevenNunez/", target: "_blank" do %><i class="fa fa-github"></i><% end %>
   </section>
+  <nav>
+    <ul class='links'>
+      <li><%= link_to "Home", '/' %></li>
+      <li><%= link_to "Blog", '/blog.html' %></li>
+    </ul>
+  </nav>
 </section>
