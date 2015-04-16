@@ -53,16 +53,15 @@ Post = Struct.new(:title, :url)
 
 class Reddit
   attr_reader :subreddit, :posts
-  attr_accessor :last_term
 
   def initialize(subreddit)
     @subreddit = subreddit
     @posts = []
   end
 
-  def search(term, not_found=method(:retry_search))
-    self.last_term = term
-    posts.find(not_found){|post| post.title =~ /#{last_term}/ }
+  def search(term, not_found=nil)
+    not_found ||= -> {method(:retry_search).curry.call(term)}
+    posts.find(not_found){|post| post.title =~ /#{term}/ }
   end
 
   def refresh
@@ -71,9 +70,9 @@ class Reddit
   end
 
   private
-  def retry_search
+  def retry_search(term)
     refresh
-    search(last_term, -> {raise PostNotFound})
+    search(term, -> {raise PostNotFound, "#{term} not found"})
   end
 
   def to_posts(post_collection)
