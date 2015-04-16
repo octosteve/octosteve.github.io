@@ -14,7 +14,7 @@
     <link rel="alternate" href="http://blog.url.com/2015/02/22/let-me-find-out.html"/>
     <id>http://blog.url.com/2015/02/22/let-me-find-out.html</id>
     <published>2015-02-21T22:41:00-05:00</published>
-    <updated>2015-02-27T18:53:09-05:00</updated>
+    <updated>2015-04-16T15:05:06-04:00</updated>
     <author>
       <name>Article Author</name>
     </author>
@@ -94,24 +94,22 @@
 33
 34
 35
-36
-37&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="nb"&gt;require&lt;/span&gt; &lt;span class="s1"&gt;'json'&lt;/span&gt;
+36&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="nb"&gt;require&lt;/span&gt; &lt;span class="s1"&gt;'json'&lt;/span&gt;
 &lt;span class="nb"&gt;require&lt;/span&gt; &lt;span class="s1"&gt;'rest-client'&lt;/span&gt;
 &lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;PostNotFound&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="no"&gt;StandardError&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;end&lt;/span&gt;
 &lt;span class="no"&gt;Post&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="no"&gt;Struct&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;new&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;:title&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:url&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 
 &lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;Reddit&lt;/span&gt;
   &lt;span class="kp"&gt;attr_reader&lt;/span&gt; &lt;span class="ss"&gt;:subreddit&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:posts&lt;/span&gt;
-  &lt;span class="kp"&gt;attr_accessor&lt;/span&gt; &lt;span class="ss"&gt;:last_term&lt;/span&gt;
 
   &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;initialize&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;subreddit&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
     &lt;span class="vi"&gt;@subreddit&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;subreddit&lt;/span&gt;
     &lt;span class="vi"&gt;@posts&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[]&lt;/span&gt;
   &lt;span class="k"&gt;end&lt;/span&gt;
 
-  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;search&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;term&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;not_found&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nb"&gt;method&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;:retry_search&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
-    &lt;span class="nb"&gt;self&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;last_term&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;term&lt;/span&gt;
-    &lt;span class="n"&gt;posts&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;find&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;not_found&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;&lt;span class="o"&gt;|&lt;/span&gt;&lt;span class="n"&gt;post&lt;/span&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;post&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;title&lt;/span&gt; &lt;span class="o"&gt;=~&lt;/span&gt; &lt;span class="sr"&gt;/&lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;last_term&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="sr"&gt;/&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;search&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;term&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;not_found&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kp"&gt;nil&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;not_found&lt;/span&gt; &lt;span class="o"&gt;||=&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="nb"&gt;method&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;:retry_search&lt;/span&gt;&lt;span class="p"&gt;).&lt;/span&gt;&lt;span class="nf"&gt;curry&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;call&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;term&lt;/span&gt;&lt;span class="p"&gt;)}&lt;/span&gt;
+    &lt;span class="n"&gt;posts&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;find&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;not_found&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;&lt;span class="o"&gt;|&lt;/span&gt;&lt;span class="n"&gt;post&lt;/span&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;post&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;title&lt;/span&gt; &lt;span class="o"&gt;=~&lt;/span&gt; &lt;span class="sr"&gt;/&lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;term&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="sr"&gt;/&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt;
   &lt;span class="k"&gt;end&lt;/span&gt;
 
   &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;refresh&lt;/span&gt;
@@ -120,9 +118,9 @@
   &lt;span class="k"&gt;end&lt;/span&gt;
 
   &lt;span class="kp"&gt;private&lt;/span&gt;
-  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;retry_search&lt;/span&gt;
+  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;retry_search&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;term&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
     &lt;span class="n"&gt;refresh&lt;/span&gt;
-    &lt;span class="n"&gt;search&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;last_term&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="k"&gt;raise&lt;/span&gt; &lt;span class="no"&gt;PostNotFound&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt;
+    &lt;span class="n"&gt;search&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;term&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="k"&gt;raise&lt;/span&gt; &lt;span class="no"&gt;PostNotFound&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;"&lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;term&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt; not found"&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt;
   &lt;span class="k"&gt;end&lt;/span&gt;
 
   &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;to_posts&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;post_collection&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
@@ -148,7 +146,7 @@
     <link rel="alternate" href="http://blog.url.com/2014/11/25/next-generation-is-better-i-promise.html"/>
     <id>http://blog.url.com/2014/11/25/next-generation-is-better-i-promise.html</id>
     <published>2014-11-24T20:13:00-05:00</published>
-    <updated>2015-02-10T16:42:52-05:00</updated>
+    <updated>2015-04-16T15:05:06-04:00</updated>
     <author>
       <name>Article Author</name>
     </author>
@@ -425,7 +423,7 @@ As of November 25th, this is known to run on Chrome Canary.&lt;/p&gt;
     <link rel="alternate" href="http://blog.url.com/2014/05/18/using-ruby-to-learn-javascript.html"/>
     <id>http://blog.url.com/2014/05/18/using-ruby-to-learn-javascript.html</id>
     <published>2014-05-18T16:16:00-04:00</published>
-    <updated>2015-02-10T16:42:52-05:00</updated>
+    <updated>2015-04-16T15:05:06-04:00</updated>
     <author>
       <name>Article Author</name>
     </author>
@@ -984,7 +982,7 @@ JavaScript also uses camelCase for its variables, vs Ruby&amp;rsquo;s snake case
     <link rel="alternate" href="http://blog.url.com/2014/04/26/on-why-learning-to-program-is-hard.html"/>
     <id>http://blog.url.com/2014/04/26/on-why-learning-to-program-is-hard.html</id>
     <published>2014-04-26T16:22:00-04:00</published>
-    <updated>2015-02-10T16:42:52-05:00</updated>
+    <updated>2015-04-16T15:05:06-04:00</updated>
     <author>
       <name>Article Author</name>
     </author>
@@ -1105,7 +1103,7 @@ The good news is you can can get better at each component separately.&lt;/p&gt;
     <link rel="alternate" href="http://blog.url.com/2014/04/13/closures.html"/>
     <id>http://blog.url.com/2014/04/13/closures.html</id>
     <published>2014-04-13T14:20:00-04:00</published>
-    <updated>2015-02-10T16:42:52-05:00</updated>
+    <updated>2015-04-16T15:05:06-04:00</updated>
     <author>
       <name>Article Author</name>
     </author>
@@ -1383,7 +1381,7 @@ about it I&amp;rsquo;m excited to explore.&lt;/p&gt;
     <link rel="alternate" href="http://blog.url.com/2014/02/15/custom-params-in-route-resources.html"/>
     <id>http://blog.url.com/2014/02/15/custom-params-in-route-resources.html</id>
     <published>2014-02-15T16:09:00-05:00</published>
-    <updated>2015-02-10T16:42:52-05:00</updated>
+    <updated>2015-04-16T15:05:06-04:00</updated>
     <author>
       <name>Article Author</name>
     </author>
