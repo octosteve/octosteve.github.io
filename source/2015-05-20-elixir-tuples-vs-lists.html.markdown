@@ -1,7 +1,7 @@
 ---
-title: Elixir: Tuples vs Lists
+title: Elixir - Tuples vs Lists
 date: 2015-05-20 15:28 UTC
-tags: Elixir, Fundamentals
+tags: elixir, fundamentals
 ---
 
 # Immutability Primer
