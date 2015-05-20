@@ -107,3 +107,13 @@ configure :build do
   # Or use a different image path
   # set :http_prefix, "/Content/images/"
 end
+
+helpers do
+  def title(current_article)
+    title = "Hostile Developer"
+    if current_article
+      title.concat(" - #{current_article.title}")
+    end
+    title
+  end
+end
