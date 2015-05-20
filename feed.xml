@@ -5,27 +5,20 @@
   <id>http://blog.url.com/</id>
   <link href="http://blog.url.com/"/>
   <link href="http://blog.url.com/feed.xml" rel="self"/>
-  <updated>2015-05-19T20:00:00-04:00</updated>
+  <updated>2015-05-20T11:28:00-04:00</updated>
   <author>
     <name>Blog Author</name>
   </author>
   <entry>
-    <title/>
+    <title>Elixir - Tuples vs Lists</title>
     <link rel="alternate" href="http://blog.url.com/2015/05/20/elixir-tuples-vs-lists.html"/>
     <id>http://blog.url.com/2015/05/20/elixir-tuples-vs-lists.html</id>
-    <published>2015-05-19T20:00:00-04:00</published>
-    <updated>2015-05-20T15:23:26-04:00</updated>
+    <published>2015-05-20T11:28:00-04:00</published>
+    <updated>2015-05-20T15:25:53-04:00</updated>
     <author>
       <name>Article Author</name>
     </author>
-    <content type="html">&lt;hr&gt;
-
-&lt;p&gt;title: Elixir: Tuples vs Lists
-date: 2015-05-20 15:28 UTC&lt;/p&gt;
-
-&lt;h2&gt;tags: Elixir, Fundamentals&lt;/h2&gt;
-
-&lt;h1&gt;Immutability Primer&lt;/h1&gt;
+    <content type="html">&lt;h1&gt;Immutability Primer&lt;/h1&gt;
 
 &lt;p&gt;Elixir is a Functional programming language with immutable types. You might see code like the following and think that we&amp;rsquo;re mutating a value.&lt;/p&gt;
 &lt;div class="highlight elixir"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
