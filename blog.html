@@ -32,6 +32,33 @@
   <main id='articles' role="main">
     
     <article>
+      <h1 class="article-title"><a href="/2015/05/20/elixir-tuples-vs-lists.html"></a></h1>
+      <hr>
+
+<p>title: Elixir: Tuples vs Lists
+date: 2015-05-20 15:28 UTC</p>
+
+<h2>tags: Elixir, Fundamentals</h2>
+
+<h1>Immutability Primer</h1>
+
+<p>Elixir is a Functional programming language with immutable types. You might see code like the following and think that we’re mutating a value.</p>
+<div class="highlight elixir">
+<table style="border-spacing: 0"><tbody><tr>
+<td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3</pre></td>
+<td class="code"><pre><span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="sd">"</span><span class="s2">Steven"</span><span class="p">,</span> <span class="sd">"</span><span class="s2">Kelly"</span><span class="p">,</span> <span class="sd">"</span><span class="s2">Michael"</span><span class="p">]</span>
+<span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="sd">"</span><span class="s2">Telly"</span><span class="p">]</span> <span class="o">++</span> <span class="n">names</span>
+<span class="n">names</span> <span class="c1"># =&gt; ["Telly", "Steven", "Kelly", "Michael"]</span>
+</pre></td>
+</tr></tbody></table>
+</div>
+
+<p>Elixir is giving us a new copy of the array. How it got this might be a bit confusing though. For starters, this is how...</p>
+      <a href="/2015/05/20/elixir-tuples-vs-lists.html">Read more…</a>
+    </article>
+    <article>
       <h1 class="article-title"><a href="/2015/02/22/let-me-find-out.html">Let me find out</a></h1>
       <h1>Finders keepers</h1>
 
@@ -165,6 +192,7 @@ While working on a Progress Dashboard I came across this code for creating neste
     <section class="recent">
       <h2>Recent Articles</h2>
       <ol class="articles">
+            <li><a href="/2015/05/20/elixir-tuples-vs-lists.html"></a>
             <li><a href="/2015/02/22/let-me-find-out.html">Let me find out</a>
             <li><a href="/2014/11/25/next-generation-is-better-i-promise.html">Next generation is better. I promise</a>
             <li><a href="/2014/05/18/using-ruby-to-learn-javascript.html">Using Ruby to learn JavaScript</a>
@@ -200,6 +228,8 @@ While working on a Progress Dashboard I came across this code for creating neste
     <section class="by-month">
       <h2>By Month</h2>
       <ol>
+            <li><a href="/2015/05.html">May 2015</a>
+              (1)</a></li>
             <li><a href="/2015/02.html">February 2015</a>
               (1)</a></li>
             <li><a href="/2014/11.html">November 2014</a>
