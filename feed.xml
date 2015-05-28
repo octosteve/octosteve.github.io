@@ -5,10 +5,202 @@
   <id>http://blog.url.com/</id>
   <link href="http://blog.url.com/"/>
   <link href="http://blog.url.com/feed.xml" rel="self"/>
-  <updated>2015-05-20T11:28:00-04:00</updated>
+  <updated>2015-05-28T11:39:00-04:00</updated>
   <author>
     <name>Blog Author</name>
   </author>
+  <entry>
+    <title>Working with Templates in Ruby ERB</title>
+    <link rel="alternate" href="http://blog.url.com/2015/05/28/working-with-templates-in-ruby-erb.html"/>
+    <id>http://blog.url.com/2015/05/28/working-with-templates-in-ruby-erb.html</id>
+    <published>2015-05-28T11:39:00-04:00</published>
+    <updated>2015-05-28T12:36:18-04:00</updated>
+    <author>
+      <name>Article Author</name>
+    </author>
+    <content type="html">&lt;h1&gt;Templates in ERB&lt;/h1&gt;
+
+&lt;p&gt;This post is a bit of a thought experiment. Looking into this led me down the route of some interesting ruby solutions.&lt;/p&gt;
+
+&lt;h2&gt;The problem&lt;/h2&gt;
+
+&lt;p&gt;Ruby ships with the &lt;code&gt;erb&lt;/code&gt; library, but it natively doesn&amp;rsquo;t come with a way to wrap one ERB file in another. This makes composing files difficult. There&amp;rsquo;s no way to use something like rails&amp;rsquo; &lt;code&gt;yield&lt;/code&gt; method.&lt;/p&gt;
+
+&lt;h3&gt;Some Basic ERB&lt;/h3&gt;
+
+&lt;p&gt;Here&amp;rsquo;s how we&amp;rsquo;d render a simple erb template.&lt;/p&gt;
+&lt;div class="highlight plaintext"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+2
+3&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;require 'erb'
+template = "1 and 1 is &amp;lt;%= 1 + 1 %&amp;gt;"
+ERB.new(template).result
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;This returns the interpreted string. If we try to use the &lt;code&gt;yield&lt;/code&gt; keyword, we&amp;rsquo;ll run into a bit of a problem.&lt;/p&gt;
+&lt;div class="highlight plaintext"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+2
+3&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;require 'erb'
+template = "&amp;lt;%= yield %&amp;gt;"
+ERB.new(template).result #=&amp;gt; LocalJumpError: no block given (yield)
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Eek! No bueno. You might be thinking, &amp;ldquo;Well, you have to give a block to&amp;hellip; something&amp;rdquo;. Good guess, but wrong.&lt;/p&gt;
+&lt;div class="highlight plaintext"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4
+5
+6
+7
+8
+9&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;require 'erb'
+template = "&amp;lt;%= yield %&amp;gt;"
+ERB.new(template).result do
+  "HERE"
+end
+# or
+ERB.new(template) do
+  "HERE"
+end.result
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;All sorts of crazy happens.&lt;/p&gt;
+
+&lt;h3&gt;Defining a Renderer&lt;/h3&gt;
+
+&lt;p&gt;ERB does come with a curious set of methods that let you add the current context of the ERB instance (stuff like the template, variables, all that stuff), to another object.&lt;/p&gt;
+
+&lt;p&gt;That looks like this:&lt;/p&gt;
+&lt;div class="highlight plaintext"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;require 'erb'
+# create a container for our new method
+class LayoutRenderer
+end
+
+# load the erb instance
+template = "Before &amp;lt;%= yield %&amp;gt; After"
+erb = ERB.new(template)
+
+# create method on LayoutRenderer. We'll pass a block to THIS method
+erb.def_method(LayoutRenderer, 'render')
+
+# Then call our LayoutRenderer
+result = LayoutRenderer.new.render do
+  "I'm somewhere in the middle"
+end
+result # =&amp;gt; "Before I'm somewhere in the middle After"
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Cool! Now it&amp;rsquo;s a matter of rendering another template inside of it. We&amp;rsquo;ll need a few files:&lt;/p&gt;
+
+&lt;p&gt;A layout:&lt;/p&gt;
+&lt;div class="highlight html"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;  &lt;span class="cp"&gt;&amp;lt;!DOCTYPE html&amp;gt;&lt;/span&gt;
+  &lt;span class="nt"&gt;&amp;lt;html&lt;/span&gt; &lt;span class="na"&gt;lang=&lt;/span&gt;&lt;span class="s"&gt;"en"&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&lt;/span&gt;
+  &lt;span class="nt"&gt;&amp;lt;head&amp;gt;&lt;/span&gt;
+    &lt;span class="nt"&gt;&amp;lt;meta&lt;/span&gt; &lt;span class="na"&gt;charset=&lt;/span&gt;&lt;span class="s"&gt;"UTF-8"&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class="nt"&gt;&amp;lt;title&amp;gt;&lt;/span&gt;Document&lt;span class="nt"&gt;&amp;lt;/title&amp;gt;&lt;/span&gt;
+  &lt;span class="nt"&gt;&amp;lt;/head&amp;gt;&lt;/span&gt;
+  &lt;span class="nt"&gt;&amp;lt;body&amp;gt;&lt;/span&gt;
+    &lt;span class="nt"&gt;&amp;lt;h1&amp;gt;&lt;/span&gt;Layout&lt;span class="nt"&gt;&amp;lt;/h1&amp;gt;&lt;/span&gt;
+    &lt;span class="err"&gt;&amp;lt;&lt;/span&gt;%= yield %&amp;gt;
+  &lt;span class="nt"&gt;&amp;lt;/body&amp;gt;&lt;/span&gt;
+  &lt;span class="nt"&gt;&amp;lt;/html&amp;gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;An index file:&lt;/p&gt;
+&lt;div class="highlight plaintext"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+2
+3&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&amp;lt;p&amp;gt;
+  I'm in a template
+&amp;lt;/p&amp;gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;And our renderer code:&lt;/p&gt;
+&lt;div class="highlight ruby"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="nb"&gt;require&lt;/span&gt; &lt;span class="s1"&gt;'erb'&lt;/span&gt;
+
+&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;LayoutRenderer&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+
+&lt;span class="n"&gt;layout_template&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="no"&gt;File&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;read&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'layout.html.erb'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;inner_template&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="no"&gt;File&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;read&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'index.html.erb'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="n"&gt;layout&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="no"&gt;ERB&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;new&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;layout_template&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;inner&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="no"&gt;ERB&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;new&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;inner_template&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="n"&gt;layout&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;def_method&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="no"&gt;LayoutRenderer&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'render'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="n"&gt;result&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="no"&gt;LayoutRenderer&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;new&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;render&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="n"&gt;inner&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;result&lt;/span&gt; &lt;span class="c1"&gt;# call the regular erb #result method&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+
+&lt;span class="nb"&gt;puts&lt;/span&gt; &lt;span class="n"&gt;result&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;NOTE: If you&amp;rsquo;re playing with this and try to &lt;code&gt;puts&lt;/code&gt; this line&amp;hellip;&lt;/p&gt;
+&lt;div class="highlight plaintext"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+2
+3&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;puts LayoutRenderer.new.render do
+  inner.result
+end
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&amp;hellip; you&amp;rsquo;ll get some weird issue. I think it&amp;rsquo;s trying to finish the render before loading the block.&lt;/p&gt;
+
+&lt;h2&gt;Final Thoughts&lt;/h2&gt;
+
+&lt;p&gt;This was fun to play with. Until next time, Happy Clacking.&lt;/p&gt;
+</content>
+  </entry>
   <entry>
     <title>Elixir - Tuples vs Lists</title>
     <link rel="alternate" href="http://blog.url.com/2015/05/20/elixir-tuples-vs-lists.html"/>
@@ -1179,284 +1371,6 @@ The good news is you can can get better at each component separately.&lt;/p&gt;
 &lt;p&gt;&amp;hellip; but along the way you pick up a rocket powered motorbike. Then you don&amp;rsquo;t care how long the road is, just how much fuel you have in the tank.&lt;/p&gt;
 
 &lt;p&gt;Happy Clacking.&lt;/p&gt;
-</content>
-  </entry>
-  <entry>
-    <title>Closures</title>
-    <link rel="alternate" href="http://blog.url.com/2014/04/13/closures.html"/>
-    <id>http://blog.url.com/2014/04/13/closures.html</id>
-    <published>2014-04-13T14:20:00-04:00</published>
-    <updated>2015-04-16T15:05:06-04:00</updated>
-    <author>
-      <name>Article Author</name>
-    </author>
-    <content type="html">&lt;blockquote class="twitter-tweet" data-partner="tweetdeck"&gt;&lt;p&gt;I UNDERSTAND CLOSURES!!! Blog post coming up!&lt;/p&gt;&amp;mdash; Steven Nunez (@_StevenNunez) &lt;a href="https://twitter.com/_StevenNunez/statuses/455337355030069248"&gt;April 13, 2014&lt;/a&gt;&lt;/blockquote&gt;
-
-&lt;script async src="//platform.twitter.com/widgets.js" charset="utf-8"&gt;&lt;/script&gt;
-
-&lt;p&gt;I&amp;rsquo;ve been trying to gain an appreciation for JavaScript recently. Behind its
-semicolon ridden lines, and funky funky functions, I&amp;rsquo;ve found it has a bunch of
-cool stuff going on. I owe my appreciation for it to &lt;a href="http://speakingjs.com/"&gt;Speaking
-JavaScript&lt;/a&gt; by Dr. Axel Rauschmayer. Great book. Go get
-it.&lt;/p&gt;
-
-&lt;h2&gt;JavaScript and Me&lt;/h2&gt;
-
-&lt;p&gt;Up until recently, my JavaScript know-how didn&amp;rsquo;t extend far beyond using jQuery
-to select some element, and apply some class. Now with an upcoming JavaScript
-module at &lt;a href="http://flatironschool.com/nycworkforce1/"&gt;The Flatiron School
-Fellowship&lt;/a&gt; I had to get on it.
-Nothing motivates more than having to teach something to a group of students. &lt;/p&gt;
-
-&lt;p&gt;I did what you would normally do when picking up a new language. &lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Learn about the language&amp;rsquo;s objects and their methods&lt;/li&gt;
-&lt;li&gt;Learn about how to create and manage scope&lt;/li&gt;
-&lt;li&gt;Look for weird quirks&lt;/li&gt;
-&lt;li&gt;Be completely baffled by closures!?&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2&gt;Surprise confusion!&lt;/h2&gt;
-
-&lt;p&gt;I know ruby has closures through lambdas&amp;hellip; I just had no idea what that
-meant. I just knew it was true! &lt;/p&gt;
-
-&lt;p&gt;In JavaScript, you can&amp;rsquo;t hide from closures though. If you&amp;rsquo;re confronted with a
-piece of code like this, you&amp;rsquo;ll need to understand closures:&lt;/p&gt;
-&lt;div class="highlight javascript"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
-2
-3
-4
-5
-6
-7
-8
-9
-10&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;step_by&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;step&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;                                                       
-  &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;total&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;                                                                   
-  &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(){&lt;/span&gt;                                                               
-    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nx"&gt;total&lt;/span&gt; &lt;span class="o"&gt;+=&lt;/span&gt; &lt;span class="nx"&gt;step&lt;/span&gt;                                                           
-  &lt;span class="p"&gt;}&lt;/span&gt;                                                                                
-&lt;span class="p"&gt;};&lt;/span&gt;                                                                                 
-
-&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;step_by_7&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;step_by&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;7&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt; 
-&lt;span class="nx"&gt;console&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;log&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;step_by_7&lt;/span&gt;&lt;span class="p"&gt;());&lt;/span&gt; &lt;span class="c1"&gt;// 7&lt;/span&gt;
-&lt;span class="nx"&gt;console&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;log&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;step_by_7&lt;/span&gt;&lt;span class="p"&gt;());&lt;/span&gt; &lt;span class="c1"&gt;// 14&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/div&gt;
-
-&lt;h3&gt;What is a closure?&lt;/h3&gt;
-
-&lt;blockquote cite='http://speakingjs.com/es5/ch01.html#_closures'&gt;A closure is a 
-function plus the connection to the scope in which the function was created.
-  &lt;footer&gt;-
-    &lt;cite&gt;
-      &lt;a href="http://speakingjs.com/es5/ch01.html#_closures"&gt;Dr. Axel Rauschmayer&lt;/a&gt;
-    &lt;/cite&gt;
-  &lt;/footer&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Armed with this, I wanted to learn it on my own turf. Enter ruby.&lt;/p&gt;
-
-&lt;h2&gt;Closures in ruby&lt;/h2&gt;
-
-&lt;p&gt;Any one that knows me will tell you I&amp;rsquo;m&amp;hellip; fond of ruby. OK, I love ruby. OK, I
-think ruby is one of the greatest things humanity has produced. Suck it
-pyramids.&lt;/p&gt;
-
-&lt;p&gt;Knowing ruby had closures and having a definition of what a closure was, I
-started devising some experiments.&lt;/p&gt;
-
-&lt;h3&gt;Context of execution&lt;/h3&gt;
-
-&lt;p&gt;A closure&amp;rsquo;s context of execution will always be the one it was created in. A
-few experiments.&lt;/p&gt;
-
-&lt;h3&gt;Experiment 1&lt;/h3&gt;
-&lt;div class="highlight ruby"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
-2
-3
-4&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;
-&lt;span class="n"&gt;my_lambda&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;+=&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt;
-&lt;span class="n"&gt;my_lambda&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;call&lt;/span&gt; &lt;span class="c1"&gt;#=&amp;gt; 10&lt;/span&gt;
-&lt;span class="n"&gt;my_lambda&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;call&lt;/span&gt; &lt;span class="c1"&gt;#=&amp;gt; 15&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/div&gt;
-
-&lt;p&gt;Cool. lambdas can call things around them. Setting the variable &lt;code&gt;x&lt;/code&gt; and the
-lambda in the same scope allows you to call &lt;code&gt;x&lt;/code&gt; from inside the lambda without
-passing it in. Let&amp;rsquo;s try something else.&lt;/p&gt;
-
-&lt;h3&gt;Experiment 2&lt;/h3&gt;
-&lt;div class="highlight ruby"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
-2
-3
-4
-5
-6
-7
-8
-9
-10&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;
-&lt;span class="n"&gt;my_lambda&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;+=&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt;
-
-&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;my_method&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;closure&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-  &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;371_292&lt;/span&gt;
-  &lt;span class="nb"&gt;puts&lt;/span&gt; &lt;span class="n"&gt;closure&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;call&lt;/span&gt;
-&lt;span class="k"&gt;end&lt;/span&gt;
-
-&lt;span class="n"&gt;my_method&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;my_lambda&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="c1"&gt;#=&amp;gt; 10&lt;/span&gt;
-&lt;span class="n"&gt;my_method&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;my_lambda&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="c1"&gt;#=&amp;gt; 15&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/div&gt;
-
-&lt;p&gt;WHOA! It totally ignored the &lt;code&gt;x&lt;/code&gt; defined in the method! Now I started
-connecting dots. That&amp;rsquo;s why stuff like &lt;code&gt;instance_eval&lt;/code&gt; exists. If we want to
-change the context of execution for the block to be the method&amp;rsquo;s, we&amp;rsquo;ll need to
-use &lt;code&gt;instance_eval&lt;/code&gt; and pass it the block.&lt;/p&gt;
-&lt;div class="highlight ruby"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;
-&lt;span class="n"&gt;my_lambda&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;obj&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="n"&gt;obj&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;x&lt;/span&gt; &lt;span class="o"&gt;+=&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt;
-
-&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;MyClass&lt;/span&gt;
-  &lt;span class="kp"&gt;attr_accessor&lt;/span&gt; &lt;span class="ss"&gt;:x&lt;/span&gt;
-  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;initialize&lt;/span&gt;
-    &lt;span class="vi"&gt;@x&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;371_292&lt;/span&gt;
-  &lt;span class="k"&gt;end&lt;/span&gt;
-
-  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;my_method&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;closure&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-    &lt;span class="nb"&gt;instance_eval&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;closure&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-  &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;span class="k"&gt;end&lt;/span&gt;
-
-&lt;span class="n"&gt;my_class&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="no"&gt;MyClass&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;new&lt;/span&gt;
-&lt;span class="n"&gt;my_class&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;my_method&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;my_lambda&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="c1"&gt;#=&amp;gt; 371297&lt;/span&gt;
-&lt;span class="n"&gt;my_class&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;my_method&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;my_lambda&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="c1"&gt;#=&amp;gt; 371302&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/div&gt;
-
-&lt;p&gt;&lt;code&gt;instance_eval&lt;/code&gt; yields &lt;code&gt;self&lt;/code&gt; to the lambda. Since &lt;code&gt;x += 5&lt;/code&gt; is short hand for 
-&lt;code&gt;x = x + 5&lt;/code&gt; we needed an accessor.&lt;/p&gt;
-
-&lt;h2&gt;Back to JavaScript&lt;/h2&gt;
-
-&lt;p&gt;Armed with this knowledge, closures seemed to be a neat little feature that
-didn&amp;rsquo;t really bloom in ruby, but found a home in JavaScript.&lt;/p&gt;
-
-&lt;p&gt;The code from earlier is crystal clear now.&lt;/p&gt;
-&lt;div class="highlight javascript"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;step_by&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;step&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;                                                       
-  &lt;span class="c1"&gt;// setup empty total value. This gets reset everytime you call the step_by&lt;/span&gt;
-  &lt;span class="c1"&gt;// function&lt;/span&gt;
-  &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;total&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;                                                                   
-  &lt;span class="c1"&gt;// this function is returned and because functions are closures, it will&lt;/span&gt;
-  &lt;span class="c1"&gt;// continue to have access to both total and step!&lt;/span&gt;
-  &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(){&lt;/span&gt;                                                               
-    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nx"&gt;total&lt;/span&gt; &lt;span class="o"&gt;+=&lt;/span&gt; &lt;span class="nx"&gt;step&lt;/span&gt;                                                           
-  &lt;span class="p"&gt;}&lt;/span&gt;                                                                                
-&lt;span class="p"&gt;};&lt;/span&gt;                                                                                 
-
-&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;step_by_7&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;step_by&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;7&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt; 
-&lt;span class="nx"&gt;console&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;log&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;step_by_7&lt;/span&gt;&lt;span class="p"&gt;());&lt;/span&gt; &lt;span class="c1"&gt;// 7&lt;/span&gt;
-&lt;span class="nx"&gt;console&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;log&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;step_by_7&lt;/span&gt;&lt;span class="p"&gt;());&lt;/span&gt; &lt;span class="c1"&gt;// 14&lt;/span&gt;
-
-&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;step_by_5&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;step_by&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt; 
-&lt;span class="nx"&gt;console&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;log&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;step_by_5&lt;/span&gt;&lt;span class="p"&gt;());&lt;/span&gt; &lt;span class="c1"&gt;// 5&lt;/span&gt;
-&lt;span class="nx"&gt;console&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;log&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;step_by_5&lt;/span&gt;&lt;span class="p"&gt;());&lt;/span&gt; &lt;span class="c1"&gt;// 10&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/div&gt;
-
-&lt;p&gt;Each returned function has its own copy of &lt;code&gt;total&lt;/code&gt; so you could do something
-like this and they won&amp;rsquo;t interfere with each other:&lt;/p&gt;
-&lt;div class="highlight javascript"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
-2
-3
-4
-5
-6&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;step_by_7&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;step_by&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;7&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt; 
-&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;step_by_5&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;step_by&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt; 
-&lt;span class="nx"&gt;console&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;log&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;step_by_7&lt;/span&gt;&lt;span class="p"&gt;());&lt;/span&gt; &lt;span class="c1"&gt;// 7&lt;/span&gt;
-&lt;span class="nx"&gt;console&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;log&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;step_by_5&lt;/span&gt;&lt;span class="p"&gt;());&lt;/span&gt; &lt;span class="c1"&gt;// 5&lt;/span&gt;
-&lt;span class="nx"&gt;console&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;log&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;step_by_7&lt;/span&gt;&lt;span class="p"&gt;());&lt;/span&gt; &lt;span class="c1"&gt;// 14&lt;/span&gt;
-&lt;span class="nx"&gt;console&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;log&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;step_by_5&lt;/span&gt;&lt;span class="p"&gt;());&lt;/span&gt; &lt;span class="c1"&gt;// 10&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/div&gt;
-
-&lt;h2&gt;For the curious&lt;/h2&gt;
-
-&lt;p&gt;Here&amp;rsquo;s the same code in ruby&lt;/p&gt;
-&lt;div class="highlight ruby"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="n"&gt;step_by&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;step&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;                                                           
-  &lt;span class="n"&gt;total&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;                                                                     
-  &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="n"&gt;total&lt;/span&gt; &lt;span class="o"&gt;+=&lt;/span&gt; &lt;span class="n"&gt;step&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt;                                                          
-&lt;span class="k"&gt;end&lt;/span&gt;                                                                             
-
-&lt;span class="n"&gt;step_by_7&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;step_by&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;call&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;7&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;                                                     
-&lt;span class="nb"&gt;puts&lt;/span&gt; &lt;span class="n"&gt;step_by_7&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;call&lt;/span&gt; &lt;span class="c1"&gt;#=&amp;gt; 7                                                       &lt;/span&gt;
-&lt;span class="nb"&gt;puts&lt;/span&gt; &lt;span class="n"&gt;step_by_7&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;call&lt;/span&gt; &lt;span class="c1"&gt;#=&amp;gt; 14                                                      &lt;/span&gt;
-&lt;span class="nb"&gt;puts&lt;/span&gt; &lt;span class="n"&gt;step_by_7&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;call&lt;/span&gt; &lt;span class="c1"&gt;#=&amp;gt; 21                                                      &lt;/span&gt;
-
-&lt;span class="n"&gt;step_by_5&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;step_by&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;call&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;                                                     
-&lt;span class="nb"&gt;puts&lt;/span&gt; &lt;span class="n"&gt;step_by_5&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;call&lt;/span&gt; &lt;span class="c1"&gt;#=&amp;gt; 5                                                       &lt;/span&gt;
-&lt;span class="nb"&gt;puts&lt;/span&gt; &lt;span class="n"&gt;step_by_5&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;call&lt;/span&gt; &lt;span class="c1"&gt;#=&amp;gt; 10                                                      &lt;/span&gt;
-&lt;span class="nb"&gt;puts&lt;/span&gt; &lt;span class="n"&gt;step_by_5&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;call&lt;/span&gt; &lt;span class="c1"&gt;#=&amp;gt; 15 &lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/div&gt;
-
-&lt;p&gt;Currying would work in this case too, but that&amp;rsquo;s another blog post&amp;hellip;&lt;/p&gt;
-
-&lt;h2&gt;Conclusion&lt;/h2&gt;
-
-&lt;p&gt;While I&amp;rsquo;m still not in love with JavaScript, there are some really cool things
-about it I&amp;rsquo;m excited to explore.&lt;/p&gt;
-
-&lt;p&gt;I hope this was helpful!&lt;/p&gt;
-
-&lt;p&gt;Happy Clacking&lt;/p&gt;
 </content>
   </entry>
 </feed>
