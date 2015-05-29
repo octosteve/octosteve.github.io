@@ -14,7 +14,7 @@ Ruby ships with the `erb` library, but it natively doesn't come with a way to wr
 
 Here's how we'd render a simple erb template.
 
-```
+``` ruby
 require 'erb'
 template = "1 and 1 is <%= 1 + 1 %>"
 ERB.new(template).result
@@ -22,7 +22,7 @@ ERB.new(template).result
 
 This returns the interpreted string. If we try to use the `yield` keyword, we'll run into a bit of a problem.
 
-```
+``` ruby
 require 'erb'
 template = "<%= yield %>"
 ERB.new(template).result #=> LocalJumpError: no block given (yield)
@@ -30,7 +30,7 @@ ERB.new(template).result #=> LocalJumpError: no block given (yield)
 
 Eek! No bueno. You might be thinking, "Well, you have to give a block to... something". Good guess, but wrong.
 
-```
+``` ruby
 require 'erb'
 template = "<%= yield %>"
 ERB.new(template).result do
@@ -49,7 +49,7 @@ ERB does come with a curious set of methods that let you add the current context
 
 That looks like this:
 
-```
+``` ruby
 require 'erb'
 # create a container for our new method
 class LayoutRenderer
@@ -72,7 +72,7 @@ Cool! Now it's a matter of rendering another template inside of it. We'll need a
 
 A layout:
 
-```
+``` html
   <!DOCTYPE html>
   <html lang="en">
   <head>
@@ -87,7 +87,7 @@ A layout:
 ```
 An index file:
 
-```
+``` html
 <p>
   I'm in a template
 </p>
@@ -117,7 +117,7 @@ puts result
 
 NOTE: If you're playing with this and try to `puts` this line...
 
-```
+``` ruby
 puts LayoutRenderer.new.render do
   inner.result
 end
