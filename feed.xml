@@ -14,7 +14,7 @@
     <link rel="alternate" href="http://blog.url.com/2015/05/28/working-with-templates-in-ruby-erb.html"/>
     <id>http://blog.url.com/2015/05/28/working-with-templates-in-ruby-erb.html</id>
     <published>2015-05-28T11:39:00-04:00</published>
-    <updated>2015-05-28T12:36:18-04:00</updated>
+    <updated>2015-05-28T21:04:21-04:00</updated>
     <author>
       <name>Article Author</name>
     </author>
@@ -29,25 +29,25 @@
 &lt;h3&gt;Some Basic ERB&lt;/h3&gt;
 
 &lt;p&gt;Here&amp;rsquo;s how we&amp;rsquo;d render a simple erb template.&lt;/p&gt;
-&lt;div class="highlight plaintext"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight ruby"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
 2
-3&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;require 'erb'
-template = "1 and 1 is &amp;lt;%= 1 + 1 %&amp;gt;"
-ERB.new(template).result
+3&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="nb"&gt;require&lt;/span&gt; &lt;span class="s1"&gt;'erb'&lt;/span&gt;
+&lt;span class="n"&gt;template&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;"1 and 1 is &amp;lt;%= 1 + 1 %&amp;gt;"&lt;/span&gt;
+&lt;span class="no"&gt;ERB&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;new&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;template&lt;/span&gt;&lt;span class="p"&gt;).&lt;/span&gt;&lt;span class="nf"&gt;result&lt;/span&gt;
 &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
 &lt;/div&gt;
 
 &lt;p&gt;This returns the interpreted string. If we try to use the &lt;code&gt;yield&lt;/code&gt; keyword, we&amp;rsquo;ll run into a bit of a problem.&lt;/p&gt;
-&lt;div class="highlight plaintext"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight ruby"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
 2
-3&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;require 'erb'
-template = "&amp;lt;%= yield %&amp;gt;"
-ERB.new(template).result #=&amp;gt; LocalJumpError: no block given (yield)
+3&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="nb"&gt;require&lt;/span&gt; &lt;span class="s1"&gt;'erb'&lt;/span&gt;
+&lt;span class="n"&gt;template&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;"&amp;lt;%= yield %&amp;gt;"&lt;/span&gt;
+&lt;span class="no"&gt;ERB&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;new&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;template&lt;/span&gt;&lt;span class="p"&gt;).&lt;/span&gt;&lt;span class="nf"&gt;result&lt;/span&gt; &lt;span class="c1"&gt;#=&amp;gt; LocalJumpError: no block given (yield)&lt;/span&gt;
 &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
 &lt;/div&gt;
 
 &lt;p&gt;Eek! No bueno. You might be thinking, &amp;ldquo;Well, you have to give a block to&amp;hellip; something&amp;rdquo;. Good guess, but wrong.&lt;/p&gt;
-&lt;div class="highlight plaintext"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight ruby"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -55,15 +55,15 @@ ERB.new(template).result #=&amp;gt; LocalJumpError: no block given (yield)
 6
 7
 8
-9&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;require 'erb'
-template = "&amp;lt;%= yield %&amp;gt;"
-ERB.new(template).result do
-  "HERE"
-end
-# or
-ERB.new(template) do
-  "HERE"
-end.result
+9&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="nb"&gt;require&lt;/span&gt; &lt;span class="s1"&gt;'erb'&lt;/span&gt;
+&lt;span class="n"&gt;template&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;"&amp;lt;%= yield %&amp;gt;"&lt;/span&gt;
+&lt;span class="no"&gt;ERB&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;new&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;template&lt;/span&gt;&lt;span class="p"&gt;).&lt;/span&gt;&lt;span class="nf"&gt;result&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="s2"&gt;"HERE"&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;span class="c1"&gt;# or&lt;/span&gt;
+&lt;span class="no"&gt;ERB&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;new&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;template&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="s2"&gt;"HERE"&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;result&lt;/span&gt;
 &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
 &lt;/div&gt;
 
@@ -74,7 +74,7 @@ end.result
 &lt;p&gt;ERB does come with a curious set of methods that let you add the current context of the ERB instance (stuff like the template, variables, all that stuff), to another object.&lt;/p&gt;
 
 &lt;p&gt;That looks like this:&lt;/p&gt;
-&lt;div class="highlight plaintext"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight ruby"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -90,23 +90,23 @@ end.result
 14
 15
 16
-17&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;require 'erb'
-# create a container for our new method
-class LayoutRenderer
-end
+17&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="nb"&gt;require&lt;/span&gt; &lt;span class="s1"&gt;'erb'&lt;/span&gt;
+&lt;span class="c1"&gt;# create a container for our new method&lt;/span&gt;
+&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;LayoutRenderer&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
 
-# load the erb instance
-template = "Before &amp;lt;%= yield %&amp;gt; After"
-erb = ERB.new(template)
+&lt;span class="c1"&gt;# load the erb instance&lt;/span&gt;
+&lt;span class="n"&gt;template&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;"Before &amp;lt;%= yield %&amp;gt; After"&lt;/span&gt;
+&lt;span class="n"&gt;erb&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="no"&gt;ERB&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;new&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;template&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 
-# create method on LayoutRenderer. We'll pass a block to THIS method
-erb.def_method(LayoutRenderer, 'render')
+&lt;span class="c1"&gt;# create method on LayoutRenderer. We'll pass a block to THIS method&lt;/span&gt;
+&lt;span class="n"&gt;erb&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;def_method&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="no"&gt;LayoutRenderer&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'render'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 
-# Then call our LayoutRenderer
-result = LayoutRenderer.new.render do
-  "I'm somewhere in the middle"
-end
-result # =&amp;gt; "Before I'm somewhere in the middle After"
+&lt;span class="c1"&gt;# Then call our LayoutRenderer&lt;/span&gt;
+&lt;span class="n"&gt;result&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="no"&gt;LayoutRenderer&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;new&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;render&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="s2"&gt;"I'm somewhere in the middle"&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;span class="n"&gt;result&lt;/span&gt; &lt;span class="c1"&gt;# =&amp;gt; "Before I'm somewhere in the middle After"&lt;/span&gt;
 &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
 &lt;/div&gt;
 
@@ -138,11 +138,11 @@ result # =&amp;gt; "Before I'm somewhere in the middle After"
 &lt;/div&gt;
 
 &lt;p&gt;An index file:&lt;/p&gt;
-&lt;div class="highlight plaintext"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight html"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
 2
-3&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&amp;lt;p&amp;gt;
+3&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="nt"&gt;&amp;lt;p&amp;gt;&lt;/span&gt;
   I'm in a template
-&amp;lt;/p&amp;gt;
+&lt;span class="nt"&gt;&amp;lt;/p&amp;gt;&lt;/span&gt;
 &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
 &lt;/div&gt;
 
@@ -186,11 +186,11 @@ result # =&amp;gt; "Before I'm somewhere in the middle After"
 &lt;/div&gt;
 
 &lt;p&gt;NOTE: If you&amp;rsquo;re playing with this and try to &lt;code&gt;puts&lt;/code&gt; this line&amp;hellip;&lt;/p&gt;
-&lt;div class="highlight plaintext"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight ruby"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
 2
-3&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;puts LayoutRenderer.new.render do
-  inner.result
-end
+3&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="nb"&gt;puts&lt;/span&gt; &lt;span class="no"&gt;LayoutRenderer&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;new&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;render&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="n"&gt;inner&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;result&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
 &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
 &lt;/div&gt;
 

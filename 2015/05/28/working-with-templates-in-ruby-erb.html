@@ -43,25 +43,25 @@
 <h3>Some Basic ERB</h3>
 
 <p>Here&rsquo;s how we&rsquo;d render a simple erb template.</p>
-<div class="highlight plaintext"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
 2
-3</pre></td><td class="code"><pre>require 'erb'
-template = "1 and 1 is &lt;%= 1 + 1 %&gt;"
-ERB.new(template).result
+3</pre></td><td class="code"><pre><span class="nb">require</span> <span class="s1">'erb'</span>
+<span class="n">template</span> <span class="o">=</span> <span class="s2">"1 and 1 is &lt;%= 1 + 1 %&gt;"</span>
+<span class="no">ERB</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">template</span><span class="p">).</span><span class="nf">result</span>
 </pre></td></tr></tbody></table>
 </div>
 
 <p>This returns the interpreted string. If we try to use the <code>yield</code> keyword, we&rsquo;ll run into a bit of a problem.</p>
-<div class="highlight plaintext"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
 2
-3</pre></td><td class="code"><pre>require 'erb'
-template = "&lt;%= yield %&gt;"
-ERB.new(template).result #=&gt; LocalJumpError: no block given (yield)
+3</pre></td><td class="code"><pre><span class="nb">require</span> <span class="s1">'erb'</span>
+<span class="n">template</span> <span class="o">=</span> <span class="s2">"&lt;%= yield %&gt;"</span>
+<span class="no">ERB</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">template</span><span class="p">).</span><span class="nf">result</span> <span class="c1">#=&gt; LocalJumpError: no block given (yield)</span>
 </pre></td></tr></tbody></table>
 </div>
 
 <p>Eek! No bueno. You might be thinking, &ldquo;Well, you have to give a block to&hellip; something&rdquo;. Good guess, but wrong.</p>
-<div class="highlight plaintext"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
 2
 3
 4
@@ -69,15 +69,15 @@ ERB.new(template).result #=&gt; LocalJumpError: no block given (yield)
 6
 7
 8
-9</pre></td><td class="code"><pre>require 'erb'
-template = "&lt;%= yield %&gt;"
-ERB.new(template).result do
-  "HERE"
-end
-# or
-ERB.new(template) do
-  "HERE"
-end.result
+9</pre></td><td class="code"><pre><span class="nb">require</span> <span class="s1">'erb'</span>
+<span class="n">template</span> <span class="o">=</span> <span class="s2">"&lt;%= yield %&gt;"</span>
+<span class="no">ERB</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">template</span><span class="p">).</span><span class="nf">result</span> <span class="k">do</span>
+  <span class="s2">"HERE"</span>
+<span class="k">end</span>
+<span class="c1"># or</span>
+<span class="no">ERB</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">template</span><span class="p">)</span> <span class="k">do</span>
+  <span class="s2">"HERE"</span>
+<span class="k">end</span><span class="p">.</span><span class="nf">result</span>
 </pre></td></tr></tbody></table>
 </div>
 
@@ -88,7 +88,7 @@ end.result
 <p>ERB does come with a curious set of methods that let you add the current context of the ERB instance (stuff like the template, variables, all that stuff), to another object.</p>
 
 <p>That looks like this:</p>
-<div class="highlight plaintext"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
 2
 3
 4
@@ -104,23 +104,23 @@ end.result
 14
 15
 16
-17</pre></td><td class="code"><pre>require 'erb'
-# create a container for our new method
-class LayoutRenderer
-end
+17</pre></td><td class="code"><pre><span class="nb">require</span> <span class="s1">'erb'</span>
+<span class="c1"># create a container for our new method</span>
+<span class="k">class</span> <span class="nc">LayoutRenderer</span>
+<span class="k">end</span>
 
-# load the erb instance
-template = "Before &lt;%= yield %&gt; After"
-erb = ERB.new(template)
+<span class="c1"># load the erb instance</span>
+<span class="n">template</span> <span class="o">=</span> <span class="s2">"Before &lt;%= yield %&gt; After"</span>
+<span class="n">erb</span> <span class="o">=</span> <span class="no">ERB</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">template</span><span class="p">)</span>
 
-# create method on LayoutRenderer. We'll pass a block to THIS method
-erb.def_method(LayoutRenderer, 'render')
+<span class="c1"># create method on LayoutRenderer. We'll pass a block to THIS method</span>
+<span class="n">erb</span><span class="p">.</span><span class="nf">def_method</span><span class="p">(</span><span class="no">LayoutRenderer</span><span class="p">,</span> <span class="s1">'render'</span><span class="p">)</span>
 
-# Then call our LayoutRenderer
-result = LayoutRenderer.new.render do
-  "I'm somewhere in the middle"
-end
-result # =&gt; "Before I'm somewhere in the middle After"
+<span class="c1"># Then call our LayoutRenderer</span>
+<span class="n">result</span> <span class="o">=</span> <span class="no">LayoutRenderer</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class="nf">render</span> <span class="k">do</span>
+  <span class="s2">"I'm somewhere in the middle"</span>
+<span class="k">end</span>
+<span class="n">result</span> <span class="c1"># =&gt; "Before I'm somewhere in the middle After"</span>
 </pre></td></tr></tbody></table>
 </div>
 
@@ -152,11 +152,11 @@ result # =&gt; "Before I'm somewhere in the middle After"
 </div>
 
 <p>An index file:</p>
-<div class="highlight plaintext"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="highlight html"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
 2
-3</pre></td><td class="code"><pre>&lt;p&gt;
+3</pre></td><td class="code"><pre><span class="nt">&lt;p&gt;</span>
   I'm in a template
-&lt;/p&gt;
+<span class="nt">&lt;/p&gt;</span>
 </pre></td></tr></tbody></table>
 </div>
 
@@ -200,11 +200,11 @@ result # =&gt; "Before I'm somewhere in the middle After"
 </div>
 
 <p>NOTE: If you&rsquo;re playing with this and try to <code>puts</code> this line&hellip;</p>
-<div class="highlight plaintext"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
 2
-3</pre></td><td class="code"><pre>puts LayoutRenderer.new.render do
-  inner.result
-end
+3</pre></td><td class="code"><pre><span class="nb">puts</span> <span class="no">LayoutRenderer</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class="nf">render</span> <span class="k">do</span>
+  <span class="n">inner</span><span class="p">.</span><span class="nf">result</span>
+<span class="k">end</span>
 </pre></td></tr></tbody></table>
 </div>
 

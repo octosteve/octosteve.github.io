@@ -44,13 +44,13 @@
 <h3>Some Basic ERB</h3>
 
 <p>Here’s how we’d render a simple erb template.</p>
-<div class="highlight plaintext"><table style="border-spacing: 0"><tbody><tr>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr>
 <td class="gutter gl" style="text-align: right"><pre class="lineno">1
 2
 3</pre></td>
-<td class="code"><pre>require 'erb'
-template = "1 and 1 is &lt;%= 1 + 1 %&gt;"
-ERB.new(template).result...</pre></td>
+<td class="code"><pre><span class="nb">require</span> <span class="s1">'erb'</span>
+<span class="n">template</span> <span class="o">=</span> <span class="s2">"1 and 1 is &lt;%= 1 + 1 %&gt;"</span>
+<span class="no">ERB</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">template</span><span class="p">).</span><span class="nf">result</span></pre></td>
 </tr></tbody></table></div>
       <a href="/2015/05/28/working-with-templates-in-ruby-erb.html">Read more…</a>
     </article>
