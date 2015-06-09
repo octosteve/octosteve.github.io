@@ -5,10 +5,121 @@
   <id>http://blog.url.com/</id>
   <link href="http://blog.url.com/"/>
   <link href="http://blog.url.com/feed.xml" rel="self"/>
-  <updated>2015-05-28T11:39:00-04:00</updated>
+  <updated>2015-06-08T18:43:00-04:00</updated>
   <author>
     <name>Blog Author</name>
   </author>
+  <entry>
+    <title>Rails Foreign Key Constraints - The Ugly Way</title>
+    <link rel="alternate" href="http://blog.url.com/2015/06/08/rails-foreign-key-constraints-the-ugly-way.html"/>
+    <id>http://blog.url.com/2015/06/08/rails-foreign-key-constraints-the-ugly-way.html</id>
+    <published>2015-06-08T18:43:00-04:00</published>
+    <updated>2015-06-08T20:07:05-04:00</updated>
+    <author>
+      <name>Article Author</name>
+    </author>
+    <content type="html">&lt;h1&gt;Render unto Caesar&amp;hellip;&lt;/h1&gt;
+
+&lt;p&gt;Let the database do it&amp;rsquo;s job. For a while, Rails development focused on pushing logic into models that would be better suited being put in as a table constraint. Articles like &lt;a href="http://shuber.io/porting-activerecord-validations-to-postgres"&gt;this one&lt;/a&gt; are great at outlining the proper approach. The problem with this is that it&amp;rsquo;s not built into the Rails tools, leaving you writing ugly code in your migrations. Not very ruby-esque.&lt;/p&gt;
+
+&lt;h2&gt;Foreign Keys&lt;/h2&gt;
+
+&lt;p&gt;Databases have a built in way for managing data integrity between 2 tables. &lt;a href="http://en.wikipedia.org/wiki/Foreign_key"&gt;The Foreign Key constraint&lt;/a&gt;. This ensures the value of a foreign key exists in the referenced table.&lt;/p&gt;
+
+&lt;p&gt;Since Rails was created, it relied on SQL, and foreign keys, but never had a way of confirming the &lt;code&gt;id&lt;/code&gt; being referenced existed, shy of adding a model validation.&lt;/p&gt;
+
+&lt;p&gt;Exiting news! Rails 4.2 shipped with foreign key support. You can create migrations that delegate the responsibility directly to the database if your database supports it.&lt;/p&gt;
+
+&lt;p&gt;There are other articles that cover &lt;a href="https://robots.thoughtbot.com/referential-integrity-with-foreign-keys"&gt;some&lt;/a&gt; of the &lt;a href="https://richonrails.com/articles/foreign-keys-in-rails-4-2"&gt;basics&lt;/a&gt;. I wanted to cover something I ran into recently.&lt;/p&gt;
+
+&lt;h2&gt;Learn stuff&lt;/h2&gt;
+
+&lt;p&gt;We&amp;rsquo;re going to model an app that lets you teach and sign up for courses.&lt;/p&gt;
+&lt;div class="highlight plaintext"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+2
+3&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;User -&amp;gt; Can be both a teacher and a student
+Course -&amp;gt; Belongs to a user by a teacher_id
+Enrollment -&amp;gt; Links a user by a student_id, and a course
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;h3&gt;Some rails&lt;/h3&gt;
+&lt;div class="highlight shell"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4
+5&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;rails new learn_stuff -d postgresql &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="nb"&gt;cd &lt;/span&gt;learn_stuff
+rails g model user name
+rails g model course topic teacher:belongs_to
+rails g model enrollment student:belongs_to course:belongs_to
+rake db:create
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;This sets us up, but when we run &lt;code&gt;rake db:migrate&lt;/code&gt; fireworks start.&lt;/p&gt;
+&lt;div class="highlight plaintext"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;PG::UndefinedTable: ERROR:  relation "teachers" does not exist
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;This makes sense. We don&amp;rsquo;t have a &lt;code&gt;teachers&lt;/code&gt; table. We need to pass the course table some more options.&lt;/p&gt;
+
+&lt;p&gt;Here&amp;rsquo;s our migration as it stands.&lt;/p&gt;
+&lt;div class="highlight ruby"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4
+5
+6
+7
+8
+9
+10&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;CreateCourses&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="no"&gt;ActiveRecord&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="no"&gt;Migration&lt;/span&gt;
+  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;change&lt;/span&gt;
+    &lt;span class="n"&gt;create_table&lt;/span&gt; &lt;span class="ss"&gt;:courses&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="o"&gt;|&lt;/span&gt;
+      &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;string&lt;/span&gt; &lt;span class="ss"&gt;:topic&lt;/span&gt;
+      &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;belongs_to&lt;/span&gt; &lt;span class="ss"&gt;:teacher&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;index: &lt;/span&gt;&lt;span class="kp"&gt;true&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;foreign_key: &lt;/span&gt;&lt;span class="kp"&gt;true&lt;/span&gt;
+
+      &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;timestamps&lt;/span&gt; &lt;span class="ss"&gt;null: &lt;/span&gt;&lt;span class="kp"&gt;false&lt;/span&gt;
+    &lt;span class="k"&gt;end&lt;/span&gt;
+  &lt;span class="k"&gt;end&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;The Rails &lt;a href="https://github.com/rails/rails/blob/7785417984f61a9d5e00416c13b89dce2ee02daf/activerecord/lib/active_record/connection_adapters/abstract/schema_statements.rb#L658"&gt;source&lt;/a&gt; shows that we can&amp;rsquo;t switch the name of table. What would be great is to be able to say something like: &amp;ldquo;OK RAILS, I&amp;rsquo;M GOING TO GIVE YOU A COLUMN NAME BUT IT&amp;rsquo;S NOT THE TABLE NAME FOR THE CONSTRAINT. I&amp;rsquo;LL GIVE YOU MORE INFO LATER. KTHXBAI&amp;rdquo;&lt;/p&gt;
+
+&lt;p&gt;We have to first create the column, THEN add the constraint.&lt;/p&gt;
+&lt;div class="highlight ruby"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;CreateCourses&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="no"&gt;ActiveRecord&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="no"&gt;Migration&lt;/span&gt;
+  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;change&lt;/span&gt;
+    &lt;span class="n"&gt;create_table&lt;/span&gt; &lt;span class="ss"&gt;:courses&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="o"&gt;|&lt;/span&gt;
+      &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;string&lt;/span&gt; &lt;span class="ss"&gt;:topic&lt;/span&gt;
+      &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;belongs_to&lt;/span&gt; &lt;span class="ss"&gt;:teacher&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;index: &lt;/span&gt;&lt;span class="kp"&gt;true&lt;/span&gt;
+
+      &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;timestamps&lt;/span&gt; &lt;span class="ss"&gt;null: &lt;/span&gt;&lt;span class="kp"&gt;false&lt;/span&gt;
+    &lt;span class="k"&gt;end&lt;/span&gt;
+    &lt;span class="n"&gt;add_foreign_key&lt;/span&gt; &lt;span class="ss"&gt;:courses&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:users&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;column: :teacher_id&lt;/span&gt;
+  &lt;span class="k"&gt;end&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;The rest of the source code, including the associations for all of this stuff can be found &lt;a href="https://github.com/StevenNunez/learn_stuff"&gt;here&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3&gt;Meh&lt;/h3&gt;
+
+&lt;p&gt;I wish this was a bit smarter, off to work on a pull request.&lt;/p&gt;
+</content>
+  </entry>
   <entry>
     <title>Working with Templates in Ruby ERB</title>
     <link rel="alternate" href="http://blog.url.com/2015/05/28/working-with-templates-in-ruby-erb.html"/>
@@ -1250,127 +1361,6 @@ JavaScript also uses camelCase for its variables, vs Ruby&amp;rsquo;s snake case
 &lt;p&gt;Learning your first programming language is hard. I hope I&amp;rsquo;ve shown you that learning your second one, isn&amp;rsquo;t that bad.&lt;/p&gt;
 
 &lt;p&gt;Happy Clacking!&lt;/p&gt;
-</content>
-  </entry>
-  <entry>
-    <title>On why learning to program is hard</title>
-    <link rel="alternate" href="http://blog.url.com/2014/04/26/on-why-learning-to-program-is-hard.html"/>
-    <id>http://blog.url.com/2014/04/26/on-why-learning-to-program-is-hard.html</id>
-    <published>2014-04-26T16:22:00-04:00</published>
-    <updated>2015-04-16T15:05:06-04:00</updated>
-    <author>
-      <name>Article Author</name>
-    </author>
-    <content type="html">&lt;p&gt;The first mention of &amp;lsquo;Objects&amp;rsquo; with regard to some non-tangible thing was in &lt;a href="http://en.wikipedia.org/wiki/Object-oriented_programming#History"&gt;the late 1950s&lt;/a&gt;. Before that, &amp;#39;Objects&amp;rsquo; didn&amp;rsquo;t exist. Once you realize that all concepts in programming are made up, you start to feel less bad about not understanding them right away. &lt;/p&gt;
-
-&lt;h1&gt;Learn all the things!&lt;/h1&gt;
-
-&lt;p&gt;To be clear, when I say &amp;ldquo;Learn to program&amp;rdquo; I don&amp;rsquo;t mean following a tutorial. Quite the opposite. Learning to program means you are able to create experiences through a combination of your own internal understanding of your programming platform, and the knowledge to find the answers through your available resources.&lt;/p&gt;
-
-&lt;h3&gt;FizzBuzz&lt;/h3&gt;
-
-&lt;p&gt;Let&amp;rsquo;s look at what you need to know to solve something like &lt;a href="http://en.wikipedia.org/wiki/Fizz_buzz"&gt;Fizz Buzz&lt;/a&gt;&lt;/p&gt;
-&lt;div class="highlight ruby"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
-2
-3
-4
-5
-6
-7
-8&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="n"&gt;fizz_buzz&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;number&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt; 
-    &lt;span class="s2"&gt;"&lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="s1"&gt;'Fizz'&lt;/span&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;number&lt;/span&gt; &lt;span class="o"&gt;%&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;).&lt;/span&gt;&lt;span class="nf"&gt;zero?&lt;/span&gt;&lt;span class="si"&gt;}#{&lt;/span&gt;&lt;span class="s1"&gt;'Buzz'&lt;/span&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;number&lt;/span&gt; &lt;span class="o"&gt;%&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;).&lt;/span&gt;&lt;span class="nf"&gt;zero?&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;"&lt;/span&gt;
-&lt;span class="k"&gt;end&lt;/span&gt;
-
-&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;upto&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;100&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;&lt;span class="n"&gt;num&lt;/span&gt;&lt;span class="o"&gt;|&lt;/span&gt; 
-    &lt;span class="n"&gt;result&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;fizz_buzz&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;call&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;num&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; 
-    &lt;span class="nb"&gt;puts&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;result&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;empty?&lt;/span&gt; &lt;span class="p"&gt;?&lt;/span&gt; &lt;span class="n"&gt;num&lt;/span&gt; &lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;result&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/div&gt;
-
-&lt;h4&gt;Reading&lt;/h4&gt;
-
-&lt;p&gt;To read this code you&amp;rsquo;ll need to know that:&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;This program runs top to bottom.&lt;/li&gt;
-&lt;li&gt;Expressions return values that can be assigned to variables.&lt;/li&gt;
-&lt;li&gt;Variables.&lt;/li&gt;
-&lt;li&gt;Iteration.&lt;/li&gt;
-&lt;li&gt;Things can be sent to &lt;a href="http://en.wikipedia.org/wiki/Standard_streams#Standard_output_.28stdout.29"&gt;Standard Out&lt;/a&gt;.&lt;/li&gt;
-&lt;li&gt;Conditionals.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h4&gt;Writing&lt;/h4&gt;
-
-&lt;p&gt;Imagine you&amp;rsquo;re instructing another developer to write this code. What things would they have to understand? &lt;/p&gt;
-
-&lt;p&gt;&amp;ldquo;Assign the result of a lambda expression taking one argument to the variable &lt;code&gt;fizz_buzz&lt;/code&gt;. In the lambda, create a string that will interpolate &amp;#39;Fizz&amp;rsquo; if the argument is divisible by 3, and &amp;#39;Buzz&amp;rsquo; if the number is divisible by 5. Ensure the string can be &amp;#39;FizzBuzz&amp;rsquo; for numbers like 15. Then iterate from 1 to 100, calling the lambda with each number. If the result of the call is empty, return the number. Otherwise return the result&amp;rdquo;.&lt;/p&gt;
-
-&lt;p&gt;Implementing this requires you know specific things about the language you&amp;rsquo;re writing in. Idioms, conventions, methods, objects&amp;hellip;
-To implement this in ruby, you&amp;rsquo;ll have to know:&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;How to create a lambda.&lt;/li&gt;
-&lt;li&gt;How to interpolate strings.&lt;/li&gt;
-&lt;li&gt;How to get the remainder from a number.&lt;/li&gt;
-&lt;li&gt;Comparison operators&lt;/li&gt;
-&lt;li&gt;Statement modifier conditional statements.&lt;/li&gt;
-&lt;li&gt;Ternary conditional statements.&lt;/li&gt;
-&lt;li&gt;How to iterate.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h4&gt;Creating&lt;/h4&gt;
-
-&lt;p&gt;To come up with this solution you&amp;rsquo;ll need a completely different skill. Programmatic thinking. Programmatic thinking is the ability to take a problem and break it down into smaller pieces. To illustrate this, have someone teach a robot how to make a smoothie. Assuming the robot knows only the things you tell it forces you to create very detailed instructions.&lt;/p&gt;
-
-&lt;p&gt;For FizzBuzz, the thought process is something like this.&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;I need something that figures out if it needs to return &amp;ldquo;Fizz&amp;rdquo;, &amp;ldquo;Buzz&amp;rdquo; or &amp;ldquo;FizzBuzz&amp;rdquo;. I could create a class with methods, or just a method, or I can use a lambda. Let&amp;rsquo;s use a lambda!&lt;/li&gt;
-&lt;li&gt;I need to print the result out, let&amp;rsquo;s loop up to 100 and call our lambda!&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h2&gt;Break it down&lt;/h2&gt;
-
-&lt;iframe width="560" height="315" src="//www.youtube.com/embed/5MgBikgcWnY" frameborder="0" allowfullscreen&gt;&lt;/iframe&gt;
-
-&lt;p&gt;Taking a problem apart and breaking it down into its components is the way to go. &lt;/p&gt;
-
-&lt;h3&gt;Components of programming&lt;/h3&gt;
-
-&lt;p&gt;When you&amp;rsquo;re starting out, you know nothing. In order to build ANYTHING you&amp;rsquo;ll need some of these things under your belt.
-The good news is you can can get better at each component separately.&lt;/p&gt;
-
-&lt;h4&gt;Programming concepts&lt;/h4&gt;
-
-&lt;p&gt;To get a better grasp on programming concepts &lt;a href="http://www.confreaks.com/"&gt;watch talks&lt;/a&gt;. &lt;a href="https://twitter.com/readingcodegood"&gt;Read code&lt;/a&gt;. Lots of it. Here you&amp;rsquo;ll learn about design patterns, techniques like recursion, concepts like encapsulation, namespacing, and testing.&lt;/p&gt;
-
-&lt;h4&gt;Programmatic thinking&lt;/h4&gt;
-
-&lt;p&gt;This one requires work. Go to &lt;a href="http://www.codewars.com"&gt;Code Wars&lt;/a&gt;. Do problems on &lt;a href="http://projecteuler.net"&gt;Project Euler&lt;/a&gt;. Do problems on &lt;a href="http://rubyquiz.com/"&gt;Ruby Quiz&lt;/a&gt;. &lt;/p&gt;
-
-&lt;h4&gt;Language specific stuff&lt;/h4&gt;
-
-&lt;p&gt;Get good at your language. Read the docs. Try figuring out multiple ways to solve the same problem.&lt;/p&gt;
-
-&lt;h4&gt;Which component does this serve?&lt;/h4&gt;
-
-&lt;p&gt;Always be aware what you&amp;rsquo;re working on is benefiting. Building software serves all 3, so when it doubt: BUILD!&lt;/p&gt;
-
-&lt;h2&gt;Silver lining&lt;/h2&gt;
-
-&lt;p&gt;When it comes time for you to learn a new language, all you&amp;rsquo;ll really have to learn is the language specific stuff! You&amp;rsquo;ll only have to learn one leg of this crazy process!&lt;/p&gt;
-
-&lt;h3&gt;Note of caution&lt;/h3&gt;
-
-&lt;p&gt;The trap seasoned developers fall prey to is mistaking language specific idioms/concept understandings for Programming Concepts. Just because you do it that way in C# doesn&amp;rsquo;t mean that&amp;rsquo;s how it&amp;rsquo;s done in ruby!&lt;/p&gt;
-
-&lt;h2&gt;The road is long and hard&lt;/h2&gt;
-
-&lt;p&gt;&amp;hellip; but along the way you pick up a rocket powered motorbike. Then you don&amp;rsquo;t care how long the road is, just how much fuel you have in the tank.&lt;/p&gt;
-
-&lt;p&gt;Happy Clacking.&lt;/p&gt;
 </content>
   </entry>
 </feed>
