@@ -14,7 +14,7 @@
     <link rel="alternate" href="http://blog.url.com/2015/08/21/lets-learn-about-rack.html"/>
     <id>http://blog.url.com/2015/08/21/lets-learn-about-rack.html</id>
     <published>2015-08-21T10:47:00-04:00</published>
-    <updated>2015-08-23T16:14:35-04:00</updated>
+    <updated>2015-08-24T17:59:54-04:00</updated>
     <author>
       <name>Article Author</name>
     </author>
@@ -177,7 +177,7 @@ Accept-Language: en-US,en;q=0.8,es-419;q=0.6,es;q=0.4
 
 &lt;p&gt;Simple. We get a Hash, and return an array&amp;hellip; but EW, we get a HASH and return an ARRAY?!&lt;/p&gt;
 
-&lt;p&gt;We know a thing or two about &lt;a href="http://c2.com/cgi/wiki?PrimitiveObsession"&gt;Primitive Obession&lt;/a&gt;, so let&amp;rsquo;s wrap these in objects. Lucky for us, &lt;code&gt;Rack&lt;/code&gt; comes with a ways to wrap them nicely. &lt;code&gt;Rack::Request&lt;/code&gt;, and &lt;code&gt;Rack::Response&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;We know a thing or two about &lt;a href="http://c2.com/cgi/wiki?PrimitiveObsession"&gt;Primitive Obsession&lt;/a&gt;, so let&amp;rsquo;s wrap these in objects. Lucky for us, &lt;code&gt;Rack&lt;/code&gt; comes with a ways to wrap them nicely. &lt;code&gt;Rack::Request&lt;/code&gt;, and &lt;code&gt;Rack::Response&lt;/code&gt;.&lt;/p&gt;
 
 &lt;p&gt;Let&amp;rsquo;s upgrade our code to look like this:&lt;/p&gt;
 &lt;div class="highlight ruby"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
