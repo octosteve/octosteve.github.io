@@ -107,7 +107,7 @@ This looks a lot like what the browser sent us! What method did we use? Check `e
 
 Simple. We get a Hash, and return an array... but EW, we get a HASH and return an ARRAY?!
 
-We know a thing or two about [Primitive Obession](http://c2.com/cgi/wiki?PrimitiveObsession), so let's wrap these in objects. Lucky for us, `Rack` comes with a ways to wrap them nicely. `Rack::Request`, and `Rack::Response`.
+We know a thing or two about [Primitive Obsession](http://c2.com/cgi/wiki?PrimitiveObsession), so let's wrap these in objects. Lucky for us, `Rack` comes with a ways to wrap them nicely. `Rack::Request`, and `Rack::Response`.
 
 Let's upgrade our code to look like this:
 
