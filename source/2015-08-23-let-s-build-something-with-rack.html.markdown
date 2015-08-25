@@ -2,12 +2,11 @@
 title: Let's build something with Rack
 date: 2015-08-23 20:28 UTC
 tags: rack, ruby
-published: false
 ---
 
 # Slow down!
 
-When it's time to build a web app, we go for the big guns. `gem 'rails'` in the `Gemfile` and we're off to races. What if we didn't. What if we tried to carefully craft every line in our app? What if we only added [Sprockets](https://github.com/sstephenson/sprockets) when we needed it? What if we want granular control of our [app's security](http://www.sinatrarb.com/rack-protection/)? Or what if we just want a better idea of what's actually happening when a user visits our site?
+When it's time to build a web app, we go for the big guns. `gem 'rails'` in the `Gemfile` and we're off to races. What if we didn't? What if we tried to carefully craft every line in our app? What if we only added [Sprockets](https://github.com/sstephenson/sprockets) when we needed it? What if we want granular control of our [app's security](https://github.com/hassox/warden)? Or what if we just want a better idea of what's actually happening when a user visits our site?
 
 ## Rack - The Bow Drill of Web Apps
 Let's build a simple web app using just rack and rack middleware. Along the way we'll learn about some rack features like URLMap and writing custom middleware.
@@ -17,12 +16,11 @@ What are we without our past? Let's write an app where we can keep track of our 
 
 
 ### Planning
-We'll need a few routes
-```
-GET / gives you a link to the "All Programmers" page
-GET /programmers returns a list of our programmers
-GET /programmers/4 returns a programmer with an id of 4
-```
+We'll need a few routes:
+
+* GET / gives you a link to the "All Programmers" page
+* GET /programmers returns a list of our programmers
+* GET /programmers/4 returns a programmer with an id of 4
 
 We'll also add Bootstrap since all websites need Bootstrap.
 
@@ -127,6 +125,7 @@ run App.new
 Better... but we can do better by using rack's `URLMap` functionality. We can essentially break up parts of our app into parallel rack apps that only get called if a route matches. The cool thing is that we can set the middleware to run all ALL routes by setting it outside the block, or create our custom stack  for each route.
 
 Here's the updated `config.ru` and HomeController
+
 ```ruby
 # config.ru
 require_relative 'config/environment'
@@ -158,6 +157,7 @@ This is MUCH better. We had to give the controller it's own `#call` method since
 
 ## All the programmers!
 Let's make a new controller for our programmers route.
+
 ```ruby
 # ProgrammersController
 class ProgrammersController
@@ -180,6 +180,7 @@ class ProgrammersController
 end
 ```
 And the template
+
 ```html
 <!DOCTYPE html>
 <html lang="en">
@@ -201,6 +202,7 @@ And the template
 Here we have the call method, again, acting as our router, delegating out to our index action or 404ing when it doesn't find anything. Again... this smells, we see some duplication, but we'll hold off. In the immortal words of [Bobby "Crouton" Nadler](http://bobnadler.com/), wait for duplication at least 3 times. By then, you should understand exactly what's being repeated.
 
 Our `config.ru` looks like this now:
+
 ```ruby
 require_relative 'config/environment'
 use Rack::ContentType
@@ -217,6 +219,7 @@ end
 Ok, so our next requirement is going to make us get... creative. We're going to have to write a router, and write some interesting regular expressions. Let's get started.
 
 The code I wish worked looks something like this
+
 ```ruby
 # config/routes.rb
 Routes = Router.new
@@ -241,7 +244,7 @@ use Rack::ContentType
 run Routes
 ```
 
-Nice right? it loads the code I wrote with all of our routes. `Routes` was made a constant so we could load it in another file and it stay in memory. Basically it's a global. Sue me.
+Nice right? It loads all of our routes. `Routes` was made a constant so we could load it in another file and it stay in memory. Basically it's a global. Sue me.
 
 We needed to make a `Router` class to get support this awesome syntax
 
@@ -278,11 +281,12 @@ end
 
 DON'T RUN! Let me explain. You have to think of the router as having 2 big roles. Storing URL, Method combinations, and looking up what to do if it finds a match.
 
-The methods related to that first job are `#initialize` and `#add_route`. Here, we're just giving it the rules. The action is in the `#call` method. Rack will call this method when a request comes in and we'll find a route.
+The methods related to that first job are `#initialize` and `#add_route`. Here, we're just giving it the rules. The sexiness is in the `#call` method. Rack will call this method when a request comes in and we'll find a route.
 
 In `#add_route` we're making the key of the hash... an array. You're seeing that right. The value is the string version of the controller#action.
 
 `#call` method asks for the route. Not found? 404, Found? MAGIC.
+
 ``` ruby
 def call_action_for(route)
   controller, action = route.split("#")
@@ -300,6 +304,7 @@ This doesn't work for the `/programmers/1` path. All that work... for NOTHING! L
 We need to write our own equality so that we can compare `/programmers/:id` and have it equal `/programmers/1`. We also want to make it so that `/programmers` equals `/programmers` (no dynamic segments here).
 
 Here's our first pass at it
+
 ```ruby
 class Route
   attr_reader :method, :path
@@ -324,7 +329,7 @@ class Route
   end
 end
 ```
-We write a regular expression that replaces any part of the string that starts with a `:` with a `\w+`. Meaning replace "/programmers/:id" into A regular expression containing /programmers/\w+.
+We write a regular expression that replaces any part of the string that starts with a `:` with a `\w+`. Meaning replace `/programmers/:id` into A regular expression containing `/programmers/(\w+)`.
 
 We updated our Router too:
 
@@ -407,6 +412,7 @@ end
 ```
 
 Then make a template at `app/views/programmers/show.html.erb`
+
 ```html
 <!DOCTYPE html>
 <html lang="en">
@@ -422,17 +428,18 @@ Then make a template at `app/views/programmers/show.html.erb`
 ```
 
 ### Router updates
-In the router, update the conditional for found routes to call a route method to update the route.
+In the router, update the request to include the dynamic segment info.
+
 ``` ruby
 #...
-if handler
+if route
   route.update_params!(request)
   call_action_for(handler, request)
 else
 #...
 ```
 
-Then in the route, add that method.
+Then in the route, add the method.
 
 ``` ruby
 def update_params!(request)
@@ -448,7 +455,7 @@ end
 Do nothing if there's nothing dynamic. Otherwise extract the keys, and values, zip them them merge it into the request's params hash.
 
 ### One more thing
-Let's make the first few steps toward styling this badass app. Add the Rack::Static Middleware. Any files in /public/css will be served without checkout our routes. great for stylesheets!
+Add the Rack::Static Middleware. Any files in /public/css will be served without checking our routes. Great for stylesheets!
 
 ```ruby
 require_relative 'config/environment'
@@ -457,10 +464,10 @@ require_relative 'config/routes'
 use Rack::ContentType
 use Rack::Static, urls: ['/css'], root: 'public'
 run Routes
-
 ```
 
 Run this in your terminal. I'm assuming you have `wget` like a respectable developer.
+
 ```
 mkdir -p public/css
 cd public/css
@@ -468,6 +475,7 @@ wget https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css
 ```
 
 Then add this line to the head of all of your html pages
+
 ``` html
   <link rel="stylesheet" href="/css/bootstrap.min.css">
 ```
