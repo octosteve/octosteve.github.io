@@ -30,8 +30,6 @@ activate :blog do |blog|
   blog.page_link = "page/{num}"
 end
 
-page "/blog.html", layout: 'blog_index'
-
 page "/feed.xml", layout: false
 
 ###

@@ -6,14 +6,44 @@
   <title>Hostile Developer<%= ' - ' + current_article.title unless current_article.nil? %></title>
   <%= stylesheet_link_tag 'application' %>
   <%= feed_tag :atom, "#{blog.options.prefix.to_s}/feed.xml", title: "Atom Feed" %>
-
 </head>
 <body>
 <div id="container">
   <%= partial 'header' %>
-  <main role="main">
+
+  <main id='articles' role="main">
     <%= yield %>
   </main>
+
+  <aside id="history">
+    <section class="recent">
+      <h2>Recent Articles</h2>
+      <ol class="articles">
+        <% blog.articles[0...10].each do |article| %>
+            <li><%= link_to article.title, article %>
+        <% end %>
+      </ol>
+    </section>
+
+    <section class="tags">
+      <h2>Tags</h2>
+      <ol>
+        <% blog.tags.sort.each do |tag, articles| %>
+            <li><%= link_to tag, tag_path(tag) %> (<%= articles.size %>)</a></li>
+        <% end %>
+      </ol>
+    </section>
+
+    <section class="by-month">
+      <h2>By Month</h2>
+      <ol>
+        <% blog.articles.group_by { |a| [a.date.month, a.date.year] }.each do |(month, year), articles| %>
+            <li><%= link_to Date.new(year, month).strftime("%B %Y"), blog_month_path(year, month) %>
+              (<%= articles.size %>)</a></li>
+        <% end %>
+      </ol>
+    </section>
+  </aside>
  <%= partial 'google_analytics' %>
 </div>
 </body>
