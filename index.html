@@ -6,7 +6,6 @@
   <title>Hostile Developer</title>
   <link href="/stylesheets/application.css" rel="stylesheet" type="text/css" />
   <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/feed.xml" />
-
 </head>
 <body>
 <div id="container">
@@ -24,28 +23,263 @@
   <nav>
     <ul class='links'>
       <li><a href="/">Home</a></li>
-      <li><a href="/blog.html">Blog</a></li>
     </ul>
   </nav>
 </section>
 
-  <main role="main">
-    <section>
-  <h1>Steven Nunez</h1>
-  <h3>Lead Instructor at <a target="_blank" href="http://flatironschool.com/">The Flatiron School</a></h3>
-  <article class="big-head">
-    <img src="/images/point.jpg" alt="" />
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+
+  <main id='articles' role="main">
+        <p>Page 1 of 2</p>
+
+
+    <article>
+      <h1 class="article-title"><a href="/2016/02/24/hey-watch-it-or-how-to-monitor-files-in-elixir.html">Hey! Watch it!...or how to monitor files in Elixir</a></h1>
+      <h2>File watchers and Elixir</h2>
+
+<p>I’m working on a feature that reloads a config file if the file is updated. The easiest way I could figure out was to watch the file, and reload the code. Thinking in JavaScript, I’d expect something like:</p>
+<div class="highlight javascript">
+<table style="border-spacing: 0"><tbody><tr>
+<td class="gutter gl" style="text-align: right"><pre class="lineno">1
 2
-3</pre></td><td class="code"><pre>      <span class="k">def</span> <span class="nf">method_missing</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-        <span class="k">raise</span> <span class="ss">:hell</span>
-      <span class="k">end</span>
-</pre></td></tr></tbody></table>
+3
+4</pre></td>
+<td class="code"><pre><span class="c1">// fake</span>
+<span class="nx">Dir</span><span class="p">.</span><span class="nx">watch</span><span class="p">(</span><span class="s1">'configs/'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">changedFile</span><span class="p">){</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="err">`</span><span class="nx">$</span><span class="p">{</span><span class="nx">changedFile</span><span class="p">}</span> <span class="nx">was</span> <span class="nx">updated</span><span class="err">`</span><span class="p">);</span>
+<span class="p">})</span>
+</pre></td>
+</tr></tbody></table>
 </div>
-  </article>
-</section>
+
+<p>But if you’ve been working with Elixir for a bit, you’ll know there’s gonna be a whole bunch of message passing to get this working. In the end, we wind up...</p>
+      <a href="/2016/02/24/hey-watch-it-or-how-to-monitor-files-in-elixir.html">Read more…</a>
+    </article>
+    <article>
+      <h1 class="article-title"><a href="/2015/08/23/let-s-build-something-with-rack.html">Let's build something with Rack</a></h1>
+      <h1>Slow down!</h1>
+
+<p>When it’s time to build a web app, we go for the big guns. <code>gem 'rails'</code> in the <code>Gemfile</code> and we’re off to races. What if we didn’t? What if we tried to carefully craft every line in our app? What if we only added <a href="https://github.com/sstephenson/sprockets">Sprockets</a> when we needed it? What if we want granular control of our <a href="https://github.com/hassox/warden">app’s security</a>? Or what if we just want a better idea of what’s actually happening when a user visits our site?</p>
+
+<h2>Rack - The Bow Drill of Web Apps</h2>
+
+<p>Let’s build a simple web app using just rack and rack middleware...</p>
+      <a href="/2015/08/23/let-s-build-something-with-rack.html">Read more…</a>
+    </article>
+    <article>
+      <h1 class="article-title"><a href="/2015/08/21/lets-learn-about-rack.html">Let's learn about Rack</a></h1>
+      <h1>Why learn rack?</h1>
+
+<p>In Ruby, we’re surrounded by magic. From <code>Sinatra</code> abstracting the request cycle away, to <code>rails</code> making you believe unicorns exist in your terminal, there is no shortage of magical abstraction in Ruby. I’ve found that uncovering the magic, peeling back the layers of metaprogramming and seeing what’s happening is helpful for when your magic turns around and starts attacking you.</p>
+
+<p>We’ll be learning a bit of rack, and then move on to building an app with nothing but the most basic of...</p>
+      <a href="/2015/08/21/lets-learn-about-rack.html">Read more…</a>
+    </article>
+    <article>
+      <h1 class="article-title"><a href="/2015/06/08/rails-foreign-key-constraints-the-ugly-way.html">Rails Foreign Key Constraints - The Ugly Way</a></h1>
+      <h1>Render unto Caesar…</h1>
+
+<p>Let the database do it’s job. For a while, Rails development focused on pushing logic into models that would be better suited being put in as a table constraint. Articles like <a href="http://shuber.io/porting-activerecord-validations-to-postgres">this one</a> are great at outlining the proper approach. The problem with this is that it’s not built into the Rails tools, leaving you writing ugly code in your migrations. Not very ruby-esque.</p>
+
+<h2>Foreign Keys</h2>
+
+<p>Databases have a built in way for managing data integrity between 2 tables. <a href="http://en.wikipedia.org/wiki/Foreign_key">The Foreign Key constraint</a></p>
+      <a href="/2015/06/08/rails-foreign-key-constraints-the-ugly-way.html">Read more…</a>
+    </article>
+    <article>
+      <h1 class="article-title"><a href="/2015/05/28/working-with-templates-in-ruby-erb.html">Working with Templates in Ruby ERB</a></h1>
+      <h1>Templates in ERB</h1>
+
+<p>This post is a bit of a thought experiment. Looking into this led me down the route of some interesting ruby solutions.</p>
+
+<h2>The problem</h2>
+
+<p>Ruby ships with the <code>erb</code> library, but it natively doesn’t come with a way to wrap one ERB file in another. This makes composing files difficult. There’s no way to use something like rails’ <code>yield</code> method.</p>
+
+<h3>Some Basic ERB</h3>
+
+<p>Here’s how we’d render a simple erb template.</p>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr>
+<td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3</pre></td>
+<td class="code"><pre><span class="nb">require</span> <span class="s1">'erb'</span>
+<span class="n">template</span> <span class="o">=</span> <span class="s2">"1 and 1 is &lt;%= 1 + 1 %&gt;"</span>
+<span class="no">ERB</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">template</span><span class="p">).</span><span class="nf">result</span></pre></td>
+</tr></tbody></table></div>
+      <a href="/2015/05/28/working-with-templates-in-ruby-erb.html">Read more…</a>
+    </article>
+    <article>
+      <h1 class="article-title"><a href="/2015/05/20/elixir-tuples-vs-lists.html">Elixir - Tuples vs Lists</a></h1>
+      <h1>Immutability Primer</h1>
+
+<p>Elixir is a Functional programming language with immutable types. You might see code like the following and think that we’re mutating a value.</p>
+<div class="highlight elixir">
+<table style="border-spacing: 0"><tbody><tr>
+<td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3</pre></td>
+<td class="code"><pre><span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="sd">"</span><span class="s2">Steven"</span><span class="p">,</span> <span class="sd">"</span><span class="s2">Kelly"</span><span class="p">,</span> <span class="sd">"</span><span class="s2">Michael"</span><span class="p">]</span>
+<span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="sd">"</span><span class="s2">Telly"</span><span class="p">]</span> <span class="o">++</span> <span class="n">names</span>
+<span class="n">names</span> <span class="c1"># =&gt; ["Telly", "Steven", "Kelly", "Michael"]</span>
+</pre></td>
+</tr></tbody></table>
+</div>
+
+<p>Elixir is giving us a new copy of the array. How it got this might be a bit confusing though. For starters, this is how Elixir stored that original <code>names</code> list.</p>
+<div class="highlight elixir">
+<table style="border-spacing: 0"><tbody><tr>
+<td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre></td>
+<td class="code"><pre><span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="sd">"</span><span class="s2">Steven"</span> <span class="o">|</span> <span class="p">[</span><span class="sd">"</span><span class="s2">Kelly"</span> <span class="o">|</span> <span class="p">[</span><span class="sd">"</span><span class="s2">Michael"</span><span class="p">]]]</span>
+</pre></td>
+</tr></tbody></table>
+</div>
+...
+      <a href="/2015/05/20/elixir-tuples-vs-lists.html">Read more…</a>
+    </article>
+    <article>
+      <h1 class="article-title"><a href="/2015/02/22/let-me-find-out.html">Let me find out</a></h1>
+      <h1>Finders keepers</h1>
+
+<p>The <code>find</code> method is one of the first methods I suggest people use when they’re suffering from <strong>eachitis</strong>.</p>
+
+<blockquote>
+<p><strong>EACHITIS</strong>: A condition where all solutions involving collections are solved using the <code>each</code> method.</p>
+</blockquote>
+
+<p>One problem with <code>find</code> is how to interpret the funky method signature.</p>
+<div class="highlight ruby">
+<table style="border-spacing: 0"><tbody><tr>
+<td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre></td>
+<td class="code"><pre><span class="n">find</span><span class="p">(</span><span class="n">ifnone</span> <span class="o">=</span> <span class="kp">nil</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">obj</span><span class="o">|</span> <span class="n">block</span> <span class="p">}</span> <span class="err">→</span> <span class="n">obj</span> <span class="n">or</span> <span class="kp">nil</span>
+</pre></td>
+</tr></tbody></table>
+</div>
+
+<p>From this signature, you might think you could just give an argument to <code>find</code> and it will be returned if no value is found. But that’s when disaster strikes...</p>
+      <a href="/2015/02/22/let-me-find-out.html">Read more…</a>
+    </article>
+    <article>
+      <h1 class="article-title"><a href="/2014/11/25/next-generation-is-better-i-promise.html">Next generation is better. I promise</a></h1>
+      <h1>Yey!….?</h1>
+
+<p>In addition to my regular hostility towards programming, I occasionally get really excited about stuff. When I heard that <a href="http://blog.chromium.org/2014/10/chrome-39-beta-js-generators-animation.html">Chrome 39</a> had native support for Generators, I got really excited… until I realized I didn’t really know what that meant.</p>
+
+<h2>Everything but the kitchen sync</h2>
+
+<p><a href="git.io/es6features">ES6 Features</a> are sneaking into <a href="http://kangax.github.io/compat-table/es6/">browsers</a> already. A lot of features are around dealing with asynchronous code. Generators are really cool in that they let you pause a functions execution until all <code>yield</code> statements...</p>
+      <a href="/2014/11/25/next-generation-is-better-i-promise.html">Read more…</a>
+    </article>
+    <article>
+      <h1 class="article-title"><a href="/2014/05/18/using-ruby-to-learn-javascript.html">Using Ruby to learn JavaScript</a></h1>
+      <p>I’ve written about why I believe <a href="/2014/04/26/on-why-learning-to-program-is-hard.html">learning to program is hard</a>. If you’ve made it to the other side, rejoice! It’s time for the easy part. Learning a new language. Let’s see how knowing Ruby can help us learn a little JavaScript. (I’m assuming you know Ruby for the duration of this post)</p>
+
+<h1>Ruby to JavaScript</h1>
+
+<p>First, let’s find some similarities.
+Both are:</p>
+
+<ul>
+<li>Dynamically Typed</li>
+<li>Both are Object Oriented</li>
+<li>Functions are first class citizens</li>
+</ul>
+
+<p>Let’s look at these first</p>
+
+<h2>Dynamically Typed</h2>
+<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr>
+<td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2</pre></td>
+<td class="code"><pre><span class="n">my_account</span> <span class="o">=</span></pre></td>
+</tr></tbody></table></div>
+      <a href="/2014/05/18/using-ruby-to-learn-javascript.html">Read more…</a>
+    </article>
+    <article>
+      <h1 class="article-title"><a href="/2014/04/26/on-why-learning-to-program-is-hard.html">On why learning to program is hard</a></h1>
+      <p>The first mention of ‘Objects’ with regard to some non-tangible thing was in <a href="http://en.wikipedia.org/wiki/Object-oriented_programming#History">the late 1950s</a>. Before that, 'Objects’ didn’t exist. Once you realize that all concepts in programming are made up, you start to feel less bad about not understanding them right away. </p>
+
+<h1>Learn all the things!</h1>
+
+<p>To be clear, when I say “Learn to program” I don’t mean following a tutorial. Quite the opposite. Learning to program means you are able to create experiences through a combination of your own internal understanding...</p>
+      <a href="/2014/04/26/on-why-learning-to-program-is-hard.html">Read more…</a>
+    </article>
+
+        <p><a href="/page/2/">Next page</a></p>
 
   </main>
+
+  <aside id="history">
+    <section class="recent">
+      <h2>Recent Articles</h2>
+      <ol class="articles">
+            <li><a href="/2016/02/24/hey-watch-it-or-how-to-monitor-files-in-elixir.html">Hey! Watch it!...or how to monitor files in Elixir</a>
+            <li><a href="/2015/08/23/let-s-build-something-with-rack.html">Let's build something with Rack</a>
+            <li><a href="/2015/08/21/lets-learn-about-rack.html">Let's learn about Rack</a>
+            <li><a href="/2015/06/08/rails-foreign-key-constraints-the-ugly-way.html">Rails Foreign Key Constraints - The Ugly Way</a>
+            <li><a href="/2015/05/28/working-with-templates-in-ruby-erb.html">Working with Templates in Ruby ERB</a>
+            <li><a href="/2015/05/20/elixir-tuples-vs-lists.html">Elixir - Tuples vs Lists</a>
+            <li><a href="/2015/02/22/let-me-find-out.html">Let me find out</a>
+            <li><a href="/2014/11/25/next-generation-is-better-i-promise.html">Next generation is better. I promise</a>
+            <li><a href="/2014/05/18/using-ruby-to-learn-javascript.html">Using Ruby to learn JavaScript</a>
+            <li><a href="/2014/04/26/on-why-learning-to-program-is-hard.html">On why learning to program is hard</a>
+      </ol>
+    </section>
+
+    <section class="tags">
+      <h2>Tags</h2>
+      <ol>
+            <li><a href="/tags/basics.html">basics</a> (1)</a></li>
+            <li><a href="/tags/beginner.html">beginner</a> (1)</a></li>
+            <li><a href="/tags/closures.html">closures</a> (1)</a></li>
+            <li><a href="/tags/components-of-programming.html">components of programming</a> (1)</a></li>
+            <li><a href="/tags/elixir.html">elixir</a> (2)</a></li>
+            <li><a href="/tags/enumerable.html">enumerable</a> (1)</a></li>
+            <li><a href="/tags/file-watchers.html">file watchers</a> (1)</a></li>
+            <li><a href="/tags/find.html">find</a> (1)</a></li>
+            <li><a href="/tags/fs.html">fs</a> (1)</a></li>
+            <li><a href="/tags/fundamentals.html">fundamentals</a> (1)</a></li>
+            <li><a href="/tags/generators.html">generators</a> (1)</a></li>
+            <li><a href="/tags/javascript.html">javascript</a> (3)</a></li>
+            <li><a href="/tags/learning.html">learning</a> (1)</a></li>
+            <li><a href="/tags/navigation.html">navigation</a> (1)</a></li>
+            <li><a href="/tags/polyglot.html">polyglot</a> (1)</a></li>
+            <li><a href="/tags/postgresql.html">postgresql</a> (1)</a></li>
+            <li><a href="/tags/promises.html">promises</a> (1)</a></li>
+            <li><a href="/tags/rack.html">rack</a> (2)</a></li>
+            <li><a href="/tags/rails.html">rails</a> (2)</a></li>
+            <li><a href="/tags/routing.html">routing</a> (1)</a></li>
+            <li><a href="/tags/ruby.html">ruby</a> (6)</a></li>
+            <li><a href="/tags/sharp-axe.html">sharp axe</a> (1)</a></li>
+            <li><a href="/tags/web.html">web</a> (1)</a></li>
+      </ol>
+    </section>
+
+    <section class="by-month">
+      <h2>By Month</h2>
+      <ol>
+            <li><a href="/2016/02.html">February 2016</a>
+              (1)</a></li>
+            <li><a href="/2015/08.html">August 2015</a>
+              (2)</a></li>
+            <li><a href="/2015/06.html">June 2015</a>
+              (1)</a></li>
+            <li><a href="/2015/05.html">May 2015</a>
+              (2)</a></li>
+            <li><a href="/2015/02.html">February 2015</a>
+              (1)</a></li>
+            <li><a href="/2014/11.html">November 2014</a>
+              (1)</a></li>
+            <li><a href="/2014/05.html">May 2014</a>
+              (1)</a></li>
+            <li><a href="/2014/04.html">April 2014</a>
+              (2)</a></li>
+            <li><a href="/2014/02.html">February 2014</a>
+              (1)</a></li>
+            <li><a href="/2013/10.html">October 2013</a>
+              (1)</a></li>
+      </ol>
+    </section>
+  </aside>
  <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
