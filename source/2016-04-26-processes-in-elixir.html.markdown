@@ -124,3 +124,7 @@ Wall of code! We updated our `receive` to match on the tuple `{:help, help_seeke
 
 # Wrap up
 We've seen 2 patterns for processes. Tasks where you care about the return value, and others where you don't. There a time and  a place for both, and in the next post, we'll see how Elixir provides an abstraction for handling these messages with GenServers.
+
+Want to try out your understanding? Clone [this repo](https://github.com/StevenNunez/processes_in_elixir) and get all of the tests passing!
+
+If you get stuck, be sure to checkout the `solution` branch.
