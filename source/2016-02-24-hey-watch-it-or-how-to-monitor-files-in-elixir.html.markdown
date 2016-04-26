@@ -17,8 +17,11 @@ Dir.watch('configs/', function(changedFile){
 But if you've been working with Elixir for a bit, you'll know there's gonna be a whole bunch of message passing to get this working. In the end, we wind up with something like:
 
 ``` elixir
+# Starting the process
 :fs.start_link(:my_watcher, Path.absname("config"))
+# Subscribing `self` to receive events.
 :fs.subscribe(:my_watcher)
+
 receive do
   {_watcher_process, {:fs, :file_event}, {changedFile, _type}} ->
    IO.puts("#{changedFile} was updated")
