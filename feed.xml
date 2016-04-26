@@ -14,7 +14,7 @@
     <link rel="alternate" href="http://blog.url.com/2016/04/26/processes-in-elixir.html"/>
     <id>http://blog.url.com/2016/04/26/processes-in-elixir.html</id>
     <published>2016-04-26T11:47:00-04:00</published>
-    <updated>2016-04-26T14:45:14-04:00</updated>
+    <updated>2016-04-26T14:47:20-04:00</updated>
     <author>
       <name>Article Author</name>
     </author>
@@ -27,8 +27,9 @@
 
 &lt;h2&gt;Creating a process&lt;/h2&gt;
 
-&lt;p&gt;We&amp;rsquo;ll be climbing the ladder of abstraction but let&amp;rsquo;s start at the bottom.
-&lt;img alt="getinsertpic.com" src="http://media0.giphy.com/media/byvw3EmW6L37q/200.gif" /&gt;&lt;/p&gt;
+&lt;p&gt;We&amp;rsquo;ll be climbing the ladder of abstraction but let&amp;rsquo;s start at the bottom.&lt;/p&gt;
+
+&lt;p&gt;&lt;img alt="getinsertpic.com" src="http://media0.giphy.com/media/byvw3EmW6L37q/200.gif" /&gt;&lt;/p&gt;
 
 &lt;p&gt;We use the &lt;code&gt;spawn&lt;/code&gt; function to create a new process. We pass it a function and that code will run in an isolated process.&lt;/p&gt;
 &lt;div class="highlight elixir"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
