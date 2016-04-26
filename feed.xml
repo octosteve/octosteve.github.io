@@ -14,15 +14,16 @@
     <link rel="alternate" href="http://blog.url.com/2016/04/26/processes-in-elixir.html"/>
     <id>http://blog.url.com/2016/04/26/processes-in-elixir.html</id>
     <published>2016-04-26T11:47:00-04:00</published>
-    <updated>2016-04-26T14:47:20-04:00</updated>
+    <updated>2016-04-26T14:54:12-04:00</updated>
     <author>
       <name>Article Author</name>
     </author>
     <content type="html">&lt;h1&gt;Processes&lt;/h1&gt;
 
 &lt;blockquote&gt;
-&lt;p&gt;The unit of concurrency in Elixir is a process. A process is  capable of responding to messages, and maintaining state. The only way to interact with a process is to send it a message.
- ##### Steven Nunez (Hostile Developer)&lt;/p&gt;
+&lt;p&gt;The unit of concurrency in Elixir is a process. A process is  capable of responding to messages, and maintaining state. The only way to interact with a process is to send it a message.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Steven Nunez (Hostile Developer)&lt;/strong&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 
 &lt;h2&gt;Creating a process&lt;/h2&gt;
