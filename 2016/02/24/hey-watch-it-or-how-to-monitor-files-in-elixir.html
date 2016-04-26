@@ -50,8 +50,14 @@
 3
 4
 5
-6</pre></td><td class="code"><pre><span class="ss">:fs</span><span class="o">.</span><span class="n">start_link</span><span class="p">(</span><span class="ss">:my_watcher</span><span class="p">,</span> <span class="no">Path</span><span class="o">.</span><span class="n">absname</span><span class="p">(</span><span class="sd">"</span><span class="s2">config"</span><span class="p">))</span>
+6
+7
+8
+9</pre></td><td class="code"><pre><span class="c1"># Starting the process</span>
+<span class="ss">:fs</span><span class="o">.</span><span class="n">start_link</span><span class="p">(</span><span class="ss">:my_watcher</span><span class="p">,</span> <span class="no">Path</span><span class="o">.</span><span class="n">absname</span><span class="p">(</span><span class="sd">"</span><span class="s2">config"</span><span class="p">))</span>
+<span class="c1"># Subscribing `self` to receive events.</span>
 <span class="ss">:fs</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="ss">:my_watcher</span><span class="p">)</span>
+
 <span class="k">receive</span> <span class="k">do</span>
   <span class="p">{</span><span class="n">_watcher_process</span><span class="p">,</span> <span class="p">{</span><span class="ss">:fs</span><span class="p">,</span> <span class="ss">:file_event</span><span class="p">},</span> <span class="p">{</span><span class="n">changedFile</span><span class="p">,</span> <span class="n">_type</span><span class="p">}}</span> <span class="o">-&gt;</span>
    <span class="no">IO</span><span class="o">.</span><span class="n">puts</span><span class="p">(</span><span class="sd">"</span><span class="si">#{</span><span class="n">changedFile</span><span class="si">}</span><span class="s2"> was updated"</span><span class="p">)</span>
@@ -146,6 +152,7 @@
     <section class="recent">
       <h2>Recent Articles</h2>
       <ol class="articles">
+            <li><a href="/2016/04/26/processes-in-elixir.html">Processes in Elixir</a>
             <li><a href="/2016/02/24/hey-watch-it-or-how-to-monitor-files-in-elixir.html">Hey! Watch it!...or how to monitor files in Elixir</a>
             <li><a href="/2015/08/23/let-s-build-something-with-rack.html">Let's build something with Rack</a>
             <li><a href="/2015/08/21/lets-learn-about-rack.html">Let's learn about Rack</a>
@@ -155,13 +162,15 @@
             <li><a href="/2015/02/22/let-me-find-out.html">Let me find out</a>
             <li><a href="/2014/11/25/next-generation-is-better-i-promise.html">Next generation is better. I promise</a>
             <li><a href="/2014/05/18/using-ruby-to-learn-javascript.html">Using Ruby to learn JavaScript</a>
-            <li><a href="/2014/04/26/on-why-learning-to-program-is-hard.html">On why learning to program is hard</a>
       </ol>
     </section>
 
     <section class="tags">
       <h2>Tags</h2>
       <ol>
+            <li><a href="/tags/concurrency.html">Concurrency</a> (1)</a></li>
+            <li><a href="/tags/elixir.html">Elixir</a> (1)</a></li>
+            <li><a href="/tags/processes.html">Processes</a> (1)</a></li>
             <li><a href="/tags/basics.html">basics</a> (1)</a></li>
             <li><a href="/tags/beginner.html">beginner</a> (1)</a></li>
             <li><a href="/tags/closures.html">closures</a> (1)</a></li>
@@ -190,6 +199,8 @@
     <section class="by-month">
       <h2>By Month</h2>
       <ol>
+            <li><a href="/2016/04.html">April 2016</a>
+              (1)</a></li>
             <li><a href="/2016/02.html">February 2016</a>
               (1)</a></li>
             <li><a href="/2015/08.html">August 2015</a>

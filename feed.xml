@@ -5,16 +5,173 @@
   <id>http://blog.url.com/</id>
   <link href="http://blog.url.com/"/>
   <link href="http://blog.url.com/feed.xml" rel="self"/>
-  <updated>2016-02-24T11:57:00-05:00</updated>
+  <updated>2016-04-26T11:47:00-04:00</updated>
   <author>
     <name>Blog Author</name>
   </author>
+  <entry>
+    <title>Processes in Elixir</title>
+    <link rel="alternate" href="http://blog.url.com/2016/04/26/processes-in-elixir.html"/>
+    <id>http://blog.url.com/2016/04/26/processes-in-elixir.html</id>
+    <published>2016-04-26T11:47:00-04:00</published>
+    <updated>2016-04-26T14:45:14-04:00</updated>
+    <author>
+      <name>Article Author</name>
+    </author>
+    <content type="html">&lt;h1&gt;Processes&lt;/h1&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;The unit of concurrency in Elixir is a process. A process is  capable of responding to messages, and maintaining state. The only way to interact with a process is to send it a message.
+ ##### Steven Nunez (Hostile Developer)&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h2&gt;Creating a process&lt;/h2&gt;
+
+&lt;p&gt;We&amp;rsquo;ll be climbing the ladder of abstraction but let&amp;rsquo;s start at the bottom.
+&lt;img alt="getinsertpic.com" src="http://media0.giphy.com/media/byvw3EmW6L37q/200.gif" /&gt;&lt;/p&gt;
+
+&lt;p&gt;We use the &lt;code&gt;spawn&lt;/code&gt; function to create a new process. We pass it a function and that code will run in an isolated process.&lt;/p&gt;
+&lt;div class="highlight elixir"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="n"&gt;pid&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;spawn&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;fn&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;
+  &lt;span class="no"&gt;IO&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;puts&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;I run in a different process)"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="no"&gt;IO&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;inspect&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;self&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;This code will print its process id. Don&amp;rsquo;t be fooled! It&amp;rsquo;s running in a separate process, but &lt;code&gt;IO.puts&lt;/code&gt; is set to print output to the &lt;code&gt;group_leader&lt;/code&gt;. That&amp;rsquo;s your main console by default.&lt;/p&gt;
+
+&lt;p&gt;Try checking if this process is alive and you&amp;rsquo;ll be met with sad news:
+&lt;code&gt;elixir
+Process.alive?(pid) # =&amp;gt; false
+&lt;/code&gt;
+Once a process&amp;rsquo; is done with it&amp;rsquo;s job&amp;hellip; it dies. Cruel world.
+&lt;img alt="getinsertpic.com" src="http://media3.giphy.com/media/XrT2XN8L6yoMg/200.gif" /&gt;&lt;/p&gt;
+
+&lt;p&gt;To interact with the process, we have to teach a process how to receive a message.
+&lt;code&gt;elixir
+pid = spawn(fn -&amp;gt;
+  receive do
+    {:help} -&amp;gt; IO.puts &amp;quot;Helping!&amp;quot;
+  end
+end)
+Process.alive?(pid) # =&amp;gt; true
+&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Doing this will keep the process alive. We can send this process a message to trigger the corresponding code.&lt;/p&gt;
+&lt;div class="highlight elixir"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+2&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="n"&gt;send&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pid&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:help&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt; &lt;span class="c1"&gt;# prints Helping!&lt;/span&gt;
+&lt;span class="no"&gt;Process&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;alive?&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pid&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="c1"&gt;# =&amp;gt; false&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;h3&gt;send and receive&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;send&lt;/code&gt; is how we send messages to a process. We can send ANY message to a process, and it&amp;rsquo;s up to the process to respond to the message. You define which messages you respond to with a &lt;code&gt;receive&lt;/code&gt; block and a list of messages you can respond to.&lt;/p&gt;
+
+&lt;p&gt;One consideration here: &lt;em&gt;If you don&amp;rsquo;t give your process a way to respond to a message, it will keep  it unprocessed. This could lead to memory issues by filling your MAILBOX (real term, look it up)&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Pretty easy to solve for this. Modify our last &lt;code&gt;receive&lt;/code&gt; block to look like this:&lt;/p&gt;
+&lt;div class="highlight elixir"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4
+5
+6
+7&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="n"&gt;pid&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;spawn&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;fn&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;
+  &lt;span class="k"&gt;receive&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+    &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:help&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="no"&gt;IO&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;puts&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;Helping!"&lt;/span&gt;
+    &lt;span class="n"&gt;_&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="no"&gt;IO&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;puts&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;Don't know what to do with that"&lt;/span&gt;
+  &lt;span class="k"&gt;end&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;send&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pid&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:beef&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="c1"&gt;# prints "Don't know what to do with that"&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Once something matches code in the &lt;code&gt;receive&lt;/code&gt; block, the block exits. If that&amp;rsquo;s the last thing in the process, the process dies. We&amp;rsquo;ll need to define a loop to create an immortal process.&lt;/p&gt;
+
+&lt;h2&gt;loops with recursion&lt;/h2&gt;
+
+&lt;p&gt;For this next part, we&amp;rsquo;ll define a module with a loop function.
+&lt;code&gt;elixir
+defmodule Help do
+  def loop do
+    receive do
+      {:help} -&amp;gt; IO.puts &amp;quot;Helping!&amp;quot;
+      _ -&amp;gt; IO.puts &amp;quot;Don&amp;#39;t know what to do with that&amp;quot;
+    end
+    loop # &amp;lt;------ Super important!
+  end
+end
+&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Then we&amp;rsquo;ll run this function in a process using &lt;code&gt;MFA&lt;/code&gt; notation.
+&lt;code&gt;elixir
+pid = spawn(Help, :loop, [])
+send(pid, {:help}) # prints &amp;quot;Helping!&amp;quot;
+send(pid, {:beef}) # prints &amp;quot;Don&amp;#39;t know what to do with that&amp;quot;
+send(pid, {:help}) # prints &amp;quot;Helping!&amp;quot;
+&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;What&amp;rsquo;s going on? First off, in our &lt;code&gt;loop&lt;/code&gt; function, we&amp;rsquo;re doing the same &lt;code&gt;receive&lt;/code&gt; block, preventing our process from moving forward. Once something matches, we call &lt;code&gt;loop&lt;/code&gt; again, locking us in a receive block again.&lt;/p&gt;
+
+&lt;p&gt;When working with modules, you can spawn processes in a couple of ways. We used &lt;code&gt;MFA&lt;/code&gt; which stands for Module/Function/Arguments, but we could have done it this way.&lt;/p&gt;
+&lt;div class="highlight elixir"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="n"&gt;spawn&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="no"&gt;Help&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="k"&gt;loop&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Both work fine.&lt;/p&gt;
+
+&lt;h2&gt;Return to sender&lt;/h2&gt;
+
+&lt;p&gt;Until now, we&amp;rsquo;ve been printing our result to the screen, but that&amp;rsquo;s returning a value to &lt;strong&gt;you&lt;/strong&gt; dear reader, not your process. To do that, we&amp;rsquo;ll need to have our &lt;code&gt;loop&lt;/code&gt; function send a message instead of printing. For THAT to work, we&amp;rsquo;ll need to include the sender in the message we send. Referencing the current process is easy: use &lt;code&gt;self&lt;/code&gt;.&lt;/p&gt;
+&lt;div class="highlight elixir"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="k"&gt;defmodule&lt;/span&gt; &lt;span class="no"&gt;Help&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="k"&gt;loop&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+    &lt;span class="k"&gt;receive&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+      &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:help&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;help_seeker&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;
+        &lt;span class="n"&gt;send&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;help_seeker&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:reponse&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;Helping!"&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt;
+      &lt;span class="n"&gt;_&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;
+        &lt;span class="no"&gt;IO&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;puts&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;Don't know what to do with that"&lt;/span&gt;
+    &lt;span class="k"&gt;end&lt;/span&gt;
+    &lt;span class="k"&gt;loop&lt;/span&gt;
+  &lt;span class="k"&gt;end&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;span class="n"&gt;helper&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;spawn&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="no"&gt;Help&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:loop&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;[])&lt;/span&gt;
+&lt;span class="n"&gt;send&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;helper&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:help&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;self&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt;
+&lt;span class="c1"&gt;# There's a message in my mailbox!!!!&lt;/span&gt;
+&lt;span class="n"&gt;flush&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Wall of code! We updated our &lt;code&gt;receive&lt;/code&gt; to match on the tuple &lt;code&gt;{:help, help_seeker}&lt;/code&gt;. We later send this process a message, passing the console process (yes, it&amp;rsquo;s a process too!) as the one seeking help. We finish up by calling &lt;code&gt;flush&lt;/code&gt; to show our messages in the console.&lt;/p&gt;
+
+&lt;h1&gt;Wrap up&lt;/h1&gt;
+
+&lt;p&gt;We&amp;rsquo;ve seen 2 patterns for processes. Tasks where you care about the return value, and others where you don&amp;rsquo;t. There a time and  a place for both, and in the next post, we&amp;rsquo;ll see how Elixir provides an abstraction for handling these messages with GenServers.&lt;/p&gt;
+</content>
+  </entry>
   <entry>
     <title>Hey! Watch it!...or how to monitor files in Elixir</title>
     <link rel="alternate" href="http://blog.url.com/2016/02/24/hey-watch-it-or-how-to-monitor-files-in-elixir.html"/>
     <id>http://blog.url.com/2016/02/24/hey-watch-it-or-how-to-monitor-files-in-elixir.html</id>
     <published>2016-02-24T11:57:00-05:00</published>
-    <updated>2016-02-24T18:00:32-05:00</updated>
+    <updated>2016-04-26T11:49:08-04:00</updated>
     <author>
       <name>Article Author</name>
     </author>
@@ -37,8 +194,14 @@
 3
 4
 5
-6&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="ss"&gt;:fs&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;start_link&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;:my_watcher&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="no"&gt;Path&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;absname&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;config"&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+6
+7
+8
+9&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="c1"&gt;# Starting the process&lt;/span&gt;
+&lt;span class="ss"&gt;:fs&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;start_link&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;:my_watcher&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="no"&gt;Path&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;absname&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;config"&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="c1"&gt;# Subscribing `self` to receive events.&lt;/span&gt;
 &lt;span class="ss"&gt;:fs&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;subscribe&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;:my_watcher&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
 &lt;span class="k"&gt;receive&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
   &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="n"&gt;_watcher_process&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:fs&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:file_event&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="n"&gt;changedFile&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_type&lt;/span&gt;&lt;span class="p"&gt;}}&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;
    &lt;span class="no"&gt;IO&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;puts&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;changedFile&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt; was updated"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
@@ -1470,89 +1633,6 @@ rake db:create
 &lt;h2&gt;Final Thoughts&lt;/h2&gt;
 
 &lt;p&gt;This was fun to play with. Until next time, Happy Clacking.&lt;/p&gt;
-</content>
-  </entry>
-  <entry>
-    <title>Elixir - Tuples vs Lists</title>
-    <link rel="alternate" href="http://blog.url.com/2015/05/20/elixir-tuples-vs-lists.html"/>
-    <id>http://blog.url.com/2015/05/20/elixir-tuples-vs-lists.html</id>
-    <published>2015-05-20T11:28:00-04:00</published>
-    <updated>2015-05-20T15:25:53-04:00</updated>
-    <author>
-      <name>Article Author</name>
-    </author>
-    <content type="html">&lt;h1&gt;Immutability Primer&lt;/h1&gt;
-
-&lt;p&gt;Elixir is a Functional programming language with immutable types. You might see code like the following and think that we&amp;rsquo;re mutating a value.&lt;/p&gt;
-&lt;div class="highlight elixir"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
-2
-3&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="n"&gt;names&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;Steven"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;Kelly"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;Michael"&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
-&lt;span class="n"&gt;names&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;Telly"&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;++&lt;/span&gt; &lt;span class="n"&gt;names&lt;/span&gt;
-&lt;span class="n"&gt;names&lt;/span&gt; &lt;span class="c1"&gt;# =&amp;gt; ["Telly", "Steven", "Kelly", "Michael"]&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/div&gt;
-
-&lt;p&gt;Elixir is giving us a new copy of the array. How it got this might be a bit confusing though. For starters, this is how Elixir stored that original &lt;code&gt;names&lt;/code&gt; list.&lt;/p&gt;
-&lt;div class="highlight elixir"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="n"&gt;names&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;Steven"&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;Kelly"&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;Michael"&lt;/span&gt;&lt;span class="p"&gt;]]]&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/div&gt;
-
-&lt;p&gt;It stores it as a linked list, with an existing list nested inside of a new list. Elixir has some ways of pattern matching this list by breaking it into the list&amp;rsquo;s &lt;code&gt;head&lt;/code&gt; and &lt;code&gt;tail&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;The &lt;code&gt;head&lt;/code&gt; is the first element, while the &lt;code&gt;tail&lt;/code&gt; is&amp;hellip; the rest.&lt;/p&gt;
-&lt;div class="highlight elixir"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
-2&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;head&lt;/span&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;tail&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;Steven"&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;Kelly"&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;Michael"&lt;/span&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="p"&gt;[]]]]&lt;/span&gt;
-&lt;span class="n"&gt;head&lt;/span&gt; &lt;span class="c1"&gt;#=&amp;gt; "Steven"&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/div&gt;
-
-&lt;p&gt;When we added &lt;code&gt;&amp;quot;Telly&amp;quot;&lt;/code&gt; to the list, we were creating a NEW list made up of &amp;ldquo;Telly&amp;rdquo; being the head, and the original list being the tail.&lt;/p&gt;
-&lt;div class="highlight elixir"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
-2
-3
-4
-5&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="n"&gt;names&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;Steven"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;Kelly"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;Michael"&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
-&lt;span class="n"&gt;names&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;Telly"&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;++&lt;/span&gt; &lt;span class="n"&gt;names&lt;/span&gt;
-&lt;span class="n"&gt;names&lt;/span&gt; &lt;span class="c1"&gt;# =&amp;gt; ["Telly", "Steven", "Kelly", "Michael"]&lt;/span&gt;
-&lt;span class="c1"&gt;# or&lt;/span&gt;
-&lt;span class="c1"&gt;# ["Telly"| ["Steven", "Kelly", "Michael"]]&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/div&gt;
-
-&lt;p&gt;OK, so you can&amp;rsquo;t modify existing values.&lt;/p&gt;
-
-&lt;h2&gt;Lists vs Tuples&lt;/h2&gt;
-
-&lt;p&gt;I was a bit confused to see that there were more than 2 types for storing lists. Coming from ruby, we have &lt;code&gt;Array&lt;/code&gt;s, that&amp;rsquo;s it.&lt;/p&gt;
-
-&lt;p&gt;Tuples are Elixir&amp;rsquo;s other way of storing a list of stuff.&lt;/p&gt;
-&lt;div class="highlight elixir"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
-2&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="n"&gt;names&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;Steven"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;Kelly"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;Michael"&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
-&lt;span class="n"&gt;names&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="no"&gt;Tuple&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;insert_at&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;names&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;Telly"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="c1"&gt;#=&amp;gt; {"Telly", "Steven", "Kelly", "Michael"}&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/div&gt;
-
-&lt;h3&gt;So they&amp;rsquo;re the same&amp;hellip;?&lt;/h3&gt;
-
-&lt;p&gt;Well&amp;hellip; no. Why have 2 if they were?&lt;/p&gt;
-
-&lt;h3&gt;Lookup Showdown&lt;/h3&gt;
-
-&lt;p&gt;Tuples are stored contiguously in memory, making operations like finding the size of a tuple constant time. Fetching an element at an index is also constant.&lt;/p&gt;
-
-&lt;p&gt;Finding an element at a specific position in a List is a bit more laborious. We have to unwrap each layer of the list and count every element. This makes fetching items in an array linear time.&lt;/p&gt;
-
-&lt;p&gt;Elixir tries to guide you to the right type by exposing the &lt;code&gt;elem&lt;/code&gt; look up methods on tuples.&lt;/p&gt;
-
-&lt;h3&gt;Deriving a collection&lt;/h3&gt;
-
-&lt;p&gt;Prepending to a List is fast. All you do is create a new list with the added value as the head and the rest as the tail, like our &lt;code&gt;names&lt;/code&gt; example. But what about appending? Well, to add something to the end of a list, we have to rebuild the entire list, and add our new list to the end. As our list grows, we have to execute more operations to deconstruct our list.&lt;/p&gt;
-
-&lt;p&gt;Adding to a Tuple is also expensive since it&amp;rsquo;s stored in a memory contiguously, you have to copy the entire collection and add the new element.&lt;/p&gt;
-
-&lt;h2&gt;Future&lt;/h2&gt;
-
-&lt;p&gt;I hope this was useful. I want the world using Elixir!&lt;/p&gt;
 </content>
   </entry>
 </feed>
