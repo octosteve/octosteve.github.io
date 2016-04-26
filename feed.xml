@@ -14,7 +14,7 @@
     <link rel="alternate" href="http://blog.url.com/2016/04/26/processes-in-elixir.html"/>
     <id>http://blog.url.com/2016/04/26/processes-in-elixir.html</id>
     <published>2016-04-26T11:47:00-04:00</published>
-    <updated>2016-04-26T14:54:12-04:00</updated>
+    <updated>2016-04-26T18:06:50-04:00</updated>
     <author>
       <name>Article Author</name>
     </author>
@@ -166,6 +166,10 @@ send(pid, {:help}) # prints &amp;quot;Helping!&amp;quot;
 &lt;h1&gt;Wrap up&lt;/h1&gt;
 
 &lt;p&gt;We&amp;rsquo;ve seen 2 patterns for processes. Tasks where you care about the return value, and others where you don&amp;rsquo;t. There a time and  a place for both, and in the next post, we&amp;rsquo;ll see how Elixir provides an abstraction for handling these messages with GenServers.&lt;/p&gt;
+
+&lt;p&gt;Want to try out your understanding? Clone &lt;a href="https://github.com/StevenNunez/processes_in_elixir"&gt;this repo&lt;/a&gt; and get all of the tests passing!&lt;/p&gt;
+
+&lt;p&gt;If you get stuck, be sure to checkout the &lt;code&gt;solution&lt;/code&gt; branch.&lt;/p&gt;
 </content>
   </entry>
   <entry>
