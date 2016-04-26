@@ -10,6 +10,7 @@ tags: [Elixir, Processes, Concurrency]
 
 ## Creating a process
 We'll be climbing the ladder of abstraction but let's start at the bottom.
+
 ![getinsertpic.com](http://media0.giphy.com/media/byvw3EmW6L37q/200.gif)
 
 We use the `spawn` function to create a new process. We pass it a function and that code will run in an isolated process.
