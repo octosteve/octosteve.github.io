@@ -192,7 +192,7 @@ LTrees are my favorite thing right now. A few things I'd like to see is smarter 
 
 We didn't use an [Ecto.Type](https://hexdocs.pm/ecto/Ecto.Type.html) annotation, so we're using a "String" as far as Ecto is concerned. If I had any addition conversion so it played nice with my domain, I'd do it there. For instance, making it so users can give you something like "Technology > Computers > Programming > Elixir" and have it converted over to "technology.computers.programming.elixir" would be in an Ecto.Type.
 
-Found this interesting? Be sure to share it!
+Found this interesting? Be sure to share it! You can find the code for it [here](https://github.com/StevenNunez/article_tracker_hd)
 
 <a href="https://twitter.com/share" class="twitter-share-button" data-text="Using LTrees in Phoenix. Hierarchical data in Postgres" data-via="_StevenNunez" data-size="large">Tweet</a>
 
