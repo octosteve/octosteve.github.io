@@ -1,0 +1,412 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta http-equiv='X-UA-Compatible' content='IE=edge;chrome=1'/>
+  <title>Hostile Developer - LTrees in Phoenix</title>
+  <link href="/stylesheets/application.css" rel="stylesheet" type="text/css" />
+  <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/feed.xml" />
+
+</head>
+<body>
+<div id="container">
+  <section id="header">
+  <header>
+<a href="/">        <h1 class="brand"><span class="hostile">Hostile</span> Developer</h1>
+
+        <h3 class="tag-line">I am Steven. Hear me Rant.</h3>
+</a>  </header>
+
+  <section class='social'>
+    <a target="_blank" href="http://twitter.com/_StevenNunez/"><i class="fa fa-twitter"></i></a>
+    <a target="_blank" href="https://github.com/StevenNunez/"><i class="fa fa-github"></i></a>
+  </section>
+  <nav>
+    <ul class='links'>
+      <li><a href="/">Home</a></li>
+    </ul>
+  </nav>
+</section>
+
+
+  <main id='articles' role="main">
+    <h1 class="article-title"><a href="/2016/05/22/ltrees-in-phoenix.html">LTrees in Phoenix</a></h1>
+    <h1>Article Tracker</h1>
+
+<p>Say you want to build a Phoenix app for tracking Articles. Your one killer feature
+is that you can store articles in a hierarchy instead of a bunch loose tags like other sites. We&rsquo;ll be focusing on the model layer here, but we&rsquo;ll see how we&rsquo;d construct the query for our tree</p>
+
+<p>You want to be able to click an article with <code>Technology &gt; Futurism &gt; AI &gt; Global Domination</code>, then click on <code>AI</code> in the header, and be taken to a list of articles with <code>Technology &gt; Futurism &gt; AI</code> which might include on other <code>AI</code> things, not related to them trying to kill us all.</p>
+
+<h2>Data Modeling</h2>
+
+<p>Nothing crazy here. We&rsquo;ll have an Article Model with a few properties.</p>
+
+<table><thead>
+<tr>
+<th>id</th>
+<th>title</th>
+<th>url</th>
+<th>categories</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>1</td>
+<td>How AI took over the world</td>
+<td>http://bit.ly/1EKZyGW</td>
+<td>technology.futurism.ai.global_domination</td>
+</tr>
+<tr>
+<td>2</td>
+<td>How AI are good for the elderly</td>
+<td>http://bit.ly/27ONtlY</td>
+<td>technology.futurism.ai.helping</td>
+</tr>
+</tbody></table>
+
+<p>To get nested categories to work, we&rsquo;re going to use a data structure offered in Postgres, the <code>ltree</code>. This blog post will focus on getting this working in Phoenix. For more information, I invite you to <a href="http://www.postgresql.org/docs/9.3/static/ltree.html">Read The Fine Manual</a>. One thing to consider from the Manual is what makes a valid ltree value:</p>
+
+<blockquote>
+<p>A label is a sequence of alphanumeric characters and underscores. Labels must be less than 256 bytes long.</p>
+</blockquote>
+
+<h2>Error Driven Development</h2>
+
+<p>Let&rsquo;s build this and fix errors as they come up.</p>
+
+<p>First, generate a new Phoenix app</p>
+<div class="highlight plaintext"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3</pre></td><td class="code"><pre>mix phoenix.new article_tracker_hd
+cd article_tracker_hd
+mix ecto.create
+</pre></td></tr></tbody></table>
+</div>
+
+<p>Then generate a quick scaffold that gets us most of the way there.
+<code>mix phoenix.gen.html Article articles title url categories</code></p>
+
+<p>Add your resource to your router</p>
+<div class="highlight elixir"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8</pre></td><td class="code"><pre><span class="c1">#...</span>
+<span class="n">scope</span> <span class="sd">"</span><span class="s2">/"</span><span class="p">,</span> <span class="no">ArticleTrackerHd</span> <span class="k">do</span>                                                   
+  <span class="n">pipe_through</span> <span class="ss">:browser</span> <span class="c1"># Use the default browser stack                          </span>
+
+  <span class="n">get</span> <span class="sd">"</span><span class="s2">/"</span><span class="p">,</span> <span class="no">PageController</span><span class="p">,</span> <span class="ss">:index</span>                                                
+  <span class="n">resources</span> <span class="sd">"</span><span class="s2">/articles"</span><span class="p">,</span> <span class="no">ArticleController</span> <span class="c1"># &lt;- New line</span>
+<span class="k">end</span>
+<span class="c1">#...</span>
+</pre></td></tr></tbody></table>
+</div>
+
+<p>Then open up the migration in <code>priv/repo/migrations/{some_time_stamp}_create_article.exs</code>. This is where the fun starts.</p>
+
+<p>Update your migration to look like this:</p>
+<div class="highlight elixir"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15</pre></td><td class="code"><pre><span class="k">defmodule</span> <span class="no">ArticleTrackerHd</span><span class="o">.</span><span class="no">Repo</span><span class="o">.</span><span class="no">Migrations</span><span class="o">.</span><span class="no">CreateArticle</span> <span class="k">do</span>
+  <span class="kn">use</span> <span class="no">Ecto</span><span class="o">.</span><span class="no">Migration</span>
+
+  <span class="k">def</span> <span class="n">change</span> <span class="k">do</span>
+    <span class="n">create</span> <span class="n">table</span><span class="p">(</span><span class="ss">:articles</span><span class="p">)</span> <span class="k">do</span>
+      <span class="n">add</span> <span class="ss">:title</span><span class="p">,</span> <span class="ss">:string</span>
+      <span class="n">add</span> <span class="ss">:url</span><span class="p">,</span> <span class="ss">:string</span>
+      <span class="n">add</span> <span class="ss">:categories</span><span class="p">,</span> <span class="ss">:ltree</span> <span class="c1"># &lt;- Changed to :ltree</span>
+
+      <span class="n">timestamps</span>
+    <span class="k">end</span>
+    <span class="n">create</span> <span class="n">index</span><span class="p">(</span><span class="ss">:articles</span><span class="p">,</span> <span class="p">[</span><span class="ss">:categories</span><span class="p">],</span> <span class="ss">using:</span> <span class="sd">"</span><span class="s2">GIST"</span><span class="p">)</span> <span class="c1"># &lt;- Add indexing for fast lookups</span>
+
+  <span class="k">end</span>
+<span class="k">end</span>
+</pre></td></tr></tbody></table>
+</div>
+
+<p>Then run the migrations with <code>mix ecto.migrate</code></p>
+
+<p>You&rsquo;ll be greeted with a wonderful error &ldquo;** (Postgrex.Error) ERROR (undefined_object): type &quot;ltree&rdquo; does not exist&quot;. Time to go home.</p>
+
+<p>First we have to open our database, and create the ltree extension. We&rsquo;ll have to do this for every database we use including test and production. We&rsquo;ll do it in article_tracker_hd_dev for now.</p>
+<div class="highlight plaintext"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3</pre></td><td class="code"><pre>psql article_tracker_hd_dev
+article_tracker_hd_dev=# CREATE EXTENSION ltree;
+article_tracker_hd_dev=# \q;
+</pre></td></tr></tbody></table>
+</div>
+
+<p>And try again <code>mix ecto.migrate</code>. It WORKED! Let&rsquo;s open up the console and try to insert an article.</p>
+<div class="highlight plaintext"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5</pre></td><td class="code"><pre>iex -S mix
+iex(1)&gt; alias ArticleTrackerHd.{Article, Repo}
+iex(2)&gt; article = %Article{title: "How AI took over the world", url: "http://www.computerworld.com/article/2922442/robotics/stephen-hawking-fears-robots-could-take-over-in-100-years.html", categories: "technology.futurism.ai.global_domination"}
+iex(3)&gt; Repo.insert!(article)
+** (ArgumentError) no extension found for oid `342415`
+</pre></td></tr></tbody></table>
+</div>
+
+<p>MOAR Errors! This just means Postgrex doesn&rsquo;t know how to map ltrees. We can fix this by adding a new Postgex type for <code>ltree</code>. Make a new file in <code>lib/postgrex/types/</code> called <code>ltree.ex</code>, and insert this code:</p>
+<div class="highlight elixir"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15</pre></td><td class="code"><pre><span class="k">defmodule</span> <span class="no">ArticleTrackerHd</span><span class="o">.</span><span class="no">Postgrex</span><span class="o">.</span><span class="no">Types</span><span class="o">.</span><span class="no">Ltree</span> <span class="k">do</span>
+  <span class="n">alias</span> <span class="no">Postgrex</span><span class="o">.</span><span class="no">TypeInfo</span>
+
+  <span class="nv">@behaviour</span> <span class="no">Postgrex</span><span class="o">.</span><span class="no">Extension</span>
+
+  <span class="k">def</span> <span class="n">init</span><span class="p">(</span><span class="n">_parameters</span><span class="p">,</span> <span class="n">_opts</span><span class="p">),</span> <span class="k">do</span><span class="p">:</span> <span class="p">{}</span>
+
+  <span class="k">def</span> <span class="n">matching</span><span class="p">(</span><span class="n">_</span><span class="p">),</span> <span class="k">do</span><span class="p">:</span> <span class="p">[</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">ltree"</span><span class="p">]</span>
+
+  <span class="k">def</span> <span class="n">format</span><span class="p">(</span><span class="n">_</span><span class="p">),</span> <span class="k">do</span><span class="p">:</span> <span class="ss">:text</span>
+
+  <span class="k">def</span> <span class="n">encode</span><span class="p">(%</span><span class="no">TypeInfo</span><span class="p">{</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">ltree"</span><span class="p">},</span> <span class="n">value</span><span class="p">,</span> <span class="n">_state</span><span class="p">,</span> <span class="n">_opts</span><span class="p">),</span> <span class="k">do</span><span class="p">:</span> <span class="n">value</span>
+
+  <span class="k">def</span> <span class="n">decode</span><span class="p">(%</span><span class="no">TypeInfo</span><span class="p">{</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">ltree"</span><span class="p">},</span> <span class="n">value</span><span class="p">,</span> <span class="n">_state</span><span class="p">,</span> <span class="n">_opts</span><span class="p">),</span> <span class="k">do</span><span class="p">:</span> <span class="n">value</span>
+<span class="k">end</span>
+</pre></td></tr></tbody></table>
+</div>
+
+<p>A lot of this is ceremony, but the things to note are the format, encode and decode functions.
+Format has 2 possible return values &ldquo;text&rdquo;, and &ldquo;binary&rdquo;. We&rsquo;re just storing the categories as text so that will do. Encode and decode are your data gateways. Right now, I&rsquo;m ok just presenting a set of categories as a string of contiguous characters with dots in between.</p>
+
+<p>We&rsquo;ll also have to tell Postgrex to load our extension. Open up <code>config/dev.exs</code> and add this to where you configure your database:</p>
+<div class="highlight elixir"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8</pre></td><td class="code"><pre><span class="n">config</span> <span class="ss">:article_tracker_hd</span><span class="p">,</span> <span class="no">ArticleTrackerHd</span><span class="o">.</span><span class="no">Repo</span><span class="p">,</span>
+  <span class="ss">adapter:</span> <span class="no">Ecto</span><span class="o">.</span><span class="no">Adapters</span><span class="o">.</span><span class="no">Postgres</span><span class="p">,</span>
+  <span class="ss">username:</span> <span class="sd">"</span><span class="s2">postgres"</span><span class="p">,</span>
+  <span class="ss">password:</span> <span class="sd">"</span><span class="s2">postgres"</span><span class="p">,</span>
+  <span class="ss">database:</span> <span class="sd">"</span><span class="s2">article_tracker_hd_dev"</span><span class="p">,</span>
+  <span class="ss">hostname:</span> <span class="sd">"</span><span class="s2">localhost"</span><span class="p">,</span>
+  <span class="ss">pool_size:</span> <span class="m">10</span><span class="p">,</span>
+  <span class="ss">extensions:</span> <span class="p">[{</span><span class="no">ArticleTrackerHd</span><span class="o">.</span><span class="no">Postgrex</span><span class="o">.</span><span class="no">Types</span><span class="o">.</span><span class="no">Ltree</span><span class="p">,</span> <span class="p">[]}]</span> <span class="c1"># &lt;- New line</span>
+</pre></td></tr></tbody></table>
+</div>
+
+<p>You&rsquo;ll have to do this for every environment you run this code in.</p>
+
+<p>Try to add the article again:</p>
+<div class="highlight plaintext"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5</pre></td><td class="code"><pre>iex -S mix
+iex(1)&gt; alias ArticleTrackerHd.{Article, Repo}
+iex(2)&gt; article = %Article{title: "How AI took over the world", url: "http://www.computerworld.com/article/2922442/robotics/stephen-hawking-fears-robots-could-take-over-in-100-years.html", categories: "technology.futurism.ai.global_domination"}
+iex(3)&gt; Repo.insert!(article)
+
+</pre></td></tr></tbody></table>
+</div>
+
+<p>WIN! On to the cool part.</p>
+
+<h2>Querying categories</h2>
+
+<p>Add these additional stories in <code>iex</code></p>
+<div class="highlight plaintext"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6</pre></td><td class="code"><pre>iex -S mix
+iex(1)&gt; alias ArticleTrackerHd.{Article, Repo}
+iex(2)&gt; article = %Article{title: "How AI are good for the elderly ", url: "http://thevitalityinstitute.org/innovations-artificial-intelligence-elderly/", categories: "technology.futurism.ai.helping"}
+iex(3)&gt; Repo.insert!(article)
+iex(4)&gt; article = %Article{title: "Google’s AI Wins Fifth And Final Game Against Go Genius Lee Sedol", url: "http://www.wired.com/2016/03/googles-ai-wins-fifth-final-game-go-genius-lee-sedol/", categories: "technology.futurism.ai.winning"}
+iex(5)&gt; Repo.insert!(article)
+</pre></td></tr></tbody></table>
+</div>
+
+<p>Then let&rsquo;s work on some queries. We&rsquo;ll be using the <a href="https://hexdocs.pm/ecto/Ecto.Query.API.html#fragment/1"><code>fragment</code></a> function to get our <code>ltree</code> search working. Say we wanted to find all of the articles starting with technology:</p>
+<div class="highlight plaintext"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3</pre></td><td class="code"><pre>iex(6)&gt; import Ecto.Query
+iex(7)&gt; query = from a in Article, where: fragment("categories &lt;@ ?", "technology")
+iex(8)&gt; Repo.all(query)
+</pre></td></tr></tbody></table>
+</div>
+
+<p>This should return all of the articles so far. The <code>&lt;@</code> asks for all categories that have start with <code>technology</code>, if you try it with <code>ai</code> you&rsquo;ll get nothing.</p>
+
+<p>Let&rsquo;s be more specific and get the ones that are <code>technology.futurism.ai.winning</code>:</p>
+<div class="highlight plaintext"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2</pre></td><td class="code"><pre>iex(9)&gt; query = from a in Article, where: fragment("categories &lt;@ ?", "technology.futurism.ai.winning")
+iex(10)&gt; Repo.all(query)
+</pre></td></tr></tbody></table>
+</div>
+
+<p>How about all of the ai stories regardless of where they show up on the category tree? Let&rsquo;s add another article, then search:</p>
+<div class="highlight plaintext"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4</pre></td><td class="code"><pre>iex(11)&gt; article = %Article{title: "How AI are beating you at rock paper scissors", url: "http://www.nytimes.com/interactive/science/rock-paper-scissors.html?_r=0", categories: "technology.gaming.ai.winning"}
+iex(12)&gt; Repo.insert!(article)
+iex(13)&gt; query = from a in Article, where: fragment("categories ~ ?", "*.winning.*")
+iex(14)&gt; Repo.all(query)      
+</pre></td></tr></tbody></table>
+</div>
+
+<p>We used the <code>~</code> to indicate we were going use path matching. Tons of options here, be sure to check out the ltree page on the Postgres guide.</p>
+
+<h1>Conclusion</h1>
+
+<p>LTrees are my favorite thing right now. A few things I&rsquo;d like to see is smarter conversion of the values to and from the db and validating the ltree is compliant in a changeset. Bad characters drive it bananas.</p>
+
+<p>We didn&rsquo;t use an <a href="https://hexdocs.pm/ecto/Ecto.Type.html">Ecto.Type</a> annotation, so we&rsquo;re using a &ldquo;String&rdquo; as far as Ecto is concerned. If I had any addition conversion so it played nice with my domain, I&rsquo;d do it there. For instance, making it so users can give you something like &ldquo;Technology &gt; Computers &gt; Programming &gt; Elixir&rdquo; and have it converted over to &ldquo;technology.computers.programming.elixir&rdquo; would be in an Ecto.Type.</p>
+
+<p>Found this interesting? Be sure to share it!</p>
+
+<p><a href="https://twitter.com/share" class="twitter-share-button" data-text="Using LTrees in Phoenix. Hierarchical data in Postgres" data-via="_StevenNunez" data-size="large">Tweet</a></p>
+
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+    <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'hostiledeveloper'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+  </main>
+
+  <aside id="history">
+    <section class="recent">
+      <h2>Recent Articles</h2>
+      <ol class="articles">
+            <li><a href="/2016/05/22/ltrees-in-phoenix.html">LTrees in Phoenix</a>
+            <li><a href="/2016/04/26/processes-in-elixir.html">Processes in Elixir</a>
+            <li><a href="/2016/02/24/hey-watch-it-or-how-to-monitor-files-in-elixir.html">Hey! Watch it!...or how to monitor files in Elixir</a>
+            <li><a href="/2015/08/23/let-s-build-something-with-rack.html">Let's build something with Rack</a>
+            <li><a href="/2015/08/21/lets-learn-about-rack.html">Let's learn about Rack</a>
+            <li><a href="/2015/06/08/rails-foreign-key-constraints-the-ugly-way.html">Rails Foreign Key Constraints - The Ugly Way</a>
+            <li><a href="/2015/05/28/working-with-templates-in-ruby-erb.html">Working with Templates in Ruby ERB</a>
+            <li><a href="/2015/05/20/elixir-tuples-vs-lists.html">Elixir - Tuples vs Lists</a>
+            <li><a href="/2015/02/22/let-me-find-out.html">Let me find out</a>
+            <li><a href="/2014/11/25/next-generation-is-better-i-promise.html">Next generation is better. I promise</a>
+      </ol>
+    </section>
+
+    <section class="tags">
+      <h2>Tags</h2>
+      <ol>
+            <li><a href="/tags/concurrency.html">Concurrency</a> (1)</a></li>
+            <li><a href="/tags/ecto.html">Ecto</a> (1)</a></li>
+            <li><a href="/tags/elixir.html">Elixir</a> (2)</a></li>
+            <li><a href="/tags/ltrees.html">LTrees</a> (1)</a></li>
+            <li><a href="/tags/phoenix.html">Phoenix</a> (1)</a></li>
+            <li><a href="/tags/processes.html">Processes</a> (1)</a></li>
+            <li><a href="/tags/basics.html">basics</a> (1)</a></li>
+            <li><a href="/tags/beginner.html">beginner</a> (1)</a></li>
+            <li><a href="/tags/closures.html">closures</a> (1)</a></li>
+            <li><a href="/tags/components-of-programming.html">components of programming</a> (1)</a></li>
+            <li><a href="/tags/elixir.html">elixir</a> (2)</a></li>
+            <li><a href="/tags/enumerable.html">enumerable</a> (1)</a></li>
+            <li><a href="/tags/file-watchers.html">file watchers</a> (1)</a></li>
+            <li><a href="/tags/find.html">find</a> (1)</a></li>
+            <li><a href="/tags/fs.html">fs</a> (1)</a></li>
+            <li><a href="/tags/fundamentals.html">fundamentals</a> (1)</a></li>
+            <li><a href="/tags/generators.html">generators</a> (1)</a></li>
+            <li><a href="/tags/javascript.html">javascript</a> (3)</a></li>
+            <li><a href="/tags/learning.html">learning</a> (1)</a></li>
+            <li><a href="/tags/navigation.html">navigation</a> (1)</a></li>
+            <li><a href="/tags/polyglot.html">polyglot</a> (1)</a></li>
+            <li><a href="/tags/postgresql.html">postgresql</a> (1)</a></li>
+            <li><a href="/tags/promises.html">promises</a> (1)</a></li>
+            <li><a href="/tags/rack.html">rack</a> (2)</a></li>
+            <li><a href="/tags/rails.html">rails</a> (2)</a></li>
+            <li><a href="/tags/routing.html">routing</a> (1)</a></li>
+            <li><a href="/tags/ruby.html">ruby</a> (6)</a></li>
+            <li><a href="/tags/sharp-axe.html">sharp axe</a> (1)</a></li>
+            <li><a href="/tags/web.html">web</a> (1)</a></li>
+      </ol>
+    </section>
+    <section class="by-month">
+      <h2>By Month</h2>
+      <ol>
+            <li><a href="/2016/05.html">May 2016</a>
+              (1)</a></li>
+            <li><a href="/2016/04.html">April 2016</a>
+              (1)</a></li>
+            <li><a href="/2016/02.html">February 2016</a>
+              (1)</a></li>
+            <li><a href="/2015/08.html">August 2015</a>
+              (2)</a></li>
+            <li><a href="/2015/06.html">June 2015</a>
+              (1)</a></li>
+            <li><a href="/2015/05.html">May 2015</a>
+              (2)</a></li>
+            <li><a href="/2015/02.html">February 2015</a>
+              (1)</a></li>
+            <li><a href="/2014/11.html">November 2014</a>
+              (1)</a></li>
+            <li><a href="/2014/05.html">May 2014</a>
+              (1)</a></li>
+            <li><a href="/2014/04.html">April 2014</a>
+              (2)</a></li>
+            <li><a href="/2014/02.html">February 2014</a>
+              (1)</a></li>
+            <li><a href="/2013/10.html">October 2013</a>
+              (1)</a></li>
+      </ol>
+    </section>
+  </aside>
+ <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-48123503-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+</div>
+</body>
+</html>
