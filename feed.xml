@@ -14,7 +14,7 @@
     <link rel="alternate" href="http://blog.url.com/2016/05/22/ltrees-in-phoenix.html"/>
     <id>http://blog.url.com/2016/05/22/ltrees-in-phoenix.html</id>
     <published>2016-05-22T12:38:00-04:00</published>
-    <updated>2016-05-22T18:29:22-04:00</updated>
+    <updated>2016-05-22T18:45:57-04:00</updated>
     <author>
       <name>Article Author</name>
     </author>
@@ -279,7 +279,7 @@ iex(14)&amp;gt; Repo.all(query)
 
 &lt;p&gt;We didn&amp;rsquo;t use an &lt;a href="https://hexdocs.pm/ecto/Ecto.Type.html"&gt;Ecto.Type&lt;/a&gt; annotation, so we&amp;rsquo;re using a &amp;ldquo;String&amp;rdquo; as far as Ecto is concerned. If I had any addition conversion so it played nice with my domain, I&amp;rsquo;d do it there. For instance, making it so users can give you something like &amp;ldquo;Technology &amp;gt; Computers &amp;gt; Programming &amp;gt; Elixir&amp;rdquo; and have it converted over to &amp;ldquo;technology.computers.programming.elixir&amp;rdquo; would be in an Ecto.Type.&lt;/p&gt;
 
-&lt;p&gt;Found this interesting? Be sure to share it!&lt;/p&gt;
+&lt;p&gt;Found this interesting? Be sure to share it! You can find the code for it &lt;a href="https://github.com/StevenNunez/article_tracker_hd"&gt;here&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;&lt;a href="https://twitter.com/share" class="twitter-share-button" data-text="Using LTrees in Phoenix. Hierarchical data in Postgres" data-via="_StevenNunez" data-size="large"&gt;Tweet&lt;/a&gt;&lt;/p&gt;
 
