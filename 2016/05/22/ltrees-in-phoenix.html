@@ -301,7 +301,7 @@ iex(17)&gt; Repo.all(query)
 </pre></td></tr></tbody></table>
 </div>
 
-<p>Our old nemisis! With a different oid. What we&rsquo;re seeing is the DB trying to resolve an <code>lquery</code>. You know the drill. Duplicate <code>ArticleTrackerHd.Postgrex.Types.Ltree</code>, and change any reference from <code>ltree</code> to <code>lquery</code> and add it to your <code>config/dev.exs</code></p>
+<p>Our old nemisis! With a different oid. What we&rsquo;re seeing is the DB trying to resolve an <code>lquery</code>. You know the drill. Duplicate <code>ArticleTrackerHd.Postgrex.Types.Ltree</code>, and change any reference from <code>ltree</code> to <code>lquery</code>.</p>
 <div class="highlight elixir"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
 2
 3
@@ -333,6 +333,8 @@ iex(17)&gt; Repo.all(query)
 <span class="k">end</span>
 </pre></td></tr></tbody></table>
 </div>
+
+<p>And in your <code>config/dev.exs</code>:</p>
 <div class="highlight elixir"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
 2
 3

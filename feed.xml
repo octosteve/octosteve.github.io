@@ -14,7 +14,7 @@
     <link rel="alternate" href="http://blog.url.com/2016/05/22/ltrees-in-phoenix.html"/>
     <id>http://blog.url.com/2016/05/22/ltrees-in-phoenix.html</id>
     <published>2016-05-22T12:38:00-04:00</published>
-    <updated>2016-05-22T20:14:15-04:00</updated>
+    <updated>2016-05-22T20:16:22-04:00</updated>
     <author>
       <name>Article Author</name>
     </author>
@@ -288,7 +288,7 @@ iex(17)&amp;gt; Repo.all(query)
 &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
 &lt;/div&gt;
 
-&lt;p&gt;Our old nemisis! With a different oid. What we&amp;rsquo;re seeing is the DB trying to resolve an &lt;code&gt;lquery&lt;/code&gt;. You know the drill. Duplicate &lt;code&gt;ArticleTrackerHd.Postgrex.Types.Ltree&lt;/code&gt;, and change any reference from &lt;code&gt;ltree&lt;/code&gt; to &lt;code&gt;lquery&lt;/code&gt; and add it to your &lt;code&gt;config/dev.exs&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Our old nemisis! With a different oid. What we&amp;rsquo;re seeing is the DB trying to resolve an &lt;code&gt;lquery&lt;/code&gt;. You know the drill. Duplicate &lt;code&gt;ArticleTrackerHd.Postgrex.Types.Ltree&lt;/code&gt;, and change any reference from &lt;code&gt;ltree&lt;/code&gt; to &lt;code&gt;lquery&lt;/code&gt;.&lt;/p&gt;
 &lt;div class="highlight elixir"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
 2
 3
@@ -320,6 +320,8 @@ iex(17)&amp;gt; Repo.all(query)
 &lt;span class="k"&gt;end&lt;/span&gt;
 &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
 &lt;/div&gt;
+
+&lt;p&gt;And in your &lt;code&gt;config/dev.exs&lt;/code&gt;:&lt;/p&gt;
 &lt;div class="highlight elixir"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
 2
 3
