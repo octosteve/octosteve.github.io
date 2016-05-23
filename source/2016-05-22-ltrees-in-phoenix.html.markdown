@@ -130,7 +130,9 @@ config :article_tracker_hd, ArticleTrackerHd.Repo,
   database: "article_tracker_hd_dev",
   hostname: "localhost",
   pool_size: 10,
-  extensions: [{ArticleTrackerHd.Postgrex.Types.Ltree, []}] # <- New line
+  extensions: [
+    {ArticleTrackerHd.Postgrex.Types.Ltree, []} # <- New line
+  ]
 ```
 
 You'll have to do this for every environment you run this code in.
@@ -186,6 +188,54 @@ iex(14)> Repo.all(query)
 ```
 
 We used the `~` to indicate we were going use path matching. Tons of options here, be sure to check out the ltree page on the Postgres guide.
+
+Not so fast though... We'll probably be passing in some variable here. If we try to simulate passing an argument we get this:
+
+```
+iex(15)> category = "winning"
+iex(16)> query = from a in Article, where: fragment("categories ~ ?", ^"*.#{category}.*")
+iex(17)> Repo.all(query)
+** (ArgumentError) no extension found for oid `342469`
+```
+
+Our old nemisis! With a different oid. What we're seeing is the DB trying to resolve an `lquery`. You know the drill. Duplicate `ArticleTrackerHd.Postgrex.Types.Ltree`, and change any reference from `ltree` to `lquery`.
+
+``` elixir
+defmodule ArticleTrackerHd.Postgrex.Types.Lquery do
+  alias Postgrex.TypeInfo
+
+  @behaviour Postgrex.Extension
+
+  def init(_parameters, _opts), do: {}
+
+  def matching(_), do: [type: "lquery"]
+
+  def format(_), do: :text
+
+  def encode(%TypeInfo{type: "lquery"}, value, _state, _opts), do: value
+
+  def decode(%TypeInfo{type: "lquery"}, value, _state, _opts), do: value
+end
+```
+
+And in your `config/dev.exs`:
+
+``` elixir
+config :article_tracker_hd, ArticleTrackerHd.Repo,
+  adapter: Ecto.Adapters.Postgres,
+  username: "postgres",
+  password: "postgres",
+  database: "article_tracker_hd_dev",
+  hostname: "localhost",
+  pool_size: 10,
+  extensions: [
+    {ArticleTrackerHd.Postgrex.Types.Ltree, []},
+    {ArticleTrackerHd.Postgrex.Types.Lquery, []} # <- New line
+  ]
+```
+
+![getinsertpic.com](http://media1.giphy.com/media/NlVo12G7b6cMg/200.gif)
+
 
 # Conclusion
 LTrees are my favorite thing right now. A few things I'd like to see is smarter conversion of the values to and from the db and validating the ltree is compliant in a changeset. Bad characters drive it bananas.
