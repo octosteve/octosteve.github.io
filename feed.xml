@@ -14,7 +14,7 @@
     <link rel="alternate" href="http://blog.url.com/2016/05/22/ltrees-in-phoenix.html"/>
     <id>http://blog.url.com/2016/05/22/ltrees-in-phoenix.html</id>
     <published>2016-05-22T12:38:00-04:00</published>
-    <updated>2016-05-22T18:45:57-04:00</updated>
+    <updated>2016-05-22T20:14:15-04:00</updated>
     <author>
       <name>Article Author</name>
     </author>
@@ -197,14 +197,18 @@ Format has 2 possible return values &amp;ldquo;text&amp;rdquo;, and &amp;ldquo;b
 5
 6
 7
-8&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="n"&gt;config&lt;/span&gt; &lt;span class="ss"&gt;:article_tracker_hd&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="no"&gt;ArticleTrackerHd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Repo&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+8
+9
+10&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="n"&gt;config&lt;/span&gt; &lt;span class="ss"&gt;:article_tracker_hd&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="no"&gt;ArticleTrackerHd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Repo&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
   &lt;span class="ss"&gt;adapter:&lt;/span&gt; &lt;span class="no"&gt;Ecto&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Adapters&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Postgres&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
   &lt;span class="ss"&gt;username:&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;postgres"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
   &lt;span class="ss"&gt;password:&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;postgres"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
   &lt;span class="ss"&gt;database:&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;article_tracker_hd_dev"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
   &lt;span class="ss"&gt;hostname:&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;localhost"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
   &lt;span class="ss"&gt;pool_size:&lt;/span&gt; &lt;span class="m"&gt;10&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-  &lt;span class="ss"&gt;extensions:&lt;/span&gt; &lt;span class="p"&gt;[{&lt;/span&gt;&lt;span class="no"&gt;ArticleTrackerHd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Postgrex&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Types&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Ltree&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;[]}]&lt;/span&gt; &lt;span class="c1"&gt;# &amp;lt;- New line&lt;/span&gt;
+  &lt;span class="ss"&gt;extensions:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
+    &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="no"&gt;ArticleTrackerHd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Postgrex&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Types&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Ltree&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;[]}&lt;/span&gt; &lt;span class="c1"&gt;# &amp;lt;- New line&lt;/span&gt;
+  &lt;span class="p"&gt;]&lt;/span&gt;
 &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
 &lt;/div&gt;
 
@@ -272,6 +276,75 @@ iex(14)&amp;gt; Repo.all(query)
 &lt;/div&gt;
 
 &lt;p&gt;We used the &lt;code&gt;~&lt;/code&gt; to indicate we were going use path matching. Tons of options here, be sure to check out the ltree page on the Postgres guide.&lt;/p&gt;
+
+&lt;p&gt;Not so fast though&amp;hellip; We&amp;rsquo;ll probably be passing in some variable here. If we try to simulate passing an argument we get this:&lt;/p&gt;
+&lt;div class="highlight plaintext"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;iex(15)&amp;gt; category = "winning"
+iex(16)&amp;gt; query = from a in Article, where: fragment("categories ~ ?", ^"*.#{category}.*")
+iex(17)&amp;gt; Repo.all(query)
+** (ArgumentError) no extension found for oid `342469`
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Our old nemisis! With a different oid. What we&amp;rsquo;re seeing is the DB trying to resolve an &lt;code&gt;lquery&lt;/code&gt;. You know the drill. Duplicate &lt;code&gt;ArticleTrackerHd.Postgrex.Types.Ltree&lt;/code&gt;, and change any reference from &lt;code&gt;ltree&lt;/code&gt; to &lt;code&gt;lquery&lt;/code&gt; and add it to your &lt;code&gt;config/dev.exs&lt;/code&gt;&lt;/p&gt;
+&lt;div class="highlight elixir"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="k"&gt;defmodule&lt;/span&gt; &lt;span class="no"&gt;ArticleTrackerHd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Postgrex&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Types&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Lquery&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="n"&gt;alias&lt;/span&gt; &lt;span class="no"&gt;Postgrex&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;TypeInfo&lt;/span&gt;
+
+  &lt;span class="nv"&gt;@behaviour&lt;/span&gt; &lt;span class="no"&gt;Postgrex&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Extension&lt;/span&gt;
+
+  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;init&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;_parameters&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_opts&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{}&lt;/span&gt;
+
+  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;matching&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="ss"&gt;type:&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;lquery"&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+
+  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;format&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="ss"&gt;:text&lt;/span&gt;
+
+  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;encode&lt;/span&gt;&lt;span class="p"&gt;(%&lt;/span&gt;&lt;span class="no"&gt;TypeInfo&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;type:&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;lquery"&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="n"&gt;value&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_state&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_opts&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;value&lt;/span&gt;
+
+  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;decode&lt;/span&gt;&lt;span class="p"&gt;(%&lt;/span&gt;&lt;span class="no"&gt;TypeInfo&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;type:&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;lquery"&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="n"&gt;value&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_state&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_opts&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;value&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;div class="highlight elixir"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="n"&gt;config&lt;/span&gt; &lt;span class="ss"&gt;:article_tracker_hd&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="no"&gt;ArticleTrackerHd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Repo&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="ss"&gt;adapter:&lt;/span&gt; &lt;span class="no"&gt;Ecto&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Adapters&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Postgres&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="ss"&gt;username:&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;postgres"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="ss"&gt;password:&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;postgres"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="ss"&gt;database:&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;article_tracker_hd_dev"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="ss"&gt;hostname:&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;localhost"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="ss"&gt;pool_size:&lt;/span&gt; &lt;span class="m"&gt;10&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="ss"&gt;extensions:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
+    &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="no"&gt;ArticleTrackerHd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Postgrex&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Types&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Ltree&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;[]},&lt;/span&gt;
+    &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="no"&gt;ArticleTrackerHd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Postgrex&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Types&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Lquery&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;[]}&lt;/span&gt; &lt;span class="c1"&gt;# &amp;lt;- New line&lt;/span&gt;
+  &lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&lt;img alt="getinsertpic.com" src="http://media1.giphy.com/media/NlVo12G7b6cMg/200.gif" /&gt;&lt;/p&gt;
 
 &lt;h1&gt;Conclusion&lt;/h1&gt;
 

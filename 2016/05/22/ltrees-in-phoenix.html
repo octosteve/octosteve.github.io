@@ -210,14 +210,18 @@ Format has 2 possible return values &ldquo;text&rdquo;, and &ldquo;binary&rdquo;
 5
 6
 7
-8</pre></td><td class="code"><pre><span class="n">config</span> <span class="ss">:article_tracker_hd</span><span class="p">,</span> <span class="no">ArticleTrackerHd</span><span class="o">.</span><span class="no">Repo</span><span class="p">,</span>
+8
+9
+10</pre></td><td class="code"><pre><span class="n">config</span> <span class="ss">:article_tracker_hd</span><span class="p">,</span> <span class="no">ArticleTrackerHd</span><span class="o">.</span><span class="no">Repo</span><span class="p">,</span>
   <span class="ss">adapter:</span> <span class="no">Ecto</span><span class="o">.</span><span class="no">Adapters</span><span class="o">.</span><span class="no">Postgres</span><span class="p">,</span>
   <span class="ss">username:</span> <span class="sd">"</span><span class="s2">postgres"</span><span class="p">,</span>
   <span class="ss">password:</span> <span class="sd">"</span><span class="s2">postgres"</span><span class="p">,</span>
   <span class="ss">database:</span> <span class="sd">"</span><span class="s2">article_tracker_hd_dev"</span><span class="p">,</span>
   <span class="ss">hostname:</span> <span class="sd">"</span><span class="s2">localhost"</span><span class="p">,</span>
   <span class="ss">pool_size:</span> <span class="m">10</span><span class="p">,</span>
-  <span class="ss">extensions:</span> <span class="p">[{</span><span class="no">ArticleTrackerHd</span><span class="o">.</span><span class="no">Postgrex</span><span class="o">.</span><span class="no">Types</span><span class="o">.</span><span class="no">Ltree</span><span class="p">,</span> <span class="p">[]}]</span> <span class="c1"># &lt;- New line</span>
+  <span class="ss">extensions:</span> <span class="p">[</span>
+    <span class="p">{</span><span class="no">ArticleTrackerHd</span><span class="o">.</span><span class="no">Postgrex</span><span class="o">.</span><span class="no">Types</span><span class="o">.</span><span class="no">Ltree</span><span class="p">,</span> <span class="p">[]}</span> <span class="c1"># &lt;- New line</span>
+  <span class="p">]</span>
 </pre></td></tr></tbody></table>
 </div>
 
@@ -285,6 +289,75 @@ iex(14)&gt; Repo.all(query)
 </div>
 
 <p>We used the <code>~</code> to indicate we were going use path matching. Tons of options here, be sure to check out the ltree page on the Postgres guide.</p>
+
+<p>Not so fast though&hellip; We&rsquo;ll probably be passing in some variable here. If we try to simulate passing an argument we get this:</p>
+<div class="highlight plaintext"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4</pre></td><td class="code"><pre>iex(15)&gt; category = "winning"
+iex(16)&gt; query = from a in Article, where: fragment("categories ~ ?", ^"*.#{category}.*")
+iex(17)&gt; Repo.all(query)
+** (ArgumentError) no extension found for oid `342469`
+</pre></td></tr></tbody></table>
+</div>
+
+<p>Our old nemisis! With a different oid. What we&rsquo;re seeing is the DB trying to resolve an <code>lquery</code>. You know the drill. Duplicate <code>ArticleTrackerHd.Postgrex.Types.Ltree</code>, and change any reference from <code>ltree</code> to <code>lquery</code> and add it to your <code>config/dev.exs</code></p>
+<div class="highlight elixir"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15</pre></td><td class="code"><pre><span class="k">defmodule</span> <span class="no">ArticleTrackerHd</span><span class="o">.</span><span class="no">Postgrex</span><span class="o">.</span><span class="no">Types</span><span class="o">.</span><span class="no">Lquery</span> <span class="k">do</span>
+  <span class="n">alias</span> <span class="no">Postgrex</span><span class="o">.</span><span class="no">TypeInfo</span>
+
+  <span class="nv">@behaviour</span> <span class="no">Postgrex</span><span class="o">.</span><span class="no">Extension</span>
+
+  <span class="k">def</span> <span class="n">init</span><span class="p">(</span><span class="n">_parameters</span><span class="p">,</span> <span class="n">_opts</span><span class="p">),</span> <span class="k">do</span><span class="p">:</span> <span class="p">{}</span>
+
+  <span class="k">def</span> <span class="n">matching</span><span class="p">(</span><span class="n">_</span><span class="p">),</span> <span class="k">do</span><span class="p">:</span> <span class="p">[</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">lquery"</span><span class="p">]</span>
+
+  <span class="k">def</span> <span class="n">format</span><span class="p">(</span><span class="n">_</span><span class="p">),</span> <span class="k">do</span><span class="p">:</span> <span class="ss">:text</span>
+
+  <span class="k">def</span> <span class="n">encode</span><span class="p">(%</span><span class="no">TypeInfo</span><span class="p">{</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">lquery"</span><span class="p">},</span> <span class="n">value</span><span class="p">,</span> <span class="n">_state</span><span class="p">,</span> <span class="n">_opts</span><span class="p">),</span> <span class="k">do</span><span class="p">:</span> <span class="n">value</span>
+
+  <span class="k">def</span> <span class="n">decode</span><span class="p">(%</span><span class="no">TypeInfo</span><span class="p">{</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">lquery"</span><span class="p">},</span> <span class="n">value</span><span class="p">,</span> <span class="n">_state</span><span class="p">,</span> <span class="n">_opts</span><span class="p">),</span> <span class="k">do</span><span class="p">:</span> <span class="n">value</span>
+<span class="k">end</span>
+</pre></td></tr></tbody></table>
+</div>
+<div class="highlight elixir"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11</pre></td><td class="code"><pre><span class="n">config</span> <span class="ss">:article_tracker_hd</span><span class="p">,</span> <span class="no">ArticleTrackerHd</span><span class="o">.</span><span class="no">Repo</span><span class="p">,</span>
+  <span class="ss">adapter:</span> <span class="no">Ecto</span><span class="o">.</span><span class="no">Adapters</span><span class="o">.</span><span class="no">Postgres</span><span class="p">,</span>
+  <span class="ss">username:</span> <span class="sd">"</span><span class="s2">postgres"</span><span class="p">,</span>
+  <span class="ss">password:</span> <span class="sd">"</span><span class="s2">postgres"</span><span class="p">,</span>
+  <span class="ss">database:</span> <span class="sd">"</span><span class="s2">article_tracker_hd_dev"</span><span class="p">,</span>
+  <span class="ss">hostname:</span> <span class="sd">"</span><span class="s2">localhost"</span><span class="p">,</span>
+  <span class="ss">pool_size:</span> <span class="m">10</span><span class="p">,</span>
+  <span class="ss">extensions:</span> <span class="p">[</span>
+    <span class="p">{</span><span class="no">ArticleTrackerHd</span><span class="o">.</span><span class="no">Postgrex</span><span class="o">.</span><span class="no">Types</span><span class="o">.</span><span class="no">Ltree</span><span class="p">,</span> <span class="p">[]},</span>
+    <span class="p">{</span><span class="no">ArticleTrackerHd</span><span class="o">.</span><span class="no">Postgrex</span><span class="o">.</span><span class="no">Types</span><span class="o">.</span><span class="no">Lquery</span><span class="p">,</span> <span class="p">[]}</span> <span class="c1"># &lt;- New line</span>
+  <span class="p">]</span>
+</pre></td></tr></tbody></table>
+</div>
+
+<p><img alt="getinsertpic.com" src="http://media1.giphy.com/media/NlVo12G7b6cMg/200.gif" /></p>
 
 <h1>Conclusion</h1>
 
