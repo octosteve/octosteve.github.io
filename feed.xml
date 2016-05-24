@@ -5,10 +5,725 @@
   <id>http://blog.url.com/</id>
   <link href="http://blog.url.com/"/>
   <link href="http://blog.url.com/feed.xml" rel="self"/>
-  <updated>2016-05-22T12:38:00-04:00</updated>
+  <updated>2016-05-23T17:58:00-04:00</updated>
   <author>
     <name>Blog Author</name>
   </author>
+  <entry>
+    <title>Guard this with your life... Or authenticating APIs with Guardian</title>
+    <link rel="alternate" href="http://blog.url.com/2016/05/23/guard-this-with-your-life-or-authenticating-apis-with-guardian.html"/>
+    <id>http://blog.url.com/2016/05/23/guard-this-with-your-life-or-authenticating-apis-with-guardian.html</id>
+    <published>2016-05-23T17:58:00-04:00</published>
+    <updated>2016-05-24T00:48:29-04:00</updated>
+    <author>
+      <name>Article Author</name>
+    </author>
+    <content type="html">&lt;h1&gt;Authentication in Phoenix&lt;/h1&gt;
+
+&lt;p&gt;Conceptually, authentication isn&amp;rsquo;t hard. You collect a username and password, check it against your database and if it matches, WIN!&lt;/p&gt;
+
+&lt;p&gt;&lt;img alt="getinsertpic.com" src="http://media2.giphy.com/media/3BlN2bxcw0l5S/200.gif" /&gt;&lt;/p&gt;
+
+&lt;p&gt;&amp;hellip; then you get into the business of persisting that information across requests, not to mention all of the security concerns of storing a password safely. In this post we&amp;rsquo;ll be covering how to authenticate users, provide them with a token, and use that token on subsequent requests to identify our user. There are a TON of moving parts, so strap in.&lt;/p&gt;
+
+&lt;h2&gt;Overview&lt;/h2&gt;
+
+&lt;p&gt;We&amp;rsquo;ll be covering:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Modeling an Account&lt;/li&gt;
+&lt;li&gt;Using changesets&lt;/li&gt;
+&lt;li&gt;Hashing passwords with &lt;a href="https://github.com/elixircnx/comeonin"&gt;&lt;code&gt;comeonin&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Managing &amp;ldquo;impure&amp;rdquo; transactions in Service Modules&lt;/li&gt;
+&lt;li&gt;Using Guardian to manage token sharing&lt;/li&gt;
+&lt;li&gt;Identifying the logged in user&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2&gt;The App&lt;/h2&gt;
+
+&lt;p&gt;We&amp;rsquo;ll be expanding on our Article Tracker located &lt;a href="https://github.com/StevenNunez/article_tracker_hd/tree/authentication-blog-start"&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2&gt;Accounts&lt;/h2&gt;
+
+&lt;p&gt;Accounts will have an email and a password_digest. The digest will hold our hashed password&amp;hellip; eventually.&lt;/p&gt;
+
+&lt;p&gt;Run &lt;code&gt;mix phoenix.gen.model Account accounts email password_digest&lt;/code&gt; then &lt;code&gt;mix ecto.migrate&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Open the new model, and update the schema to have a virtual attribute:&lt;/p&gt;
+&lt;div class="highlight elixir"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4
+5
+6
+7&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="n"&gt;schema&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;accounts"&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="n"&gt;field&lt;/span&gt; &lt;span class="ss"&gt;:email&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:string&lt;/span&gt;
+  &lt;span class="n"&gt;field&lt;/span&gt; &lt;span class="ss"&gt;:password_digest&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:string&lt;/span&gt;
+  &lt;span class="n"&gt;field&lt;/span&gt; &lt;span class="ss"&gt;:password&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:string&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;virtual:&lt;/span&gt; &lt;span class="no"&gt;true&lt;/span&gt; &lt;span class="c1"&gt;# &amp;lt;- New line&lt;/span&gt;
+
+  &lt;span class="n"&gt;timestamps&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Virtual attributes are a great way of taking a value from an interaction, but not persisting. In our case, we&amp;rsquo;ll be using it to hold the value a users gives us before we hash and persist it.&lt;/p&gt;
+
+&lt;h1&gt;Changesets&lt;/h1&gt;
+
+&lt;p&gt;Changesets are a way of describing the process a set of proposed changes go through in preparation to being persisted. You define your rules, then try to persist. If everything is good to go, say passing all of your validation rules, it can be inserted into your database.&lt;/p&gt;
+
+&lt;p&gt;Storing passwords in plain text is a bad, NAY &lt;em&gt;TERRIBLE&lt;/em&gt; IDEA!! We want to allow a user to send us a password, that we&amp;rsquo;ll hash then store.&lt;/p&gt;
+
+&lt;p&gt;Creating a changeset is easy. In the model, we call &lt;code&gt;cast&lt;/code&gt; and pass in the model, a map with proposed values, and the fields we require, and permit.&lt;/p&gt;
+
+&lt;p&gt;This is the built in one from our project. Be sure to change the &lt;code&gt;password_digest&lt;/code&gt; in our &lt;code&gt;@required_fields&lt;/code&gt; to &lt;code&gt;password&lt;/code&gt;. The user will never pass us a &lt;code&gt;password_digest&lt;/code&gt;&lt;/p&gt;
+&lt;div class="highlight elixir"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4
+5
+6
+7&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="nv"&gt;@required_fields&lt;/span&gt; &lt;span class="err"&gt;~&lt;/span&gt;&lt;span class="n"&gt;w&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;email&lt;/span&gt; &lt;span class="n"&gt;password&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="c1"&gt;# &amp;lt;- Changed from password_digest to password&lt;/span&gt;
+&lt;span class="nv"&gt;@optional_fields&lt;/span&gt; &lt;span class="err"&gt;~&lt;/span&gt;&lt;span class="n"&gt;w&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;changeset&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;model&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;params&lt;/span&gt; &lt;span class="p"&gt;\\&lt;/span&gt; &lt;span class="ss"&gt;:empty&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="n"&gt;model&lt;/span&gt;
+  &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;cast&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;params&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nv"&gt;@required_fields&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nv"&gt;@optional_fields&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;This returns a changeset back. We can tag along another function, as long as it returns a changeset as well. Let&amp;rsquo;s do some work to obfuscate the user&amp;rsquo;s password.&lt;/p&gt;
+&lt;div class="highlight elixir"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4
+5
+6
+7
+8
+9
+10&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;changeset&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;model&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;params&lt;/span&gt; &lt;span class="p"&gt;\\&lt;/span&gt; &lt;span class="ss"&gt;:empty&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="n"&gt;model&lt;/span&gt;
+  &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;cast&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;params&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nv"&gt;@required_fields&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nv"&gt;@optional_fields&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;put_pass_hash&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+
+&lt;span class="k"&gt;defp&lt;/span&gt; &lt;span class="n"&gt;put_pass_hash&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;changeset&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="n"&gt;password&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;changeset&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;changes&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;password&lt;/span&gt;
+  &lt;span class="n"&gt;put_change&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;changeset&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:password_digest&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="no"&gt;String&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;reverse&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;password&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Open up &lt;code&gt;iex -S mix&lt;/code&gt; and try this out:&lt;/p&gt;
+&lt;div class="highlight plaintext"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+2
+3&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;iex&amp;gt; alias ArticleTrackerHd.Account
+iex&amp;gt; changeset = Account.changeset(%Account{}, %{email: "steven@example.com", password: "beef101"})
+iex&amp;gt; changeset.changes.password_digest # =&amp;gt; "101feeb"
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;#security #hashtag. I think we need to be a bit more deliberate in our approach.&lt;/p&gt;
+
+&lt;h1&gt;Come on in!&lt;/h1&gt;
+
+&lt;p&gt;Maybe not what you want to hear in a security library, but, hey&amp;hellip; We&amp;rsquo;ll be adding this library to handle our password hashing.&lt;/p&gt;
+
+&lt;p&gt;Checkout their &lt;a href="https://github.com/elixircnx/comeonin"&gt;github&lt;/a&gt; and add the latest version to your &lt;code&gt;mix.exs&lt;/code&gt; file.&lt;/p&gt;
+&lt;div class="highlight elixir"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="k"&gt;defp&lt;/span&gt; &lt;span class="n"&gt;deps&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="p"&gt;[{&lt;/span&gt;&lt;span class="ss"&gt;:phoenix&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;~&amp;gt; 1.1.4"&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt;
+   &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:postgrex&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;&amp;gt;= 0.0.0"&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt;
+   &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:phoenix_ecto&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;~&amp;gt; 2.0"&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt;
+   &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:phoenix_html&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;~&amp;gt; 2.4"&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt;
+   &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:phoenix_live_reload&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;~&amp;gt; 1.0"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;only:&lt;/span&gt; &lt;span class="ss"&gt;:dev&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt;
+   &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:gettext&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;~&amp;gt; 0.9"&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt;
+   &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:comeonin&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;~&amp;gt; 2.4"&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="c1"&gt;# &amp;lt;- New line&lt;/span&gt;
+   &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:cowboy&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;~&amp;gt; 1.0"&lt;/span&gt;&lt;span class="p"&gt;}]&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+
+
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Then start the application:&lt;/p&gt;
+&lt;div class="highlight elixir"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;application&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="ss"&gt;mod:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="no"&gt;ArticleTrackerHd&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;[]},&lt;/span&gt;
+   &lt;span class="ss"&gt;applications:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
+     &lt;span class="ss"&gt;:phoenix&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+     &lt;span class="ss"&gt;:phoenix_html&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+     &lt;span class="ss"&gt;:cowboy&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+     &lt;span class="ss"&gt;:logger&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+     &lt;span class="ss"&gt;:gettext&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+     &lt;span class="ss"&gt;:phoenix_ecto&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+     &lt;span class="ss"&gt;:postgrex&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+     &lt;span class="ss"&gt;:comeonin&lt;/span&gt; &lt;span class="c1"&gt;# &amp;lt;- New Line&lt;/span&gt;
+    &lt;span class="p"&gt;]&lt;/span&gt;
+  &lt;span class="p"&gt;]&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&lt;code&gt;mix deps.get&lt;/code&gt; and we&amp;rsquo;re good to go.&lt;/p&gt;
+
+&lt;h3&gt;Updating our changeset&lt;/h3&gt;
+
+&lt;p&gt;Let&amp;rsquo;s update to our super secure hashing algorithm.&lt;/p&gt;
+&lt;div class="highlight elixir"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="k"&gt;defp&lt;/span&gt; &lt;span class="n"&gt;put_pass_hash&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;changeset&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="n"&gt;password&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;changeset&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;changes&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;password&lt;/span&gt;
+  &lt;span class="n"&gt;put_change&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;changeset&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:password_digest&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="no"&gt;Comeonin&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Bcrypt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;hashpwsalt&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;password&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Open up &lt;code&gt;iex -S mix&lt;/code&gt; and try again:&lt;/p&gt;
+&lt;div class="highlight plaintext"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;iex&amp;gt; alias ArticleTrackerHd.{Account, Repo}
+iex&amp;gt; changeset = Account.changeset(%Account{}, %{email: "steven@example.com", password: "beef101"})
+iex&amp;gt; changeset.changes.password_digest # =&amp;gt; "Something crazy"
+iex&amp;gt; Repo.insert!(changeset)
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;WIN! We&amp;rsquo;re doing right by our users. Note that we saved user with an email of &lt;code&gt;steven@example.com&lt;/code&gt; and a password of &lt;code&gt;beef101&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h3&gt;Authenticating users&lt;/h3&gt;
+
+&lt;p&gt;If you&amp;rsquo;re coming from rails, you might be tempted to slap on an &lt;code&gt;authenticate&lt;/code&gt; function and have it find the account, check the password and all that jazz. Well HOLD YOUR HORSES!
+&lt;img alt="getinsertpic.com" src="https://media3.giphy.com/media/ZvRz1cnhjyecw/200.gif" /&gt;&lt;/p&gt;
+
+&lt;p&gt;In Phoenix, we create &amp;ldquo;pure&amp;rdquo; function in our models and views, and &amp;ldquo;impure&amp;rdquo; functions&amp;hellip; elsewhere. What is a &amp;ldquo;pure&amp;rdquo; function? Think of a function that takes in 2 values&lt;/p&gt;
+&lt;div class="highlight elixir"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="k"&gt;fn&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;If you call this function with 1 and 2, the result will always be the same. Now imagine calling this code:&lt;/p&gt;
+&lt;div class="highlight elixir"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="no"&gt;Repo&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;all&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="no"&gt;Account&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;This code might return 1 User, or 300. We&amp;rsquo;re touching the outside world. Fancy terms for simple things.&lt;/p&gt;
+
+&lt;p&gt;Back to authentication. We need a place to handle our impure operations. I&amp;rsquo;m coining a new term, We need a &lt;em&gt;Service Module&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img alt="getinsertpic.com" src="http://media0.giphy.com/media/GsYaDdbX7k3Kw/200.gif" /&gt;&lt;/p&gt;
+
+&lt;p&gt;This module will hold our impure auth related stuff. Make a new file in &lt;code&gt;web/services&lt;/code&gt; called &lt;code&gt;auth.ex&lt;/code&gt;.&lt;/p&gt;
+&lt;div class="highlight elixir"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="k"&gt;defmodule&lt;/span&gt; &lt;span class="no"&gt;ArticleTrackerHd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Auth&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="n"&gt;alias&lt;/span&gt; &lt;span class="no"&gt;ArticleTrackerHd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="no"&gt;Repo&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="no"&gt;Account&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+  &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="no"&gt;Comeonin&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Bcrypt&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;only:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="ss"&gt;checkpw:&lt;/span&gt; &lt;span class="m"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;dummy_checkpw:&lt;/span&gt; &lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+
+  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;verify&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;email&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;password&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+    &lt;span class="n"&gt;account&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;  &lt;span class="no"&gt;Repo&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;one&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="no"&gt;Account&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;find_by_email&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;email&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="c1"&gt;# &amp;lt;- Need to define find_by_email&lt;/span&gt;
+    &lt;span class="k"&gt;cond&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+      &lt;span class="n"&gt;account&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="n"&gt;checkpw&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;password&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;account&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;password_digest&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="c1"&gt;# &amp;lt;- Valid account and password!&lt;/span&gt;
+        &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:ok&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;account&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+      &lt;span class="n"&gt;account&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="c1"&gt;# &amp;lt;- Found account but password didn't match&lt;/span&gt;
+        &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:error&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:bad_password&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+      &lt;span class="no"&gt;true&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;
+        &lt;span class="n"&gt;dummy_checkpw&lt;/span&gt; &lt;span class="c1"&gt;# &amp;lt;- Fool hackers&lt;/span&gt;
+        &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:error&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:not_found&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+    &lt;span class="k"&gt;end&lt;/span&gt;
+  &lt;span class="k"&gt;end&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;So IMPURE! We have one nugget of purity and that&amp;rsquo;s in the &lt;code&gt;find_by_email&lt;/code&gt; function. That will return the query we&amp;rsquo;ll pass to &lt;code&gt;Repo.one&lt;/code&gt;. Here it is:&lt;/p&gt;
+&lt;div class="highlight elixir"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;find_by_email&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;email&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="n"&gt;from&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="bp"&gt;__MODULE__&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="ss"&gt;where:&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;email&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="n"&gt;email&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Try it out. &lt;code&gt;iex -S mix&lt;/code&gt;.&lt;/p&gt;
+&lt;div class="highlight plaintext"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;iex&amp;gt; alias ArticleTrackerHd.{Account, Auth}
+iex&amp;gt; Auth.verify("steven@example.com", "beef101")
+{:ok,
+ %ArticleTrackerHd.Account{__meta__: #Ecto.Schema.Metadata&amp;lt;:loaded&amp;gt;,
+  email: "steven@example.com", id: 1,
+  inserted_at: #Ecto.DateTime&amp;lt;2016-05-24T02:29:27Z&amp;gt;, password: nil,
+  password_digest: "$2b$12$vEJ80G.uEpJapbXgsGHBN.aZSgDD3yyWiQm.gimOSZimApDL.pTOm",
+  updated_at: #Ecto.DateTime&amp;lt;2016-05-24T02:29:27Z&amp;gt;}}
+iex&amp;gt; Auth.verify("steven@example.com", "wrongpw")
+{:error, :bad_password}
+iex&amp;gt; Auth.verify("nope@example.com", "wrongpw")  
+{:error, :not_found}
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;GLORIOUS!!&lt;/p&gt;
+
+&lt;h1&gt;Guardian&lt;/h1&gt;
+
+&lt;p&gt;Guardian is a way of generating &lt;a href="jwt.io"&gt;JWT&lt;/a&gt; &lt;a href="https://tools.ietf.org/html/rfc7519"&gt;tokens&lt;/a&gt;. Tokens can be read from the session, or from the headers. We&amp;rsquo;re designing this to work with an API, so we&amp;rsquo;ll check the headers.&lt;/p&gt;
+
+&lt;p&gt;Guardian doesn&amp;rsquo;t manage finding accounts, that&amp;rsquo;s your job, hence all the blah blah from before. Once that&amp;rsquo;s all set up, we&amp;rsquo; can leverage Guardian to manage keeping our user requests and our app in sync.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s set it up. You&amp;rsquo;ll need a key for the next part. Run &lt;code&gt;mix phoenix.gen.secret&lt;/code&gt; and hold on to the value.&lt;/p&gt;
+
+&lt;p&gt;Open up &lt;code&gt;mix.exs&lt;/code&gt;:&lt;/p&gt;
+&lt;div class="highlight elixir"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="k"&gt;defp&lt;/span&gt; &lt;span class="n"&gt;deps&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="p"&gt;[{&lt;/span&gt;&lt;span class="ss"&gt;:phoenix&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;~&amp;gt; 1.1.4"&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt;
+   &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:postgrex&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;&amp;gt;= 0.0.0"&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt;
+   &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:phoenix_ecto&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;~&amp;gt; 2.0"&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt;
+   &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:phoenix_html&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;~&amp;gt; 2.4"&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt;
+   &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:phoenix_live_reload&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;~&amp;gt; 1.0"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;only:&lt;/span&gt; &lt;span class="ss"&gt;:dev&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt;
+   &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:gettext&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;~&amp;gt; 0.9"&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt;
+   &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:comeonin&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;~&amp;gt; 2.4"&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt;
+   &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:guardian&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;~&amp;gt; 0.10.0"&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="c1"&gt;# &amp;lt;- New line&lt;/span&gt;
+   &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:cowboy&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;~&amp;gt; 1.0"&lt;/span&gt;&lt;span class="p"&gt;}]&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Run &lt;code&gt;mix deps.get&lt;/code&gt; to get setup.&lt;/p&gt;
+
+&lt;p&gt;We&amp;rsquo;ll need to create a configuration for Guardian in our &lt;code&gt;config.exs&lt;/code&gt;.&lt;/p&gt;
+&lt;div class="highlight elixir"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4
+5&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="n"&gt;config&lt;/span&gt; &lt;span class="ss"&gt;:guardian&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="no"&gt;Guardian&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="ss"&gt;issuer:&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;ArticleTrackerHd"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="ss"&gt;ttl:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="m"&gt;30&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:days&lt;/span&gt; &lt;span class="p"&gt;},&lt;/span&gt;
+  &lt;span class="ss"&gt;secret_key:&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;46l5yfRFGorxAArf64nGzHlfvSDAOUEV7m6c3/lf4LzZcBfUClDsSfNETrosmsdO"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="c1"&gt;# &amp;lt;- Your Key&lt;/span&gt;
+  &lt;span class="ss"&gt;serializer:&lt;/span&gt; &lt;span class="no"&gt;ArticleTrackerHd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;GuardianSerializer&lt;/span&gt; &lt;span class="c1"&gt;# &amp;lt;- We'll create this next&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;OK, so a bunch of stuff is about to happen&amp;hellip; Brace yourself.&lt;/p&gt;
+
+&lt;p&gt;&lt;img alt="getinsertpic.com" src="http://media3.giphy.com/media/psK7tSNSAE8Te/200.gif" /&gt;&lt;/p&gt;
+
+&lt;p&gt;We&amp;rsquo;re going to add 2 plugs. One to teach Guardian how to find our token, and another that lets us convert the token to an account.&lt;/p&gt;
+
+&lt;p&gt;Open up your router and add:&lt;/p&gt;
+&lt;div class="highlight elixir"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4
+5&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="n"&gt;pipeline&lt;/span&gt; &lt;span class="ss"&gt;:api&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="n"&gt;plug&lt;/span&gt; &lt;span class="ss"&gt;:accepts&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;json"&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+  &lt;span class="n"&gt;plug&lt;/span&gt; &lt;span class="no"&gt;Guardian&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Plug&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;VerifyHeader&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;realm:&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;Bearer"&lt;/span&gt; &lt;span class="c1"&gt;# &amp;lt;- New line (1)&lt;/span&gt;
+  &lt;span class="n"&gt;plug&lt;/span&gt; &lt;span class="no"&gt;Guardian&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Plug&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;LoadResource&lt;/span&gt;                  &lt;span class="c1"&gt;# &amp;lt;- New line (2)&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;The first line tells Guardian to look in the header for &lt;code&gt;Authorization: Bearer some_crazy_token&lt;/code&gt;. If you didn&amp;rsquo;t provide a realm, it would expect &lt;code&gt;Authorization: some_crazy_token&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;The second line works in tandem with the &lt;em&gt;not yet written&lt;/em&gt; &lt;code&gt;ArticleTrackerHd.GuardianSerializer&lt;/code&gt; to convert a token value into a record.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s go write that serializer. Create a file in &lt;code&gt;web/serializers&lt;/code&gt; named &lt;code&gt;guardian_serializer.ex&lt;/code&gt;&lt;/p&gt;
+&lt;div class="highlight elixir"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="k"&gt;defmodule&lt;/span&gt; &lt;span class="no"&gt;ArticleTrackerHd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;GuardianSerializer&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="nv"&gt;@behaviour&lt;/span&gt; &lt;span class="no"&gt;Guardian&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Serializer&lt;/span&gt;
+
+  &lt;span class="n"&gt;alias&lt;/span&gt; &lt;span class="no"&gt;ArticleTrackerHd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Repo&lt;/span&gt;
+  &lt;span class="n"&gt;alias&lt;/span&gt; &lt;span class="no"&gt;ArticleTrackerHd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Account&lt;/span&gt;
+
+  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;for_token&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;account&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;%&lt;/span&gt;&lt;span class="no"&gt;Account&lt;/span&gt;&lt;span class="p"&gt;{}),&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="ss"&gt;:ok&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;Account:&lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;account&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;id&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;"&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;for_token&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="ss"&gt;:error&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;Unknown resource type"&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+
+  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;from_token&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;Account:"&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;id&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="ss"&gt;:ok&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="no"&gt;Repo&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="no"&gt;Account&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;id&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;from_token&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="ss"&gt;:error&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;Unknown resource type"&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Nothing too crazy here. If you find a claim in the token like &lt;code&gt;Account:1&lt;/code&gt;, find account with an id of 1.&lt;/p&gt;
+
+&lt;p&gt;That&amp;rsquo;s it for Guardian Setup!&lt;/p&gt;
+
+&lt;h2&gt;Logging in&lt;/h2&gt;
+
+&lt;p&gt;&lt;img alt="getinsertpic.com" src="http://media2.giphy.com/media/xTiTngXiWGXLmIZVYY/200.gif" /&gt;&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s tie this all together. We&amp;rsquo;ll create a &lt;code&gt;SessionController&lt;/code&gt; with a &lt;code&gt;create&lt;/code&gt; action. It will check if the username and password are valid and if it is, we&amp;rsquo;ll sign them in.&lt;/p&gt;
+
+&lt;p&gt;Modify your router:&lt;/p&gt;
+&lt;div class="highlight elixir"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4
+5&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="n"&gt;scope&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;/api"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="no"&gt;ArticleTrackerHd&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="n"&gt;pipe_through&lt;/span&gt; &lt;span class="ss"&gt;:api&lt;/span&gt;
+  &lt;span class="n"&gt;resources&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;/articles"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="no"&gt;ArticleController&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;except:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="ss"&gt;:new&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:edit&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+  &lt;span class="n"&gt;post&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;/log-in"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="no"&gt;SessionController&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:create&lt;/span&gt; &lt;span class="c1"&gt;# &amp;lt;- New line&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Then make a file in &lt;code&gt;web/controllers/&lt;/code&gt; named &lt;code&gt;session_controller.ex&lt;/code&gt;.&lt;/p&gt;
+&lt;div class="highlight elixir"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="k"&gt;defmodule&lt;/span&gt; &lt;span class="no"&gt;ArticleTrackerHd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;SessionController&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="kn"&gt;use&lt;/span&gt; &lt;span class="no"&gt;ArticleTrackerHd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Web&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:controller&lt;/span&gt;
+  &lt;span class="n"&gt;alias&lt;/span&gt; &lt;span class="no"&gt;ArticleTrackerHd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Auth&lt;/span&gt;
+
+  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;create&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;conn&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;account"&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;email"&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;email&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;password"&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;password&lt;/span&gt;&lt;span class="p"&gt;}})&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+    &lt;span class="k"&gt;case&lt;/span&gt; &lt;span class="no"&gt;Auth&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;verify&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;email&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;password&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt; &lt;span class="c1"&gt;# &amp;lt;- 1&lt;/span&gt;
+      &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:ok&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;account&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;
+         &lt;span class="n"&gt;conn&lt;/span&gt;
+         &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;sign_in&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;account&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+         &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;render&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;login.json"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+      &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:error&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;
+        &lt;span class="n"&gt;conn&lt;/span&gt;
+        &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;put_status&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;:unprocessable_entity&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;end&lt;/span&gt;
+  &lt;span class="k"&gt;end&lt;/span&gt;
+
+  &lt;span class="k"&gt;defp&lt;/span&gt; &lt;span class="n"&gt;sign_in&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;conn&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;account&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt; &lt;span class="c1"&gt;# &amp;lt;- 2&lt;/span&gt;
+     &lt;span class="n"&gt;conn&lt;/span&gt;
+     &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="no"&gt;Guardian&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Plug&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;api_sign_in&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;account&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+     &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;add_jwt&lt;/span&gt;
+  &lt;span class="k"&gt;end&lt;/span&gt;
+
+  &lt;span class="k"&gt;defp&lt;/span&gt; &lt;span class="n"&gt;add_jwt&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;conn&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt; &lt;span class="c1"&gt;# &amp;lt;- 3&lt;/span&gt;
+    &lt;span class="n"&gt;jwt&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="no"&gt;Guardian&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Plug&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;current_token&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;conn&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;assign&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;conn&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:jwt&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;jwt&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="k"&gt;end&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Create a file named &lt;code&gt;session_view.ex&lt;/code&gt; in &lt;code&gt;web/views/&lt;/code&gt;:&lt;/p&gt;
+&lt;div class="highlight elixir"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4
+5
+6
+7&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="k"&gt;defmodule&lt;/span&gt; &lt;span class="no"&gt;ArticleTrackerHd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;SessionView&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="kn"&gt;use&lt;/span&gt; &lt;span class="no"&gt;ArticleTrackerHd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Web&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:view&lt;/span&gt;
+
+  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;render&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;login.json"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="ss"&gt;jwt:&lt;/span&gt; &lt;span class="n"&gt;jwt&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+    &lt;span class="p"&gt;%{&lt;/span&gt; &lt;span class="ss"&gt;jwt:&lt;/span&gt; &lt;span class="n"&gt;jwt&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+  &lt;span class="k"&gt;end&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;The important parts are are numbered.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;We&amp;rsquo;re using our Auth Module!&lt;/li&gt;
+&lt;li&gt;We&amp;rsquo;re using the Guardian.Plug.api_sign_in function. This will call our GuardianSerializer and add the account to the token.&lt;/li&gt;
+&lt;li&gt;This adds the generated jwt to the &lt;code&gt;conn&lt;/code&gt; so we can use it in our &lt;code&gt;login.json&lt;/code&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Let&amp;rsquo;s test it out!&lt;/p&gt;
+&lt;div class="highlight shell"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+2&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;curl --data &lt;span class="s2"&gt;"account[email]=steven@example.com&amp;amp;account[password]=beef101"&lt;/span&gt; http://localhost:4000/api/log-in
+&lt;span class="c"&gt;# {"jwt":"eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJBY2NvdW50OjEiLCJleHAiOjE0NjY2NTQxMzUsImlhdCI6MTQ2NDA2MjEzNSwiaXNzIjoiQXJ0aWNsZVRyYWNrZXJIZCIsImp0aSI6IjhlOTE2ZjQ2LWM5MmEtNDBhMi1iYzE0LTY3Y2VjMmEyYzI1OSIsInBlbSI6e30sInN1YiI6IkFjY291bnQ6MSIsInR5cCI6InRva2VuIn0.OXK_Hu6uJRo3QClBdY05_xFuUdXK2NS3oTCRNZFd6yhyyl-ub1bjBZQV-flM3J6i7WIh1QUvTV4L7I6x72VADA"}&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;WOOOOOOOOT! Now we just need to make a request with that token, and we should be good to go.&lt;/p&gt;
+
+&lt;h2&gt;User Autorization&lt;/h2&gt;
+
+&lt;p&gt;So we&amp;rsquo;re logged in. Now we want to restrict creating new articles to logged in users, but we want all users to be able to see them.&lt;/p&gt;
+
+&lt;p&gt;Open up the &lt;code&gt;ArticleTrackerHd.ArticleController&lt;/code&gt;.&lt;/p&gt;
+&lt;div class="highlight elixir"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4
+5
+6
+7
+8
+9&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="k"&gt;defmodule&lt;/span&gt; &lt;span class="no"&gt;ArticleTrackerHd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;ArticleController&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="kn"&gt;use&lt;/span&gt; &lt;span class="no"&gt;ArticleTrackerHd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Web&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:controller&lt;/span&gt;
+
+  &lt;span class="n"&gt;alias&lt;/span&gt; &lt;span class="no"&gt;ArticleTrackerHd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Article&lt;/span&gt;
+
+  &lt;span class="n"&gt;plug&lt;/span&gt; &lt;span class="no"&gt;Guardian&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Plug&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;EnsureAuthenticated&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="ss"&gt;handler:&lt;/span&gt; &lt;span class="no"&gt;ArticleTrackerHd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;GuardianErrorHandler&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;  &lt;span class="ow"&gt;when&lt;/span&gt; &lt;span class="n"&gt;action&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="ss"&gt;:create&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:update&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:delete&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="c1"&gt;# &amp;lt;- New line&lt;/span&gt;
+  &lt;span class="n"&gt;plug&lt;/span&gt; &lt;span class="ss"&gt;:scrub_params&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;article"&lt;/span&gt; &lt;span class="ow"&gt;when&lt;/span&gt; &lt;span class="n"&gt;action&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="ss"&gt;:create&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:update&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;span class="c1"&gt;#...&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;This line makes it so only authenticated users can create articles. We&amp;rsquo;ll have to create a new controller for handling guardian errors. If it fails authentication, it will call the &lt;code&gt;unauthenticated&lt;/code&gt; function in the module you give it.&lt;/p&gt;
+
+&lt;p&gt;Put this in &lt;code&gt;web/controllers/guardian_error_handler&lt;/code&gt;:&lt;/p&gt;
+&lt;div class="highlight elixir"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4
+5
+6
+7
+8
+9
+10&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;
+&lt;span class="k"&gt;defmodule&lt;/span&gt; &lt;span class="no"&gt;ArticleTrackerHd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;GuardianErrorHandler&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="kn"&gt;use&lt;/span&gt; &lt;span class="no"&gt;ArticleTrackerHd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Web&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:controller&lt;/span&gt;
+  &lt;span class="n"&gt;alias&lt;/span&gt; &lt;span class="no"&gt;ArticleTrackerHd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;GuardianErrorView&lt;/span&gt;
+  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;unauthenticated&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;conn&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_params&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+      &lt;span class="n"&gt;conn&lt;/span&gt;
+      &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;put_status&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;:forbidden&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+      &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;render&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="no"&gt;GuardianErrorView&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:forbidden&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;end&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;If it fails we want to render a view that returns a JSON message of forbidden. Make a new file in &lt;code&gt;web/views&lt;/code&gt; named &lt;code&gt;guardian_error_view.ex&lt;/code&gt;:&lt;/p&gt;
+&lt;div class="highlight elixir"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4
+5
+6&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="k"&gt;defmodule&lt;/span&gt; &lt;span class="no"&gt;ArticleTrackerHd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;GuardianErrorView&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="kn"&gt;use&lt;/span&gt; &lt;span class="no"&gt;ArticleTrackerHd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Web&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:view&lt;/span&gt;
+  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;render&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;forbidden.json"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_assigns&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+    &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="ss"&gt;message:&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;Forbidden"&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+  &lt;span class="k"&gt;end&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Let&amp;rsquo;s try this out, then get a beer.&lt;/p&gt;
+&lt;div class="highlight shell"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4
+5
+6
+7
+8&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;curl --data &lt;span class="s2"&gt;"account[email]=steven@example.com&amp;amp;account[password]=beef101"&lt;/span&gt; http://localhost:4000/api/log-in
+&lt;span class="c"&gt;# {"jwt":"eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJBY2NvdW50OjEiLCJleHAiOjE0NjY2NTQ2NzUsImlhdCI6MTQ2NDA2MjY3NSwiaXNzIjoiQXJ0aWNsZVRyYWNrZXJIZCIsImp0aSI6IjBjZDNiYWZhLTY4MjYtNGJlNi1hYWM3LTMzZWJkNTAwMzM5NyIsInBlbSI6e30sInN1YiI6IkFjY291bnQ6MSIsInR5cCI6InRva2VuIn0.S3jQkmtia-mlAv0O0u1QZxWr3MFH5IBnG1C_u0Uyjq6-DOA5is3l8tKiI0M83Vfw5ADUi55uXfoRqYRY7EQ-DQ"}&lt;/span&gt;
+curl http://localhost:4000/api/articles
+&lt;span class="c"&gt;# all the articles&lt;/span&gt;
+curl --data &lt;span class="s2"&gt;"article[url]=http://example.com&amp;amp;article[title]=A+Great+one&amp;amp;article[categories]=foo.bar.baz"&lt;/span&gt; http://localhost:4000/api/articles
+&lt;span class="c"&gt;# Forbidden&lt;/span&gt;
+curl --data &lt;span class="s2"&gt;"article[url]=http://example.com&amp;amp;article[title]=A+Great+one&amp;amp;article[categories]=foo.bar.baz"&lt;/span&gt; http://localhost:4000/api/articles --header &lt;span class="s2"&gt;"Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJBY2NvdW50OjEiLCJleHAiOjE0NjY2NTQ2NzUsImlhdCI6MTQ2NDA2MjY3NSwiaXNzIjoiQXJ0aWNsZVRyYWNrZXJIZCIsImp0aSI6IjBjZDNiYWZhLTY4MjYtNGJlNi1hYWM3LTMzZWJkNTAwMzM5NyIsInBlbSI6e30sInN1YiI6IkFjY291bnQ6MSIsInR5cCI6InRva2VuIn0.S3jQkmtia-mlAv0O0u1QZxWr3MFH5IBnG1C_u0Uyjq6-DOA5is3l8tKiI0M83Vfw5ADUi55uXfoRqYRY7EQ-DQ"&lt;/span&gt;
+curl http://localhost:4000/api/articles
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;VICTORY!&lt;/p&gt;
+
+&lt;h2&gt;Quick associations&lt;/h2&gt;
+
+&lt;p&gt;Let&amp;rsquo;s add a reference to users on articles. Then we&amp;rsquo;ll create them and attribute them.&lt;/p&gt;
+
+&lt;p&gt;Run &lt;code&gt;mix ecto.gen.migration add_account_reference_to_article&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Then modify it to say:&lt;/p&gt;
+&lt;div class="highlight elixir"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4
+5
+6
+7
+8
+9&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="k"&gt;defmodule&lt;/span&gt; &lt;span class="no"&gt;ArticleTrackerHd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Repo&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Migrations&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;AddAccountReferenceToArticle&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="kn"&gt;use&lt;/span&gt; &lt;span class="no"&gt;Ecto&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Migration&lt;/span&gt;
+
+  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;change&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+    &lt;span class="n"&gt;alter&lt;/span&gt; &lt;span class="n"&gt;table&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;:articles&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+      &lt;span class="n"&gt;add&lt;/span&gt; &lt;span class="ss"&gt;:account_id&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;references&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;:accounts&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;end&lt;/span&gt;
+  &lt;span class="k"&gt;end&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Wire up the models:
+In &lt;code&gt;article.ex&lt;/code&gt;:&lt;/p&gt;
+&lt;div class="highlight elixir"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4
+5
+6
+7
+8
+9
+10&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;
+  &lt;span class="n"&gt;schema&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;articles"&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+    &lt;span class="n"&gt;field&lt;/span&gt; &lt;span class="ss"&gt;:title&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:string&lt;/span&gt;
+    &lt;span class="n"&gt;field&lt;/span&gt; &lt;span class="ss"&gt;:url&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:string&lt;/span&gt;
+    &lt;span class="n"&gt;field&lt;/span&gt; &lt;span class="ss"&gt;:categories&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:string&lt;/span&gt;
+    &lt;span class="n"&gt;belongs_to&lt;/span&gt; &lt;span class="ss"&gt;:account&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="no"&gt;ArticleTrackerHd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Account&lt;/span&gt; &lt;span class="c1"&gt;# &amp;lt;- New line&lt;/span&gt;
+
+    &lt;span class="n"&gt;timestamps&lt;/span&gt;
+  &lt;span class="k"&gt;end&lt;/span&gt;
+
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;And in &lt;code&gt;account.ex&lt;/code&gt;:&lt;/p&gt;
+&lt;div class="highlight elixir"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4
+5
+6
+7
+8&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="n"&gt;schema&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;accounts"&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="n"&gt;field&lt;/span&gt; &lt;span class="ss"&gt;:email&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:string&lt;/span&gt;
+  &lt;span class="n"&gt;field&lt;/span&gt; &lt;span class="ss"&gt;:password_digest&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:string&lt;/span&gt;
+  &lt;span class="n"&gt;field&lt;/span&gt; &lt;span class="ss"&gt;:password&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:string&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;virtual:&lt;/span&gt; &lt;span class="no"&gt;true&lt;/span&gt;
+  &lt;span class="n"&gt;has_many&lt;/span&gt; &lt;span class="ss"&gt;:articles&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="no"&gt;ArticleTrackerHd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Article&lt;/span&gt; &lt;span class="c1"&gt;# &amp;lt;- New Line&lt;/span&gt;
+
+  &lt;span class="n"&gt;timestamps&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Then in our ArticleController, we need to find the user and create an associated:&lt;/p&gt;
+&lt;div class="highlight elixir"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4
+5
+6
+7&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;create&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;conn&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;article"&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;article_params&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="n"&gt;account&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="no"&gt;Guardian&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Plug&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;current_resource&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;conn&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="c1"&gt;# &amp;lt;- New line&lt;/span&gt;
+  &lt;span class="n"&gt;article&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="no"&gt;Ecto&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;build_assoc&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;account&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:articles&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="c1"&gt;# &amp;lt;- New line&lt;/span&gt;
+  &lt;span class="n"&gt;changeset&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="no"&gt;Article&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;changeset&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;article&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;article_params&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="c1"&gt;# &amp;lt;- New line&lt;/span&gt;
+  &lt;span class="c1"&gt;# ...&lt;/span&gt;
+
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Try it one more time&lt;/p&gt;
+&lt;div class="highlight shell"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;curl --data &lt;span class="s2"&gt;"article[url]=http://example.com&amp;amp;article[title]=A+Great+one&amp;amp;article[categories]=foo.bar.baz"&lt;/span&gt; http://localhost:4000/api/articles --header &lt;span class="s2"&gt;"Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJBY2NvdW50OjEiLCJleHAiOjE0NjY2NTQ2NzUsImlhdCI6MTQ2NDA2MjY3NSwiaXNzIjoiQXJ0aWNsZVRyYWNrZXJIZCIsImp0aSI6IjBjZDNiYWZhLTY4MjYtNGJlNi1hYWM3LTMzZWJkNTAwMzM5NyIsInBlbSI6e30sInN1YiI6IkFjY291bnQ6MSIsInR5cCI6InRva2VuIn0.S3jQkmtia-mlAv0O0u1QZxWr3MFH5IBnG1C_u0Uyjq6-DOA5is3l8tKiI0M83Vfw5ADUi55uXfoRqYRY7EQ-DQ"&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;And now it&amp;rsquo;s all associated.&lt;/p&gt;
+
+&lt;p&gt;&lt;img alt="getinsertpic.com" src="http://media0.giphy.com/media/3puXxCB93ysGA/200.gif" /&gt;&lt;/p&gt;
+
+&lt;h1&gt;Conclusion&lt;/h1&gt;
+
+&lt;p&gt;And that&amp;rsquo;s it! If you&amp;rsquo;re thinking, &amp;ldquo;MAN THAT WAS NUTS!&amp;rdquo;, I agree. A lot of the documentation is hard to find. I&amp;rsquo;m hoping to see more posts from YOU dear reader. Together we can make working with Phoenix and Elixir awesome.&lt;/p&gt;
+
+&lt;p&gt;I hope you find this useful when building Phoenix APIs! If you want to checkout the finished code, &lt;a href="https://github.com/StevenNunez/article_tracker_hd/tree/authentication-blog-finish"&gt;checkout the repo&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Found this interesting? Be sure to share it!&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="https://twitter.com/share" class="twitter-share-button" data-text="User Auth with JWT and Phoenix" data-via="_StevenNunez" data-size="large"&gt;Tweet&lt;/a&gt;&lt;/p&gt;
+
+&lt;script&gt;!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');&lt;/script&gt;
+</content>
+  </entry>
   <entry>
     <title>LTrees in Phoenix</title>
     <link rel="alternate" href="http://blog.url.com/2016/05/22/ltrees-in-phoenix.html"/>
@@ -1688,117 +2403,6 @@ Accept-Language: en-US,en;q=0.8,es-419;q=0.6,es;q=0.4
 &lt;p&gt;Next time, we&amp;rsquo;ll use these tools to build an app. We&amp;rsquo;ll implement multiple routes, create controllers, and use some other really powerful Rack middleware and features.&lt;/p&gt;
 
 &lt;p&gt;Happy Clacking!&lt;/p&gt;
-</content>
-  </entry>
-  <entry>
-    <title>Rails Foreign Key Constraints - The Ugly Way</title>
-    <link rel="alternate" href="http://blog.url.com/2015/06/08/rails-foreign-key-constraints-the-ugly-way.html"/>
-    <id>http://blog.url.com/2015/06/08/rails-foreign-key-constraints-the-ugly-way.html</id>
-    <published>2015-06-08T18:43:00-04:00</published>
-    <updated>2015-06-08T20:07:05-04:00</updated>
-    <author>
-      <name>Article Author</name>
-    </author>
-    <content type="html">&lt;h1&gt;Render unto Caesar&amp;hellip;&lt;/h1&gt;
-
-&lt;p&gt;Let the database do it&amp;rsquo;s job. For a while, Rails development focused on pushing logic into models that would be better suited being put in as a table constraint. Articles like &lt;a href="http://shuber.io/porting-activerecord-validations-to-postgres"&gt;this one&lt;/a&gt; are great at outlining the proper approach. The problem with this is that it&amp;rsquo;s not built into the Rails tools, leaving you writing ugly code in your migrations. Not very ruby-esque.&lt;/p&gt;
-
-&lt;h2&gt;Foreign Keys&lt;/h2&gt;
-
-&lt;p&gt;Databases have a built in way for managing data integrity between 2 tables. &lt;a href="http://en.wikipedia.org/wiki/Foreign_key"&gt;The Foreign Key constraint&lt;/a&gt;. This ensures the value of a foreign key exists in the referenced table.&lt;/p&gt;
-
-&lt;p&gt;Since Rails was created, it relied on SQL, and foreign keys, but never had a way of confirming the &lt;code&gt;id&lt;/code&gt; being referenced existed, shy of adding a model validation.&lt;/p&gt;
-
-&lt;p&gt;Exiting news! Rails 4.2 shipped with foreign key support. You can create migrations that delegate the responsibility directly to the database if your database supports it.&lt;/p&gt;
-
-&lt;p&gt;There are other articles that cover &lt;a href="https://robots.thoughtbot.com/referential-integrity-with-foreign-keys"&gt;some&lt;/a&gt; of the &lt;a href="https://richonrails.com/articles/foreign-keys-in-rails-4-2"&gt;basics&lt;/a&gt;. I wanted to cover something I ran into recently.&lt;/p&gt;
-
-&lt;h2&gt;Learn stuff&lt;/h2&gt;
-
-&lt;p&gt;We&amp;rsquo;re going to model an app that lets you teach and sign up for courses.&lt;/p&gt;
-&lt;div class="highlight plaintext"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
-2
-3&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;User -&amp;gt; Can be both a teacher and a student
-Course -&amp;gt; Belongs to a user by a teacher_id
-Enrollment -&amp;gt; Links a user by a student_id, and a course
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/div&gt;
-
-&lt;h3&gt;Some rails&lt;/h3&gt;
-&lt;div class="highlight shell"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
-2
-3
-4
-5&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;rails new learn_stuff -d postgresql &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="nb"&gt;cd &lt;/span&gt;learn_stuff
-rails g model user name
-rails g model course topic teacher:belongs_to
-rails g model enrollment student:belongs_to course:belongs_to
-rake db:create
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/div&gt;
-
-&lt;p&gt;This sets us up, but when we run &lt;code&gt;rake db:migrate&lt;/code&gt; fireworks start.&lt;/p&gt;
-&lt;div class="highlight plaintext"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;PG::UndefinedTable: ERROR:  relation "teachers" does not exist
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/div&gt;
-
-&lt;p&gt;This makes sense. We don&amp;rsquo;t have a &lt;code&gt;teachers&lt;/code&gt; table. We need to pass the course table some more options.&lt;/p&gt;
-
-&lt;p&gt;Here&amp;rsquo;s our migration as it stands.&lt;/p&gt;
-&lt;div class="highlight ruby"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
-2
-3
-4
-5
-6
-7
-8
-9
-10&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;CreateCourses&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="no"&gt;ActiveRecord&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="no"&gt;Migration&lt;/span&gt;
-  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;change&lt;/span&gt;
-    &lt;span class="n"&gt;create_table&lt;/span&gt; &lt;span class="ss"&gt;:courses&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="o"&gt;|&lt;/span&gt;
-      &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;string&lt;/span&gt; &lt;span class="ss"&gt;:topic&lt;/span&gt;
-      &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;belongs_to&lt;/span&gt; &lt;span class="ss"&gt;:teacher&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;index: &lt;/span&gt;&lt;span class="kp"&gt;true&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;foreign_key: &lt;/span&gt;&lt;span class="kp"&gt;true&lt;/span&gt;
-
-      &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;timestamps&lt;/span&gt; &lt;span class="ss"&gt;null: &lt;/span&gt;&lt;span class="kp"&gt;false&lt;/span&gt;
-    &lt;span class="k"&gt;end&lt;/span&gt;
-  &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/div&gt;
-
-&lt;p&gt;The Rails &lt;a href="https://github.com/rails/rails/blob/7785417984f61a9d5e00416c13b89dce2ee02daf/activerecord/lib/active_record/connection_adapters/abstract/schema_statements.rb#L658"&gt;source&lt;/a&gt; shows that we can&amp;rsquo;t switch the name of table. What would be great is to be able to say something like: &amp;ldquo;OK RAILS, I&amp;rsquo;M GOING TO GIVE YOU A COLUMN NAME BUT IT&amp;rsquo;S NOT THE TABLE NAME FOR THE CONSTRAINT. I&amp;rsquo;LL GIVE YOU MORE INFO LATER. KTHXBAI&amp;rdquo;&lt;/p&gt;
-
-&lt;p&gt;We have to first create the column, THEN add the constraint.&lt;/p&gt;
-&lt;div class="highlight ruby"&gt;&lt;table style="border-spacing: 0"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="gutter gl" style="text-align: right"&gt;&lt;pre class="lineno"&gt;1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11&lt;/pre&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;pre&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;CreateCourses&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="no"&gt;ActiveRecord&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="no"&gt;Migration&lt;/span&gt;
-  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;change&lt;/span&gt;
-    &lt;span class="n"&gt;create_table&lt;/span&gt; &lt;span class="ss"&gt;:courses&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="o"&gt;|&lt;/span&gt;
-      &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;string&lt;/span&gt; &lt;span class="ss"&gt;:topic&lt;/span&gt;
-      &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;belongs_to&lt;/span&gt; &lt;span class="ss"&gt;:teacher&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;index: &lt;/span&gt;&lt;span class="kp"&gt;true&lt;/span&gt;
-
-      &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;timestamps&lt;/span&gt; &lt;span class="ss"&gt;null: &lt;/span&gt;&lt;span class="kp"&gt;false&lt;/span&gt;
-    &lt;span class="k"&gt;end&lt;/span&gt;
-    &lt;span class="n"&gt;add_foreign_key&lt;/span&gt; &lt;span class="ss"&gt;:courses&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:users&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;column: :teacher_id&lt;/span&gt;
-  &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/div&gt;
-
-&lt;p&gt;The rest of the source code, including the associations for all of this stuff can be found &lt;a href="https://github.com/StevenNunez/learn_stuff"&gt;here&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3&gt;Meh&lt;/h3&gt;
-
-&lt;p&gt;I wish this was a bit smarter, off to work on a pull request.&lt;/p&gt;
 </content>
   </entry>
 </feed>

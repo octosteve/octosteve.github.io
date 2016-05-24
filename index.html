@@ -33,6 +33,17 @@
 
 
     <article>
+      <h1 class="article-title"><a href="/2016/05/23/guard-this-with-your-life-or-authenticating-apis-with-guardian.html">Guard this with your life... Or authenticating APIs with Guardian</a></h1>
+      <h1>Authentication in Phoenix</h1>
+
+<p>Conceptually, authentication isn’t hard. You collect a username and password, check it against your database and if it matches, WIN!</p>
+
+<p><img alt="getinsertpic.com" src="http://media2.giphy.com/media/3BlN2bxcw0l5S/200.gif"></p>
+
+<p>… then you get into the business of persisting that information across requests, not to mention all of the security concerns of storing a password safely. In this post we’ll be covering how to authenticate users, provide them with a token, and use that token on subsequent requests to identify our user. There are a TON of moving parts...</p>
+      <a href="/2016/05/23/guard-this-with-your-life-or-authenticating-apis-with-guardian.html">Read more…</a>
+    </article>
+    <article>
       <h1 class="article-title"><a href="/2016/05/22/ltrees-in-phoenix.html">LTrees in Phoenix</a></h1>
       <h1>Article Tracker</h1>
 
@@ -195,17 +206,6 @@ is that you can store articles in a hierarchy instead of a bunch loose tags like
 <p>From this signature, you might think you could just give an argument to <code>find</code> and it will be returned if no value is found. But that’s when disaster strikes...</p>
       <a href="/2015/02/22/let-me-find-out.html">Read more…</a>
     </article>
-    <article>
-      <h1 class="article-title"><a href="/2014/11/25/next-generation-is-better-i-promise.html">Next generation is better. I promise</a></h1>
-      <h1>Yey!….?</h1>
-
-<p>In addition to my regular hostility towards programming, I occasionally get really excited about stuff. When I heard that <a href="http://blog.chromium.org/2014/10/chrome-39-beta-js-generators-animation.html">Chrome 39</a> had native support for Generators, I got really excited… until I realized I didn’t really know what that meant.</p>
-
-<h2>Everything but the kitchen sync</h2>
-
-<p><a href="git.io/es6features">ES6 Features</a> are sneaking into <a href="http://kangax.github.io/compat-table/es6/">browsers</a> already. A lot of features are around dealing with asynchronous code. Generators are really cool in that they let you pause a functions execution until all <code>yield</code> statements...</p>
-      <a href="/2014/11/25/next-generation-is-better-i-promise.html">Read more…</a>
-    </article>
 
         <p><a href="/page/2/">Next page</a></p>
 
@@ -215,6 +215,7 @@ is that you can store articles in a hierarchy instead of a bunch loose tags like
     <section class="recent">
       <h2>Recent Articles</h2>
       <ol class="articles">
+            <li><a href="/2016/05/23/guard-this-with-your-life-or-authenticating-apis-with-guardian.html">Guard this with your life... Or authenticating APIs with Guardian</a>
             <li><a href="/2016/05/22/ltrees-in-phoenix.html">LTrees in Phoenix</a>
             <li><a href="/2016/04/26/processes-in-elixir.html">Processes in Elixir</a>
             <li><a href="/2016/02/24/hey-watch-it-or-how-to-monitor-files-in-elixir.html">Hey! Watch it!...or how to monitor files in Elixir</a>
@@ -224,7 +225,6 @@ is that you can store articles in a hierarchy instead of a bunch loose tags like
             <li><a href="/2015/05/28/working-with-templates-in-ruby-erb.html">Working with Templates in Ruby ERB</a>
             <li><a href="/2015/05/20/elixir-tuples-vs-lists.html">Elixir - Tuples vs Lists</a>
             <li><a href="/2015/02/22/let-me-find-out.html">Let me find out</a>
-            <li><a href="/2014/11/25/next-generation-is-better-i-promise.html">Next generation is better. I promise</a>
       </ol>
     </section>
 
@@ -237,20 +237,23 @@ is that you can store articles in a hierarchy instead of a bunch loose tags like
             <li><a href="/tags/ltrees.html">LTrees</a> (1)</a></li>
             <li><a href="/tags/phoenix.html">Phoenix</a> (1)</a></li>
             <li><a href="/tags/processes.html">Processes</a> (1)</a></li>
+            <li><a href="/tags/authentication.html">authentication</a> (1)</a></li>
             <li><a href="/tags/basics.html">basics</a> (1)</a></li>
             <li><a href="/tags/beginner.html">beginner</a> (1)</a></li>
             <li><a href="/tags/closures.html">closures</a> (1)</a></li>
             <li><a href="/tags/components-of-programming.html">components of programming</a> (1)</a></li>
-            <li><a href="/tags/elixir.html">elixir</a> (2)</a></li>
+            <li><a href="/tags/elixir.html">elixir</a> (3)</a></li>
             <li><a href="/tags/enumerable.html">enumerable</a> (1)</a></li>
             <li><a href="/tags/file-watchers.html">file watchers</a> (1)</a></li>
             <li><a href="/tags/find.html">find</a> (1)</a></li>
             <li><a href="/tags/fs.html">fs</a> (1)</a></li>
             <li><a href="/tags/fundamentals.html">fundamentals</a> (1)</a></li>
             <li><a href="/tags/generators.html">generators</a> (1)</a></li>
+            <li><a href="/tags/guardian.html">guardian</a> (1)</a></li>
             <li><a href="/tags/javascript.html">javascript</a> (3)</a></li>
             <li><a href="/tags/learning.html">learning</a> (1)</a></li>
             <li><a href="/tags/navigation.html">navigation</a> (1)</a></li>
+            <li><a href="/tags/phoenix.html">phoenix</a> (1)</a></li>
             <li><a href="/tags/polyglot.html">polyglot</a> (1)</a></li>
             <li><a href="/tags/postgresql.html">postgresql</a> (1)</a></li>
             <li><a href="/tags/promises.html">promises</a> (1)</a></li>
@@ -267,7 +270,7 @@ is that you can store articles in a hierarchy instead of a bunch loose tags like
       <h2>By Month</h2>
       <ol>
             <li><a href="/2016/05.html">May 2016</a>
-              (1)</a></li>
+              (2)</a></li>
             <li><a href="/2016/04.html">April 2016</a>
               (1)</a></li>
             <li><a href="/2016/02.html">February 2016</a>
