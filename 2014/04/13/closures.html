@@ -65,7 +65,7 @@ meant. I just knew it was true! </p>
 
 <p>In JavaScript, you can&rsquo;t hide from closures though. If you&rsquo;re confronted with a
 piece of code like this, you&rsquo;ll need to understand closures:</p>
-<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -74,7 +74,8 @@ piece of code like this, you&rsquo;ll need to understand closures:</p>
 7
 8
 9
-10</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">step_by</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">step</span><span class="p">){</span>                                                       
+10
+</pre></td><td class="rouge-code"><pre><span class="kd">var</span> <span class="nx">step_by</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">step</span><span class="p">){</span>                                                       
   <span class="kd">var</span> <span class="nx">total</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>                                                                   
   <span class="k">return</span> <span class="kd">function</span><span class="p">(){</span>                                                               
     <span class="k">return</span> <span class="nx">total</span> <span class="o">+=</span> <span class="nx">step</span>                                                           
@@ -85,8 +86,7 @@ piece of code like this, you&rsquo;ll need to understand closures:</p>
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">step_by_7</span><span class="p">());</span> <span class="c1">// 7</span>
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">step_by_7</span><span class="p">());</span> <span class="c1">// 14</span>
 </pre></td></tr></tbody></table>
-</div>
-
+</code></pre>
 <h3>What is a closure?</h3>
 
 <blockquote cite='http://speakingjs.com/es5/ch01.html#_closures'>A closure is a 
@@ -115,22 +115,22 @@ started devising some experiments.</p>
 few experiments.</p>
 
 <h3>Experiment 1</h3>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
-4</pre></td><td class="code"><pre><span class="n">x</span> <span class="o">=</span> <span class="mi">5</span>
+4
+</pre></td><td class="rouge-code"><pre><span class="n">x</span> <span class="o">=</span> <span class="mi">5</span>
 <span class="n">my_lambda</span> <span class="o">=</span> <span class="o">-&gt;</span> <span class="p">{</span> <span class="n">x</span> <span class="o">+=</span> <span class="mi">5</span> <span class="p">}</span>
 <span class="n">my_lambda</span><span class="p">.</span><span class="nf">call</span> <span class="c1">#=&gt; 10</span>
 <span class="n">my_lambda</span><span class="p">.</span><span class="nf">call</span> <span class="c1">#=&gt; 15</span>
 </pre></td></tr></tbody></table>
-</div>
-
+</code></pre>
 <p>Cool. lambdas can call things around them. Setting the variable <code>x</code> and the
 lambda in the same scope allows you to call <code>x</code> from inside the lambda without
 passing it in. Let&rsquo;s try something else.</p>
 
 <h3>Experiment 2</h3>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -139,7 +139,8 @@ passing it in. Let&rsquo;s try something else.</p>
 7
 8
 9
-10</pre></td><td class="code"><pre><span class="n">x</span> <span class="o">=</span> <span class="mi">5</span>
+10
+</pre></td><td class="rouge-code"><pre><span class="n">x</span> <span class="o">=</span> <span class="mi">5</span>
 <span class="n">my_lambda</span> <span class="o">=</span> <span class="o">-&gt;</span> <span class="p">{</span> <span class="n">x</span> <span class="o">+=</span> <span class="mi">5</span> <span class="p">}</span>
 
 <span class="k">def</span> <span class="nf">my_method</span><span class="p">(</span><span class="n">closure</span><span class="p">)</span>
@@ -150,13 +151,12 @@ passing it in. Let&rsquo;s try something else.</p>
 <span class="n">my_method</span><span class="p">(</span><span class="n">my_lambda</span><span class="p">)</span> <span class="c1">#=&gt; 10</span>
 <span class="n">my_method</span><span class="p">(</span><span class="n">my_lambda</span><span class="p">)</span> <span class="c1">#=&gt; 15</span>
 </pre></td></tr></tbody></table>
-</div>
-
+</code></pre>
 <p>WHOA! It totally ignored the <code>x</code> defined in the method! Now I started
 connecting dots. That&rsquo;s why stuff like <code>instance_eval</code> exists. If we want to
 change the context of execution for the block to be the method&rsquo;s, we&rsquo;ll need to
 use <code>instance_eval</code> and pass it the block.</p>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -172,7 +172,8 @@ use <code>instance_eval</code> and pass it the block.</p>
 14
 15
 16
-17</pre></td><td class="code"><pre><span class="n">x</span> <span class="o">=</span> <span class="mi">5</span>
+17
+</pre></td><td class="rouge-code"><pre><span class="n">x</span> <span class="o">=</span> <span class="mi">5</span>
 <span class="n">my_lambda</span> <span class="o">=</span> <span class="o">-&gt;</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="p">{</span> <span class="n">obj</span><span class="p">.</span><span class="nf">x</span> <span class="o">+=</span> <span class="mi">5</span> <span class="p">}</span>
 
 <span class="k">class</span> <span class="nc">MyClass</span>
@@ -190,8 +191,7 @@ use <code>instance_eval</code> and pass it the block.</p>
 <span class="n">my_class</span><span class="p">.</span><span class="nf">my_method</span><span class="p">(</span><span class="n">my_lambda</span><span class="p">)</span> <span class="c1">#=&gt; 371297</span>
 <span class="n">my_class</span><span class="p">.</span><span class="nf">my_method</span><span class="p">(</span><span class="n">my_lambda</span><span class="p">)</span> <span class="c1">#=&gt; 371302</span>
 </pre></td></tr></tbody></table>
-</div>
-
+</code></pre>
 <p><code>instance_eval</code> yields <code>self</code> to the lambda. Since <code>x += 5</code> is short hand for 
 <code>x = x + 5</code> we needed an accessor.</p>
 
@@ -201,7 +201,7 @@ use <code>instance_eval</code> and pass it the block.</p>
 didn&rsquo;t really bloom in ruby, but found a home in JavaScript.</p>
 
 <p>The code from earlier is crystal clear now.</p>
-<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -218,7 +218,8 @@ didn&rsquo;t really bloom in ruby, but found a home in JavaScript.</p>
 15
 16
 17
-18</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">step_by</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">step</span><span class="p">){</span>                                                       
+18
+</pre></td><td class="rouge-code"><pre><span class="kd">var</span> <span class="nx">step_by</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">step</span><span class="p">){</span>                                                       
   <span class="c1">// setup empty total value. This gets reset everytime you call the step_by</span>
   <span class="c1">// function</span>
   <span class="kd">var</span> <span class="nx">total</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>                                                                   
@@ -237,28 +238,27 @@ didn&rsquo;t really bloom in ruby, but found a home in JavaScript.</p>
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">step_by_5</span><span class="p">());</span> <span class="c1">// 5</span>
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">step_by_5</span><span class="p">());</span> <span class="c1">// 10</span>
 </pre></td></tr></tbody></table>
-</div>
-
+</code></pre>
 <p>Each returned function has its own copy of <code>total</code> so you could do something
 like this and they won&rsquo;t interfere with each other:</p>
-<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
 5
-6</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">step_by_7</span> <span class="o">=</span> <span class="nx">step_by</span><span class="p">(</span><span class="mi">7</span><span class="p">);</span> 
+6
+</pre></td><td class="rouge-code"><pre><span class="kd">var</span> <span class="nx">step_by_7</span> <span class="o">=</span> <span class="nx">step_by</span><span class="p">(</span><span class="mi">7</span><span class="p">);</span> 
 <span class="kd">var</span> <span class="nx">step_by_5</span> <span class="o">=</span> <span class="nx">step_by</span><span class="p">(</span><span class="mi">5</span><span class="p">);</span> 
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">step_by_7</span><span class="p">());</span> <span class="c1">// 7</span>
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">step_by_5</span><span class="p">());</span> <span class="c1">// 5</span>
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">step_by_7</span><span class="p">());</span> <span class="c1">// 14</span>
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">step_by_5</span><span class="p">());</span> <span class="c1">// 10</span>
 </pre></td></tr></tbody></table>
-</div>
-
+</code></pre>
 <h2>For the curious</h2>
 
 <p>Here&rsquo;s the same code in ruby</p>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -271,7 +271,8 @@ like this and they won&rsquo;t interfere with each other:</p>
 11
 12
 13
-14</pre></td><td class="code"><pre><span class="n">step_by</span> <span class="o">=</span> <span class="o">-&gt;</span><span class="p">(</span><span class="n">step</span><span class="p">)</span> <span class="k">do</span>                                                           
+14
+</pre></td><td class="rouge-code"><pre><span class="n">step_by</span> <span class="o">=</span> <span class="o">-&gt;</span><span class="p">(</span><span class="n">step</span><span class="p">)</span> <span class="k">do</span>                                                           
   <span class="n">total</span> <span class="o">=</span> <span class="mi">0</span>                                                                     
   <span class="o">-&gt;</span> <span class="p">{</span> <span class="n">total</span> <span class="o">+=</span> <span class="n">step</span> <span class="p">}</span>                                                          
 <span class="k">end</span>                                                                             
@@ -286,8 +287,7 @@ like this and they won&rsquo;t interfere with each other:</p>
 <span class="nb">puts</span> <span class="n">step_by_5</span><span class="p">.</span><span class="nf">call</span> <span class="c1">#=&gt; 10                                                      </span>
 <span class="nb">puts</span> <span class="n">step_by_5</span><span class="p">.</span><span class="nf">call</span> <span class="c1">#=&gt; 15 </span>
 </pre></td></tr></tbody></table>
-</div>
-
+</code></pre>
 <p>Currying would work in this case too, but that&rsquo;s another blog post&hellip;</p>
 
 <h2>Conclusion</h2>
@@ -320,6 +320,7 @@ about it I&rsquo;m excited to explore.</p>
     <section class="recent">
       <h2>Recent Articles</h2>
       <ol class="articles">
+            <li><a href="/2016/08/24/learn-to-program-with-elixir.html">Learn to Program with Elixir</a>
             <li><a href="/2016/05/23/guard-this-with-your-life-or-authenticating-apis-with-guardian.html">Guard this with your life... Or authenticating APIs with Guardian</a>
             <li><a href="/2016/05/22/ltrees-in-phoenix.html">LTrees in Phoenix</a>
             <li><a href="/2016/04/26/processes-in-elixir.html">Processes in Elixir</a>
@@ -329,19 +330,21 @@ about it I&rsquo;m excited to explore.</p>
             <li><a href="/2015/06/08/rails-foreign-key-constraints-the-ugly-way.html">Rails Foreign Key Constraints - The Ugly Way</a>
             <li><a href="/2015/05/28/working-with-templates-in-ruby-erb.html">Working with Templates in Ruby ERB</a>
             <li><a href="/2015/05/20/elixir-tuples-vs-lists.html">Elixir - Tuples vs Lists</a>
-            <li><a href="/2015/02/22/let-me-find-out.html">Let me find out</a>
       </ol>
     </section>
 
     <section class="tags">
       <h2>Tags</h2>
       <ol>
+            <li><a href="/tags/beginner.html">Beginner</a> (1)</a></li>
             <li><a href="/tags/concurrency.html">Concurrency</a> (1)</a></li>
             <li><a href="/tags/ecto.html">Ecto</a> (1)</a></li>
-            <li><a href="/tags/elixir.html">Elixir</a> (2)</a></li>
+            <li><a href="/tags/elixir.html">Elixir</a> (3)</a></li>
             <li><a href="/tags/ltrees.html">LTrees</a> (1)</a></li>
+            <li><a href="/tags/learn-to-program.html">Learn to Program</a> (1)</a></li>
             <li><a href="/tags/phoenix.html">Phoenix</a> (1)</a></li>
             <li><a href="/tags/processes.html">Processes</a> (1)</a></li>
+            <li><a href="/tags/random-thoughts.html">Random Thoughts</a> (1)</a></li>
             <li><a href="/tags/authentication.html">authentication</a> (1)</a></li>
             <li><a href="/tags/basics.html">basics</a> (1)</a></li>
             <li><a href="/tags/beginner.html">beginner</a> (1)</a></li>
@@ -373,6 +376,8 @@ about it I&rsquo;m excited to explore.</p>
     <section class="by-month">
       <h2>By Month</h2>
       <ol>
+            <li><a href="/2016/08.html">August 2016</a>
+              (1)</a></li>
             <li><a href="/2016/05.html">May 2016</a>
               (2)</a></li>
             <li><a href="/2016/04.html">April 2016</a>

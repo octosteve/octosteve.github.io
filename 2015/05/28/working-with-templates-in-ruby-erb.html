@@ -42,25 +42,25 @@
 <h3>Some Basic ERB</h3>
 
 <p>Here&rsquo;s how we&rsquo;d render a simple erb template.</p>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
-3</pre></td><td class="code"><pre><span class="nb">require</span> <span class="s1">'erb'</span>
+3
+</pre></td><td class="rouge-code"><pre><span class="nb">require</span> <span class="s1">'erb'</span>
 <span class="n">template</span> <span class="o">=</span> <span class="s2">"1 and 1 is &lt;%= 1 + 1 %&gt;"</span>
 <span class="no">ERB</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">template</span><span class="p">).</span><span class="nf">result</span>
 </pre></td></tr></tbody></table>
-</div>
-
+</code></pre>
 <p>This returns the interpreted string. If we try to use the <code>yield</code> keyword, we&rsquo;ll run into a bit of a problem.</p>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
-3</pre></td><td class="code"><pre><span class="nb">require</span> <span class="s1">'erb'</span>
+3
+</pre></td><td class="rouge-code"><pre><span class="nb">require</span> <span class="s1">'erb'</span>
 <span class="n">template</span> <span class="o">=</span> <span class="s2">"&lt;%= yield %&gt;"</span>
 <span class="no">ERB</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">template</span><span class="p">).</span><span class="nf">result</span> <span class="c1">#=&gt; LocalJumpError: no block given (yield)</span>
 </pre></td></tr></tbody></table>
-</div>
-
+</code></pre>
 <p>Eek! No bueno. You might be thinking, &ldquo;Well, you have to give a block to&hellip; something&rdquo;. Good guess, but wrong.</p>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -68,7 +68,8 @@
 6
 7
 8
-9</pre></td><td class="code"><pre><span class="nb">require</span> <span class="s1">'erb'</span>
+9
+</pre></td><td class="rouge-code"><pre><span class="nb">require</span> <span class="s1">'erb'</span>
 <span class="n">template</span> <span class="o">=</span> <span class="s2">"&lt;%= yield %&gt;"</span>
 <span class="no">ERB</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">template</span><span class="p">).</span><span class="nf">result</span> <span class="k">do</span>
   <span class="s2">"HERE"</span>
@@ -78,8 +79,7 @@
   <span class="s2">"HERE"</span>
 <span class="k">end</span><span class="p">.</span><span class="nf">result</span>
 </pre></td></tr></tbody></table>
-</div>
-
+</code></pre>
 <p>All sorts of crazy happens.</p>
 
 <h3>Defining a Renderer</h3>
@@ -87,7 +87,7 @@
 <p>ERB does come with a curious set of methods that let you add the current context of the ERB instance (stuff like the template, variables, all that stuff), to another object.</p>
 
 <p>That looks like this:</p>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -103,7 +103,8 @@
 14
 15
 16
-17</pre></td><td class="code"><pre><span class="nb">require</span> <span class="s1">'erb'</span>
+17
+</pre></td><td class="rouge-code"><pre><span class="nb">require</span> <span class="s1">'erb'</span>
 <span class="c1"># create a container for our new method</span>
 <span class="k">class</span> <span class="nc">LayoutRenderer</span>
 <span class="k">end</span>
@@ -121,12 +122,11 @@
 <span class="k">end</span>
 <span class="n">result</span> <span class="c1"># =&gt; "Before I'm somewhere in the middle After"</span>
 </pre></td></tr></tbody></table>
-</div>
-
+</code></pre>
 <p>Cool! Now it&rsquo;s a matter of rendering another template inside of it. We&rsquo;ll need a few files:</p>
 
 <p>A layout:</p>
-<div class="highlight html"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<pre class="highlight html"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -136,7 +136,8 @@
 8
 9
 10
-11</pre></td><td class="code"><pre>  <span class="cp">&lt;!DOCTYPE html&gt;</span>
+11
+</pre></td><td class="rouge-code"><pre>  <span class="cp">&lt;!DOCTYPE html&gt;</span>
   <span class="nt">&lt;html</span> <span class="na">lang=</span><span class="s">"en"</span><span class="nt">&gt;</span>
   <span class="nt">&lt;head&gt;</span>
     <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">"UTF-8"</span><span class="nt">&gt;</span>
@@ -148,19 +149,18 @@
   <span class="nt">&lt;/body&gt;</span>
   <span class="nt">&lt;/html&gt;</span>
 </pre></td></tr></tbody></table>
-</div>
-
+</code></pre>
 <p>An index file:</p>
-<div class="highlight html"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<pre class="highlight html"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
-3</pre></td><td class="code"><pre><span class="nt">&lt;p&gt;</span>
+3
+</pre></td><td class="rouge-code"><pre><span class="nt">&lt;p&gt;</span>
   I'm in a template
 <span class="nt">&lt;/p&gt;</span>
 </pre></td></tr></tbody></table>
-</div>
-
+</code></pre>
 <p>And our renderer code:</p>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -177,7 +177,8 @@
 15
 16
 17
-18</pre></td><td class="code"><pre><span class="nb">require</span> <span class="s1">'erb'</span>
+18
+</pre></td><td class="rouge-code"><pre><span class="nb">require</span> <span class="s1">'erb'</span>
 
 <span class="k">class</span> <span class="nc">LayoutRenderer</span>
 <span class="k">end</span>
@@ -196,17 +197,16 @@
 
 <span class="nb">puts</span> <span class="n">result</span>
 </pre></td></tr></tbody></table>
-</div>
-
+</code></pre>
 <p>NOTE: If you&rsquo;re playing with this and try to <code>puts</code> this line&hellip;</p>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
-3</pre></td><td class="code"><pre><span class="nb">puts</span> <span class="no">LayoutRenderer</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class="nf">render</span> <span class="k">do</span>
+3
+</pre></td><td class="rouge-code"><pre><span class="nb">puts</span> <span class="no">LayoutRenderer</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class="nf">render</span> <span class="k">do</span>
   <span class="n">inner</span><span class="p">.</span><span class="nf">result</span>
 <span class="k">end</span>
 </pre></td></tr></tbody></table>
-</div>
-
+</code></pre>
 <p>&hellip; you&rsquo;ll get some weird issue. I think it&rsquo;s trying to finish the render before loading the block.</p>
 
 <h2>Final Thoughts</h2>
@@ -234,6 +234,7 @@
     <section class="recent">
       <h2>Recent Articles</h2>
       <ol class="articles">
+            <li><a href="/2016/08/24/learn-to-program-with-elixir.html">Learn to Program with Elixir</a>
             <li><a href="/2016/05/23/guard-this-with-your-life-or-authenticating-apis-with-guardian.html">Guard this with your life... Or authenticating APIs with Guardian</a>
             <li><a href="/2016/05/22/ltrees-in-phoenix.html">LTrees in Phoenix</a>
             <li><a href="/2016/04/26/processes-in-elixir.html">Processes in Elixir</a>
@@ -243,19 +244,21 @@
             <li><a href="/2015/06/08/rails-foreign-key-constraints-the-ugly-way.html">Rails Foreign Key Constraints - The Ugly Way</a>
             <li><a href="/2015/05/28/working-with-templates-in-ruby-erb.html">Working with Templates in Ruby ERB</a>
             <li><a href="/2015/05/20/elixir-tuples-vs-lists.html">Elixir - Tuples vs Lists</a>
-            <li><a href="/2015/02/22/let-me-find-out.html">Let me find out</a>
       </ol>
     </section>
 
     <section class="tags">
       <h2>Tags</h2>
       <ol>
+            <li><a href="/tags/beginner.html">Beginner</a> (1)</a></li>
             <li><a href="/tags/concurrency.html">Concurrency</a> (1)</a></li>
             <li><a href="/tags/ecto.html">Ecto</a> (1)</a></li>
-            <li><a href="/tags/elixir.html">Elixir</a> (2)</a></li>
+            <li><a href="/tags/elixir.html">Elixir</a> (3)</a></li>
             <li><a href="/tags/ltrees.html">LTrees</a> (1)</a></li>
+            <li><a href="/tags/learn-to-program.html">Learn to Program</a> (1)</a></li>
             <li><a href="/tags/phoenix.html">Phoenix</a> (1)</a></li>
             <li><a href="/tags/processes.html">Processes</a> (1)</a></li>
+            <li><a href="/tags/random-thoughts.html">Random Thoughts</a> (1)</a></li>
             <li><a href="/tags/authentication.html">authentication</a> (1)</a></li>
             <li><a href="/tags/basics.html">basics</a> (1)</a></li>
             <li><a href="/tags/beginner.html">beginner</a> (1)</a></li>
@@ -287,6 +290,8 @@
     <section class="by-month">
       <h2>By Month</h2>
       <ol>
+            <li><a href="/2016/08.html">August 2016</a>
+              (1)</a></li>
             <li><a href="/2016/05.html">May 2016</a>
               (2)</a></li>
             <li><a href="/2016/04.html">April 2016</a>

@@ -34,18 +34,18 @@
     <h2>File watchers and Elixir</h2>
 
 <p>I&rsquo;m working on a feature that reloads a config file if the file is updated. The easiest way I could figure out was to watch the file, and reload the code. Thinking in JavaScript, I&rsquo;d expect something like:</p>
-<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
-4</pre></td><td class="code"><pre><span class="c1">// fake</span>
+4
+</pre></td><td class="rouge-code"><pre><span class="c1">// fake</span>
 <span class="nx">Dir</span><span class="p">.</span><span class="nx">watch</span><span class="p">(</span><span class="s1">'configs/'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">changedFile</span><span class="p">){</span>
-  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="err">`</span><span class="nx">$</span><span class="p">{</span><span class="nx">changedFile</span><span class="p">}</span> <span class="nx">was</span> <span class="nx">updated</span><span class="err">`</span><span class="p">);</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">`</span><span class="p">${</span><span class="nx">changedFile</span><span class="p">}</span><span class="s2"> was updated`</span><span class="p">);</span>
 <span class="p">})</span>
 </pre></td></tr></tbody></table>
-</div>
-
+</code></pre>
 <p>But if you&rsquo;ve been working with Elixir for a bit, you&rsquo;ll know there&rsquo;s gonna be a whole bunch of message passing to get this working. In the end, we wind up with something like:</p>
-<div class="highlight elixir"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -53,7 +53,8 @@
 6
 7
 8
-9</pre></td><td class="code"><pre><span class="c1"># Starting the process</span>
+9
+</pre></td><td class="rouge-code"><pre><span class="c1"># Starting the process</span>
 <span class="ss">:fs</span><span class="o">.</span><span class="n">start_link</span><span class="p">(</span><span class="ss">:my_watcher</span><span class="p">,</span> <span class="no">Path</span><span class="o">.</span><span class="n">absname</span><span class="p">(</span><span class="sd">"</span><span class="s2">config"</span><span class="p">))</span>
 <span class="c1"># Subscribing `self` to receive events.</span>
 <span class="ss">:fs</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="ss">:my_watcher</span><span class="p">)</span>
@@ -63,8 +64,7 @@
    <span class="no">IO</span><span class="o">.</span><span class="n">puts</span><span class="p">(</span><span class="sd">"</span><span class="si">#{</span><span class="n">changedFile</span><span class="si">}</span><span class="s2"> was updated"</span><span class="p">)</span>
 <span class="k">end</span>
 </pre></td></tr></tbody></table>
-</div>
-
+</code></pre>
 <h2>Getting Started and the FS library</h2>
 
 <p>I picked the <code>fs</code> library since it&rsquo;s what Phoenix uses. In this post, we&rsquo;ll be using <a href="https://github.com/synrc/fs/tree/812449edbf4c756c54ed2373e1c7353fe74c036a">master </a> in a mix project. Follow along!</p>
@@ -72,61 +72,61 @@
 <h3>A new project!</h3>
 
 <p>Create a new mix project with <code>mix new watch_it</code>, and add fs to your dependencies in mix.exs.</p>
-<div class="highlight elixir"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
-5</pre></td><td class="code"><pre><span class="c1">#...</span>
+5
+</pre></td><td class="rouge-code"><pre><span class="c1">#...</span>
 <span class="k">defp</span> <span class="n">deps</span> <span class="k">do</span>
   <span class="p">[{</span><span class="ss">:fs</span><span class="p">,</span> <span class="ss">github:</span> <span class="sd">"</span><span class="s2">synrc/fs"</span><span class="p">}]</span>
 <span class="k">end</span>
 <span class="c1">#...</span>
 </pre></td></tr></tbody></table>
-</div>
-
+</code></pre>
 <p>And start the <code>fs</code> application with:</p>
-<div class="highlight elixir"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
-3</pre></td><td class="code"><pre><span class="k">def</span> <span class="n">application</span> <span class="k">do</span>
+3
+</pre></td><td class="rouge-code"><pre><span class="k">def</span> <span class="n">application</span> <span class="k">do</span>
   <span class="p">[</span><span class="ss">applications:</span> <span class="p">[</span><span class="ss">:logger</span><span class="p">,</span> <span class="ss">:fs</span><span class="p">]]</span>
 <span class="k">end</span>
 </pre></td></tr></tbody></table>
-</div>
-
+</code></pre>
 <p>Then install everything with <code>mix deps.get</code></p>
 
 <p>And kick the tires in <code>iex -S mix</code> (this will compile a bunch).</p>
-<div class="highlight elixir"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
-5</pre></td><td class="code"><pre><span class="ss">:fs</span><span class="o">.</span><span class="n">start_link</span><span class="p">(</span><span class="ss">:my_watcher</span><span class="p">,</span> <span class="no">Path</span><span class="o">.</span><span class="n">absname</span><span class="p">(</span><span class="sd">"</span><span class="s2">config"</span><span class="p">))</span>
+5
+</pre></td><td class="rouge-code"><pre><span class="ss">:fs</span><span class="o">.</span><span class="n">start_link</span><span class="p">(</span><span class="ss">:my_watcher</span><span class="p">,</span> <span class="no">Path</span><span class="o">.</span><span class="n">absname</span><span class="p">(</span><span class="sd">"</span><span class="s2">config"</span><span class="p">))</span>
 <span class="ss">:fs</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="ss">:my_watcher</span><span class="p">)</span>
 <span class="n">flush</span>
 <span class="c1"># {#PID&lt;0.129.0&gt;, {:fs, :file_event},</span>
 <span class="c1"># {'/Users/StevenNunez/code/watch_it/config/fake_config.exs', [:created]}}</span>
 </pre></td></tr></tbody></table>
-</div>
-
+</code></pre>
 <p><strong>I don&rsquo;t know about you, but I&rsquo;m excited.</strong> What happened?
 <code>:fs.start_link(:my_watcher, Path.absname(&quot;config&quot;))</code> created a process that watches a directory for changes. We give the process a reference of <code>:my_watcher</code>. We&rsquo;ll use it later. The next line is where the magic is.
 <code>:fs.subscribe(:my_watcher)</code> finds the <code>:my_watcher</code> process, then notifies <code>self</code> whenever a file changes.</p>
 
 <p>We can add a bit of pattern matching to make this nicer. (Make sure you&rsquo;re exiting <code>iex -S mix</code> between examples)</p>
-<div class="highlight elixir"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
 5
-6</pre></td><td class="code"><pre><span class="ss">:fs</span><span class="o">.</span><span class="n">start_link</span><span class="p">(</span><span class="ss">:my_watcher</span><span class="p">,</span> <span class="no">Path</span><span class="o">.</span><span class="n">absname</span><span class="p">(</span><span class="sd">"</span><span class="s2">config"</span><span class="p">))</span>
+6
+</pre></td><td class="rouge-code"><pre><span class="ss">:fs</span><span class="o">.</span><span class="n">start_link</span><span class="p">(</span><span class="ss">:my_watcher</span><span class="p">,</span> <span class="no">Path</span><span class="o">.</span><span class="n">absname</span><span class="p">(</span><span class="sd">"</span><span class="s2">config"</span><span class="p">))</span>
 <span class="ss">:fs</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="ss">:my_watcher</span><span class="p">)</span>
 <span class="k">receive</span> <span class="k">do</span>
   <span class="p">{</span><span class="n">_watcher_process</span><span class="p">,</span> <span class="p">{</span><span class="ss">:fs</span><span class="p">,</span> <span class="ss">:file_event</span><span class="p">},</span> <span class="p">{</span><span class="n">changedFile</span><span class="p">,</span> <span class="n">_type</span><span class="p">}}</span> <span class="o">-&gt;</span>
    <span class="no">IO</span><span class="o">.</span><span class="n">puts</span><span class="p">(</span><span class="sd">"</span><span class="si">#{</span><span class="n">changedFile</span><span class="si">}</span><span class="s2"> was updated"</span><span class="p">)</span>
 <span class="k">end</span>
 </pre></td></tr></tbody></table>
-</div>
-
+</code></pre>
 <h3>Conclusion</h3>
 
 <p>I plan on using this library a lot! Using this with separate process responding to changes to the file system is super powerful. Phoenix uses it for it&rsquo;s live reloading. Maybe we can replace some JavaScript build tools ;-)</p>
@@ -152,6 +152,7 @@
     <section class="recent">
       <h2>Recent Articles</h2>
       <ol class="articles">
+            <li><a href="/2016/08/24/learn-to-program-with-elixir.html">Learn to Program with Elixir</a>
             <li><a href="/2016/05/23/guard-this-with-your-life-or-authenticating-apis-with-guardian.html">Guard this with your life... Or authenticating APIs with Guardian</a>
             <li><a href="/2016/05/22/ltrees-in-phoenix.html">LTrees in Phoenix</a>
             <li><a href="/2016/04/26/processes-in-elixir.html">Processes in Elixir</a>
@@ -161,19 +162,21 @@
             <li><a href="/2015/06/08/rails-foreign-key-constraints-the-ugly-way.html">Rails Foreign Key Constraints - The Ugly Way</a>
             <li><a href="/2015/05/28/working-with-templates-in-ruby-erb.html">Working with Templates in Ruby ERB</a>
             <li><a href="/2015/05/20/elixir-tuples-vs-lists.html">Elixir - Tuples vs Lists</a>
-            <li><a href="/2015/02/22/let-me-find-out.html">Let me find out</a>
       </ol>
     </section>
 
     <section class="tags">
       <h2>Tags</h2>
       <ol>
+            <li><a href="/tags/beginner.html">Beginner</a> (1)</a></li>
             <li><a href="/tags/concurrency.html">Concurrency</a> (1)</a></li>
             <li><a href="/tags/ecto.html">Ecto</a> (1)</a></li>
-            <li><a href="/tags/elixir.html">Elixir</a> (2)</a></li>
+            <li><a href="/tags/elixir.html">Elixir</a> (3)</a></li>
             <li><a href="/tags/ltrees.html">LTrees</a> (1)</a></li>
+            <li><a href="/tags/learn-to-program.html">Learn to Program</a> (1)</a></li>
             <li><a href="/tags/phoenix.html">Phoenix</a> (1)</a></li>
             <li><a href="/tags/processes.html">Processes</a> (1)</a></li>
+            <li><a href="/tags/random-thoughts.html">Random Thoughts</a> (1)</a></li>
             <li><a href="/tags/authentication.html">authentication</a> (1)</a></li>
             <li><a href="/tags/basics.html">basics</a> (1)</a></li>
             <li><a href="/tags/beginner.html">beginner</a> (1)</a></li>
@@ -205,6 +208,8 @@
     <section class="by-month">
       <h2>By Month</h2>
       <ol>
+            <li><a href="/2016/08.html">August 2016</a>
+              (1)</a></li>
             <li><a href="/2016/05.html">May 2016</a>
               (2)</a></li>
             <li><a href="/2016/04.html">April 2016</a>

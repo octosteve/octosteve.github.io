@@ -60,14 +60,15 @@
 <h2>The request cycle</h2>
 
 <p>What does your app receive when your user &ldquo;sends a request&rdquo;? Let&rsquo;s say your user is trying to get to the home page. They go to <code>http://example.com</code>, and (after some DNS magic) the browser sends you something that looks like this</p>
-<div class="highlight plaintext"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<pre class="highlight plaintext"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
 5
 6
 7
-8</pre></td><td class="code"><pre>GET / HTTP/1.1
+8
+</pre></td><td class="rouge-code"><pre>GET / HTTP/1.1
 Host: localhost:9292
 Connection: keep-alive
 Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
@@ -76,8 +77,7 @@ User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_4) AppleWebKit/537.36 (
 Accept-Encoding: gzip, deflate, sdch
 Accept-Language: en-US,en;q=0.8,es-419;q=0.6,es;q=0.4
 </pre></td></tr></tbody></table>
-</div>
-
+</code></pre>
 <p>If you want to try this your self, run <a href="https://gist.github.com/StevenNunez/17487d85c5493fb4404e">this</a> script and visit <code>http://localhost:9292</code> in an incognito browser.</p>
 
 <p>Ok, so you get this and what are are you supposed to do with it? If you&rsquo;re working with a <a href="https://www.digitalocean.com/community/tutorials/a-comparison-of-rack-web-servers-for-ruby-web-applications">Rack</a> Compliant web server, it&rsquo;s going to take this information and parse it into something your app can more easily work with: A Hash.</p>
@@ -85,7 +85,7 @@ Accept-Language: en-US,en;q=0.8,es-419;q=0.6,es;q=0.4
 <p>To see what this looks like to your <code>Rack</code> app, let&rsquo;s make a simple one.</p>
 
 <p>All we have to do to make a <code>Rack</code> app is create an object that responds to the <code>call</code> method and takes one argument. We&rsquo;ll do that by making an <code>App</code> class with a <code>call</code> instance method. We&rsquo;ll make it respond with an array of 3 values: The status code, any headers, and the body in an array. Stick this in a file named <code>config.ru</code></p>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -93,7 +93,8 @@ Accept-Language: en-US,en;q=0.8,es-419;q=0.6,es;q=0.4
 6
 7
 8
-9</pre></td><td class="code"><pre><span class="c1"># config.ru</span>
+9
+</pre></td><td class="rouge-code"><pre><span class="c1"># config.ru</span>
 <span class="k">class</span> <span class="nc">App</span>
   <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
     <span class="nb">p</span> <span class="n">env</span>
@@ -103,10 +104,9 @@ Accept-Language: en-US,en;q=0.8,es-419;q=0.6,es;q=0.4
 
 <span class="n">run</span> <span class="no">App</span><span class="p">.</span><span class="nf">new</span>
 </pre></td></tr></tbody></table>
-</div>
-
+</code></pre>
 <p>Run <code>rackup</code> and visit <code>http://localhost:9292</code>. You should see something like this:</p>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -144,7 +144,8 @@ Accept-Language: en-US,en;q=0.8,es-419;q=0.6,es;q=0.4
 36
 37
 38
-39</pre></td><td class="code"><pre><span class="p">{</span>
+39
+</pre></td><td class="rouge-code"><pre><span class="p">{</span>
                  <span class="s2">"GATEWAY_INTERFACE"</span> <span class="o">=&gt;</span> <span class="s2">"CGI/1.1"</span><span class="p">,</span>
                          <span class="s2">"PATH_INFO"</span> <span class="o">=&gt;</span> <span class="s2">"/"</span><span class="p">,</span>
                       <span class="s2">"QUERY_STRING"</span> <span class="o">=&gt;</span> <span class="s2">""</span><span class="p">,</span>
@@ -184,8 +185,7 @@ Accept-Language: en-US,en;q=0.8,es-419;q=0.6,es;q=0.4
 <span class="p">}</span>
 
 </pre></td></tr></tbody></table>
-</div>
-
+</code></pre>
 <p>This looks a lot like what the browser sent us! What method did we use? Check <code>env[&quot;REQUEST_METHOD&quot;]</code>. Want to know where they were going? Check <code>env[&quot;PATH_INFO&quot;]</code>.</p>
 
 <p>Simple. We get a Hash, and return an array&hellip; but EW, we get a HASH and return an ARRAY?!</p>
@@ -193,14 +193,15 @@ Accept-Language: en-US,en;q=0.8,es-419;q=0.6,es;q=0.4
 <p>We know a thing or two about <a href="http://c2.com/cgi/wiki?PrimitiveObsession">Primitive Obsession</a>, so let&rsquo;s wrap these in objects. Lucky for us, <code>Rack</code> comes with a ways to wrap them nicely. <code>Rack::Request</code>, and <code>Rack::Response</code>.</p>
 
 <p>Let&rsquo;s upgrade our code to look like this:</p>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
 5
 6
 7
-8</pre></td><td class="code"><pre><span class="k">class</span> <span class="nc">App</span>
+8
+</pre></td><td class="rouge-code"><pre><span class="k">class</span> <span class="nc">App</span>
   <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
     <span class="n">request</span> <span class="o">=</span> <span class="no">Rack</span><span class="o">::</span><span class="no">Request</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
     <span class="no">Rack</span><span class="o">::</span><span class="no">Response</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"You made a </span><span class="si">#{</span><span class="n">request</span><span class="p">.</span><span class="nf">request_method</span><span class="si">}</span><span class="s2"> request to </span><span class="si">#{</span><span class="n">request</span><span class="p">.</span><span class="nf">path_info</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="p">{</span><span class="s2">"Content-Type"</span> <span class="o">=&gt;</span> <span class="s2">"text/html"</span><span class="p">})</span>
@@ -209,12 +210,11 @@ Accept-Language: en-US,en;q=0.8,es-419;q=0.6,es;q=0.4
 
 <span class="n">run</span> <span class="no">App</span><span class="p">.</span><span class="nf">new</span>
 </pre></td></tr></tbody></table>
-</div>
-
+</code></pre>
 <p>Visit <code>http://localhost:9292</code> and you&rsquo;ll see <code>You made a GET request to /</code>. Visit <code>http://localhost:9292/banana</code> and you&rsquo;ll see <code>You made a GET request to /banana</code>.</p>
 
 <p>We can reduce a bit of code by taking advantage of some Rack defaults, and the <code>Rack::ContentType</code> middleware. Let&rsquo;s modify our code to look like this</p>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -222,7 +222,8 @@ Accept-Language: en-US,en;q=0.8,es-419;q=0.6,es;q=0.4
 6
 7
 8
-9</pre></td><td class="code"><pre><span class="k">class</span> <span class="nc">App</span>
+9
+</pre></td><td class="rouge-code"><pre><span class="k">class</span> <span class="nc">App</span>
   <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
     <span class="n">request</span> <span class="o">=</span> <span class="no">Rack</span><span class="o">::</span><span class="no">Request</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
     <span class="no">Rack</span><span class="o">::</span><span class="no">Response</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"You made a </span><span class="si">#{</span><span class="n">request</span><span class="p">.</span><span class="nf">request_method</span><span class="si">}</span><span class="s2"> request to </span><span class="si">#{</span><span class="n">request</span><span class="p">.</span><span class="nf">path_info</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
@@ -232,8 +233,7 @@ Accept-Language: en-US,en;q=0.8,es-419;q=0.6,es;q=0.4
 <span class="n">use</span> <span class="no">Rack</span><span class="o">::</span><span class="no">ContentType</span>
 <span class="n">run</span> <span class="no">App</span><span class="p">.</span><span class="nf">new</span>
 </pre></td></tr></tbody></table>
-</div>
-
+</code></pre>
 <p><code>Rack::ContentType</code> sets all outgoing responses to be &lsquo;text/html&rsquo;. If you need to override this, say to have it always return <code>application/json</code>, try <code>use Rack::ContentType, &#39;application/json&#39;</code> instead.</p>
 
 <p><code>Rack::Response</code> sets its second constructor argument to <code>200</code> by default, so we can leave it out. So clean!</p>
@@ -241,18 +241,18 @@ Accept-Language: en-US,en;q=0.8,es-419;q=0.6,es;q=0.4
 <h3>Dealing with post requests and request bodies</h3>
 
 <p>Load up the <code>rest-client</code> gem in the console and try this.</p>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
-4</pre></td><td class="code"><pre><span class="c1"># make sure you've run gem install rest-client before running this</span>
+4
+</pre></td><td class="rouge-code"><pre><span class="c1"># make sure you've run gem install rest-client before running this</span>
 <span class="nb">require</span> <span class="s1">'rest-client'</span>
 <span class="no">RestClient</span><span class="p">.</span><span class="nf">post</span><span class="p">(</span><span class="s2">"http://localhost:9292/banana"</span><span class="p">,</span> <span class="p">{</span><span class="ss">potassium: </span><span class="s2">"High"</span><span class="p">}).</span><span class="nf">body</span>
 <span class="c1"># =&gt; "You made a POST request to /banana"</span>
 </pre></td></tr></tbody></table>
-</div>
-
+</code></pre>
 <p>It works&hellip; but how do we work with those parameters? Come on Rack, don&rsquo;t be stingy, let me see those sweet sweet params I sent you bruh. Let&rsquo;s update our code to read the request&rsquo;s body. According to the <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html">RFC</a> (try reading these if you&rsquo;re having trouble sleeping) the body of a request is &ldquo;used to carry the entity-body associated with the request or response&rdquo;. Basically, the goods we&rsquo;re after. We can read them with rack by using the <code>body</code> method on a request object. Let&rsquo;s update the code to output we sent in our post request.</p>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -260,7 +260,8 @@ Accept-Language: en-US,en;q=0.8,es-419;q=0.6,es;q=0.4
 6
 7
 8
-9</pre></td><td class="code"><pre><span class="k">class</span> <span class="nc">App</span>
+9
+</pre></td><td class="rouge-code"><pre><span class="k">class</span> <span class="nc">App</span>
   <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
     <span class="n">request</span> <span class="o">=</span> <span class="no">Rack</span><span class="o">::</span><span class="no">Request</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
     <span class="no">Rack</span><span class="o">::</span><span class="no">Response</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"You made a </span><span class="si">#{</span><span class="n">request</span><span class="p">.</span><span class="nf">request_method</span><span class="si">}</span><span class="s2"> request to </span><span class="si">#{</span><span class="n">request</span><span class="p">.</span><span class="nf">path_info</span><span class="si">}</span><span class="s2"> here's the body </span><span class="si">#{</span><span class="n">request</span><span class="p">.</span><span class="nf">body</span><span class="p">.</span><span class="nf">read</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
@@ -270,17 +271,16 @@ Accept-Language: en-US,en;q=0.8,es-419;q=0.6,es;q=0.4
 <span class="n">use</span> <span class="no">Rack</span><span class="o">::</span><span class="no">ContentType</span>
 <span class="n">run</span> <span class="no">App</span><span class="p">.</span><span class="nf">new</span>
 </pre></td></tr></tbody></table>
-</div>
-
+</code></pre>
 <p>And then back in <code>irb</code></p>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
-2</pre></td><td class="code"><pre><span class="no">RestClient</span><span class="p">.</span><span class="nf">post</span><span class="p">(</span><span class="s2">"http://localhost:9292/banana"</span><span class="p">,</span> <span class="p">{</span><span class="ss">potassium: </span><span class="s2">"High"</span><span class="p">}).</span><span class="nf">body</span>
+<pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre><span class="no">RestClient</span><span class="p">.</span><span class="nf">post</span><span class="p">(</span><span class="s2">"http://localhost:9292/banana"</span><span class="p">,</span> <span class="p">{</span><span class="ss">potassium: </span><span class="s2">"High"</span><span class="p">}).</span><span class="nf">body</span>
 <span class="c1"># =&gt; "You made a POST request to /banana here's the body potassium=High"</span>
 </pre></td></tr></tbody></table>
-</div>
-
+</code></pre>
 <p>Sweet11!!1! Except&hellip; I gave you a hash, and you gave me a mashed up string. WTF rack. Easy fix, though. We can use <code>Rack::Utils.parse_nested_query</code> to get it into an easier form for us to work with.</p>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -289,7 +289,8 @@ Accept-Language: en-US,en;q=0.8,es-419;q=0.6,es;q=0.4
 7
 8
 9
-10</pre></td><td class="code"><pre><span class="k">class</span> <span class="nc">App</span>
+10
+</pre></td><td class="rouge-code"><pre><span class="k">class</span> <span class="nc">App</span>
   <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
     <span class="n">request</span> <span class="o">=</span> <span class="no">Rack</span><span class="o">::</span><span class="no">Request</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
     <span class="n">body</span> <span class="o">=</span> <span class="no">Rack</span><span class="o">::</span><span class="no">Utils</span><span class="p">.</span><span class="nf">parse_nested_query</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="nf">body</span><span class="p">.</span><span class="nf">read</span><span class="p">)</span>
@@ -300,15 +301,14 @@ Accept-Language: en-US,en;q=0.8,es-419;q=0.6,es;q=0.4
 <span class="n">use</span> <span class="no">Rack</span><span class="o">::</span><span class="no">ContentType</span>
 <span class="n">run</span> <span class="no">App</span><span class="p">.</span><span class="nf">new</span>
 </pre></td></tr></tbody></table>
-</div>
-
+</code></pre>
 <p>And&hellip;</p>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
-2</pre></td><td class="code"><pre><span class="no">RestClient</span><span class="p">.</span><span class="nf">post</span><span class="p">(</span><span class="s2">"http://localhost:9292/banana"</span><span class="p">,</span> <span class="p">{</span><span class="ss">potassium: </span><span class="s2">"High"</span><span class="p">}).</span><span class="nf">body</span>
+<pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre><span class="no">RestClient</span><span class="p">.</span><span class="nf">post</span><span class="p">(</span><span class="s2">"http://localhost:9292/banana"</span><span class="p">,</span> <span class="p">{</span><span class="ss">potassium: </span><span class="s2">"High"</span><span class="p">}).</span><span class="nf">body</span>
 <span class="c1"># =&gt; "You made a POST request to /banana here's the body {\"potassium\"=&gt;\"High\"}"</span>
 </pre></td></tr></tbody></table>
-</div>
-
+</code></pre>
 <p>Now we&rsquo;re cooking with gas!</p>
 
 <h1>That&rsquo;s it for the basics</h1>
@@ -338,6 +338,7 @@ Accept-Language: en-US,en;q=0.8,es-419;q=0.6,es;q=0.4
     <section class="recent">
       <h2>Recent Articles</h2>
       <ol class="articles">
+            <li><a href="/2016/08/24/learn-to-program-with-elixir.html">Learn to Program with Elixir</a>
             <li><a href="/2016/05/23/guard-this-with-your-life-or-authenticating-apis-with-guardian.html">Guard this with your life... Or authenticating APIs with Guardian</a>
             <li><a href="/2016/05/22/ltrees-in-phoenix.html">LTrees in Phoenix</a>
             <li><a href="/2016/04/26/processes-in-elixir.html">Processes in Elixir</a>
@@ -347,19 +348,21 @@ Accept-Language: en-US,en;q=0.8,es-419;q=0.6,es;q=0.4
             <li><a href="/2015/06/08/rails-foreign-key-constraints-the-ugly-way.html">Rails Foreign Key Constraints - The Ugly Way</a>
             <li><a href="/2015/05/28/working-with-templates-in-ruby-erb.html">Working with Templates in Ruby ERB</a>
             <li><a href="/2015/05/20/elixir-tuples-vs-lists.html">Elixir - Tuples vs Lists</a>
-            <li><a href="/2015/02/22/let-me-find-out.html">Let me find out</a>
       </ol>
     </section>
 
     <section class="tags">
       <h2>Tags</h2>
       <ol>
+            <li><a href="/tags/beginner.html">Beginner</a> (1)</a></li>
             <li><a href="/tags/concurrency.html">Concurrency</a> (1)</a></li>
             <li><a href="/tags/ecto.html">Ecto</a> (1)</a></li>
-            <li><a href="/tags/elixir.html">Elixir</a> (2)</a></li>
+            <li><a href="/tags/elixir.html">Elixir</a> (3)</a></li>
             <li><a href="/tags/ltrees.html">LTrees</a> (1)</a></li>
+            <li><a href="/tags/learn-to-program.html">Learn to Program</a> (1)</a></li>
             <li><a href="/tags/phoenix.html">Phoenix</a> (1)</a></li>
             <li><a href="/tags/processes.html">Processes</a> (1)</a></li>
+            <li><a href="/tags/random-thoughts.html">Random Thoughts</a> (1)</a></li>
             <li><a href="/tags/authentication.html">authentication</a> (1)</a></li>
             <li><a href="/tags/basics.html">basics</a> (1)</a></li>
             <li><a href="/tags/beginner.html">beginner</a> (1)</a></li>
@@ -391,6 +394,8 @@ Accept-Language: en-US,en;q=0.8,es-419;q=0.6,es;q=0.4
     <section class="by-month">
       <h2>By Month</h2>
       <ol>
+            <li><a href="/2016/08.html">August 2016</a>
+              (1)</a></li>
             <li><a href="/2016/05.html">May 2016</a>
               (2)</a></li>
             <li><a href="/2016/04.html">April 2016</a>

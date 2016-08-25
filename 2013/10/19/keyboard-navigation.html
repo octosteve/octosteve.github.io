@@ -36,10 +36,10 @@
 <p>One of the unsung heroes of development is knowing how to use your keyboard. I don&rsquo;t just mean typing. That skill, while important, is still second to being able to move around. What do I mean by this?</p>
 
 <p>Let&rsquo;s say I&rsquo;m typing this obscenely long line of bash:</p>
-<div class="highlight shell"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre></td><td class="code"><pre>cat ~/schol/GA/BEWD_Curriculum/01_Dev_Workflow/README.md| grep -i git
+<pre class="highlight shell"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>cat ~/schol/GA/BEWD_Curriculum/01_Dev_Workflow/README.md| grep -i git
 </pre></td></tr></tbody></table>
-</div>
-
+</code></pre>
 <p>Oh NO! I&rsquo;ve misspelled <code>school</code>. Here we go: backspace backspace backspace… 59 backspaces! Even if you didn&rsquo;t erase it and just used left, it&rsquo;s still going to take a while.</p>
 
 <p>That&rsquo;s crazy. Let&rsquo;s try another way.</p>
@@ -66,7 +66,7 @@
 <p>A lot of these things work in your editor of choice. A lot of developers use <a href="http://www.sublimetext.com/2">Sublime Text</a>. </p>
 
 <p>Let&rsquo;s look at getting around a small ruby file. It&rsquo;s from my <a href="https://github.com/StevenNunez/slide_hero">slide_hero gem</a>. Don&rsquo;t worry too much about what it does.</p>
-<div class="highlight ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -92,7 +92,8 @@
 24
 25
 26
-27</pre></td><td class="code"><pre><span class="k">module</span> <span class="nn">SlideHero</span>                                                                   
+27
+</pre></td><td class="rouge-code"><pre><span class="k">module</span> <span class="nn">SlideHero</span>                                                                   
   <span class="k">class</span> <span class="nc">Point</span>                                                                      
     <span class="kp">attr_reader</span> <span class="ss">:text</span>                                                              
     <span class="no">SUPPORTED_ANIMATIONS</span> <span class="o">=</span> <span class="sx">%w{grow shrink roll-in fade-out                         
@@ -120,8 +121,7 @@
   <span class="k">end</span>                                                                              
 <span class="k">end</span>                        
 </pre></td></tr></tbody></table>
-</div>
-
+</code></pre>
 <p>Let&rsquo;s say I want to jump to add another method (<code>def animation</code> is me defining a method). Since the editor usually opens at the top of the file, I&rsquo;ll have to press down 16 times or worse, USE MY MOUSE!  Looking at Sublime Text&rsquo;s <code>Goto</code> menu, I see ^G will let me specify what line to go to. Cool! Ok, well now I&rsquo;m on the line with <code>private</code> and need to get <em>after</em> it to enter my new method. We can use one of our old buddies <code>⌥+right</code> here! OK, <code>⌥+right</code>, <code>enter</code>, start typing!</p>
 
 <p>If you&rsquo;re planning on using Sublime Text, be sure to learn the <a href="http://docs.sublimetext.info/en/latest/reference/keyboard_shortcuts_osx.html">keyboard shortcuts!</a>. They&rsquo;re there because of you! Use them and be awesome.</p>
@@ -155,6 +155,7 @@
     <section class="recent">
       <h2>Recent Articles</h2>
       <ol class="articles">
+            <li><a href="/2016/08/24/learn-to-program-with-elixir.html">Learn to Program with Elixir</a>
             <li><a href="/2016/05/23/guard-this-with-your-life-or-authenticating-apis-with-guardian.html">Guard this with your life... Or authenticating APIs with Guardian</a>
             <li><a href="/2016/05/22/ltrees-in-phoenix.html">LTrees in Phoenix</a>
             <li><a href="/2016/04/26/processes-in-elixir.html">Processes in Elixir</a>
@@ -164,19 +165,21 @@
             <li><a href="/2015/06/08/rails-foreign-key-constraints-the-ugly-way.html">Rails Foreign Key Constraints - The Ugly Way</a>
             <li><a href="/2015/05/28/working-with-templates-in-ruby-erb.html">Working with Templates in Ruby ERB</a>
             <li><a href="/2015/05/20/elixir-tuples-vs-lists.html">Elixir - Tuples vs Lists</a>
-            <li><a href="/2015/02/22/let-me-find-out.html">Let me find out</a>
       </ol>
     </section>
 
     <section class="tags">
       <h2>Tags</h2>
       <ol>
+            <li><a href="/tags/beginner.html">Beginner</a> (1)</a></li>
             <li><a href="/tags/concurrency.html">Concurrency</a> (1)</a></li>
             <li><a href="/tags/ecto.html">Ecto</a> (1)</a></li>
-            <li><a href="/tags/elixir.html">Elixir</a> (2)</a></li>
+            <li><a href="/tags/elixir.html">Elixir</a> (3)</a></li>
             <li><a href="/tags/ltrees.html">LTrees</a> (1)</a></li>
+            <li><a href="/tags/learn-to-program.html">Learn to Program</a> (1)</a></li>
             <li><a href="/tags/phoenix.html">Phoenix</a> (1)</a></li>
             <li><a href="/tags/processes.html">Processes</a> (1)</a></li>
+            <li><a href="/tags/random-thoughts.html">Random Thoughts</a> (1)</a></li>
             <li><a href="/tags/authentication.html">authentication</a> (1)</a></li>
             <li><a href="/tags/basics.html">basics</a> (1)</a></li>
             <li><a href="/tags/beginner.html">beginner</a> (1)</a></li>
@@ -208,6 +211,8 @@
     <section class="by-month">
       <h2>By Month</h2>
       <ol>
+            <li><a href="/2016/08.html">August 2016</a>
+              (1)</a></li>
             <li><a href="/2016/05.html">May 2016</a>
               (2)</a></li>
             <li><a href="/2016/04.html">April 2016</a>

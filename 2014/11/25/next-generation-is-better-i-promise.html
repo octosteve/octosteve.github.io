@@ -38,7 +38,7 @@
 <h2>Everything but the kitchen sync</h2>
 
 <p><a href="git.io/es6features">ES6 Features</a> are sneaking into <a href="http://kangax.github.io/compat-table/es6/">browsers</a> already. A lot of features are around dealing with asynchronous code. Generators are really cool in that they let you pause a functions execution until all <code>yield</code> statements are done. Take a look at this code:</p>
-<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -51,7 +51,8 @@
 11
 12
 13
-14</pre></td><td class="code"><pre><span class="kd">function</span><span class="o">*</span> <span class="nx">rainbow</span><span class="p">(){</span>
+14
+</pre></td><td class="rouge-code"><pre><span class="kd">function</span><span class="o">*</span> <span class="nx">rainbow</span><span class="p">(){</span>
   <span class="k">yield</span> <span class="s2">"Red"</span><span class="p">;</span>
   <span class="k">yield</span> <span class="s2">"Orange"</span><span class="p">;</span>
   <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"I'm all done"</span><span class="p">)</span>
@@ -66,14 +67,13 @@
 <span class="c1">// ***Prints***  I'm all done</span>
 <span class="c1">// ***Prints***  Current Color: undefined</span>
 </pre></td></tr></tbody></table>
-</div>
-
+</code></pre>
 <p>This is pretty nice! But by itself, it&rsquo;s kind of useless. We&rsquo;ll need to learn a bit more about what gets returned when we call <code>next</code>.</p>
 
 <h3>NEXT!</h3>
 
 <p>The value we get from calling <code>next</code> is an object that has 2 properties. The value being yielded, and whether the generator is done:</p>
-<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -85,7 +85,8 @@
 10
 11
 12
-13</pre></td><td class="code"><pre><span class="kd">function</span><span class="o">*</span> <span class="nx">rainbow</span><span class="p">(){</span>
+13
+</pre></td><td class="rouge-code"><pre><span class="kd">function</span><span class="o">*</span> <span class="nx">rainbow</span><span class="p">(){</span>
   <span class="k">yield</span> <span class="s2">"Red"</span><span class="p">;</span>
   <span class="k">yield</span> <span class="s2">"Orange"</span><span class="p">;</span>
   <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"I'm all done"</span><span class="p">)</span>
@@ -99,10 +100,9 @@
 <span class="nx">lameRainbow</span><span class="p">.</span><span class="nx">next</span><span class="p">();</span>
 <span class="c1">// Object {value: undefined, done: true}</span>
 </pre></td></tr></tbody></table>
-</div>
-
+</code></pre>
 <p>With this in mind, it&rsquo;s pretty easy to go through all of the generator values in a loop:</p>
-<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -116,7 +116,8 @@
 12
 13
 14
-15</pre></td><td class="code"><pre><span class="kd">function</span><span class="o">*</span> <span class="nx">rainbow</span><span class="p">(){</span>
+15
+</pre></td><td class="rouge-code"><pre><span class="kd">function</span><span class="o">*</span> <span class="nx">rainbow</span><span class="p">(){</span>
   <span class="k">yield</span> <span class="s2">"Red"</span><span class="p">;</span>
   <span class="k">yield</span> <span class="s2">"Orange"</span><span class="p">;</span>
   <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"I'm all done"</span><span class="p">)</span>
@@ -132,12 +133,11 @@
 <span class="c1">// ***Prints***  Current Color: Orange</span>
 <span class="c1">// ***Prints***  I'm all done</span>
 </pre></td></tr></tbody></table>
-</div>
-
+</code></pre>
 <h3>I&rsquo;ll be back</h3>
 
 <p>We saw how to pass values out of a function using <code>yield</code>, but we can also pass values back in and use it in our function. Here&rsquo;s an example:</p>
-<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -148,7 +148,8 @@
 9
 10
 11
-12</pre></td><td class="code"><pre><span class="kd">function</span><span class="o">*</span> <span class="nx">brat</span><span class="p">(){</span>
+12
+</pre></td><td class="rouge-code"><pre><span class="kd">function</span><span class="o">*</span> <span class="nx">brat</span><span class="p">(){</span>
   <span class="kd">var</span> <span class="nx">gift</span> <span class="o">=</span> <span class="k">yield</span> <span class="s2">"What are you giving me?"</span><span class="p">;</span>
   <span class="k">if</span><span class="p">(</span><span class="nx">gift</span> <span class="o">===</span> <span class="s2">"diamonds"</span><span class="p">){</span>
     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"OMG YOU'RE THE BEST"</span><span class="p">)</span>
@@ -161,8 +162,7 @@
 <span class="nx">a</span><span class="p">.</span><span class="nx">next</span><span class="p">();</span> <span class="c1">// returns "What are you giving me?" in an object</span>
 <span class="nx">a</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="s2">"diamonds"</span><span class="p">);</span> <span class="c1">// Passes "diamonds" and assigns it to our gift variable.</span>
 </pre></td></tr></tbody></table>
-</div>
-
+</code></pre>
 <h2>This is going to be awesome: Promise</h2>
 
 <p>Another cool es6 feature is the Promise. This showed up as a way to handle asynchronous requests via the <a href="https://github.com/kriskowal/q">q library</a>. Other libraries have implemented this pattern, including jQuery and AngularJS and now Chrome and Firefox have native support for Promises.</p>
@@ -178,7 +178,7 @@
 </ol>
 
 <p>A promise wraps all of these steps together and provides you with one object you can extract the resulting code from. Here&rsquo;s an example of wrapping a call to the Reddit api in a promise:</p>
-<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -197,7 +197,8 @@
 17
 18
 19
-20</pre></td><td class="code"><pre><span class="c1">// Assuming you have jQuery :-)</span>
+20
+</pre></td><td class="rouge-code"><pre><span class="c1">// Assuming you have jQuery :-)</span>
 <span class="c1">// POINT 1</span>
 <span class="kd">var</span> <span class="nx">getReddit</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Promise</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">){</span>
   <span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="s1">'http://reddit.com/r/science.json?jsonp=?'</span><span class="p">).</span>
@@ -218,8 +219,7 @@
    <span class="p">});</span>
 <span class="c1">// Gets you a reddit</span>
 </pre></td></tr></tbody></table>
-</div>
-
+</code></pre>
 <p>At POINT 1 we&rsquo;re creating a new promise. Promises take a function that expects 2 arguments: a <code>resolve</code> function, and a <code>reject</code> function. Inside the promise, you write your normal callback laden code, dealing with success, and failure cases. With a promise, you&rsquo;re preparing the data, and calling the <code>resolve</code> function when it&rsquo;s done being processed. In our case, we aren&rsquo;t processing the results, so we just pass them into the <code>resolve</code> function at POINT 2. At POINT 3 we deal with errors by passing a new <code>Error</code> to the <code>reject</code> function.</p>
 
 <p>By the time we get to POINT 4, we have a function that has access to the result of the call to Reddit. We can access the success case by tagging on the <code>then</code> function with instructions on what to do with the result. Nice! Errors are available by calling the <code>catch</code> function.</p>
@@ -229,13 +229,14 @@
 <p>Ok, let&rsquo;s cook. Using promises and generators we can make code that is asynchronous but looks synchronous because we encapsulate all of async stuff.  We&rsquo;re going to build out a few functions, and use them to make some bad ass stuff.</p>
 
 <p>We&rsquo;ll be using a call to the Reddit api in our example. We&rsquo;ll set up a promise that makes a call the Reddit, but only returns the first 3 stories found.</p>
-<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
 5
 6
-7</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">top3FromReddit</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Promise</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">){</span>
+7
+</pre></td><td class="rouge-code"><pre><span class="kd">var</span> <span class="nx">top3FromReddit</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Promise</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">){</span>
   <span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="s1">'http://reddit.com/r/science.json?jsonp=?'</span><span class="p">).</span>
   <span class="nx">success</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">result</span><span class="p">){</span>
       <span class="kd">var</span> <span class="nx">stories</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">children</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">);</span>
@@ -243,31 +244,31 @@
   <span class="p">});</span>
 <span class="p">});</span>
 </pre></td></tr></tbody></table>
-</div>
-
+</code></pre>
 <p>In the success callback, we&rsquo;re going through the results from Reddit and only returning an array of 3 stories.</p>
 
 <p>Next, we&rsquo;ll create a generator that yields this promise. Yielding the promise will help us later when we create our async wrapper function later to resolve the promise.</p>
-<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
-4</pre></td><td class="code"><pre><span class="kd">function</span><span class="o">*</span> <span class="nx">redditGenerator</span><span class="p">(){</span>
+4
+</pre></td><td class="rouge-code"><pre><span class="kd">function</span><span class="o">*</span> <span class="nx">redditGenerator</span><span class="p">(){</span>
   <span class="kd">var</span> <span class="nx">stories</span> <span class="o">=</span> <span class="k">yield</span> <span class="nx">top3FromReddit</span>
   <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">stories</span><span class="p">);</span>
 <span class="p">}</span>
 </pre></td></tr></tbody></table>
-</div>
-
+</code></pre>
 <p>Now to build a small helper function that wraps our yielded promise</p>
 
 <p>This was inspired by the example <a href="https://www.promisejs.org/generators/">here</a>.</p>
-<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
 5
 6
-7</pre></td><td class="code"><pre><span class="kd">function</span> <span class="nx">async</span><span class="p">(</span><span class="nx">generatorFunction</span><span class="p">){</span>
+7
+</pre></td><td class="rouge-code"><pre><span class="kd">function</span> <span class="nx">async</span><span class="p">(</span><span class="nx">generatorFunction</span><span class="p">){</span>
   <span class="kd">var</span> <span class="nx">generator</span> <span class="o">=</span> <span class="nx">generatorFunction</span><span class="p">();</span>
   <span class="kd">var</span> <span class="nx">promise</span> <span class="o">=</span> <span class="nx">generator</span><span class="p">.</span><span class="nx">next</span><span class="p">().</span><span class="nx">value</span><span class="p">;</span>
   <span class="nx">promise</span><span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">result</span><span class="p">){</span>
@@ -275,18 +276,17 @@
   <span class="p">})</span>
 <span class="p">}</span>
 </pre></td></tr></tbody></table>
-</div>
-
+</code></pre>
 <p>Our <code>async</code> function takes a generator function.
 We create a generator from the function, call <code>next</code> and <code>value</code> to get the promise yielded. We call the <code>then</code> function on our promise and pass the return value of the resolved promise BACK to our generator. This value will be set to <code>stories</code> inside the redditGenerator.</p>
 
 <p><em>NOTE: This is an insanely limted example. Checkout the link above for a better solution, but this one works for us.</em></p>
 
 <p>And finally, make our call to Reddit, wrapping the call in our <code>async</code> function.</p>
-<div class="highlight javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre></td><td class="code"><pre><span class="nx">async</span><span class="p">(</span><span class="nx">redditGenerator</span><span class="p">)</span>
+<pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="nx">async</span><span class="p">(</span><span class="nx">redditGenerator</span><span class="p">)</span>
 </pre></td></tr></tbody></table>
-</div>
-
+</code></pre>
 <p>This fires off the generator, makes the async call, assigns the value of <code>stories</code> to the resolved promise and prints it. Not bad JavaScript&hellip; Not bad&hellip;</p>
 
 <h1>Recap</h1>
@@ -319,6 +319,7 @@ As of November 25th, this is known to run on Chrome Canary.</p>
     <section class="recent">
       <h2>Recent Articles</h2>
       <ol class="articles">
+            <li><a href="/2016/08/24/learn-to-program-with-elixir.html">Learn to Program with Elixir</a>
             <li><a href="/2016/05/23/guard-this-with-your-life-or-authenticating-apis-with-guardian.html">Guard this with your life... Or authenticating APIs with Guardian</a>
             <li><a href="/2016/05/22/ltrees-in-phoenix.html">LTrees in Phoenix</a>
             <li><a href="/2016/04/26/processes-in-elixir.html">Processes in Elixir</a>
@@ -328,19 +329,21 @@ As of November 25th, this is known to run on Chrome Canary.</p>
             <li><a href="/2015/06/08/rails-foreign-key-constraints-the-ugly-way.html">Rails Foreign Key Constraints - The Ugly Way</a>
             <li><a href="/2015/05/28/working-with-templates-in-ruby-erb.html">Working with Templates in Ruby ERB</a>
             <li><a href="/2015/05/20/elixir-tuples-vs-lists.html">Elixir - Tuples vs Lists</a>
-            <li><a href="/2015/02/22/let-me-find-out.html">Let me find out</a>
       </ol>
     </section>
 
     <section class="tags">
       <h2>Tags</h2>
       <ol>
+            <li><a href="/tags/beginner.html">Beginner</a> (1)</a></li>
             <li><a href="/tags/concurrency.html">Concurrency</a> (1)</a></li>
             <li><a href="/tags/ecto.html">Ecto</a> (1)</a></li>
-            <li><a href="/tags/elixir.html">Elixir</a> (2)</a></li>
+            <li><a href="/tags/elixir.html">Elixir</a> (3)</a></li>
             <li><a href="/tags/ltrees.html">LTrees</a> (1)</a></li>
+            <li><a href="/tags/learn-to-program.html">Learn to Program</a> (1)</a></li>
             <li><a href="/tags/phoenix.html">Phoenix</a> (1)</a></li>
             <li><a href="/tags/processes.html">Processes</a> (1)</a></li>
+            <li><a href="/tags/random-thoughts.html">Random Thoughts</a> (1)</a></li>
             <li><a href="/tags/authentication.html">authentication</a> (1)</a></li>
             <li><a href="/tags/basics.html">basics</a> (1)</a></li>
             <li><a href="/tags/beginner.html">beginner</a> (1)</a></li>
@@ -372,6 +375,8 @@ As of November 25th, this is known to run on Chrome Canary.</p>
     <section class="by-month">
       <h2>By Month</h2>
       <ol>
+            <li><a href="/2016/08.html">August 2016</a>
+              (1)</a></li>
             <li><a href="/2016/05.html">May 2016</a>
               (2)</a></li>
             <li><a href="/2016/04.html">April 2016</a>
