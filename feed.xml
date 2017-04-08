@@ -5,7 +5,7 @@
   <id>http://blog.url.com/</id>
   <link href="http://blog.url.com/"/>
   <link href="http://blog.url.com/feed.xml" rel="self"/>
-  <updated>2016-08-24T19:47:00-04:00</updated>
+  <updated>2016-08-24T23:47:00Z</updated>
   <author>
     <name>Blog Author</name>
   </author>
@@ -13,7 +13,7 @@
     <title>Learn to Program with Elixir</title>
     <link rel="alternate" href="http://blog.url.com/2016/08/24/learn-to-program-with-elixir.html"/>
     <id>http://blog.url.com/2016/08/24/learn-to-program-with-elixir.html</id>
-    <published>2016-08-24T19:47:00-04:00</published>
+    <published>2016-08-24T23:47:00Z</published>
     <updated>2016-08-25T19:35:18-04:00</updated>
     <author>
       <name>Article Author</name>
@@ -57,8 +57,8 @@ applications? I think there is, with Elixir.&lt;/p&gt;
     <title>Guard this with your life... Or authenticating APIs with Guardian</title>
     <link rel="alternate" href="http://blog.url.com/2016/05/23/guard-this-with-your-life-or-authenticating-apis-with-guardian.html"/>
     <id>http://blog.url.com/2016/05/23/guard-this-with-your-life-or-authenticating-apis-with-guardian.html</id>
-    <published>2016-05-23T17:58:00-04:00</published>
-    <updated>2016-05-24T00:48:29-04:00</updated>
+    <published>2016-05-23T21:58:00Z</published>
+    <updated>2017-04-08T12:55:18-04:00</updated>
     <author>
       <name>Article Author</name>
     </author>
@@ -361,7 +361,7 @@ iex&amp;gt; Auth.verify("nope@example.com", "wrongpw")
 
 &lt;h1&gt;Guardian&lt;/h1&gt;
 
-&lt;p&gt;Guardian is a way of generating &lt;a href="jwt.io"&gt;JWT&lt;/a&gt; &lt;a href="https://tools.ietf.org/html/rfc7519"&gt;tokens&lt;/a&gt;. Tokens can be read from the session, or from the headers. We&amp;rsquo;re designing this to work with an API, so we&amp;rsquo;ll check the headers.&lt;/p&gt;
+&lt;p&gt;Guardian is a way of generating &lt;a href="https://jwt.io"&gt;JWT&lt;/a&gt; &lt;a href="https://tools.ietf.org/html/rfc7519"&gt;tokens&lt;/a&gt;. Tokens can be read from the session, or from the headers. We&amp;rsquo;re designing this to work with an API, so we&amp;rsquo;ll check the headers.&lt;/p&gt;
 
 &lt;p&gt;Guardian doesn&amp;rsquo;t manage finding accounts, that&amp;rsquo;s your job, hence all the blah blah from before. Once that&amp;rsquo;s all set up, we&amp;rsquo; can leverage Guardian to manage keeping our user requests and our app in sync.&lt;/p&gt;
 
@@ -772,7 +772,7 @@ In &lt;code&gt;article.ex&lt;/code&gt;:&lt;/p&gt;
     <title>LTrees in Phoenix</title>
     <link rel="alternate" href="http://blog.url.com/2016/05/22/ltrees-in-phoenix.html"/>
     <id>http://blog.url.com/2016/05/22/ltrees-in-phoenix.html</id>
-    <published>2016-05-22T12:38:00-04:00</published>
+    <published>2016-05-22T16:38:00Z</published>
     <updated>2016-05-22T20:16:22-04:00</updated>
     <author>
       <name>Article Author</name>
@@ -1124,7 +1124,7 @@ iex(17)&amp;gt; Repo.all(query)
     <title>Processes in Elixir</title>
     <link rel="alternate" href="http://blog.url.com/2016/04/26/processes-in-elixir.html"/>
     <id>http://blog.url.com/2016/04/26/processes-in-elixir.html</id>
-    <published>2016-04-26T11:47:00-04:00</published>
+    <published>2016-04-26T15:47:00Z</published>
     <updated>2016-04-26T18:06:50-04:00</updated>
     <author>
       <name>Article Author</name>
@@ -1287,7 +1287,7 @@ send(pid, {:help}) # prints &amp;quot;Helping!&amp;quot;
     <title>Hey! Watch it!...or how to monitor files in Elixir</title>
     <link rel="alternate" href="http://blog.url.com/2016/02/24/hey-watch-it-or-how-to-monitor-files-in-elixir.html"/>
     <id>http://blog.url.com/2016/02/24/hey-watch-it-or-how-to-monitor-files-in-elixir.html</id>
-    <published>2016-02-24T11:57:00-05:00</published>
+    <published>2016-02-24T16:57:00Z</published>
     <updated>2016-04-26T11:49:08-04:00</updated>
     <author>
       <name>Article Author</name>
@@ -1397,7 +1397,7 @@ send(pid, {:help}) # prints &amp;quot;Helping!&amp;quot;
     <title>Let's build something with Rack</title>
     <link rel="alternate" href="http://blog.url.com/2015/08/23/let-s-build-something-with-rack.html"/>
     <id>http://blog.url.com/2015/08/23/let-s-build-something-with-rack.html</id>
-    <published>2015-08-23T16:28:00-04:00</published>
+    <published>2015-08-23T20:28:00Z</published>
     <updated>2015-08-25T18:25:59-04:00</updated>
     <author>
       <name>Article Author</name>
