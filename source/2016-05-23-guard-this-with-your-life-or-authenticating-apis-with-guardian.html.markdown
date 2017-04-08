@@ -222,7 +222,7 @@ iex> Auth.verify("nope@example.com", "wrongpw")
 GLORIOUS!!
 
 # Guardian
-Guardian is a way of generating [JWT](jwt.io) [tokens](https://tools.ietf.org/html/rfc7519). Tokens can be read from the session, or from the headers. We're designing this to work with an API, so we'll check the headers.
+Guardian is a way of generating [JWT](https://jwt.io) [tokens](https://tools.ietf.org/html/rfc7519). Tokens can be read from the session, or from the headers. We're designing this to work with an API, so we'll check the headers.
 
 Guardian doesn't manage finding accounts, that's your job, hence all the blah blah from before. Once that's all set up, we' can leverage Guardian to manage keeping our user requests and our app in sync.
 
