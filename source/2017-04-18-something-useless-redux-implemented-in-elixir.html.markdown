@@ -1,7 +1,7 @@
 ---
 title: Something Useless - Redux Implemented in Elixir
 date: 2017-04-18 15:38 UTC
-tags:
+tags: elixir, redux
 ---
 
 # Something completely useless - Redux Implemented in Elixir
