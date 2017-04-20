@@ -34,6 +34,32 @@
         <p><a href="/">Previous page</a></p>
 
     <article>
+      <h1 class="article-title"><a href="/2015/05/20/elixir-tuples-vs-lists.html">Elixir - Tuples vs Lists</a></h1>
+      <h1>Immutability Primer</h1>
+
+<p>Elixir is a Functional programming language with immutable types. You might see code like the following and think that we’re mutating a value.</p>
+<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre></td>
+<td class="rouge-code"><pre><span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="sd">"</span><span class="s2">Steven"</span><span class="p">,</span> <span class="sd">"</span><span class="s2">Kelly"</span><span class="p">,</span> <span class="sd">"</span><span class="s2">Michael"</span><span class="p">]</span>
+<span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="sd">"</span><span class="s2">Telly"</span><span class="p">]</span> <span class="o">++</span> <span class="n">names</span>
+<span class="n">names</span> <span class="c1"># =&gt; ["Telly", "Steven", "Kelly", "Michael"]</span>
+</pre></td>
+</tr></tbody></table>
+</code></pre>
+<p>Elixir is giving us a new copy of the array. How it got this might be a bit confusing though. For starters, this is how Elixir stored that original <code>names</code> list.</p>
+<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre><span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="sd">"</span><span class="s2">Steven"</span> <span class="o">|</span> <span class="p">[</span><span class="sd">"</span><span class="s2">Kelly"</span> <span class="o">|</span> <span class="p">[</span><span class="sd">"</span><span class="s2">Michael"</span><span class="p">]]]</span>
+</pre></td>
+</tr></tbody></table>
+</code></pre>
+      <a href="/2015/05/20/elixir-tuples-vs-lists.html">Read more…</a>
+    </article>
+    <article>
       <h1 class="article-title"><a href="/2015/02/22/let-me-find-out.html">Let me find out</a></h1>
       <h1>Finders keepers</h1>
 
@@ -167,6 +193,7 @@ While working on a Progress Dashboard I came across this code for creating neste
     <section class="recent">
       <h2>Recent Articles</h2>
       <ol class="articles">
+            <li><a href="/2017/04/18/something-useless-redux-implemented-in-elixir.html">Something Useless - Redux Implemented in Elixir</a>
             <li><a href="/2016/08/24/learn-to-program-with-elixir.html">Learn to Program with Elixir</a>
             <li><a href="/2016/05/23/guard-this-with-your-life-or-authenticating-apis-with-guardian.html">Guard this with your life... Or authenticating APIs with Guardian</a>
             <li><a href="/2016/05/22/ltrees-in-phoenix.html">LTrees in Phoenix</a>
@@ -176,7 +203,6 @@ While working on a Progress Dashboard I came across this code for creating neste
             <li><a href="/2015/08/21/lets-learn-about-rack.html">Let's learn about Rack</a>
             <li><a href="/2015/06/08/rails-foreign-key-constraints-the-ugly-way.html">Rails Foreign Key Constraints - The Ugly Way</a>
             <li><a href="/2015/05/28/working-with-templates-in-ruby-erb.html">Working with Templates in Ruby ERB</a>
-            <li><a href="/2015/05/20/elixir-tuples-vs-lists.html">Elixir - Tuples vs Lists</a>
       </ol>
     </section>
 
@@ -197,7 +223,7 @@ While working on a Progress Dashboard I came across this code for creating neste
             <li><a href="/tags/beginner.html">beginner</a> (1)</a></li>
             <li><a href="/tags/closures.html">closures</a> (1)</a></li>
             <li><a href="/tags/components-of-programming.html">components of programming</a> (1)</a></li>
-            <li><a href="/tags/elixir.html">elixir</a> (3)</a></li>
+            <li><a href="/tags/elixir.html">elixir</a> (4)</a></li>
             <li><a href="/tags/enumerable.html">enumerable</a> (1)</a></li>
             <li><a href="/tags/file-watchers.html">file watchers</a> (1)</a></li>
             <li><a href="/tags/find.html">find</a> (1)</a></li>
@@ -214,6 +240,7 @@ While working on a Progress Dashboard I came across this code for creating neste
             <li><a href="/tags/promises.html">promises</a> (1)</a></li>
             <li><a href="/tags/rack.html">rack</a> (2)</a></li>
             <li><a href="/tags/rails.html">rails</a> (2)</a></li>
+            <li><a href="/tags/redux.html">redux</a> (1)</a></li>
             <li><a href="/tags/routing.html">routing</a> (1)</a></li>
             <li><a href="/tags/ruby.html">ruby</a> (6)</a></li>
             <li><a href="/tags/sharp-axe.html">sharp axe</a> (1)</a></li>
@@ -224,6 +251,8 @@ While working on a Progress Dashboard I came across this code for creating neste
     <section class="by-month">
       <h2>By Month</h2>
       <ol>
+            <li><a href="/2017/04.html">April 2017</a>
+              (1)</a></li>
             <li><a href="/2016/08.html">August 2016</a>
               (1)</a></li>
             <li><a href="/2016/05.html">May 2016</a>
