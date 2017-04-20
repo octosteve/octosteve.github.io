@@ -14,7 +14,7 @@
     <link rel="alternate" href="http://blog.url.com/2017/04/18/something-useless-redux-implemented-in-elixir.html"/>
     <id>http://blog.url.com/2017/04/18/something-useless-redux-implemented-in-elixir.html</id>
     <published>2017-04-18T11:38:00-04:00</published>
-    <updated>2017-04-19T19:59:07-04:00</updated>
+    <updated>2017-04-19T21:47:01-04:00</updated>
     <author>
       <name>Article Author</name>
     </author>
@@ -591,7 +591,7 @@ end
 
 &lt;p&gt;Want to see more of something mentioned here? Leave any ideas in the comments below.&lt;/p&gt;
 
-&lt;p&gt;Happy Clacking.&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://gist.github.com/StevenNunez/cd955e1f1576397c01c528ba41a88730"&gt;Here&amp;rsquo;s a gist with the code&lt;/a&gt;. Happy Clacking.&lt;/p&gt;
 </content>
   </entry>
   <entry>
