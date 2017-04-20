@@ -158,6 +158,7 @@ defmodule Store do
 ```
 
 Here we cast asynchronously using `GenServer.cast/2`. This strategy makes it so our dispatch code won't block our calling code. Imagine if a reducer took a long time to finish. Or better yet, imagine if we have to run through several reducers? This not blocking takes advantage of Elixir's real power: Concurrency. Try this out by loading the file like before and run this:
+
 ```elixir
 c "e_dux.exs"
 
@@ -171,6 +172,7 @@ WOOT! Got some `INCREMENT` action! Let's move on to adding subscribers and notif
 
 ## I'd like to subscribe to your newsletter
 Back to our dream code:
+
 ``` elixir
 {:ok, store} = Store.start_link(CountReducer)
 
@@ -235,6 +237,7 @@ end
 FINALLY we update `handle_cast/2` for our `dispatch/2` function to call every subscriber.
 
 With this code, our dreams are ALIVE!
+
 ```elixir
 {:ok, store} = Store.start_link(CountReducer)
 
@@ -340,6 +343,7 @@ end
 ```
 
 And finally, our brand new module a brand new module to handle our CombineReducers logic.
+
 ``` elixir
 defmodule CombineReducers do
   def reduce(reducers, state, action) do
@@ -357,6 +361,7 @@ end
 Ok, dopeness alert. Notice how we're using a task to run this calculation. This means that the calculation for ALL of the reducers will take as long as the slowest one, not the culmination of all of their time. THIS IS REALLY COOL. How are you not excited?!
 
 Let's test it out. First create a `SquareReducer`:
+
 ```elixir
 defmodule SquareReducer do
   @behaviour Reducer
