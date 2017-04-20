@@ -275,37 +275,27 @@ Let&rsquo;s start by implementing the <code>get_state</code> function on a <code
   <span class="k">end</span>
 </pre></td></tr></tbody></table>
 </code></pre>
-<p>Here we cast asynchronously using <code>GenServer.cast/2</code>. This strategy makes it so our dispatch code won&rsquo;t block our calling code. Imagine if a reducer took a long time to finish. Or better yet, imagine if we have to run through several reducers? This not blocking takes advantage of Elixir&rsquo;s real power: Concurrency. Try this out by loading the file like before and run this:
-&ldquo;`elixir
-c &quot;e_dux.exs&rdquo;</p>
+<p>Here we cast asynchronously using <code>GenServer.cast/2</code>. This strategy makes it so our dispatch code won&rsquo;t block our calling code. Imagine if a reducer took a long time to finish. Or better yet, imagine if we have to run through several reducers? This not blocking takes advantage of Elixir&rsquo;s real power: Concurrency. Try this out by loading the file like before and run this:</p>
+<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre></td><td class="rouge-code"><pre><span class="n">c</span> <span class="sd">"</span><span class="s2">e_dux.exs"</span>
 
-<p>{:ok, store} = Store.start<em>link(CountReducer)
-Store.get</em>state(store) # =&gt; 0
-Store.dispatch(store, %{type: &ldquo;INCREMENT&rdquo;})
-Store.get_state(store) # =&gt; 1
-&ldquo;`</p>
-
+<span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">store</span><span class="p">}</span> <span class="o">=</span> <span class="no">Store</span><span class="o">.</span><span class="n">start_link</span><span class="p">(</span><span class="no">CountReducer</span><span class="p">)</span>
+<span class="no">Store</span><span class="o">.</span><span class="n">get_state</span><span class="p">(</span><span class="n">store</span><span class="p">)</span> <span class="c1"># =&gt; 0</span>
+<span class="no">Store</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="p">%{</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">INCREMENT"</span><span class="p">})</span>
+<span class="no">Store</span><span class="o">.</span><span class="n">get_state</span><span class="p">(</span><span class="n">store</span><span class="p">)</span> <span class="c1"># =&gt; 1</span>
+</pre></td></tr></tbody></table>
+</code></pre>
 <p>WOOT! Got some <code>INCREMENT</code> action! Let&rsquo;s move on to adding subscribers and notifying them.</p>
 
 <h2>I&rsquo;d like to subscribe to your newsletter</h2>
 
-<p>Back to our dream code:
-&rdquo;` elixir
-{:ok, store} = Store.start_link(CountReducer)</p>
-
-<p>subscriber_ref = Store.subscribe(store, fn (state) -&gt;
-    IO.puts &ldquo;I Got called: #{state}&rdquo;
-end)</p>
-
-<p>Store.dispatch(store, %{type: &ldquo;INCREMENT&rdquo;})</p>
-
-<h1>Should log &ldquo;I got called: 1&rdquo;</h1>
-
-<p>Store.remove<em>subscriber(store, subscriber</em>ref)
-Store.dispatch(store, %{type: &ldquo;INCREMENT&rdquo;})</p>
-
-<h1>Should log nothing&quot;</h1>
-<pre class="highlight plaintext"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<p>Back to our dream code:</p>
+<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -315,16 +305,33 @@ Store.dispatch(store, %{type: &ldquo;INCREMENT&rdquo;})</p>
 8
 9
 10
-</pre></td><td class="rouge-code"><pre>
-We want a `dispatch` to notify our existing subscribers after we've updated our state. We'll also have our `store` track its subscribers. We'll be updating `init/1`, as well as adding `subscribe/2` and `remove_subscriber/2`
+11
+12
+</pre></td><td class="rouge-code"><pre><span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">store</span><span class="p">}</span> <span class="o">=</span> <span class="no">Store</span><span class="o">.</span><span class="n">start_link</span><span class="p">(</span><span class="no">CountReducer</span><span class="p">)</span>
 
-### init/1
+<span class="n">subscriber_ref</span> <span class="o">=</span> <span class="no">Store</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="k">fn</span> <span class="p">(</span><span class="n">state</span><span class="p">)</span> <span class="o">-&gt;</span>
+    <span class="no">IO</span><span class="o">.</span><span class="n">puts</span> <span class="sd">"</span><span class="s2">I Got called: </span><span class="si">#{</span><span class="n">state</span><span class="si">}</span><span class="s2">"</span>
+<span class="k">end</span><span class="p">)</span>
 
-``` elixir
-def init([reducer, initial_state]) do
-  store_state = apply(reducer, :reduce, [initial_state, @initializer_action])
-  {:ok, %{reducer: reducer, store_state: store_state, subscribers: %{}}} # add new subscribers map to state
-end
+<span class="no">Store</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="p">%{</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">INCREMENT"</span><span class="p">})</span>
+<span class="c1"># Should log "I got called: 1"</span>
+
+<span class="no">Store</span><span class="o">.</span><span class="n">remove_subscriber</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="n">subscriber_ref</span><span class="p">)</span>
+<span class="no">Store</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="p">%{</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">INCREMENT"</span><span class="p">})</span>
+<span class="c1"># Should log nothing"</span>
+</pre></td></tr></tbody></table>
+</code></pre>
+<p>We want a <code>dispatch</code> to notify our existing subscribers after we&rsquo;ve updated our state. We&rsquo;ll also have our <code>store</code> track its subscribers. We&rsquo;ll be updating <code>init/1</code>, as well as adding <code>subscribe/2</code> and <code>remove_subscriber/2</code></p>
+
+<h3>init/1</h3>
+<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td><td class="rouge-code"><pre><span class="k">def</span> <span class="n">init</span><span class="p">([</span><span class="n">reducer</span><span class="p">,</span> <span class="n">initial_state</span><span class="p">])</span> <span class="k">do</span>
+  <span class="n">store_state</span> <span class="o">=</span> <span class="n">apply</span><span class="p">(</span><span class="n">reducer</span><span class="p">,</span> <span class="ss">:reduce</span><span class="p">,</span> <span class="p">[</span><span class="n">initial_state</span><span class="p">,</span> <span class="nv">@initializer_action</span><span class="p">])</span>
+  <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="p">%{</span><span class="ss">reducer:</span> <span class="n">reducer</span><span class="p">,</span> <span class="ss">store_state:</span> <span class="n">store_state</span><span class="p">,</span> <span class="ss">subscribers:</span> <span class="p">%{}}}</span> <span class="c1"># add new subscribers map to state</span>
+<span class="k">end</span>
 </pre></td></tr></tbody></table>
 </code></pre>
 <p>Here we add a new key to our state map: subscribers. We&rsquo;ll be taking advantage of this being a map when we delete subscribers in <code>remove_subscriber/2</code></p>
@@ -387,23 +394,8 @@ end
 </code></pre>
 <p>FINALLY we update <code>handle_cast/2</code> for our <code>dispatch/2</code> function to call every subscriber.</p>
 
-<p>With this code, our dreams are ALIVE!
-&ldquo;`elixir
-{:ok, store} = Store.start_link(CountReducer)</p>
-
-<p>subscriber_ref = Store.subscribe(store, fn (state) -&gt;
-    IO.puts &quot;I Got called: #{state}&rdquo;
-end)</p>
-
-<p>Store.dispatch(store, %{type: &ldquo;INCREMENT&rdquo;})</p>
-
-<h1>Should log &ldquo;I got called: 1&rdquo;</h1>
-
-<p>Store.remove<em>subscriber(store, subscriber</em>ref)
-Store.dispatch(store, %{type: &ldquo;INCREMENT&rdquo;})</p>
-
-<h1>Should log nothing&quot;</h1>
-<pre class="highlight plaintext"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<p>With this code, our dreams are ALIVE!</p>
+<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -415,22 +407,41 @@ Store.dispatch(store, %{type: &ldquo;INCREMENT&rdquo;})</p>
 10
 11
 12
-13
-14
-</pre></td><td class="rouge-code"><pre>
-## Combined Reducers
-So Redux lets you break down complex logic into multiple reducers. Something like:
+</pre></td><td class="rouge-code"><pre><span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">store</span><span class="p">}</span> <span class="o">=</span> <span class="no">Store</span><span class="o">.</span><span class="n">start_link</span><span class="p">(</span><span class="no">CountReducer</span><span class="p">)</span>
 
-``` javascript
-const rootReducer = combineReducers({
-  count: countReducer,
-  square: squareReducer
-})
+<span class="n">subscriber_ref</span> <span class="o">=</span> <span class="no">Store</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="k">fn</span> <span class="p">(</span><span class="n">state</span><span class="p">)</span> <span class="o">-&gt;</span>
+    <span class="no">IO</span><span class="o">.</span><span class="n">puts</span> <span class="sd">"</span><span class="s2">I Got called: </span><span class="si">#{</span><span class="n">state</span><span class="si">}</span><span class="s2">"</span>
+<span class="k">end</span><span class="p">)</span>
 
-const store = createStore(rootReducer)
-store.getState() // {count: 0, square: 2} // default to 2 so we can get some good squaring action
-store.dispatch({type: "INCREMENT"})
-store.getState() // {count: 1, square: 4}
+<span class="no">Store</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="p">%{</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">INCREMENT"</span><span class="p">})</span>
+<span class="c1"># Should log "I got called: 1"</span>
+
+<span class="no">Store</span><span class="o">.</span><span class="n">remove_subscriber</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="n">subscriber_ref</span><span class="p">)</span>
+<span class="no">Store</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="p">%{</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">INCREMENT"</span><span class="p">})</span>
+<span class="c1"># Should log nothing"</span>
+</pre></td></tr></tbody></table>
+</code></pre>
+<h2>Combined Reducers</h2>
+
+<p>So Redux lets you break down complex logic into multiple reducers. Something like:</p>
+<pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre></td><td class="rouge-code"><pre><span class="kr">const</span> <span class="nx">rootReducer</span> <span class="o">=</span> <span class="nx">combineReducers</span><span class="p">({</span>
+  <span class="na">count</span><span class="p">:</span> <span class="nx">countReducer</span><span class="p">,</span>
+  <span class="na">square</span><span class="p">:</span> <span class="nx">squareReducer</span>
+<span class="p">})</span>
+
+<span class="kr">const</span> <span class="nx">store</span> <span class="o">=</span> <span class="nx">createStore</span><span class="p">(</span><span class="nx">rootReducer</span><span class="p">)</span>
+<span class="nx">store</span><span class="p">.</span><span class="nx">getState</span><span class="p">()</span> <span class="c1">// {count: 0, square: 2} // default to 2 so we can get some good squaring action</span>
+<span class="nx">store</span><span class="p">.</span><span class="nx">dispatch</span><span class="p">({</span><span class="na">type</span><span class="p">:</span> <span class="s2">"INCREMENT"</span><span class="p">})</span>
+<span class="nx">store</span><span class="p">.</span><span class="nx">getState</span><span class="p">()</span> <span class="c1">// {count: 1, square: 4}</span>
 </pre></td></tr></tbody></table>
 </code></pre>
 <p>Internally all a combined reducer is is a reducer that delegates to other reducers. More naive code:</p>
@@ -556,35 +567,52 @@ store.getState() // {count: 1, square: 4}
 <span class="k">end</span>
 </pre></td></tr></tbody></table>
 </code></pre>
-<p>And finally, our brand new module a brand new module to handle our CombineReducers logic.
-<code>elixir
-defmodule CombineReducers do
-  def reduce(reducers, state, action) do
-    for {state_name, reducer} &lt;- reducers do
-      Task.async(fn () -&gt;
-        {state_name, apply(reducer, :reduce, [state[state_name], action])}
-      end)
-    end
-    |&gt; Enum.map(&amp;Task.await/1)
-    |&gt; Enum.into(%{})
-  end
-end
-</code></p>
-
+<p>And finally, our brand new module a brand new module to handle our CombineReducers logic.</p>
+<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+</pre></td><td class="rouge-code"><pre><span class="k">defmodule</span> <span class="no">CombineReducers</span> <span class="k">do</span>
+  <span class="k">def</span> <span class="n">reduce</span><span class="p">(</span><span class="n">reducers</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">for</span> <span class="p">{</span><span class="n">state_name</span><span class="p">,</span> <span class="n">reducer</span><span class="p">}</span> <span class="o">&lt;-</span> <span class="n">reducers</span> <span class="k">do</span>
+      <span class="no">Task</span><span class="o">.</span><span class="n">async</span><span class="p">(</span><span class="k">fn</span> <span class="p">()</span> <span class="o">-&gt;</span>
+        <span class="p">{</span><span class="n">state_name</span><span class="p">,</span> <span class="n">apply</span><span class="p">(</span><span class="n">reducer</span><span class="p">,</span> <span class="ss">:reduce</span><span class="p">,</span> <span class="p">[</span><span class="n">state</span><span class="p">[</span><span class="n">state_name</span><span class="p">],</span> <span class="n">action</span><span class="p">])}</span>
+      <span class="k">end</span><span class="p">)</span>
+    <span class="k">end</span>
+    <span class="o">|&gt;</span> <span class="no">Enum</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="o">&amp;</span><span class="no">Task</span><span class="o">.</span><span class="n">await</span><span class="o">/</span><span class="m">1</span><span class="p">)</span>
+    <span class="o">|&gt;</span> <span class="no">Enum</span><span class="o">.</span><span class="n">into</span><span class="p">(%{})</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</pre></td></tr></tbody></table>
+</code></pre>
 <p>Ok, dopeness alert. Notice how we&rsquo;re using a task to run this calculation. This means that the calculation for ALL of the reducers will take as long as the slowest one, not the culmination of all of their time. THIS IS REALLY COOL. How are you not excited?!</p>
 
-<p>Let&rsquo;s test it out. First create a <code>SquareReducer</code>:
-&ldquo;`elixir
-defmodule SquareReducer do
-  @behaviour Reducer
-  def reduce(nil, action), do: reduce(2, action)
-  def reduce(state, action), do: do_reduce(state, action)</p>
+<p>Let&rsquo;s test it out. First create a <code>SquareReducer</code>:</p>
+<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+</pre></td><td class="rouge-code"><pre><span class="k">defmodule</span> <span class="no">SquareReducer</span> <span class="k">do</span>
+  <span class="nv">@behaviour</span> <span class="no">Reducer</span>
+  <span class="k">def</span> <span class="n">reduce</span><span class="p">(</span><span class="no">nil</span><span class="p">,</span> <span class="n">action</span><span class="p">),</span> <span class="k">do</span><span class="p">:</span> <span class="n">reduce</span><span class="p">(</span><span class="m">2</span><span class="p">,</span> <span class="n">action</span><span class="p">)</span>
+  <span class="k">def</span> <span class="n">reduce</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">),</span> <span class="k">do</span><span class="p">:</span> <span class="n">do_reduce</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">)</span>
 
-<p>defp do<em>reduce(state, %{type: &quot;INCREMENT&rdquo;}), do: state * 1
-  defp do</em>reduce(state, _), do: state
-end
-&ldquo;`</p>
-
+  <span class="k">defp</span> <span class="n">do_reduce</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="p">%{</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">INCREMENT"</span><span class="p">}),</span> <span class="k">do</span><span class="p">:</span> <span class="n">state</span> <span class="o">*</span> <span class="m">1</span>
+  <span class="k">defp</span> <span class="n">do_reduce</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">_</span><span class="p">),</span> <span class="k">do</span><span class="p">:</span> <span class="n">state</span>
+<span class="k">end</span>
+</pre></td></tr></tbody></table>
+</code></pre>
 <p>Then Run this!</p>
 <pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
