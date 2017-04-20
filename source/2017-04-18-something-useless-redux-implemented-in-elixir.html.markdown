@@ -5,7 +5,7 @@ tags: elixir, redux
 ---
 
 # Something completely useless - Redux Implemented in Elixir
-I got a chance to teach [Redux](http://redux.js.org/) recently and what a time! For something so simple, it sure can get complicated. If you take a look at my [previous articles](2014/04/13/closures.html) you might notice a technique I use to get my head around concepts. Bring that bad boy on to my own turf.
+I got a chance to teach [Redux](http://redux.js.org/) recently and what a time! For something so simple, it sure can get complicated. If you take a look at my [previous articles](/2014/04/13/closures.html) you might notice a technique I use to get my head around concepts. Bring that bad boy on to my own turf.
 
 ![](https://media.giphy.com/media/OhQBBFi64Z81a/giphy.gif)
 
