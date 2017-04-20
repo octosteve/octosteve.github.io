@@ -14,13 +14,13 @@
     <link rel="alternate" href="http://blog.url.com/2017/04/18/something-useless-redux-implemented-in-elixir.html"/>
     <id>http://blog.url.com/2017/04/18/something-useless-redux-implemented-in-elixir.html</id>
     <published>2017-04-18T11:38:00-04:00</published>
-    <updated>2017-04-19T21:57:26-04:00</updated>
+    <updated>2017-04-20T08:20:03-04:00</updated>
     <author>
       <name>Article Author</name>
     </author>
     <content type="html">&lt;h1&gt;Something completely useless - Redux Implemented in Elixir&lt;/h1&gt;
 
-&lt;p&gt;I got a chance to teach &lt;a href="http://redux.js.org/"&gt;Redux&lt;/a&gt; recently and what a time! For something so simple, it sure can get complicated. If you take a look at my &lt;a href="2014/04/13/closures.html"&gt;previous articles&lt;/a&gt; you might notice a technique I use to get my head around concepts. Bring that bad boy on to my own turf.&lt;/p&gt;
+&lt;p&gt;I got a chance to teach &lt;a href="http://redux.js.org/"&gt;Redux&lt;/a&gt; recently and what a time! For something so simple, it sure can get complicated. If you take a look at my &lt;a href="/2014/04/13/closures.html"&gt;previous articles&lt;/a&gt; you might notice a technique I use to get my head around concepts. Bring that bad boy on to my own turf.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src="https://media.giphy.com/media/OhQBBFi64Z81a/giphy.gif" /&gt;&lt;/p&gt;
 
