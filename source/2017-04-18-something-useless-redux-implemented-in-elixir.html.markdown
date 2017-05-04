@@ -1,7 +1,7 @@
 ---
 title: Something Useless - Redux Implemented in Elixir
 date: 2017-04-18 15:38 UTC
-tags: elixir, redux
+tags: elixir, redux, something useless
 ---
 
 # Something completely useless - Redux Implemented in Elixir
@@ -113,7 +113,7 @@ The Reducers don't care what the state is, all they do is get state, and an acti
 
 ``` elixir
 defmodule Reducer do
-  @callback reduce(any, Map :: map()) :: any
+  @callback reduce(any, %{type: any}) :: any
 end
 
 defmodule CountReducer do
