@@ -391,6 +391,7 @@ __Channels are just `GenServer`s so they respond to out of band messages with `h
  Whoop!
 
 And just like that, we've got a terminal in our browser!
+<img src="http://i.imgur.com/DXhsL3W.gif"  width=700 />
 
 ## Wrap up
 The `erlexec` library is really powerful. With options to send `stdout|stderr` to different processes, the way we set this up could have been really different.
