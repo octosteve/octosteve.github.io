@@ -34,6 +34,30 @@
         <p><a href="/">Previous page</a></p>
 
     <article>
+      <h1 class="article-title"><a href="/2015/05/28/working-with-templates-in-ruby-erb.html">Working with Templates in Ruby ERB</a></h1>
+      <h1>Templates in ERB</h1>
+
+<p>This post is a bit of a thought experiment. Looking into this led me down the route of some interesting ruby solutions.</p>
+
+<h2>The problem</h2>
+
+<p>Ruby ships with the <code>erb</code> library, but it natively doesn’t come with a way to wrap one ERB file in another. This makes composing files difficult. There’s no way to use something like rails’ <code>yield</code> method.</p>
+
+<h3>Some Basic ERB</h3>
+
+<p>Here’s how we’d render a simple erb template.</p>
+<pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre></td>
+<td class="rouge-code"><pre><span class="nb">require</span> <span class="s1">'erb'</span>
+<span class="n">template</span> <span class="o">=</span> <span class="s2">"1 and 1 is &lt;%= 1 + 1 %&gt;"</span>
+<span class="no">ERB</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">template</span><span class="p">).</span><span class="nf">result</span></pre></td>
+</tr></tbody></table></code></pre>
+      <a href="/2015/05/28/working-with-templates-in-ruby-erb.html">Read more…</a>
+    </article>
+    <article>
       <h1 class="article-title"><a href="/2015/05/20/elixir-tuples-vs-lists.html">Elixir - Tuples vs Lists</a></h1>
       <h1>Immutability Primer</h1>
 
@@ -193,6 +217,7 @@ While working on a Progress Dashboard I came across this code for creating neste
     <section class="recent">
       <h2>Recent Articles</h2>
       <ol class="articles">
+            <li><a href="/2017/05/02/something-useless-terminal-in-your-browser.html">Something Useless - Terminal in your browser</a>
             <li><a href="/2017/04/18/something-useless-redux-implemented-in-elixir.html">Something Useless - Redux Implemented in Elixir</a>
             <li><a href="/2016/08/24/learn-to-program-with-elixir.html">Learn to Program with Elixir</a>
             <li><a href="/2016/05/23/guard-this-with-your-life-or-authenticating-apis-with-guardian.html">Guard this with your life... Or authenticating APIs with Guardian</a>
@@ -202,7 +227,6 @@ While working on a Progress Dashboard I came across this code for creating neste
             <li><a href="/2015/08/23/let-s-build-something-with-rack.html">Let's build something with Rack</a>
             <li><a href="/2015/08/21/lets-learn-about-rack.html">Let's learn about Rack</a>
             <li><a href="/2015/06/08/rails-foreign-key-constraints-the-ugly-way.html">Rails Foreign Key Constraints - The Ugly Way</a>
-            <li><a href="/2015/05/28/working-with-templates-in-ruby-erb.html">Working with Templates in Ruby ERB</a>
       </ol>
     </section>
 
@@ -223,7 +247,7 @@ While working on a Progress Dashboard I came across this code for creating neste
             <li><a href="/tags/beginner.html">beginner</a> (1)</a></li>
             <li><a href="/tags/closures.html">closures</a> (1)</a></li>
             <li><a href="/tags/components-of-programming.html">components of programming</a> (1)</a></li>
-            <li><a href="/tags/elixir.html">elixir</a> (4)</a></li>
+            <li><a href="/tags/elixir.html">elixir</a> (5)</a></li>
             <li><a href="/tags/enumerable.html">enumerable</a> (1)</a></li>
             <li><a href="/tags/file-watchers.html">file watchers</a> (1)</a></li>
             <li><a href="/tags/find.html">find</a> (1)</a></li>
@@ -244,6 +268,7 @@ While working on a Progress Dashboard I came across this code for creating neste
             <li><a href="/tags/routing.html">routing</a> (1)</a></li>
             <li><a href="/tags/ruby.html">ruby</a> (6)</a></li>
             <li><a href="/tags/sharp-axe.html">sharp axe</a> (1)</a></li>
+            <li><a href="/tags/something-useless.html">something useless</a> (2)</a></li>
             <li><a href="/tags/web.html">web</a> (1)</a></li>
       </ol>
     </section>
@@ -251,6 +276,8 @@ While working on a Progress Dashboard I came across this code for creating neste
     <section class="by-month">
       <h2>By Month</h2>
       <ol>
+            <li><a href="/2017/05.html">May 2017</a>
+              (1)</a></li>
             <li><a href="/2017/04.html">April 2017</a>
               (1)</a></li>
             <li><a href="/2016/08.html">August 2016</a>
