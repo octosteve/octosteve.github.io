@@ -5,7 +5,7 @@
   <id>http://blog.url.com/</id>
   <link href="http://blog.url.com/"/>
   <link href="http://blog.url.com/feed.xml" rel="self"/>
-  <updated>2017-05-02T09:40:00-04:00</updated>
+  <updated>2017-05-02T13:40:00Z</updated>
   <author>
     <name>Blog Author</name>
   </author>
@@ -13,8 +13,8 @@
     <title>Something Useless - Terminal in your browser</title>
     <link rel="alternate" href="http://blog.url.com/2017/05/02/something-useless-terminal-in-your-browser.html"/>
     <id>http://blog.url.com/2017/05/02/something-useless-terminal-in-your-browser.html</id>
-    <published>2017-05-02T09:40:00-04:00</published>
-    <updated>2017-05-04T09:40:23-04:00</updated>
+    <published>2017-05-02T13:40:00Z</published>
+    <updated>2017-05-04T10:26:28-04:00</updated>
     <author>
       <name>Article Author</name>
     </author>
@@ -183,23 +183,38 @@ npm install --save xterm
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;NICE! Let&amp;rsquo;s wrap this leg of the trip up by sending all terminal input to our channel, then respond to the &lt;code&gt;output&lt;/code&gt; event we send from the channel.&lt;/p&gt;
 
-&lt;p&gt;In the end, your &lt;code&gt;app.js&lt;/code&gt; should look like this:
-&amp;ldquo;`javascript
-import Terminal from &amp;lsquo;xterm&amp;rsquo;
-import socket from &amp;lsquo;./socket&amp;rsquo;&lt;/p&gt;
+&lt;p&gt;In the end, your &lt;code&gt;app.js&lt;/code&gt; should look like this:&lt;/p&gt;
+&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="kr"&gt;import&lt;/span&gt; &lt;span class="nx"&gt;Terminal&lt;/span&gt; &lt;span class="nx"&gt;from&lt;/span&gt; &lt;span class="s1"&gt;'xterm'&lt;/span&gt;
+&lt;span class="kr"&gt;import&lt;/span&gt; &lt;span class="nx"&gt;socket&lt;/span&gt; &lt;span class="nx"&gt;from&lt;/span&gt; &lt;span class="s1"&gt;'./socket'&lt;/span&gt;
 
-&lt;p&gt;let channel = socket.channel(&amp;quot;terminal:1&amp;rdquo;, {})
-channel.join()
-channel.on(&amp;lsquo;output&amp;rsquo;, ({output}) =&amp;gt; term.write(output)) // From the Channel&lt;/p&gt;
+&lt;span class="kd"&gt;let&lt;/span&gt; &lt;span class="nx"&gt;channel&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;socket&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;channel&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;"terminal:1"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{})&lt;/span&gt;
+&lt;span class="nx"&gt;channel&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;join&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="nx"&gt;channel&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;on&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'output'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;({&lt;/span&gt;&lt;span class="nx"&gt;output&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="nx"&gt;term&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;write&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;output&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="c1"&gt;// From the Channel&lt;/span&gt;
 
-&lt;p&gt;let term = new Terminal({
-  cursorBlink: true,
-})&lt;/p&gt;
+&lt;span class="kd"&gt;let&lt;/span&gt; &lt;span class="nx"&gt;term&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="nx"&gt;Terminal&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;
+  &lt;span class="na"&gt;cursorBlink&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;span class="p"&gt;})&lt;/span&gt;
 
-&lt;p&gt;term.open(document.getElementById(&amp;lsquo;terminal-container&amp;rsquo;))
-term.on(&amp;lsquo;data&amp;rsquo;, (data) =&amp;gt; channel.push(&amp;lsquo;input&amp;rsquo;, {input: data})) // To the Channel
-&amp;ldquo;`
-Lines where we send IO back and forth are marked in comments. Look! Our terminal&amp;hellip; just returns what we typed. Not super exciting. Up next, we&amp;rsquo;ll be delving into the bowels of Unix, and learning how to interact with external processes.&lt;/p&gt;
+
+&lt;span class="nx"&gt;term&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;open&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;document&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;getElementById&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'terminal-container'&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="nx"&gt;term&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;on&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'data'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;data&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="nx"&gt;channel&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;push&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'input'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="na"&gt;input&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;data&lt;/span&gt;&lt;span class="p"&gt;}))&lt;/span&gt; &lt;span class="c1"&gt;// To the Channel&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Lines where we send IO back and forth are marked in comments. Look! Our terminal&amp;hellip; just returns what we typed. Not super exciting. Up next, we&amp;rsquo;ll be delving into the bowels of Unix, and learning how to interact with external processes.&lt;/p&gt;
 
 &lt;h2&gt;Ports, ptys, AKA why did I choose to write about this?!&lt;/h2&gt;
 
@@ -357,9 +372,12 @@ Notice that the only message we&amp;rsquo;ve received so far is our terminal pro
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;ECHO!&lt;/p&gt;
 
-&lt;p&gt;A couple of things to note:
-1. &lt;code&gt;{:ok, pid, _os_pid} = :exec.run(&amp;#39;$SHELL&amp;#39;, [:stdin, :stdout, :stderr, :pty])&lt;/code&gt;. Note the single quotes. This &lt;strong&gt;has&lt;/strong&gt; to be an Erlang String or Elixir Charlist, which is in single quotes.
-2. &lt;code&gt;:exec.send(pid, &amp;quot;ls\n&amp;quot;)&lt;/code&gt; Double quotes when you &lt;code&gt;:exec.send&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;A couple of things to note:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;{:ok, pid, _os_pid} = :exec.run(&amp;#39;$SHELL&amp;#39;, [:stdin, :stdout, :stderr, :pty])&lt;/code&gt;. Note the single quotes. This &lt;strong&gt;has&lt;/strong&gt; to be an Erlang String or Elixir Charlist, which is in single quotes.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;:exec.send(pid, &amp;quot;ls\n&amp;quot;)&lt;/code&gt; Double quotes when you &lt;code&gt;:exec.send&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
 
 &lt;h2&gt;GenServer time&lt;/h2&gt;
 
@@ -496,28 +514,45 @@ Notice that the only message we&amp;rsquo;ve received so far is our terminal pro
 
 &lt;h2&gt;TerminalChannel part 2&lt;/h2&gt;
 
-&lt;p&gt;Let&amp;rsquo;s dive in.
-&amp;rdquo;` elixir
-defmodule TerminalInYourBrowser.Web.TerminalChannel do
-  use TerminalInYourBrowser.Web, :channel&lt;/p&gt;
+&lt;p&gt;Let&amp;rsquo;s dive in.&lt;/p&gt;
+&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="k"&gt;defmodule&lt;/span&gt; &lt;span class="no"&gt;TerminalInYourBrowser&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Web&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;TerminalChannel&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="kn"&gt;use&lt;/span&gt; &lt;span class="no"&gt;TerminalInYourBrowser&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Web&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:channel&lt;/span&gt;
 
-&lt;p&gt;def join(&amp;ldquo;terminal:&amp;rdquo; &amp;lt;&amp;gt; id, payload, socket) do
-    {:ok, terminal} = Terminal.start_link(self())
-    {:ok, assign(socket, :terminal, terminal)}
-  end&lt;/p&gt;
+  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;join&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;terminal:"&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;id&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;payload&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;socket&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+    &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:ok&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;terminal&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="no"&gt;Terminal&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;start_link&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;self&lt;/span&gt;&lt;span class="p"&gt;())&lt;/span&gt;
+    &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:ok&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;assign&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;socket&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:terminal&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;terminal&lt;/span&gt;&lt;span class="p"&gt;)}&lt;/span&gt;
+  &lt;span class="k"&gt;end&lt;/span&gt;
 
-&lt;p&gt;def handle&lt;em&gt;in(&amp;ldquo;input&amp;rdquo;, %{&amp;ldquo;input&amp;rdquo; =&amp;gt; input}, socket) do
-    Terminal.send&lt;/em&gt;input(socket.assigns[:terminal], input)
-    {:noreply, socket}
-u end&lt;/p&gt;
+  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;handle_in&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;input"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;input"&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;input&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="n"&gt;socket&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+    &lt;span class="no"&gt;Terminal&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;send_input&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;socket&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;assigns&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="ss"&gt;:terminal&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="n"&gt;input&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:noreply&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;socket&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="n"&gt;u&lt;/span&gt; &lt;span class="k"&gt;end&lt;/span&gt;
 
-&lt;p&gt;def handle_info({:output, output}, socket) do
-    push(socket, &amp;ldquo;output&amp;rdquo;, %{output: output})
-    {:noreply, socket}
-  end
-end
-&amp;ldquo;`&lt;/p&gt;
-
+  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;handle_info&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;&lt;span class="ss"&gt;:output&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;output&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="n"&gt;socket&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+    &lt;span class="n"&gt;push&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;socket&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;output"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="ss"&gt;output:&lt;/span&gt; &lt;span class="n"&gt;output&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt;
+    &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:noreply&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;socket&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+  &lt;span class="k"&gt;end&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;When you join, we create a new terminal process. We pass in &lt;code&gt;self()&lt;/code&gt; as the &lt;code&gt;output_pid&lt;/code&gt;. We then add the terminal pid to the socket&amp;rsquo;s state. Then we wait&amp;hellip; When we get that &lt;code&gt;input&lt;/code&gt; message from the browser terminal, we send it to the terminal process. Here&amp;rsquo;s the cool part:&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;Channels are just &lt;code&gt;GenServer&lt;/code&gt;s so they respond to out of band messages with &lt;code&gt;handle_info&lt;/code&gt;.&lt;/strong&gt;
@@ -538,8 +573,8 @@ end
     <title>Something Useless - Redux Implemented in Elixir</title>
     <link rel="alternate" href="http://blog.url.com/2017/04/18/something-useless-redux-implemented-in-elixir.html"/>
     <id>http://blog.url.com/2017/04/18/something-useless-redux-implemented-in-elixir.html</id>
-    <published>2017-04-18T11:38:00-04:00</published>
-    <updated>2017-05-02T09:41:24-04:00</updated>
+    <published>2017-04-18T15:38:00Z</published>
+    <updated>2017-05-04T10:02:19-04:00</updated>
     <author>
       <name>Article Author</name>
     </author>
@@ -1151,8 +1186,8 @@ Let&amp;rsquo;s start by implementing the &lt;code&gt;get_state&lt;/code&gt; fun
     <title>Learn to Program with Elixir</title>
     <link rel="alternate" href="http://blog.url.com/2016/08/24/learn-to-program-with-elixir.html"/>
     <id>http://blog.url.com/2016/08/24/learn-to-program-with-elixir.html</id>
-    <published>2016-08-24T19:47:00-04:00</published>
-    <updated>2017-04-18T18:23:23-04:00</updated>
+    <published>2016-08-24T23:47:00Z</published>
+    <updated>2016-08-25T19:35:18-04:00</updated>
     <author>
       <name>Article Author</name>
     </author>
@@ -1195,8 +1230,8 @@ applications? I think there is, with Elixir.&lt;/p&gt;
     <title>Guard this with your life... Or authenticating APIs with Guardian</title>
     <link rel="alternate" href="http://blog.url.com/2016/05/23/guard-this-with-your-life-or-authenticating-apis-with-guardian.html"/>
     <id>http://blog.url.com/2016/05/23/guard-this-with-your-life-or-authenticating-apis-with-guardian.html</id>
-    <published>2016-05-23T17:58:00-04:00</published>
-    <updated>2017-04-18T18:23:23-04:00</updated>
+    <published>2016-05-23T21:58:00Z</published>
+    <updated>2017-04-08T12:55:18-04:00</updated>
     <author>
       <name>Article Author</name>
     </author>
@@ -1910,8 +1945,8 @@ In &lt;code&gt;article.ex&lt;/code&gt;:&lt;/p&gt;
     <title>LTrees in Phoenix</title>
     <link rel="alternate" href="http://blog.url.com/2016/05/22/ltrees-in-phoenix.html"/>
     <id>http://blog.url.com/2016/05/22/ltrees-in-phoenix.html</id>
-    <published>2016-05-22T12:38:00-04:00</published>
-    <updated>2017-04-18T18:23:23-04:00</updated>
+    <published>2016-05-22T16:38:00Z</published>
+    <updated>2016-05-22T20:16:22-04:00</updated>
     <author>
       <name>Article Author</name>
     </author>
@@ -2262,8 +2297,8 @@ iex(17)&amp;gt; Repo.all(query)
     <title>Processes in Elixir</title>
     <link rel="alternate" href="http://blog.url.com/2016/04/26/processes-in-elixir.html"/>
     <id>http://blog.url.com/2016/04/26/processes-in-elixir.html</id>
-    <published>2016-04-26T11:47:00-04:00</published>
-    <updated>2017-04-18T18:23:23-04:00</updated>
+    <published>2016-04-26T15:47:00Z</published>
+    <updated>2016-04-26T18:06:50-04:00</updated>
     <author>
       <name>Article Author</name>
     </author>

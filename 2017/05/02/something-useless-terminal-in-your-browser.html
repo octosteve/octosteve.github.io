@@ -196,23 +196,38 @@ npm install --save xterm
 </code></pre>
 <p>NICE! Let&rsquo;s wrap this leg of the trip up by sending all terminal input to our channel, then respond to the <code>output</code> event we send from the channel.</p>
 
-<p>In the end, your <code>app.js</code> should look like this:
-&ldquo;`javascript
-import Terminal from &lsquo;xterm&rsquo;
-import socket from &lsquo;./socket&rsquo;</p>
+<p>In the end, your <code>app.js</code> should look like this:</p>
+<pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+</pre></td><td class="rouge-code"><pre><span class="kr">import</span> <span class="nx">Terminal</span> <span class="nx">from</span> <span class="s1">'xterm'</span>
+<span class="kr">import</span> <span class="nx">socket</span> <span class="nx">from</span> <span class="s1">'./socket'</span>
 
-<p>let channel = socket.channel(&quot;terminal:1&rdquo;, {})
-channel.join()
-channel.on(&lsquo;output&rsquo;, ({output}) =&gt; term.write(output)) // From the Channel</p>
+<span class="kd">let</span> <span class="nx">channel</span> <span class="o">=</span> <span class="nx">socket</span><span class="p">.</span><span class="nx">channel</span><span class="p">(</span><span class="s2">"terminal:1"</span><span class="p">,</span> <span class="p">{})</span>
+<span class="nx">channel</span><span class="p">.</span><span class="nx">join</span><span class="p">()</span>
+<span class="nx">channel</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">'output'</span><span class="p">,</span> <span class="p">({</span><span class="nx">output</span><span class="p">})</span> <span class="o">=&gt;</span> <span class="nx">term</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="nx">output</span><span class="p">))</span> <span class="c1">// From the Channel</span>
 
-<p>let term = new Terminal({
-  cursorBlink: true,
-})</p>
+<span class="kd">let</span> <span class="nx">term</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Terminal</span><span class="p">({</span>
+  <span class="na">cursorBlink</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+<span class="p">})</span>
 
-<p>term.open(document.getElementById(&lsquo;terminal-container&rsquo;))
-term.on(&lsquo;data&rsquo;, (data) =&gt; channel.push(&lsquo;input&rsquo;, {input: data})) // To the Channel
-&ldquo;`
-Lines where we send IO back and forth are marked in comments. Look! Our terminal&hellip; just returns what we typed. Not super exciting. Up next, we&rsquo;ll be delving into the bowels of Unix, and learning how to interact with external processes.</p>
+
+<span class="nx">term</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">'terminal-container'</span><span class="p">))</span>
+<span class="nx">term</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">'data'</span><span class="p">,</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">channel</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="s1">'input'</span><span class="p">,</span> <span class="p">{</span><span class="na">input</span><span class="p">:</span> <span class="nx">data</span><span class="p">}))</span> <span class="c1">// To the Channel</span>
+</pre></td></tr></tbody></table>
+</code></pre>
+<p>Lines where we send IO back and forth are marked in comments. Look! Our terminal&hellip; just returns what we typed. Not super exciting. Up next, we&rsquo;ll be delving into the bowels of Unix, and learning how to interact with external processes.</p>
 
 <h2>Ports, ptys, AKA why did I choose to write about this?!</h2>
 
@@ -370,9 +385,12 @@ Notice that the only message we&rsquo;ve received so far is our terminal prompt.
 </code></pre>
 <p>ECHO!</p>
 
-<p>A couple of things to note:
-1. <code>{:ok, pid, _os_pid} = :exec.run(&#39;$SHELL&#39;, [:stdin, :stdout, :stderr, :pty])</code>. Note the single quotes. This <strong>has</strong> to be an Erlang String or Elixir Charlist, which is in single quotes.
-2. <code>:exec.send(pid, &quot;ls\n&quot;)</code> Double quotes when you <code>:exec.send</code></p>
+<p>A couple of things to note:</p>
+
+<ol>
+<li><code>{:ok, pid, _os_pid} = :exec.run(&#39;$SHELL&#39;, [:stdin, :stdout, :stderr, :pty])</code>. Note the single quotes. This <strong>has</strong> to be an Erlang String or Elixir Charlist, which is in single quotes.</li>
+<li><code>:exec.send(pid, &quot;ls\n&quot;)</code> Double quotes when you <code>:exec.send</code></li>
+</ol>
 
 <h2>GenServer time</h2>
 
@@ -509,28 +527,45 @@ Notice that the only message we&rsquo;ve received so far is our terminal prompt.
 
 <h2>TerminalChannel part 2</h2>
 
-<p>Let&rsquo;s dive in.
-&rdquo;` elixir
-defmodule TerminalInYourBrowser.Web.TerminalChannel do
-  use TerminalInYourBrowser.Web, :channel</p>
+<p>Let&rsquo;s dive in.</p>
+<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+</pre></td><td class="rouge-code"><pre><span class="k">defmodule</span> <span class="no">TerminalInYourBrowser</span><span class="o">.</span><span class="no">Web</span><span class="o">.</span><span class="no">TerminalChannel</span> <span class="k">do</span>
+  <span class="kn">use</span> <span class="no">TerminalInYourBrowser</span><span class="o">.</span><span class="no">Web</span><span class="p">,</span> <span class="ss">:channel</span>
 
-<p>def join(&ldquo;terminal:&rdquo; &lt;&gt; id, payload, socket) do
-    {:ok, terminal} = Terminal.start_link(self())
-    {:ok, assign(socket, :terminal, terminal)}
-  end</p>
+  <span class="k">def</span> <span class="n">join</span><span class="p">(</span><span class="sd">"</span><span class="s2">terminal:"</span> <span class="o">&lt;&gt;</span> <span class="n">id</span><span class="p">,</span> <span class="n">payload</span><span class="p">,</span> <span class="n">socket</span><span class="p">)</span> <span class="k">do</span>
+    <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">terminal</span><span class="p">}</span> <span class="o">=</span> <span class="no">Terminal</span><span class="o">.</span><span class="n">start_link</span><span class="p">(</span><span class="n">self</span><span class="p">())</span>
+    <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">assign</span><span class="p">(</span><span class="n">socket</span><span class="p">,</span> <span class="ss">:terminal</span><span class="p">,</span> <span class="n">terminal</span><span class="p">)}</span>
+  <span class="k">end</span>
 
-<p>def handle<em>in(&ldquo;input&rdquo;, %{&ldquo;input&rdquo; =&gt; input}, socket) do
-    Terminal.send</em>input(socket.assigns[:terminal], input)
-    {:noreply, socket}
-u end</p>
+  <span class="k">def</span> <span class="n">handle_in</span><span class="p">(</span><span class="sd">"</span><span class="s2">input"</span><span class="p">,</span> <span class="p">%{</span><span class="sd">"</span><span class="s2">input"</span> <span class="o">=&gt;</span> <span class="n">input</span><span class="p">},</span> <span class="n">socket</span><span class="p">)</span> <span class="k">do</span>
+    <span class="no">Terminal</span><span class="o">.</span><span class="n">send_input</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">assigns</span><span class="p">[</span><span class="ss">:terminal</span><span class="p">],</span> <span class="n">input</span><span class="p">)</span>
+    <span class="p">{</span><span class="ss">:noreply</span><span class="p">,</span> <span class="n">socket</span><span class="p">}</span>
+<span class="n">u</span> <span class="k">end</span>
 
-<p>def handle_info({:output, output}, socket) do
-    push(socket, &ldquo;output&rdquo;, %{output: output})
-    {:noreply, socket}
-  end
-end
-&ldquo;`</p>
-
+  <span class="k">def</span> <span class="n">handle_info</span><span class="p">({</span><span class="ss">:output</span><span class="p">,</span> <span class="n">output</span><span class="p">},</span> <span class="n">socket</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">push</span><span class="p">(</span><span class="n">socket</span><span class="p">,</span> <span class="sd">"</span><span class="s2">output"</span><span class="p">,</span> <span class="p">%{</span><span class="ss">output:</span> <span class="n">output</span><span class="p">})</span>
+    <span class="p">{</span><span class="ss">:noreply</span><span class="p">,</span> <span class="n">socket</span><span class="p">}</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</pre></td></tr></tbody></table>
+</code></pre>
 <p>When you join, we create a new terminal process. We pass in <code>self()</code> as the <code>output_pid</code>. We then add the terminal pid to the socket&rsquo;s state. Then we wait&hellip; When we get that <code>input</code> message from the browser terminal, we send it to the terminal process. Here&rsquo;s the cool part:</p>
 
 <p><strong>Channels are just <code>GenServer</code>s so they respond to out of band messages with <code>handle_info</code>.</strong>
