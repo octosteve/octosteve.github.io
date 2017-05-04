@@ -138,6 +138,7 @@ With this, we're connected to our server! Refresh the page and checkout the logs
 NICE! Let's wrap this leg of the trip up by sending all terminal input to our channel, then respond to the `output` event we send from the channel.
 
 In the end, your `app.js` should look like this:
+
 ```javascript
 import Terminal from 'xterm'
 import socket from './socket'
@@ -154,6 +155,7 @@ let term = new Terminal({
 term.open(document.getElementById('terminal-container'))
 term.on('data', (data) => channel.push('input', {input: data})) // To the Channel
 ```
+
 Lines where we send IO back and forth are marked in comments. Look! Our terminal... just returns what we typed. Not super exciting. Up next, we'll be delving into the bowels of Unix, and learning how to interact with external processes.
 
 ## Ports, ptys, AKA why did I choose to write about this?!
@@ -193,6 +195,7 @@ opost -olcuc -ocrnl onlcr -onocr -onlret -ofill -ofdel nl0 cr0 tab0 bs0 vt0 ff0
 isig icanon iexten echo echoe echok -echonl -noflsh -xcase -tostop -echoprt echoctl echoke
 -flusho -extproc
 ```
+
 If you run `stty -echo` you'll see it turns your echo off! Sadly, running `stty echo` on our port doesn't make it echo. Instead, we get a weird error:
 
 ```shell
@@ -267,6 +270,7 @@ iex(9)> flush()
 ECHO!
 
 A couple of things to note:
+
 1. `{:ok, pid, _os_pid} = :exec.run('$SHELL', [:stdin, :stdout, :stderr, :pty])`. Note the single quotes. This __has__ to be an Erlang String or Elixir Charlist, which is in single quotes.
 2. `:exec.send(pid, "ls\n")` Double quotes when you `:exec.send`
 
@@ -359,6 +363,7 @@ And that's it for our `GenServer`! You'll notice we send a message to our `outpu
 ## TerminalChannel part 2
 
 Let's dive in.
+
 ``` elixir
 defmodule TerminalInYourBrowser.Web.TerminalChannel do
   use TerminalInYourBrowser.Web, :channel
