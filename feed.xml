@@ -14,7 +14,7 @@
     <link rel="alternate" href="http://blog.url.com/2017/05/02/something-useless-terminal-in-your-browser.html"/>
     <id>http://blog.url.com/2017/05/02/something-useless-terminal-in-your-browser.html</id>
     <published>2017-05-02T13:40:00Z</published>
-    <updated>2017-05-04T10:26:28-04:00</updated>
+    <updated>2017-05-04T11:40:32-04:00</updated>
     <author>
       <name>Article Author</name>
     </author>
@@ -558,7 +558,8 @@ Notice that the only message we&amp;rsquo;ve received so far is our terminal pro
 &lt;p&gt;&lt;strong&gt;Channels are just &lt;code&gt;GenServer&lt;/code&gt;s so they respond to out of band messages with &lt;code&gt;handle_info&lt;/code&gt;.&lt;/strong&gt;
  Whoop!&lt;/p&gt;
 
-&lt;p&gt;And just like that, we&amp;rsquo;ve got a terminal in our browser!&lt;/p&gt;
+&lt;p&gt;And just like that, we&amp;rsquo;ve got a terminal in our browser!
+&lt;img src="http://i.imgur.com/DXhsL3W.gif"  width=700 /&gt;&lt;/p&gt;
 
 &lt;h2&gt;Wrap up&lt;/h2&gt;
 
