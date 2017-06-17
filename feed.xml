@@ -5,26 +5,20 @@
   <id>http://blog.url.com/</id>
   <link href="http://blog.url.com/"/>
   <link href="http://blog.url.com/feed.xml" rel="self"/>
-  <updated>2017-06-16T20:00:00-04:00</updated>
+  <updated>2017-06-17T12:38:00-04:00</updated>
   <author>
     <name>Blog Author</name>
   </author>
   <entry>
-    <title/>
+    <title>LTrees in Phoenix</title>
     <link rel="alternate" href="http://blog.url.com/2017/06/17/ltrees-in-phoenix.html"/>
     <id>http://blog.url.com/2017/06/17/ltrees-in-phoenix.html</id>
-    <published>2017-06-16T20:00:00-04:00</published>
-    <updated>2017-06-17T18:03:54-04:00</updated>
+    <published>2017-06-17T12:38:00-04:00</published>
+    <updated>2017-06-17T18:12:47-04:00</updated>
     <author>
       <name>Article Author</name>
     </author>
-    <content type="html">&lt;p&gt;j&amp;mdash;
-title: LTrees in Phoenix
-date: 2017-06-17 16:38 UTC&lt;/p&gt;
-
-&lt;h2&gt;tags: [&amp;ldquo;Elixir&amp;rdquo;, &amp;ldquo;Phoenix&amp;rdquo;, &amp;ldquo;Ecto&amp;rdquo;, &amp;ldquo;LTrees&amp;rdquo;]&lt;/h2&gt;
-
-&lt;h1&gt;Article Tracker&lt;/h1&gt;
+    <content type="html">&lt;h1&gt;Article Tracker&lt;/h1&gt;
 
 &lt;p&gt;Say you want to build a Phoenix app for tracking Articles. Your one killer feature
 is that you can store articles in a hierarchy instead of a bunch loose tags like other sites. We&amp;rsquo;ll be focusing on the model layer here, but we&amp;rsquo;ll see how we&amp;rsquo;d construct the query for our tree&lt;/p&gt;
