@@ -1,4 +1,4 @@
----
+j---
 title: LTrees in Phoenix
 date: 2016-05-22 16:38 UTC
 tags: ["Elixir", "Phoenix", "Ecto", "LTrees"]
@@ -21,104 +21,110 @@ Nothing crazy here. We'll have an Article Model with a few properties.
 | 2 | How AI are good for the elderly |  http://bit.ly/27ONtlY | technology.futurism.ai.helping |
 
 
-To get nested categories to work, we're going to use a data structure offered in Postgres, the `ltree`. This blog post will focus on getting this working in Phoenix. For more information, I invite you to [Read The Fine Manual](http://www.postgresql.org/docs/9.3/static/ltree.html). One thing to consider from the Manual is what makes a valid ltree value:
+To get nested categories to work, we're going to use a data structure offered in Postgres, the `ltree`. This blog post will focus on getting this working in Phoenix. For more information, I invite you to [Read The Fine Manual](https://www.postgresql.org/docs/current/static/ltree.html). One thing to consider from the Manual is what makes a valid ltree value:
 
-
->A label is a sequence of alphanumeric characters and underscores. Labels must be less than 256 bytes long.
-
+The entire tree is made up of several labels. Labels are separated with the `.` character with valid characters for a label being letters from a to z (both cases), numbers from 0 to 9, and `_`.
 
 ## Error Driven Development
 Let's build this and fix errors as they come up.
 
-First, generate a new Phoenix app
+First, generate a new Phoenix app. We're going to be building this with Phoenix 1.3 rc-1, so make sure you have that installed.
 
 ```
-mix phoenix.new article_tracker_hd
+mix phx.new article_tracker_hd
 cd article_tracker_hd
 mix ecto.create
 ```
 
 Then generate a quick scaffold that gets us most of the way there.
-`mix phoenix.gen.html Article articles title url categories`
+`mix phx.gen.html ContentManagement Article articles title url categories`. Here we're saying that we want to be able to manage articles, and that we'll be editing them as part of our Content Management domain. Other things that might go here would be tags, authors, and the rules for featuring a particular article.
 
-Add your resource to your router
+Add your resource to your router at `article_tracker_hd/lib/article_tracker_hd/web/router.ex`
 
 ``` elixir
 #...
-scope "/", ArticleTrackerHd do                                                   
-  pipe_through :browser # Use the default browser stack                          
+scope "/", ArticleTrackerHd do
+  pipe_through :browser # Use the default browser stack
 
-  get "/", PageController, :index                                                
+  get "/", PageController, :index
   resources "/articles", ArticleController # <- New line
 end
 #...
 ```
 
-Then open up the migration in `priv/repo/migrations/{some_time_stamp}_create_article.exs`. This is where the fun starts.
+Then open up the migration in `priv/repo/migrations/{some_time_stamp}_create_content_management_article.exs`. This is where the fun starts.
 
 Update your migration to look like this:
 
 ``` elixir
-defmodule ArticleTrackerHd.Repo.Migrations.CreateArticle do
+defmodule ArticleTrackerHd.Repo.Migrations.CreateArticleTrackerHd.ContentManagement.Article do
   use Ecto.Migration
 
   def change do
-    create table(:articles) do
+    execute "CREATE EXTENSION ltree" # Enables Ltree action
+
+    create table(:content_management_articles) do
       add :title, :string
       add :url, :string
       add :categories, :ltree # <- Changed to :ltree
 
       timestamps
     end
-    create index(:articles, [:categories], using: "GIST") # <- Add indexing for fast lookups
+    create index(:content_management_articles, [:categories], using: "GIST") # <- Add indexing for fast lookups
 
   end
 end
 ```
-Then run the migrations with `mix ecto.migrate`
 
-You'll be greeted with a wonderful error "** (Postgrex.Error) ERROR (undefined_object): type "ltree" does not exist". Time to go home.
-
-First we have to open our database, and create the ltree extension. We'll have to do this for every database we use including test and production. We'll do it in article\_tracker\_hd_dev for now.
-
-```
-psql article_tracker_hd_dev
-article_tracker_hd_dev=# CREATE EXTENSION ltree;
-article_tracker_hd_dev=# \q;
-```
-
-And try again `mix ecto.migrate`. It WORKED! Let's open up the console and try to insert an article.
+Then run the migrations with `mix ecto.migrate` It WORKED! Let's open up the console and try to insert an article.
 
 ```
 iex -S mix
-iex(1)> alias ArticleTrackerHd.{Article, Repo}
-iex(2)> article = %Article{title: "How AI took over the world", url: "http://www.computerworld.com/article/2922442/robotics/stephen-hawking-fears-robots-could-take-over-in-100-years.html", categories: "technology.futurism.ai.global_domination"}
-iex(3)> Repo.insert!(article)
-** (ArgumentError) no extension found for oid `342415`
+iex(1)> alias ArticleTrackerHd.ContentManagement.Article
+iex(2)> alias ArticleTrackerHd.Repo                     
+iex(3)> article = %Article{title: "How AI took over the world", url: "http://www.computerworld.com/article/2922442/robotics/stephen-hawking-fears-robots-could-take-over-in-100-years.html", categories: "technology.futurism.ai.global_domination"}
+iex(4)> Repo.insert!(article)
+** (RuntimeError) type `ltree` can not be handled by the types module Ecto.Adapters.Postgres.TypeModule
 ```
 
-MOAR Errors! This just means Postgrex doesn't know how to map ltrees. We can fix this by adding a new Postgex type for `ltree`. Make a new file in `lib/postgrex/types/` called `ltree.ex`, and insert this code:
+Errors! This just means Postgrex doesn't know how to map ltrees. Lucky for use, they use LTrees to show you [how to make extensions](https://hexdocs.pm/postgrex/Postgrex.Extension.html)! Make a new file in `lib/postgrex/extensions/` called `ltree.ex`, and insert this code:
 
 ``` elixir
-defmodule ArticleTrackerHd.Postgrex.Types.Ltree do
-  alias Postgrex.TypeInfo
-
+defmodule ArticleTrackerHd.Postgrex.Extensions.Ltree do
   @behaviour Postgrex.Extension
 
-  def init(_parameters, _opts), do: {}
+  def init(opts) do
+    Keyword.get(opts, :decode_copy, :copy)
+  end
 
-  def matching(_), do: [type: "ltree"]
+  def matching(_state), do: [type: "ltree"]
 
-  def format(_), do: :text
+  def format(_state), do: :text
 
-  def encode(%TypeInfo{type: "ltree"}, value, _state, _opts), do: value
+  def encode(_state) do
+    quote do
+      bin when is_binary(bin) ->
+        [<<byte_size(bin) :: signed-size(32)>> | bin]
+    end
+  end
 
-  def decode(%TypeInfo{type: "ltree"}, value, _state, _opts), do: value
+  def decode(:reference) do
+    quote do
+      <<len::signed-size(32), bin::binary-size(len)>> ->
+        bin
+    end
+  end
+  def decode(:copy) do
+    quote do
+      <<len::signed-size(32), bin::binary-size(len)>> ->
+        :binary.copy(bin)
+    end
+  end
 end
 ```
 
 A lot of this is ceremony, but the things to note are the format, encode and decode functions.
-Format has 2 possible return values "text", and "binary". We're just storing the categories as text so that will do. Encode and decode are your data gateways. Right now, I'm ok just presenting a set of categories as a string of contiguous characters with dots in between.
+Format has 2 possible return values "text", and "binary". We're just storing the categories as text so that will do. Encode and decode are your data gateways. You have to do that funky quoted expression business. Right now, I'm ok just presenting a set of categories as a string of contiguous characters with dots in between.
 
 We'll also have to tell Postgrex to load our extension. Open up `config/dev.exs` and add this to where you configure your database:
 
@@ -130,12 +136,18 @@ config :article_tracker_hd, ArticleTrackerHd.Repo,
   database: "article_tracker_hd_dev",
   hostname: "localhost",
   pool_size: 10,
-  extensions: [
-    {ArticleTrackerHd.Postgrex.Types.Ltree, []} # <- New line
-  ]
+  types: ArticleTrackerHd.Postgrex.Types
 ```
 
-You'll have to do this for every environment you run this code in.
+And in `lib/postgrex/types.ex` add this line.
+
+``` elixir
+Postgrex.Types.define(ArticleTrackerHd.Postgrex.Types,
+  [ArticleTrackerHd.Postgrex.Extensions.Ltree] ++ Ecto.Adapters.Postgres.extensions(),
+  [])
+
+```
+This defines the module and set's the loaded types to include our `ltree` extension.
 
 Try to add the article again:
 
@@ -154,11 +166,12 @@ Add these additional stories in `iex`
 
 ```
 iex -S mix
-iex(1)> alias ArticleTrackerHd.{Article, Repo}
-iex(2)> article = %Article{title: "How AI are good for the elderly ", url: "http://thevitalityinstitute.org/innovations-artificial-intelligence-elderly/", categories: "technology.futurism.ai.helping"}
-iex(3)> Repo.insert!(article)
-iex(4)> article = %Article{title: "Google’s AI Wins Fifth And Final Game Against Go Genius Lee Sedol", url: "http://www.wired.com/2016/03/googles-ai-wins-fifth-final-game-go-genius-lee-sedol/", categories: "technology.futurism.ai.winning"}
-iex(5)> Repo.insert!(article)
+iex(1)> alias ArticleTrackerHd.ContentManagement.Article
+iex(2)> alias ArticleTrackerHd.Repo                     
+iex(3)> article = %Article{title: "How AI are good for the elderly ", url: "http://thevitalityinstitute.org/innovations-artificial-intelligence-elderly/", categories: "technology.futurism.ai.helping"}
+iex(4)> Repo.insert!(article)
+iex(5)> article = %Article{title: "Google’s AI Wins Fifth And Final Game Against Go Genius Lee Sedol", url: "http://www.wired.com/2016/03/googles-ai-wins-fifth-final-game-go-genius-lee-sedol/", categories: "technology.futurism.ai.winning"}
+iex(6)> Repo.insert!(article)
 ```
 
 Then let's work on some queries. We'll be using the [`fragment`](https://hexdocs.pm/ecto/Ecto.Query.API.html#fragment/1) function to get our `ltree` search working. Say we wanted to find all of the articles starting with technology:
@@ -195,43 +208,62 @@ Not so fast though... We'll probably be passing in some variable here. If we try
 iex(15)> category = "winning"
 iex(16)> query = from a in Article, where: fragment("categories ~ ?", ^"*.#{category}.*")
 iex(17)> Repo.all(query)
-** (ArgumentError) no extension found for oid `342469`
+** (RuntimeError) type `lquery` can not be handled by the types module ArticleTrackerHd.Postgrex.Types
 ```
 
-Our old nemisis! With a different oid. What we're seeing is the DB trying to resolve an `lquery`. You know the drill. Duplicate `ArticleTrackerHd.Postgrex.Types.Ltree`, and change any reference from `ltree` to `lquery`.
+Our old nemisis! What we're seeing is the DB trying to resolve an `lquery`. You know the drill. Duplicate `ArticleTrackerHd.Postgrex.Extensions.Ltree`, and change any reference from `ltree` to `lquery`.
 
 ``` elixir
-defmodule ArticleTrackerHd.Postgrex.Types.Lquery do
-  alias Postgrex.TypeInfo
-
+defmodule ArticleTrackerHd.Postgrex.Extensions.Lquery do
   @behaviour Postgrex.Extension
 
-  def init(_parameters, _opts), do: {}
+  def init(opts) do
+    Keyword.get(opts, :decode_copy, :copy)
+  end
 
-  def matching(_), do: [type: "lquery"]
+  def matching(_state), do: [type: "lquery"]
 
-  def format(_), do: :text
+  def format(_state), do: :text
 
-  def encode(%TypeInfo{type: "lquery"}, value, _state, _opts), do: value
+  def encode(_state) do
+    quote do
+      bin when is_binary(bin) ->
+        [<<byte_size(bin) :: signed-size(32)>> | bin]
+    end
+  end
 
-  def decode(%TypeInfo{type: "lquery"}, value, _state, _opts), do: value
+  def decode(:reference) do
+    quote do
+      <<len::signed-size(32), bin::binary-size(len)>> ->
+        bin
+    end
+  end
+  def decode(:copy) do
+    quote do
+      <<len::signed-size(32), bin::binary-size(len)>> ->
+        :binary.copy(bin)
+    end
+  end
 end
 ```
 
-And in your `config/dev.exs`:
+And in your `lib/postgrex/types.ex`:
 
 ``` elixir
-config :article_tracker_hd, ArticleTrackerHd.Repo,
-  adapter: Ecto.Adapters.Postgres,
-  username: "postgres",
-  password: "postgres",
-  database: "article_tracker_hd_dev",
-  hostname: "localhost",
-  pool_size: 10,
-  extensions: [
-    {ArticleTrackerHd.Postgrex.Types.Ltree, []},
-    {ArticleTrackerHd.Postgrex.Types.Lquery, []} # <- New line
-  ]
+Postgrex.Types.define(ArticleTrackerHd.Postgrex.Types,
+  [ArticleTrackerHd.Postgrex.Extensions.Ltree, ArticleTrackerHd.Postgrex.Extensions.Lquery] ++ Ecto.Adapters.Postgres.extensions(),
+  [])
+
+```
+
+Let's try it out!
+```
+iex(1)> alias ArticleTrackerHd.ContentManagement.Article
+iex(2)> alias ArticleTrackerHd.Repo                     
+iex(3)> import Ecto.Query
+iex(4)> category = "winning"
+iex(5)> query = from a in Article, where: fragment("categories ~ ?", ^"*.#{category}.*")
+iex(6)> Repo.all(query)
 ```
 
 ![getinsertpic.com](http://media1.giphy.com/media/NlVo12G7b6cMg/200.gif)
@@ -240,10 +272,12 @@ config :article_tracker_hd, ArticleTrackerHd.Repo,
 # Conclusion
 LTrees are my favorite thing right now. A few things I'd like to see is smarter conversion of the values to and from the db and validating the ltree is compliant in a changeset. Bad characters drive it bananas.
 
+To be honest, I'm not exactly sure why we need to return a quoted expression, and I sort of guessed with the lquery, but it works!
+
 We didn't use an [Ecto.Type](https://hexdocs.pm/ecto/Ecto.Type.html) annotation, so we're using a "String" as far as Ecto is concerned. If I had any addition conversion so it played nice with my domain, I'd do it there. For instance, making it so users can give you something like "Technology > Computers > Programming > Elixir" and have it converted over to "technology.computers.programming.elixir" would be in an Ecto.Type.
 
 Found this interesting? Be sure to share it! You can find the code for it [here](https://github.com/StevenNunez/article_tracker_hd)
 
-<a href="https://twitter.com/share" class="twitter-share-button" data-text="Using LTrees in Phoenix. Hierarchical data in Postgres" data-via="_StevenNunez" data-size="large">Tweet</a>
+<a href="https://twitter.com/share" class="twitter-share-button" data-text="How to use Ltrees in Phoenix 1.3. for hierarchical data" data-via="_StevenNunez" data-size="large">Tweet</a>
 
 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
