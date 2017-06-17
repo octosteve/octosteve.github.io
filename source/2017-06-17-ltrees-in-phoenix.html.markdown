@@ -1,6 +1,6 @@
 j---
 title: LTrees in Phoenix
-date: 2016-05-22 16:38 UTC
+date: 2017-06-17 16:38 UTC
 tags: ["Elixir", "Phoenix", "Ecto", "LTrees"]
 ---
 
