@@ -94,7 +94,7 @@ mix ecto.create
 7
 8
 </pre></td><td class="rouge-code"><pre><span class="c1">#...</span>
-<span class="n">scope</span> <span class="sd">"</span><span class="s2">/"</span><span class="p">,</span> <span class="no">ArticleTrackerHd</span> <span class="k">do</span>
+<span class="n">scope</span> <span class="sd">"</span><span class="s2">/"</span><span class="p">,</span> <span class="no">ArticleTrackerHd</span><span class="o">.</span><span class="no">Web</span> <span class="k">do</span>
   <span class="n">pipe_through</span> <span class="ss">:browser</span> <span class="c1"># Use the default browser stack</span>
 
   <span class="n">get</span> <span class="sd">"</span><span class="s2">/"</span><span class="p">,</span> <span class="no">PageController</span><span class="p">,</span> <span class="ss">:index</span>
@@ -142,7 +142,7 @@ mix ecto.create
 <span class="k">end</span>
 </pre></td></tr></tbody></table>
 </code></pre>
-<p>Then run the migrations with <code>mix ecto.migrate</code> It WORKED! Let&rsquo;s open up the console and try to insert an article.</p>
+<p>Then run the migrations with <code>mix ecto.migrate</code>. It WORKED! Let&rsquo;s open up the console and try to insert an article.</p>
 <pre class="highlight plaintext"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
@@ -151,7 +151,7 @@ mix ecto.create
 6
 </pre></td><td class="rouge-code"><pre>iex -S mix
 iex(1)&gt; alias ArticleTrackerHd.ContentManagement.Article
-iex(2)&gt; alias ArticleTrackerHd.Repo                     
+iex(2)&gt; alias ArticleTrackerHd.Repo
 iex(3)&gt; article = %Article{title: "How AI took over the world", url: "http://www.computerworld.com/article/2922442/robotics/stephen-hawking-fears-robots-could-take-over-in-100-years.html", categories: "technology.futurism.ai.global_domination"}
 iex(4)&gt; Repo.insert!(article)
 ** (RuntimeError) type `ltree` can not be handled by the types module Ecto.Adapters.Postgres.TypeModule
@@ -244,7 +244,7 @@ Format has 2 possible return values &ldquo;text&rdquo;, and &ldquo;binary&rdquo;
   <span class="ss">types:</span> <span class="no">ArticleTrackerHd</span><span class="o">.</span><span class="no">Postgrex</span><span class="o">.</span><span class="no">Types</span>
 </pre></td></tr></tbody></table>
 </code></pre>
-<p>And in <code>lib/postgrex/types.ex</code> add this line.</p>
+<p>Create <code>lib/postgrex/types.ex</code> and add this line.</p>
 <pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
@@ -255,7 +255,7 @@ Format has 2 possible return values &ldquo;text&rdquo;, and &ldquo;binary&rdquo;
 
 </pre></td></tr></tbody></table>
 </code></pre>
-<p>This defines the module and set&rsquo;s the loaded types to include our <code>ltree</code> extension.</p>
+<p>This defines the <code>ArticleTrackerHd.Postgres.Types</code> module and updated the loaded types to include our <code>ltree</code> extension.</p>
 
 <p>Try to add the article again:</p>
 <pre class="highlight plaintext"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
@@ -264,10 +264,10 @@ Format has 2 possible return values &ldquo;text&rdquo;, and &ldquo;binary&rdquo;
 4
 5
 </pre></td><td class="rouge-code"><pre>iex -S mix
-iex(1)&gt; alias ArticleTrackerHd.{Article, Repo}
-iex(2)&gt; article = %Article{title: "How AI took over the world", url: "http://www.computerworld.com/article/2922442/robotics/stephen-hawking-fears-robots-could-take-over-in-100-years.html", categories: "technology.futurism.ai.global_domination"}
-iex(3)&gt; Repo.insert!(article)
-
+iex(1)&gt; alias ArticleTrackerHd.ContentManagement.Article
+iex(2)&gt; alias ArticleTrackerHd.Repo
+iex(3)&gt; article = %Article{title: "How AI took over the world", url: "http://www.computerworld.com/article/2922442/robotics/stephen-hawking-fears-robots-could-take-over-in-100-years.html", categories: "technology.futurism.ai.global_domination"}
+iex(4)&gt; Repo.insert!(article)
 </pre></td></tr></tbody></table>
 </code></pre>
 <p>WIN! On to the cool part.</p>
@@ -284,7 +284,7 @@ iex(3)&gt; Repo.insert!(article)
 7
 </pre></td><td class="rouge-code"><pre>iex -S mix
 iex(1)&gt; alias ArticleTrackerHd.ContentManagement.Article
-iex(2)&gt; alias ArticleTrackerHd.Repo                     
+iex(2)&gt; alias ArticleTrackerHd.Repo
 iex(3)&gt; article = %Article{title: "How AI are good for the elderly ", url: "http://thevitalityinstitute.org/innovations-artificial-intelligence-elderly/", categories: "technology.futurism.ai.helping"}
 iex(4)&gt; Repo.insert!(article)
 iex(5)&gt; article = %Article{title: "Google’s AI Wins Fifth And Final Game Against Go Genius Lee Sedol", url: "http://www.wired.com/2016/03/googles-ai-wins-fifth-final-game-go-genius-lee-sedol/", categories: "technology.futurism.ai.winning"}
@@ -295,9 +295,9 @@ iex(6)&gt; Repo.insert!(article)
 <pre class="highlight plaintext"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
-</pre></td><td class="rouge-code"><pre>iex(6)&gt; import Ecto.Query
-iex(7)&gt; query = from a in Article, where: fragment("categories &lt;@ ?", "technology")
-iex(8)&gt; Repo.all(query)
+</pre></td><td class="rouge-code"><pre>iex(7)&gt; import Ecto.Query
+iex(8)&gt; query = from a in Article, where: fragment("categories &lt;@ ?", "technology")
+iex(9)&gt; Repo.all(query)
 </pre></td></tr></tbody></table>
 </code></pre>
 <p>This should return all of the articles so far. The <code>&lt;@</code> asks for all categories that have start with <code>technology</code>, if you try it with <code>ai</code> you&rsquo;ll get nothing.</p>
@@ -305,8 +305,8 @@ iex(8)&gt; Repo.all(query)
 <p>Let&rsquo;s be more specific and get the ones that are <code>technology.futurism.ai.winning</code>:</p>
 <pre class="highlight plaintext"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
-</pre></td><td class="rouge-code"><pre>iex(9)&gt; query = from a in Article, where: fragment("categories &lt;@ ?", "technology.futurism.ai.winning")
-iex(10)&gt; Repo.all(query)
+</pre></td><td class="rouge-code"><pre>iex(10)&gt; query = from a in Article, where: fragment("categories &lt;@ ?", "technology.futurism.ai.winning")
+iex(11)&gt; Repo.all(query)
 </pre></td></tr></tbody></table>
 </code></pre>
 <p>How about all of the ai stories regardless of where they show up on the category tree? Let&rsquo;s add another article, then search:</p>
@@ -314,22 +314,22 @@ iex(10)&gt; Repo.all(query)
 2
 3
 4
-</pre></td><td class="rouge-code"><pre>iex(11)&gt; article = %Article{title: "How AI are beating you at rock paper scissors", url: "http://www.nytimes.com/interactive/science/rock-paper-scissors.html?_r=0", categories: "technology.gaming.ai.winning"}
-iex(12)&gt; Repo.insert!(article)
-iex(13)&gt; query = from a in Article, where: fragment("categories ~ ?", "*.winning.*")
-iex(14)&gt; Repo.all(query)      
+</pre></td><td class="rouge-code"><pre>iex(12)&gt; article = %Article{title: "How AI are beating you at rock paper scissors", url: "http://www.nytimes.com/interactive/science/rock-paper-scissors.html?_r=0", categories: "technology.gaming.ai.winning"}
+iex(13)&gt; Repo.insert!(article)
+iex(14)&gt; query = from a in Article, where: fragment("categories ~ ?", "*.winning.*")
+iex(15)&gt; Repo.all(query)
 </pre></td></tr></tbody></table>
 </code></pre>
 <p>We used the <code>~</code> to indicate we were going use path matching. Tons of options here, be sure to check out the ltree page on the Postgres guide.</p>
 
-<p>Not so fast though&hellip; We&rsquo;ll probably be passing in some variable here. If we try to simulate passing an argument we get this:</p>
+<p>Not so fast though&hellip; We&rsquo;ll probably be using dynamic values from an external source. If we try to simulate passing an argument we get this:</p>
 <pre class="highlight plaintext"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
-</pre></td><td class="rouge-code"><pre>iex(15)&gt; category = "winning"
-iex(16)&gt; query = from a in Article, where: fragment("categories ~ ?", ^"*.#{category}.*")
-iex(17)&gt; Repo.all(query)
+</pre></td><td class="rouge-code"><pre>iex(16)&gt; category = "winning"
+iex(17)&gt; query = from a in Article, where: fragment("categories ~ ?", ^"*.#{category}.*")
+iex(18)&gt; Repo.all(query)
 ** (RuntimeError) type `lquery` can not be handled by the types module ArticleTrackerHd.Postgrex.Types
 </pre></td></tr></tbody></table>
 </code></pre>
@@ -402,17 +402,15 @@ iex(17)&gt; Repo.all(query)
 <pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
-4
 </pre></td><td class="rouge-code"><pre><span class="no">Postgrex</span><span class="o">.</span><span class="no">Types</span><span class="o">.</span><span class="n">define</span><span class="p">(</span><span class="no">ArticleTrackerHd</span><span class="o">.</span><span class="no">Postgrex</span><span class="o">.</span><span class="no">Types</span><span class="p">,</span>
   <span class="p">[</span><span class="no">ArticleTrackerHd</span><span class="o">.</span><span class="no">Postgrex</span><span class="o">.</span><span class="no">Extensions</span><span class="o">.</span><span class="no">Ltree</span><span class="p">,</span> <span class="no">ArticleTrackerHd</span><span class="o">.</span><span class="no">Postgrex</span><span class="o">.</span><span class="no">Extensions</span><span class="o">.</span><span class="no">Lquery</span><span class="p">]</span> <span class="o">++</span> <span class="no">Ecto</span><span class="o">.</span><span class="no">Adapters</span><span class="o">.</span><span class="no">Postgres</span><span class="o">.</span><span class="n">extensions</span><span class="p">(),</span>
   <span class="p">[])</span>
-
 </pre></td></tr></tbody></table>
 </code></pre>
 <p>Let&rsquo;s try it out!
 <code>
 iex(1)&gt; alias ArticleTrackerHd.ContentManagement.Article
-iex(2)&gt; alias ArticleTrackerHd.Repo                     
+iex(2)&gt; alias ArticleTrackerHd.Repo
 iex(3)&gt; import Ecto.Query
 iex(4)&gt; category = &quot;winning&quot;
 iex(5)&gt; query = from a in Article, where: fragment(&quot;categories ~ ?&quot;, ^&quot;*.#{category}.*&quot;)
