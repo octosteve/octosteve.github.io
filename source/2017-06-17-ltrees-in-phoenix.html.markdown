@@ -43,7 +43,7 @@ Add your resource to your router at `article_tracker_hd/lib/article_tracker_hd/w
 
 ``` elixir
 #...
-scope "/", ArticleTrackerHd do
+scope "/", ArticleTrackerHd.Web do
   pipe_through :browser # Use the default browser stack
 
   get "/", PageController, :index
@@ -76,12 +76,12 @@ defmodule ArticleTrackerHd.Repo.Migrations.CreateArticleTrackerHd.ContentManagem
 end
 ```
 
-Then run the migrations with `mix ecto.migrate` It WORKED! Let's open up the console and try to insert an article.
+Then run the migrations with `mix ecto.migrate`. It WORKED! Let's open up the console and try to insert an article.
 
 ```
 iex -S mix
 iex(1)> alias ArticleTrackerHd.ContentManagement.Article
-iex(2)> alias ArticleTrackerHd.Repo                     
+iex(2)> alias ArticleTrackerHd.Repo
 iex(3)> article = %Article{title: "How AI took over the world", url: "http://www.computerworld.com/article/2922442/robotics/stephen-hawking-fears-robots-could-take-over-in-100-years.html", categories: "technology.futurism.ai.global_domination"}
 iex(4)> Repo.insert!(article)
 ** (RuntimeError) type `ltree` can not be handled by the types module Ecto.Adapters.Postgres.TypeModule
@@ -139,7 +139,7 @@ config :article_tracker_hd, ArticleTrackerHd.Repo,
   types: ArticleTrackerHd.Postgrex.Types
 ```
 
-And in `lib/postgrex/types.ex` add this line.
+Create `lib/postgrex/types.ex` and add this line.
 
 ``` elixir
 Postgrex.Types.define(ArticleTrackerHd.Postgrex.Types,
@@ -147,16 +147,16 @@ Postgrex.Types.define(ArticleTrackerHd.Postgrex.Types,
   [])
 
 ```
-This defines the module and set's the loaded types to include our `ltree` extension.
+This defines the `ArticleTrackerHd.Postgres.Types` module and updated the loaded types to include our `ltree` extension.
 
 Try to add the article again:
 
 ```
 iex -S mix
-iex(1)> alias ArticleTrackerHd.{Article, Repo}
-iex(2)> article = %Article{title: "How AI took over the world", url: "http://www.computerworld.com/article/2922442/robotics/stephen-hawking-fears-robots-could-take-over-in-100-years.html", categories: "technology.futurism.ai.global_domination"}
-iex(3)> Repo.insert!(article)
-
+iex(1)> alias ArticleTrackerHd.ContentManagement.Article
+iex(2)> alias ArticleTrackerHd.Repo
+iex(3)> article = %Article{title: "How AI took over the world", url: "http://www.computerworld.com/article/2922442/robotics/stephen-hawking-fears-robots-could-take-over-in-100-years.html", categories: "technology.futurism.ai.global_domination"}
+iex(4)> Repo.insert!(article)
 ```
 
 WIN! On to the cool part.
@@ -167,7 +167,7 @@ Add these additional stories in `iex`
 ```
 iex -S mix
 iex(1)> alias ArticleTrackerHd.ContentManagement.Article
-iex(2)> alias ArticleTrackerHd.Repo                     
+iex(2)> alias ArticleTrackerHd.Repo
 iex(3)> article = %Article{title: "How AI are good for the elderly ", url: "http://thevitalityinstitute.org/innovations-artificial-intelligence-elderly/", categories: "technology.futurism.ai.helping"}
 iex(4)> Repo.insert!(article)
 iex(5)> article = %Article{title: "Google’s AI Wins Fifth And Final Game Against Go Genius Lee Sedol", url: "http://www.wired.com/2016/03/googles-ai-wins-fifth-final-game-go-genius-lee-sedol/", categories: "technology.futurism.ai.winning"}
@@ -177,9 +177,9 @@ iex(6)> Repo.insert!(article)
 Then let's work on some queries. We'll be using the [`fragment`](https://hexdocs.pm/ecto/Ecto.Query.API.html#fragment/1) function to get our `ltree` search working. Say we wanted to find all of the articles starting with technology:
 
 ```
-iex(6)> import Ecto.Query
-iex(7)> query = from a in Article, where: fragment("categories <@ ?", "technology")
-iex(8)> Repo.all(query)
+iex(7)> import Ecto.Query
+iex(8)> query = from a in Article, where: fragment("categories <@ ?", "technology")
+iex(9)> Repo.all(query)
 ```
 
 This should return all of the articles so far. The `<@` asks for all categories that have start with `technology`, if you try it with `ai` you'll get nothing.
@@ -187,27 +187,27 @@ This should return all of the articles so far. The `<@` asks for all categories 
 Let's be more specific and get the ones that are `technology.futurism.ai.winning`:
 
 ```
-iex(9)> query = from a in Article, where: fragment("categories <@ ?", "technology.futurism.ai.winning")
-iex(10)> Repo.all(query)
+iex(10)> query = from a in Article, where: fragment("categories <@ ?", "technology.futurism.ai.winning")
+iex(11)> Repo.all(query)
 ```
 
 How about all of the ai stories regardless of where they show up on the category tree? Let's add another article, then search:
 
 ```
-iex(11)> article = %Article{title: "How AI are beating you at rock paper scissors", url: "http://www.nytimes.com/interactive/science/rock-paper-scissors.html?_r=0", categories: "technology.gaming.ai.winning"}
-iex(12)> Repo.insert!(article)
-iex(13)> query = from a in Article, where: fragment("categories ~ ?", "*.winning.*")
-iex(14)> Repo.all(query)      
+iex(12)> article = %Article{title: "How AI are beating you at rock paper scissors", url: "http://www.nytimes.com/interactive/science/rock-paper-scissors.html?_r=0", categories: "technology.gaming.ai.winning"}
+iex(13)> Repo.insert!(article)
+iex(14)> query = from a in Article, where: fragment("categories ~ ?", "*.winning.*")
+iex(15)> Repo.all(query)
 ```
 
 We used the `~` to indicate we were going use path matching. Tons of options here, be sure to check out the ltree page on the Postgres guide.
 
-Not so fast though... We'll probably be passing in some variable here. If we try to simulate passing an argument we get this:
+Not so fast though... We'll probably be using dynamic values from an external source. If we try to simulate passing an argument we get this:
 
 ```
-iex(15)> category = "winning"
-iex(16)> query = from a in Article, where: fragment("categories ~ ?", ^"*.#{category}.*")
-iex(17)> Repo.all(query)
+iex(16)> category = "winning"
+iex(17)> query = from a in Article, where: fragment("categories ~ ?", ^"*.#{category}.*")
+iex(18)> Repo.all(query)
 ** (RuntimeError) type `lquery` can not be handled by the types module ArticleTrackerHd.Postgrex.Types
 ```
 
@@ -253,13 +253,12 @@ And in your `lib/postgrex/types.ex`:
 Postgrex.Types.define(ArticleTrackerHd.Postgrex.Types,
   [ArticleTrackerHd.Postgrex.Extensions.Ltree, ArticleTrackerHd.Postgrex.Extensions.Lquery] ++ Ecto.Adapters.Postgres.extensions(),
   [])
-
 ```
 
 Let's try it out!
 ```
 iex(1)> alias ArticleTrackerHd.ContentManagement.Article
-iex(2)> alias ArticleTrackerHd.Repo                     
+iex(2)> alias ArticleTrackerHd.Repo
 iex(3)> import Ecto.Query
 iex(4)> category = "winning"
 iex(5)> query = from a in Article, where: fragment("categories ~ ?", ^"*.#{category}.*")
