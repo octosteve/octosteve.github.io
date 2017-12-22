@@ -406,16 +406,21 @@ iex(18)&gt; Repo.all(query)
   <span class="p">[])</span>
 </pre></td></tr></tbody></table>
 </code></pre>
-<p>Let&rsquo;s try it out!
-<code>
-iex(1)&gt; alias ArticleTrackerHd.ContentManagement.Article
+<p>Let&rsquo;s try it out!</p>
+<pre class="highlight plaintext"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre></td><td class="rouge-code"><pre>iex(1)&gt; alias ArticleTrackerHd.ContentManagement.Article
 iex(2)&gt; alias ArticleTrackerHd.Repo
 iex(3)&gt; import Ecto.Query
-iex(4)&gt; category = &quot;winning&quot;
-iex(5)&gt; query = from a in Article, where: fragment(&quot;categories ~ ?&quot;, ^&quot;*.#{category}.*&quot;)
+iex(4)&gt; category = "winning"
+iex(5)&gt; query = from a in Article, where: fragment("categories ~ ?", ^"*.#{category}.*")
 iex(6)&gt; Repo.all(query)
-</code></p>
-
+</pre></td></tr></tbody></table>
+</code></pre>
 <p><img alt="getinsertpic.com" src="http://media1.giphy.com/media/NlVo12G7b6cMg/200.gif" /></p>
 
 <h1>Conclusion</h1>

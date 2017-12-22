@@ -14,7 +14,7 @@
     <link rel="alternate" href="http://blog.url.com/2017/06/17/ltrees-in-phoenix.html"/>
     <id>http://blog.url.com/2017/06/17/ltrees-in-phoenix.html</id>
     <published>2017-06-17T16:38:00Z</published>
-    <updated>2017-09-21T15:03:43-04:00</updated>
+    <updated>2017-12-22T15:54:46-05:00</updated>
     <author>
       <name>Article Author</name>
     </author>
@@ -394,16 +394,21 @@ iex(18)&amp;gt; Repo.all(query)
   &lt;span class="p"&gt;[])&lt;/span&gt;
 &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Let&amp;rsquo;s try it out!
-&lt;code&gt;
-iex(1)&amp;gt; alias ArticleTrackerHd.ContentManagement.Article
+&lt;p&gt;Let&amp;rsquo;s try it out!&lt;/p&gt;
+&lt;pre class="highlight plaintext"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4
+5
+6
+&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;iex(1)&amp;gt; alias ArticleTrackerHd.ContentManagement.Article
 iex(2)&amp;gt; alias ArticleTrackerHd.Repo
 iex(3)&amp;gt; import Ecto.Query
-iex(4)&amp;gt; category = &amp;quot;winning&amp;quot;
-iex(5)&amp;gt; query = from a in Article, where: fragment(&amp;quot;categories ~ ?&amp;quot;, ^&amp;quot;*.#{category}.*&amp;quot;)
+iex(4)&amp;gt; category = "winning"
+iex(5)&amp;gt; query = from a in Article, where: fragment("categories ~ ?", ^"*.#{category}.*")
 iex(6)&amp;gt; Repo.all(query)
-&lt;/code&gt;&lt;/p&gt;
-
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;img alt="getinsertpic.com" src="http://media1.giphy.com/media/NlVo12G7b6cMg/200.gif" /&gt;&lt;/p&gt;
 
 &lt;h1&gt;Conclusion&lt;/h1&gt;
