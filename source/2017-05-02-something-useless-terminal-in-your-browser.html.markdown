@@ -4,8 +4,6 @@ date: 2017-05-02 13:40 UTC
 tags: elixir, something useless
 ---
 
-# Terminal in your browser
-
 In today's installment of Something Useless, we're going to build a terminal in your browser with Phoenix!
 This post will be broken up into 3 sections.
 
@@ -391,7 +389,7 @@ __Channels are just `GenServer`s so they respond to out of band messages with `h
  Whoop!
 
 And just like that, we've got a terminal in our browser!
-<img src="http://i.imgur.com/DXhsL3W.gif"  width=700 />
+<img src="http://i.imgur.com/DXhsL3W.gif" width="100%" />
 
 ## Wrap up
 The `erlexec` library is really powerful. With options to send `stdout|stderr` to different processes, the way we set this up could have been really different.
