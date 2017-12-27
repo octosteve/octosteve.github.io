@@ -42,10 +42,11 @@ npm: {
 // ...
 ```
 
-Clear out `lib/terminal_in_your_browser/web/templates/page/index.html.eex` and insert a `div` with an id of `terminal-container`.
+Clear out `page/index.html.eex` and insert a `div` with an id of `terminal-container`.
 
 
 ```html
+<!-- lib/terminal_in_your_browser/web/templates/page/index.html.eex -->
 <div id="terminal-container"></div>
 ```
 
