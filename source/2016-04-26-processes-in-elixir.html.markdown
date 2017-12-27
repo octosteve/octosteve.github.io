@@ -1,10 +1,9 @@
 ---
 title: Processes in Elixir
 date: 2016-04-26 15:47 UTC
-tags: [Elixir, Processes, Concurrency]
+tags: elixir
 ---
 
-# Processes
 > The unit of concurrency in Elixir is a process. A process is  capable of responding to messages, and maintaining state. The only way to interact with a process is to send it a message.
 
 >  **Steven Nunez (Hostile Developer)**

@@ -1,7 +1,7 @@
 ---
 title: Closures
 date: 2014-04-13 18:20 UTC
-tags: closures, javascript, ruby
+tags: javascript, ruby
 ---
 <blockquote class="twitter-tweet" data-partner="tweetdeck"><p>I UNDERSTAND CLOSURES!!! Blog post coming up!</p>&mdash; Steven Nunez (@_StevenNunez) <a href="https://twitter.com/_StevenNunez/statuses/455337355030069248">April 13, 2014</a></blockquote>
 <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>

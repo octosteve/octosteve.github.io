@@ -1,7 +1,7 @@
 ---
 title: Let me find out
 date: 2015-02-22 03:41 UTC
-tags: ruby, enumerable, find
+tags: ruby
 ---
 
 # Finders keepers

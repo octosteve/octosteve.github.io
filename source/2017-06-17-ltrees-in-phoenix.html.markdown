@@ -1,7 +1,7 @@
 ---
 title: LTrees in Phoenix
 date: 2017-06-17 16:38 UTC
-tags: ["Elixir", "Phoenix", "Ecto", "LTrees"]
+tags: elixir, phoenix
 ---
 
 # Article Tracker

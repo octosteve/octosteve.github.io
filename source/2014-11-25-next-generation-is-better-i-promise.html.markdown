@@ -1,7 +1,7 @@
 ---
 title: Next generation is better. I promise
 date: 2014-11-25 01:13 UTC
-tags: javascript, promises, generators
+tags: javascript
 ---
 
 # Yey!....?

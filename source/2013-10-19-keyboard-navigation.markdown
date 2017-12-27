@@ -1,7 +1,7 @@
 ---
 title: "Keyboard Navigation"
 date: 2013-10-19 10:59
-tags: [navigation, sharp axe]
+tags: [basics]
 
 ---
 

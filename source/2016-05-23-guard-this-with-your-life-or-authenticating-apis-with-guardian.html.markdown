@@ -1,7 +1,7 @@
 ---
 title: Guard this with your life... Or authenticating APIs with Guardian
 date: 2016-05-23 21:58 UTC
-tags: ["elixir", "phoenix", "authentication", "guardian"]
+tags: elixir, phoenix
 ---
 # Authentication in Phoenix
 Conceptually, authentication isn't hard. You collect a username and password, check it against your database and if it matches, WIN!

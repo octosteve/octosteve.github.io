@@ -1,4 +1,3 @@
-require 'bootstrap-sass'
 ###
 # Blog settings
 ###
@@ -109,9 +108,12 @@ end
 helpers do
   def title(current_article)
     title = "Hostile Developer"
-    if current_article
-      title.concat(" - #{current_article.title}")
-    end
-    title
+    return title unless current_article
+
+    title.concat(" - #{current_article.title}")
+  end
+
+  def render_tag_links(tags)
+    tags.map{|t| link_to t, tag_path(t) }
   end
 end

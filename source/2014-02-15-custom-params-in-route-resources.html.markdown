@@ -1,7 +1,7 @@
 ---
 title: Custom params in route resources
 date: 2014-02-15 21:09 UTC
-tags: rails, ruby, routing, web
+tags: rails, ruby
 ---
 
 Anyone who knows me will tell you I'm a huge rails fanboy. There are times when you get _stuck_.

@@ -1,10 +1,9 @@
 ---
 title: Learn to Program with Elixir
 date: 2016-08-24 23:47 UTC
-tags: Beginner, Elixir, Learn to Program, Random Thoughts
+tags: elixir, basics
 ---
 
-# Learn to Program
 I've been helping people become programmers at [The Flatiron
 School](https://flatironschool.com) for the last few years. I've taught hundreds
 of people how to program using Ruby. I love Ruby. It's simple. Low ceremony and most

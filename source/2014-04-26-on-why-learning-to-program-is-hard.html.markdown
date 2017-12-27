@@ -1,7 +1,7 @@
 ---
 title: On why learning to program is hard
 date: 2014-04-26 20:22 UTC
-tags: learning, beginner, components of programming
+tags: learning
 ---
 The first mention of 'Objects' with regard to some non-tangible thing was in [the late 1950s](http://en.wikipedia.org/wiki/Object-oriented_programming#History). Before that, 'Objects' didn't exist. Once you realize that all concepts in programming are made up, you start to feel less bad about not understanding them right away. 
 

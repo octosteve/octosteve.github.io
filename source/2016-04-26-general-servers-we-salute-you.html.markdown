@@ -1,7 +1,7 @@
 ---
 title: General Servers we salute you
 date: 2016-04-26 22:15 UTC
-tags: ["Elixir", "GenServer"]
+tags: elixir
 published: false
 ---
 

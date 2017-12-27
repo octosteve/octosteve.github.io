@@ -1,7 +1,7 @@
 ---
 title: Hey! Watch it!...or how to monitor files in Elixir
 date: 2016-02-24 16:57 UTC
-tags: [elixir, file watchers, fs]
+tags: elixir
 ---
 
 ## File watchers and Elixir

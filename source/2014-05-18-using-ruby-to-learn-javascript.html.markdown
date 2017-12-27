@@ -1,7 +1,7 @@
 ---
 title: Using Ruby to learn JavaScript
 date: 2014-05-18 20:16 UTC
-tags: ruby, javascript, polyglot
+tags: ruby, javascript
 ---
 
 I've written about why I believe [learning to program is hard](2014-04-26-on-why-learning-to-program-is-hard.html). If you've made it to the other side, rejoice! It's time for the easy part. Learning a new language. Let's see how knowing Ruby can help us learn a little JavaScript. (I'm assuming you know Ruby for the duration of this post)

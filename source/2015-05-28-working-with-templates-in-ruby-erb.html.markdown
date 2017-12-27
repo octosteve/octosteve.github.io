@@ -1,7 +1,7 @@
 ---
 title: Working with Templates in Ruby ERB
 date: 2015-05-28 15:39 UTC
-tags:
+tags: ruby
 ---
 
 # Templates in ERB
