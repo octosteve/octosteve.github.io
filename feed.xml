@@ -14,7 +14,7 @@
     <link rel="alternate" href="http://blog.url.com/2017/06/17/ltrees-in-phoenix.html"/>
     <id>http://blog.url.com/2017/06/17/ltrees-in-phoenix.html</id>
     <published>2017-06-17T16:38:00Z</published>
-    <updated>2017-12-22T15:54:46-05:00</updated>
+    <updated>2017-12-23T17:27:19-05:00</updated>
     <author>
       <name>Article Author</name>
     </author>
@@ -60,19 +60,18 @@ is that you can store articles in a hierarchy instead of a bunch loose tags like
 &lt;p&gt;Let&amp;rsquo;s build this and fix errors as they come up.&lt;/p&gt;
 
 &lt;p&gt;First, generate a new Phoenix app. We&amp;rsquo;re going to be building this with Phoenix 1.3 rc-1, so make sure you have that installed.&lt;/p&gt;
-&lt;pre class="highlight plaintext"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight plaintext"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 &lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;mix phx.new article_tracker_hd
 cd article_tracker_hd
 mix ecto.create
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Then generate a quick scaffold that gets us most of the way there.
 &lt;code&gt;mix phx.gen.html ContentManagement Article articles title url categories&lt;/code&gt;. Here we&amp;rsquo;re saying that we want to be able to manage articles, and that we&amp;rsquo;ll be editing them as part of our Content Management domain. Other things that might go here would be tags, authors, and the rules for featuring a particular article.&lt;/p&gt;
 
 &lt;p&gt;Add your resource to your router at &lt;code&gt;article_tracker_hd/lib/article_tracker_hd/web/router.ex&lt;/code&gt;&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -88,12 +87,11 @@ mix ecto.create
   &lt;span class="n"&gt;resources&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;/articles"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="no"&gt;ArticleController&lt;/span&gt; &lt;span class="c1"&gt;# &amp;lt;- New line&lt;/span&gt;
 &lt;span class="k"&gt;end&lt;/span&gt;
 &lt;span class="c1"&gt;#...&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Then open up the migration in &lt;code&gt;priv/repo/migrations/{some_time_stamp}_create_content_management_article.exs&lt;/code&gt;. This is where the fun starts.&lt;/p&gt;
 
 &lt;p&gt;Update your migration to look like this:&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -127,10 +125,9 @@ mix ecto.create
 
   &lt;span class="k"&gt;end&lt;/span&gt;
 &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Then run the migrations with &lt;code&gt;mix ecto.migrate&lt;/code&gt;. It WORKED! Let&amp;rsquo;s open up the console and try to insert an article.&lt;/p&gt;
-&lt;pre class="highlight plaintext"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight plaintext"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -142,10 +139,9 @@ iex(2)&amp;gt; alias ArticleTrackerHd.Repo
 iex(3)&amp;gt; article = %Article{title: "How AI took over the world", url: "http://www.computerworld.com/article/2922442/robotics/stephen-hawking-fears-robots-could-take-over-in-100-years.html", categories: "technology.futurism.ai.global_domination"}
 iex(4)&amp;gt; Repo.insert!(article)
 ** (RuntimeError) type `ltree` can not be handled by the types module Ecto.Adapters.Postgres.TypeModule
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Errors! This just means Postgrex doesn&amp;rsquo;t know how to map ltrees. Lucky for use, they use LTrees to show you &lt;a href="https://hexdocs.pm/postgrex/Postgrex.Extension.html"&gt;how to make extensions&lt;/a&gt;! Make a new file in &lt;code&gt;lib/postgrex/extensions/&lt;/code&gt; called &lt;code&gt;ltree.ex&lt;/code&gt;, and insert this code:&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -207,13 +203,12 @@ iex(4)&amp;gt; Repo.insert!(article)
     &lt;span class="k"&gt;end&lt;/span&gt;
   &lt;span class="k"&gt;end&lt;/span&gt;
 &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;A lot of this is ceremony, but the things to note are the format, encode and decode functions.
 Format has 2 possible return values &amp;ldquo;text&amp;rdquo;, and &amp;ldquo;binary&amp;rdquo;. We&amp;rsquo;re just storing the categories as text so that will do. Encode and decode are your data gateways. You have to do that funky quoted expression business. Right now, I&amp;rsquo;m ok just presenting a set of categories as a string of contiguous characters with dots in between.&lt;/p&gt;
 
 &lt;p&gt;We&amp;rsquo;ll also have to tell Postgrex to load our extension. Open up &lt;code&gt;config/dev.exs&lt;/code&gt; and add this to where you configure your database:&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -229,10 +224,9 @@ Format has 2 possible return values &amp;ldquo;text&amp;rdquo;, and &amp;ldquo;b
   &lt;span class="ss"&gt;hostname:&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;localhost"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
   &lt;span class="ss"&gt;pool_size:&lt;/span&gt; &lt;span class="m"&gt;10&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
   &lt;span class="ss"&gt;types:&lt;/span&gt; &lt;span class="no"&gt;ArticleTrackerHd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Postgrex&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Types&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Create &lt;code&gt;lib/postgrex/types.ex&lt;/code&gt; and add this line.&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -240,12 +234,11 @@ Format has 2 possible return values &amp;ldquo;text&amp;rdquo;, and &amp;ldquo;b
   &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="no"&gt;ArticleTrackerHd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Postgrex&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Extensions&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Ltree&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;++&lt;/span&gt; &lt;span class="no"&gt;Ecto&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Adapters&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Postgres&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;extensions&lt;/span&gt;&lt;span class="p"&gt;(),&lt;/span&gt;
   &lt;span class="p"&gt;[])&lt;/span&gt;
 
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;This defines the &lt;code&gt;ArticleTrackerHd.Postgres.Types&lt;/code&gt; module and updated the loaded types to include our &lt;code&gt;ltree&lt;/code&gt; extension.&lt;/p&gt;
 
 &lt;p&gt;Try to add the article again:&lt;/p&gt;
-&lt;pre class="highlight plaintext"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight plaintext"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -255,14 +248,13 @@ iex(1)&amp;gt; alias ArticleTrackerHd.ContentManagement.Article
 iex(2)&amp;gt; alias ArticleTrackerHd.Repo
 iex(3)&amp;gt; article = %Article{title: "How AI took over the world", url: "http://www.computerworld.com/article/2922442/robotics/stephen-hawking-fears-robots-could-take-over-in-100-years.html", categories: "technology.futurism.ai.global_domination"}
 iex(4)&amp;gt; Repo.insert!(article)
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;WIN! On to the cool part.&lt;/p&gt;
 
 &lt;h2&gt;Querying categories&lt;/h2&gt;
 
 &lt;p&gt;Add these additional stories in &lt;code&gt;iex&lt;/code&gt;&lt;/p&gt;
-&lt;pre class="highlight plaintext"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight plaintext"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -276,28 +268,25 @@ iex(3)&amp;gt; article = %Article{title: "How AI are good for the elderly ", url
 iex(4)&amp;gt; Repo.insert!(article)
 iex(5)&amp;gt; article = %Article{title: "Google’s AI Wins Fifth And Final Game Against Go Genius Lee Sedol", url: "http://www.wired.com/2016/03/googles-ai-wins-fifth-final-game-go-genius-lee-sedol/", categories: "technology.futurism.ai.winning"}
 iex(6)&amp;gt; Repo.insert!(article)
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Then let&amp;rsquo;s work on some queries. We&amp;rsquo;ll be using the &lt;a href="https://hexdocs.pm/ecto/Ecto.Query.API.html#fragment/1"&gt;&lt;code&gt;fragment&lt;/code&gt;&lt;/a&gt; function to get our &lt;code&gt;ltree&lt;/code&gt; search working. Say we wanted to find all of the articles starting with technology:&lt;/p&gt;
-&lt;pre class="highlight plaintext"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight plaintext"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 &lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;iex(7)&amp;gt; import Ecto.Query
 iex(8)&amp;gt; query = from a in Article, where: fragment("categories &amp;lt;@ ?", "technology")
 iex(9)&amp;gt; Repo.all(query)
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;This should return all of the articles so far. The &lt;code&gt;&amp;lt;@&lt;/code&gt; asks for all categories that have start with &lt;code&gt;technology&lt;/code&gt;, if you try it with &lt;code&gt;ai&lt;/code&gt; you&amp;rsquo;ll get nothing.&lt;/p&gt;
 
 &lt;p&gt;Let&amp;rsquo;s be more specific and get the ones that are &lt;code&gt;technology.futurism.ai.winning&lt;/code&gt;:&lt;/p&gt;
-&lt;pre class="highlight plaintext"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight plaintext"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 &lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;iex(10)&amp;gt; query = from a in Article, where: fragment("categories &amp;lt;@ ?", "technology.futurism.ai.winning")
 iex(11)&amp;gt; Repo.all(query)
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;How about all of the ai stories regardless of where they show up on the category tree? Let&amp;rsquo;s add another article, then search:&lt;/p&gt;
-&lt;pre class="highlight plaintext"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight plaintext"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -305,12 +294,11 @@ iex(11)&amp;gt; Repo.all(query)
 iex(13)&amp;gt; Repo.insert!(article)
 iex(14)&amp;gt; query = from a in Article, where: fragment("categories ~ ?", "*.winning.*")
 iex(15)&amp;gt; Repo.all(query)
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;We used the &lt;code&gt;~&lt;/code&gt; to indicate we were going use path matching. Tons of options here, be sure to check out the ltree page on the Postgres guide.&lt;/p&gt;
 
 &lt;p&gt;Not so fast though&amp;hellip; We&amp;rsquo;ll probably be using dynamic values from an external source. If we try to simulate passing an argument we get this:&lt;/p&gt;
-&lt;pre class="highlight plaintext"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight plaintext"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -318,10 +306,9 @@ iex(15)&amp;gt; Repo.all(query)
 iex(17)&amp;gt; query = from a in Article, where: fragment("categories ~ ?", ^"*.#{category}.*")
 iex(18)&amp;gt; Repo.all(query)
 ** (RuntimeError) type `lquery` can not be handled by the types module ArticleTrackerHd.Postgrex.Types
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Our old nemisis! What we&amp;rsquo;re seeing is the DB trying to resolve an &lt;code&gt;lquery&lt;/code&gt;. You know the drill. Duplicate &lt;code&gt;ArticleTrackerHd.Postgrex.Extensions.Ltree&lt;/code&gt;, and change any reference from &lt;code&gt;ltree&lt;/code&gt; to &lt;code&gt;lquery&lt;/code&gt;.&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -383,32 +370,25 @@ iex(18)&amp;gt; Repo.all(query)
     &lt;span class="k"&gt;end&lt;/span&gt;
   &lt;span class="k"&gt;end&lt;/span&gt;
 &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;And in your &lt;code&gt;lib/postgrex/types.ex&lt;/code&gt;:&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 &lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="no"&gt;Postgrex&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Types&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;define&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="no"&gt;ArticleTrackerHd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Postgrex&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Types&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
   &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="no"&gt;ArticleTrackerHd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Postgrex&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Extensions&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Ltree&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="no"&gt;ArticleTrackerHd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Postgrex&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Extensions&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Lquery&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;++&lt;/span&gt; &lt;span class="no"&gt;Ecto&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Adapters&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Postgres&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;extensions&lt;/span&gt;&lt;span class="p"&gt;(),&lt;/span&gt;
   &lt;span class="p"&gt;[])&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Let&amp;rsquo;s try it out!&lt;/p&gt;
-&lt;pre class="highlight plaintext"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
-2
-3
-4
-5
-6
-&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;iex(1)&amp;gt; alias ArticleTrackerHd.ContentManagement.Article
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Let&amp;rsquo;s try it out!
+&lt;code&gt;
+iex(1)&amp;gt; alias ArticleTrackerHd.ContentManagement.Article
 iex(2)&amp;gt; alias ArticleTrackerHd.Repo
 iex(3)&amp;gt; import Ecto.Query
-iex(4)&amp;gt; category = "winning"
-iex(5)&amp;gt; query = from a in Article, where: fragment("categories ~ ?", ^"*.#{category}.*")
+iex(4)&amp;gt; category = &amp;quot;winning&amp;quot;
+iex(5)&amp;gt; query = from a in Article, where: fragment(&amp;quot;categories ~ ?&amp;quot;, ^&amp;quot;*.#{category}.*&amp;quot;)
 iex(6)&amp;gt; Repo.all(query)
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/code&gt;&lt;/p&gt;
+
 &lt;p&gt;&lt;img alt="getinsertpic.com" src="http://media1.giphy.com/media/NlVo12G7b6cMg/200.gif" /&gt;&lt;/p&gt;
 
 &lt;h1&gt;Conclusion&lt;/h1&gt;
@@ -431,13 +411,11 @@ iex(6)&amp;gt; Repo.all(query)
     <link rel="alternate" href="http://blog.url.com/2017/05/02/something-useless-terminal-in-your-browser.html"/>
     <id>http://blog.url.com/2017/05/02/something-useless-terminal-in-your-browser.html</id>
     <published>2017-05-02T13:40:00Z</published>
-    <updated>2017-09-21T15:03:43-04:00</updated>
+    <updated>2017-12-27T10:32:27-05:00</updated>
     <author>
       <name>Article Author</name>
     </author>
-    <content type="html">&lt;h1&gt;Terminal in your browser&lt;/h1&gt;
-
-&lt;p&gt;In today&amp;rsquo;s installment of Something Useless, we&amp;rsquo;re going to build a terminal in your browser with Phoenix!
+    <content type="html">&lt;p&gt;In today&amp;rsquo;s installment of Something Useless, we&amp;rsquo;re going to build a terminal in your browser with Phoenix!
 This post will be broken up into 3 sections.&lt;/p&gt;
 
 &lt;ul&gt;
@@ -449,25 +427,23 @@ This post will be broken up into 3 sections.&lt;/p&gt;
 &lt;h2&gt;Getting Started&lt;/h2&gt;
 
 &lt;p&gt;Create a new Phoenix Application. We&amp;rsquo;ll be using Phoenix 1.3.&lt;/p&gt;
-&lt;pre class="highlight shell"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight shell"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
-&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;mix phx.new terminal_in_your_browser --no-ecto
+&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;mix phx.new terminal_in_your_browser &lt;span class="nt"&gt;--no-ecto&lt;/span&gt;
 &lt;span class="c"&gt;# Install all your dependencies&lt;/span&gt;
 &lt;span class="nb"&gt;cd &lt;/span&gt;terminal_in_your_browser
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Let&amp;rsquo;s start by getting the terminal on the page. Start by adding the &lt;code&gt;xterm&lt;/code&gt; package.&lt;/p&gt;
-&lt;pre class="highlight shell"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight shell"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 &lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="nb"&gt;cd &lt;/span&gt;assets
-npm install --save xterm
+npm install &lt;span class="nt"&gt;--save&lt;/span&gt; xterm
 &lt;span class="nb"&gt;cd&lt;/span&gt; ..
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Then edit &lt;code&gt;brunch-config.js&lt;/code&gt; to load the styles for the plugin. Without this&amp;hellip; it&amp;rsquo;s just a &lt;code&gt;textarea&lt;/code&gt;.&lt;/p&gt;
-&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -478,22 +454,22 @@ npm install --save xterm
 9
 &lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="c1"&gt;// brunch-config.js&lt;/span&gt;
 &lt;span class="c1"&gt;// ...&lt;/span&gt;
-&lt;span class="nl"&gt;npm&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="nx"&gt;npm&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
  &lt;span class="nl"&gt;enabled&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
  &lt;span class="nx"&gt;styles&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
    &lt;span class="s2"&gt;"xterm"&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;"dist/xterm.css"&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;
  &lt;span class="p"&gt;}&lt;/span&gt;
 &lt;span class="p"&gt;}&lt;/span&gt;
 &lt;span class="c1"&gt;// ...&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Clear out &lt;code&gt;lib/terminal_in_your_browser/web/templates/page/index.html.eex&lt;/code&gt; and insert a &lt;code&gt;div&lt;/code&gt; with an id of &lt;code&gt;terminal-container&lt;/code&gt;.&lt;/p&gt;
-&lt;pre class="highlight html"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
-&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="nt"&gt;&amp;lt;div&lt;/span&gt; &lt;span class="na"&gt;id=&lt;/span&gt;&lt;span class="s"&gt;"terminal-container"&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&amp;lt;/div&amp;gt;&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Clear out &lt;code&gt;page/index.html.eex&lt;/code&gt; and insert a &lt;code&gt;div&lt;/code&gt; with an id of &lt;code&gt;terminal-container&lt;/code&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre class="highlight html"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+2
+&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="c"&gt;&amp;lt;!-- lib/terminal_in_your_browser/web/templates/page/index.html.eex --&amp;gt;&lt;/span&gt;
+&lt;span class="nt"&gt;&amp;lt;div&lt;/span&gt; &lt;span class="na"&gt;id=&lt;/span&gt;&lt;span class="s"&gt;"terminal-container"&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&amp;lt;/div&amp;gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Finally, in &lt;code&gt;assets/js/app.js&lt;/code&gt; load &lt;code&gt;xterm&lt;/code&gt; and load it on the page:&lt;/p&gt;
-&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -501,7 +477,7 @@ npm install --save xterm
 6
 7
 8
-&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="kr"&gt;import&lt;/span&gt; &lt;span class="nx"&gt;Terminal&lt;/span&gt; &lt;span class="nx"&gt;from&lt;/span&gt; &lt;span class="s1"&gt;'xterm'&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="k"&gt;import&lt;/span&gt; &lt;span class="nx"&gt;Terminal&lt;/span&gt; &lt;span class="k"&gt;from&lt;/span&gt; &lt;span class="s1"&gt;'xterm'&lt;/span&gt;
 
 &lt;span class="kd"&gt;let&lt;/span&gt; &lt;span class="nx"&gt;term&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="nx"&gt;Terminal&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;
   &lt;span class="na"&gt;cursorBlink&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
@@ -509,8 +485,7 @@ npm install --save xterm
 
 &lt;span class="nx"&gt;term&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;open&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;document&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;getElementById&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'terminal-container'&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
 &lt;span class="nx"&gt;term&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;on&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'data'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;data&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="nx"&gt;console&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;log&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;data&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;That last bit will console.log every character you type. Off to a great start!&lt;/p&gt;
 
 &lt;h2&gt;Flipping Channels&lt;/h2&gt;
@@ -518,17 +493,15 @@ npm install --save xterm
 &lt;p&gt;Now we get to work with some Channels!&lt;/p&gt;
 
 &lt;p&gt;Let&amp;rsquo;s create the Terminal Channel. We&amp;rsquo;ll use to receive input from our &lt;code&gt;xterm&lt;/code&gt; box in the browser.&lt;/p&gt;
-&lt;pre class="highlight shell"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight shell"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 &lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;mix phx.gen.channel Terminal
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Follow the instructions and but instead, add this to &lt;code&gt;user_socket.ex&lt;/code&gt;&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 &lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="n"&gt;channel&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;terminal:*"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="no"&gt;TerminalInYourBrowser&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Web&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;TerminalChannel&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Let&amp;rsquo;s clean up the &lt;code&gt;TerminalChannel&lt;/code&gt; module to only include a &lt;code&gt;join/3&lt;/code&gt; function allows anyone to join.&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -542,12 +515,11 @@ npm install --save xterm
     &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:ok&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;socket&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
   &lt;span class="k"&gt;end&lt;/span&gt;
 &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;The fun part. Let&amp;rsquo;s echo everything you type back to you from the channel.&lt;/p&gt;
 
 &lt;p&gt;In the channel add this:&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -555,40 +527,37 @@ npm install --save xterm
   &lt;span class="n"&gt;push&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;socket&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;output"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="ss"&gt;output:&lt;/span&gt; &lt;span class="n"&gt;input&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt;
   &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:noreply&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;socket&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
 &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;We push the input back to the client with an event named &lt;code&gt;output&lt;/code&gt;. Our current code doesn&amp;rsquo;t know how to handle this but it will soon. The &lt;code&gt;{:noreply, socket}&lt;/code&gt; just tells phoenix not to reply to the sender, and preserves the socket to this process.&lt;/p&gt;
 
 &lt;p&gt;Next up. let&amp;rsquo;s edit the &lt;code&gt;socket.js&lt;/code&gt; file Phoenix provides us:&lt;/p&gt;
-&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
 5
 6
 7
-&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="kr"&gt;import&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="nx"&gt;Socket&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="nx"&gt;from&lt;/span&gt; &lt;span class="s2"&gt;"phoenix"&lt;/span&gt;                  
+&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="k"&gt;import&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="nx"&gt;Socket&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="k"&gt;from&lt;/span&gt; &lt;span class="s2"&gt;"phoenix"&lt;/span&gt;                  
 
 &lt;span class="kd"&gt;let&lt;/span&gt; &lt;span class="nx"&gt;socket&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="nx"&gt;Socket&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;"/socket"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{})&lt;/span&gt;
 
 &lt;span class="nx"&gt;socket&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;connect&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;                                
 
-&lt;span class="kr"&gt;export&lt;/span&gt; &lt;span class="k"&gt;default&lt;/span&gt; &lt;span class="nx"&gt;socket&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;span class="k"&gt;export&lt;/span&gt; &lt;span class="k"&gt;default&lt;/span&gt; &lt;span class="nx"&gt;socket&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Initialize a socket, connect, and export. Super simple. We&amp;rsquo;ll use this socket in &lt;code&gt;app.js&lt;/code&gt;. Add this near the top of the file.&lt;/p&gt;
-&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
-&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="kr"&gt;import&lt;/span&gt; &lt;span class="nx"&gt;socket&lt;/span&gt; &lt;span class="nx"&gt;from&lt;/span&gt; &lt;span class="s1"&gt;'./socket'&lt;/span&gt;                   
+&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="k"&gt;import&lt;/span&gt; &lt;span class="nx"&gt;socket&lt;/span&gt; &lt;span class="k"&gt;from&lt;/span&gt; &lt;span class="s1"&gt;'./socket'&lt;/span&gt;                   
 
 &lt;span class="kd"&gt;let&lt;/span&gt; &lt;span class="nx"&gt;channel&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;socket&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;channel&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;"terminal:1"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{})&lt;/span&gt;
 &lt;span class="nx"&gt;channel&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;join&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;With this, we&amp;rsquo;re connected to our server! Refresh the page and checkout the logs.&lt;/p&gt;
-&lt;pre class="highlight shell"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight shell"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -596,12 +565,11 @@ npm install --save xterm
   Transport:  Phoenix.Transports.WebSocket
   Parameters: %&lt;span class="o"&gt;{}&lt;/span&gt;
 &lt;span class="o"&gt;[&lt;/span&gt;info] Replied terminal:1 :ok
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;NICE! Let&amp;rsquo;s wrap this leg of the trip up by sending all terminal input to our channel, then respond to the &lt;code&gt;output&lt;/code&gt; event we send from the channel.&lt;/p&gt;
 
 &lt;p&gt;In the end, your &lt;code&gt;app.js&lt;/code&gt; should look like this:&lt;/p&gt;
-&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -615,8 +583,8 @@ npm install --save xterm
 12
 13
 14
-&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="kr"&gt;import&lt;/span&gt; &lt;span class="nx"&gt;Terminal&lt;/span&gt; &lt;span class="nx"&gt;from&lt;/span&gt; &lt;span class="s1"&gt;'xterm'&lt;/span&gt;
-&lt;span class="kr"&gt;import&lt;/span&gt; &lt;span class="nx"&gt;socket&lt;/span&gt; &lt;span class="nx"&gt;from&lt;/span&gt; &lt;span class="s1"&gt;'./socket'&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="k"&gt;import&lt;/span&gt; &lt;span class="nx"&gt;Terminal&lt;/span&gt; &lt;span class="k"&gt;from&lt;/span&gt; &lt;span class="s1"&gt;'xterm'&lt;/span&gt;
+&lt;span class="k"&gt;import&lt;/span&gt; &lt;span class="nx"&gt;socket&lt;/span&gt; &lt;span class="k"&gt;from&lt;/span&gt; &lt;span class="s1"&gt;'./socket'&lt;/span&gt;
 
 &lt;span class="kd"&gt;let&lt;/span&gt; &lt;span class="nx"&gt;channel&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;socket&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;channel&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;"terminal:1"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{})&lt;/span&gt;
 &lt;span class="nx"&gt;channel&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;join&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
@@ -629,14 +597,13 @@ npm install --save xterm
 
 &lt;span class="nx"&gt;term&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;open&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;document&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;getElementById&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'terminal-container'&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
 &lt;span class="nx"&gt;term&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;on&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'data'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;data&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="nx"&gt;channel&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;push&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'input'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="na"&gt;input&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;data&lt;/span&gt;&lt;span class="p"&gt;}))&lt;/span&gt; &lt;span class="c1"&gt;// To the Channel&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Lines where we send IO back and forth are marked in comments. Look! Our terminal&amp;hellip; just returns what we typed. Not super exciting. Up next, we&amp;rsquo;ll be delving into the bowels of Unix, and learning how to interact with external processes.&lt;/p&gt;
 
 &lt;h2&gt;Ports, ptys, AKA why did I choose to write about this?!&lt;/h2&gt;
 
 &lt;p&gt;Erlang comes with a built in way to communicate with external programs called &lt;code&gt;Ports&lt;/code&gt;. With a port you can spawn a process like a shell, or a ruby script and communicate via IO. I can send it messages with &lt;code&gt;Port.command/2&lt;/code&gt;, and receive formatted responses in the calling process. This has some limitations for our purposes. We need a terminal that sends back an echo when we type. As you saw, our terminal doesn&amp;rsquo;t actually put anything in the box UNLESS we send it. We &lt;em&gt;could&lt;/em&gt; write this ourselves but why. *nix has us covered. If you dig a bit deeper, you figure out that the reason it doesn&amp;rsquo;t echo your input is because it&amp;rsquo;s not a PTY. Let&amp;rsquo;s look at an example. In &lt;code&gt;iex&lt;/code&gt; type the following:&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -662,12 +629,11 @@ npm install --save xterm
 &lt;span class="n"&gt;iex&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="m"&gt;5&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;flush&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
 &lt;span class="c1"&gt;# no echo&lt;/span&gt;
 &lt;span class="ss"&gt;:ok&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;It might be hard to see, but when we flush on &lt;code&gt;3&lt;/code&gt; we get back the response we see the port sent us a message. On &lt;code&gt;5&lt;/code&gt;, no joy, no echo which we need to make our terminal work. Also, we don&amp;rsquo;t get our lovely prompt.&lt;/p&gt;
 
 &lt;p&gt;The thing that causes the terminal to echo are the settings of the &lt;code&gt;stty&lt;/code&gt; command. You can see your current settings by typing in &lt;code&gt;stty --all&lt;/code&gt;. Mine look like this:&lt;/p&gt;
-&lt;pre class="highlight shell"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight shell"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -678,28 +644,26 @@ npm install --save xterm
 9
 10
 11
-&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="gp"&gt;$ &lt;/span&gt;stty --all
-speed 38400 baud; rows 23; columns 96; line &lt;span class="o"&gt;=&lt;/span&gt; 0;
-intr &lt;span class="o"&gt;=&lt;/span&gt; ^C; quit &lt;span class="o"&gt;=&lt;/span&gt; ^&lt;span class="se"&gt;\;&lt;/span&gt; erase &lt;span class="o"&gt;=&lt;/span&gt; ^?; &lt;span class="nb"&gt;kill&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; ^U; eof &lt;span class="o"&gt;=&lt;/span&gt; ^D; eol &lt;span class="o"&gt;=&lt;/span&gt; M-^?; eol2 &lt;span class="o"&gt;=&lt;/span&gt; M-^?; swtch &lt;span class="o"&gt;=&lt;/span&gt; M-^?;
-start &lt;span class="o"&gt;=&lt;/span&gt; ^Q; stop &lt;span class="o"&gt;=&lt;/span&gt; ^S; susp &lt;span class="o"&gt;=&lt;/span&gt; ^Z; rprnt &lt;span class="o"&gt;=&lt;/span&gt; ^R; werase &lt;span class="o"&gt;=&lt;/span&gt; ^W; lnext &lt;span class="o"&gt;=&lt;/span&gt; ^V; discard &lt;span class="o"&gt;=&lt;/span&gt; ^O;
-min &lt;span class="o"&gt;=&lt;/span&gt; 1; &lt;span class="nb"&gt;time&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; 0;
--parenb -parodd -cmspar cs8 hupcl -cstopb cread -clocal -crtscts
--ignbrk brkint -ignpar -parmrk -inpck -istrip -inlcr -igncr icrnl ixon -ixoff -iuclc ixany
+&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;stty &lt;span class="nt"&gt;--all&lt;/span&gt;
+speed 38400 baud&lt;span class="p"&gt;;&lt;/span&gt; rows 23&lt;span class="p"&gt;;&lt;/span&gt; columns 96&lt;span class="p"&gt;;&lt;/span&gt; line &lt;span class="o"&gt;=&lt;/span&gt; 0&lt;span class="p"&gt;;&lt;/span&gt;
+intr &lt;span class="o"&gt;=&lt;/span&gt; ^C&lt;span class="p"&gt;;&lt;/span&gt; quit &lt;span class="o"&gt;=&lt;/span&gt; ^&lt;span class="se"&gt;\;&lt;/span&gt; erase &lt;span class="o"&gt;=&lt;/span&gt; ^?&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nb"&gt;kill&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; ^U&lt;span class="p"&gt;;&lt;/span&gt; eof &lt;span class="o"&gt;=&lt;/span&gt; ^D&lt;span class="p"&gt;;&lt;/span&gt; eol &lt;span class="o"&gt;=&lt;/span&gt; M-^?&lt;span class="p"&gt;;&lt;/span&gt; eol2 &lt;span class="o"&gt;=&lt;/span&gt; M-^?&lt;span class="p"&gt;;&lt;/span&gt; swtch &lt;span class="o"&gt;=&lt;/span&gt; M-^?&lt;span class="p"&gt;;&lt;/span&gt;
+start &lt;span class="o"&gt;=&lt;/span&gt; ^Q&lt;span class="p"&gt;;&lt;/span&gt; stop &lt;span class="o"&gt;=&lt;/span&gt; ^S&lt;span class="p"&gt;;&lt;/span&gt; susp &lt;span class="o"&gt;=&lt;/span&gt; ^Z&lt;span class="p"&gt;;&lt;/span&gt; rprnt &lt;span class="o"&gt;=&lt;/span&gt; ^R&lt;span class="p"&gt;;&lt;/span&gt; werase &lt;span class="o"&gt;=&lt;/span&gt; ^W&lt;span class="p"&gt;;&lt;/span&gt; lnext &lt;span class="o"&gt;=&lt;/span&gt; ^V&lt;span class="p"&gt;;&lt;/span&gt; discard &lt;span class="o"&gt;=&lt;/span&gt; ^O&lt;span class="p"&gt;;&lt;/span&gt;
+min &lt;span class="o"&gt;=&lt;/span&gt; 1&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nb"&gt;time&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; 0&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="nt"&gt;-parenb&lt;/span&gt; &lt;span class="nt"&gt;-parodd&lt;/span&gt; &lt;span class="nt"&gt;-cmspar&lt;/span&gt; cs8 hupcl &lt;span class="nt"&gt;-cstopb&lt;/span&gt; cread &lt;span class="nt"&gt;-clocal&lt;/span&gt; &lt;span class="nt"&gt;-crtscts&lt;/span&gt;
+&lt;span class="nt"&gt;-ignbrk&lt;/span&gt; brkint &lt;span class="nt"&gt;-ignpar&lt;/span&gt; &lt;span class="nt"&gt;-parmrk&lt;/span&gt; &lt;span class="nt"&gt;-inpck&lt;/span&gt; &lt;span class="nt"&gt;-istrip&lt;/span&gt; &lt;span class="nt"&gt;-inlcr&lt;/span&gt; &lt;span class="nt"&gt;-igncr&lt;/span&gt; icrnl ixon &lt;span class="nt"&gt;-ixoff&lt;/span&gt; &lt;span class="nt"&gt;-iuclc&lt;/span&gt; ixany
 imaxbel iutf8
-opost -olcuc -ocrnl onlcr -onocr -onlret -ofill -ofdel nl0 cr0 tab0 bs0 vt0 ff0
-isig icanon iexten &lt;span class="nb"&gt;echo &lt;/span&gt;echoe echok -echonl -noflsh -xcase -tostop -echoprt echoctl echoke
--flusho -extproc
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+opost &lt;span class="nt"&gt;-olcuc&lt;/span&gt; &lt;span class="nt"&gt;-ocrnl&lt;/span&gt; onlcr &lt;span class="nt"&gt;-onocr&lt;/span&gt; &lt;span class="nt"&gt;-onlret&lt;/span&gt; &lt;span class="nt"&gt;-ofill&lt;/span&gt; &lt;span class="nt"&gt;-ofdel&lt;/span&gt; nl0 cr0 tab0 bs0 vt0 ff0
+isig icanon iexten &lt;span class="nb"&gt;echo &lt;/span&gt;echoe echok &lt;span class="nt"&gt;-echonl&lt;/span&gt; &lt;span class="nt"&gt;-noflsh&lt;/span&gt; &lt;span class="nt"&gt;-xcase&lt;/span&gt; &lt;span class="nt"&gt;-tostop&lt;/span&gt; &lt;span class="nt"&gt;-echoprt&lt;/span&gt; echoctl echoke
+&lt;span class="nt"&gt;-flusho&lt;/span&gt; &lt;span class="nt"&gt;-extproc&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;If you run &lt;code&gt;stty -echo&lt;/code&gt; you&amp;rsquo;ll see it turns your echo off! Sadly, running &lt;code&gt;stty echo&lt;/code&gt; on our port doesn&amp;rsquo;t make it echo. Instead, we get a weird error:&lt;/p&gt;
-&lt;pre class="highlight shell"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight shell"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
-&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="gp"&gt;iex(6)&amp;gt; &lt;/span&gt;Port.command&lt;span class="o"&gt;(&lt;/span&gt;port, &lt;span class="s2"&gt;"stty echo&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s2"&gt;"&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;iex&lt;span class="o"&gt;(&lt;/span&gt;6&lt;span class="o"&gt;)&amp;gt;&lt;/span&gt; Port.command&lt;span class="o"&gt;(&lt;/span&gt;port, &lt;span class="s2"&gt;"stty echo&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s2"&gt;"&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
 &lt;span class="nb"&gt;true
-&lt;/span&gt;&lt;span class="gp"&gt;iex(7)&amp;gt; &lt;/span&gt;stty: &lt;span class="s1"&gt;'standard input'&lt;/span&gt;: Inappropriate ioctl &lt;span class="k"&gt;for &lt;/span&gt;device
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/span&gt;iex&lt;span class="o"&gt;(&lt;/span&gt;7&lt;span class="o"&gt;)&amp;gt;&lt;/span&gt; stty: &lt;span class="s1"&gt;'standard input'&lt;/span&gt;: Inappropriate ioctl &lt;span class="k"&gt;for &lt;/span&gt;device
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Womp. This error is essentially telling us our port isn&amp;rsquo;t a pty. To get around this, we&amp;rsquo;re going to bring in a library that &amp;lsquo;provides significantly better control over OS processes than built-in &lt;code&gt;erlang:open_port/3&lt;/code&gt; command&amp;rsquo;. It also has pty support. The library we&amp;rsquo;re talking about is &lt;code&gt;erlexec&lt;/code&gt;.&lt;/p&gt;
 
 &lt;h2&gt;erlexec&lt;/h2&gt;
@@ -707,7 +671,7 @@ isig icanon iexten &lt;span class="nb"&gt;echo &lt;/span&gt;echoe echok -echonl 
 &lt;p&gt;With &lt;code&gt;erlexec&lt;/code&gt;, we&amp;rsquo;ll be able to get around this pesky pty issue, and turn on our terminal echo. Let&amp;rsquo;s get it setup.&lt;/p&gt;
 
 &lt;p&gt;In our &lt;code&gt;mix.exs&lt;/code&gt;, let&amp;rsquo;s add the latest version of &lt;code&gt;erlexec&lt;/code&gt;. Your deps should look like this.&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -727,12 +691,11 @@ isig icanon iexten &lt;span class="nb"&gt;echo &lt;/span&gt;echoe echok -echonl 
    &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:erlexec&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;~&amp;gt; 1.7"&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt;
   &lt;span class="p"&gt;]&lt;/span&gt;
 &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;If you&amp;rsquo;re running elixir &amp;gt;= 1.4, you won&amp;rsquo;t need to start the application. If you aren&amp;rsquo;t, make sure you add &lt;code&gt;:erlexec&lt;/code&gt; to your application list.&lt;/p&gt;
 
 &lt;p&gt;Run &lt;code&gt;mix deps.get&lt;/code&gt;, then run &lt;code&gt;iex -S mix&lt;/code&gt; to try it out.&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -744,13 +707,12 @@ isig icanon iexten &lt;span class="nb"&gt;echo &lt;/span&gt;echoe echok -echonl 
 &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:stdout&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="m"&gt;10721&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
  &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;\e]0;stevennunez@TashiDor: ~/code/blog_code/terminal_in_your_browser\astevennunez@TashiDor:~/code/blog_code/terminal_in_your_browser$ "&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
 
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;We start our default shell with the &lt;code&gt;:stdin&lt;/code&gt; option so it accepts input from use via &lt;code&gt;:exec.send/2&lt;/code&gt;. &lt;code&gt;:stdout&lt;/code&gt; and &lt;code&gt;:stderr&lt;/code&gt; make it so the calling process receives output in a tagged tuple starting with &lt;code&gt;:stdout&lt;/code&gt; and &lt;code&gt;:stderr&lt;/code&gt;.
 Notice that the only message we&amp;rsquo;ve received so far is our terminal prompt. Also note that we&amp;rsquo;re not getting an echo from the &lt;code&gt;l&lt;/code&gt; we sent in.&lt;/p&gt;
 
 &lt;p&gt;Next, we&amp;rsquo;ll finish up the &lt;code&gt;ls\n&lt;/code&gt; command by passing in the rest.&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -762,12 +724,11 @@ Notice that the only message we&amp;rsquo;ve received so far is our terminal pro
  &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;\e[0m\e[01;34massets\e[0m  \e[01;34m_build\e[0m  \e[01;34mconfig\e[0m  \e[01;34mdeps\e[0m  \e[01;34mlib\e[0m  mix.exs  mix.lock  \e[01;34mpriv\e[0m  README.md  \e[01;34mtest\e[0m\r\n"&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
 &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:stdout&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="m"&gt;10721&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
  &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;\e]0;stevennunez@TashiDor: ~/code/blog_code/terminal_in_your_browser\astevennunez@TashiDor:~/code/blog_code/terminal_in_your_browser$ "&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Here we get a file list. The wacky &lt;code&gt;\e[om\e&lt;/code&gt; characters are for formatting in the terminal program. All &lt;code&gt;xterm.js&lt;/code&gt; compatible!&lt;/p&gt;
 
 &lt;p&gt;Let&amp;rsquo;s try turning on the echo via &lt;code&gt;stty&lt;/code&gt; settings.&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -785,8 +746,7 @@ Notice that the only message we&amp;rsquo;ve received so far is our terminal pro
 &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:stdout&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="m"&gt;10721&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;l"&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
 &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:stdout&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="m"&gt;10721&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;s"&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
 
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;ECHO!&lt;/p&gt;
 
 &lt;p&gt;A couple of things to note:&lt;/p&gt;
@@ -801,7 +761,7 @@ Notice that the only message we&amp;rsquo;ve received so far is our terminal pro
 &lt;p&gt;Let&amp;rsquo;s wrap all of this in a &lt;code&gt;GenServer&lt;/code&gt;. The server will have a way to receive input as well as a way to notify a process (our socket process) when there&amp;rsquo;s something to output.&lt;/p&gt;
 
 &lt;p&gt;Step 1: Make a module named &lt;code&gt;Terminal&lt;/code&gt; that uses &lt;code&gt;GenServer&lt;/code&gt;&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -809,10 +769,9 @@ Notice that the only message we&amp;rsquo;ve received so far is our terminal pro
   &lt;span class="kn"&gt;use&lt;/span&gt; &lt;span class="no"&gt;GenServer&lt;/span&gt;
 
 &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Step 2: Create &lt;code&gt;start_link/1&lt;/code&gt; and the &lt;code&gt;init/1&lt;/code&gt; callback to receive and store the output_pid:&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -834,10 +793,9 @@ Notice that the only message we&amp;rsquo;ve received so far is our terminal pro
     &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:ok&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="ss"&gt;output_pid:&lt;/span&gt; &lt;span class="n"&gt;output_pid&lt;/span&gt;&lt;span class="p"&gt;}}&lt;/span&gt;
   &lt;span class="k"&gt;end&lt;/span&gt;
 &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Step 3: In the &lt;code&gt;init/1&lt;/code&gt; callback, start a pty shell and set it up to echo on input:&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -865,10 +823,9 @@ Notice that the only message we&amp;rsquo;ve received so far is our terminal pro
     &lt;span class="p"&gt;}&lt;/span&gt;
   &lt;span class="k"&gt;end&lt;/span&gt;
 &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Step 4: Take input and send it to the shell pid:&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -894,10 +851,9 @@ Notice that the only message we&amp;rsquo;ve received so far is our terminal pro
     &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:noreply&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
   &lt;span class="k"&gt;end&lt;/span&gt;
 &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Step 5: Handle output your &lt;code&gt;GenServer&lt;/code&gt; receives as a message:&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -925,14 +881,13 @@ Notice that the only message we&amp;rsquo;ve received so far is our terminal pro
     &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:noreply&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
   &lt;span class="k"&gt;end&lt;/span&gt;
 &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;And that&amp;rsquo;s it for our &lt;code&gt;GenServer&lt;/code&gt;! You&amp;rsquo;ll notice we send a message to our &lt;code&gt;output_pid&lt;/code&gt;. How do we handle that? Let&amp;rsquo;s jump back to the socket.&lt;/p&gt;
 
 &lt;h2&gt;TerminalChannel part 2&lt;/h2&gt;
 
 &lt;p&gt;Let&amp;rsquo;s dive in.&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -968,15 +923,14 @@ Notice that the only message we&amp;rsquo;ve received so far is our terminal pro
     &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:noreply&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;socket&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
   &lt;span class="k"&gt;end&lt;/span&gt;
 &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;When you join, we create a new terminal process. We pass in &lt;code&gt;self()&lt;/code&gt; as the &lt;code&gt;output_pid&lt;/code&gt;. We then add the terminal pid to the socket&amp;rsquo;s state. Then we wait&amp;hellip; When we get that &lt;code&gt;input&lt;/code&gt; message from the browser terminal, we send it to the terminal process. Here&amp;rsquo;s the cool part:&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;Channels are just &lt;code&gt;GenServer&lt;/code&gt;s so they respond to out of band messages with &lt;code&gt;handle_info&lt;/code&gt;.&lt;/strong&gt;
  Whoop!&lt;/p&gt;
 
 &lt;p&gt;And just like that, we&amp;rsquo;ve got a terminal in our browser!
-&lt;img src="http://i.imgur.com/DXhsL3W.gif"  width=700 /&gt;&lt;/p&gt;
+&lt;img src="http://i.imgur.com/DXhsL3W.gif" width="100%" /&gt;&lt;/p&gt;
 
 &lt;h2&gt;Wrap up&lt;/h2&gt;
 
@@ -992,18 +946,16 @@ Notice that the only message we&amp;rsquo;ve received so far is our terminal pro
     <link rel="alternate" href="http://blog.url.com/2017/04/18/something-useless-redux-implemented-in-elixir.html"/>
     <id>http://blog.url.com/2017/04/18/something-useless-redux-implemented-in-elixir.html</id>
     <published>2017-04-18T15:38:00Z</published>
-    <updated>2017-09-21T15:03:43-04:00</updated>
+    <updated>2017-12-23T17:45:37-05:00</updated>
     <author>
       <name>Article Author</name>
     </author>
-    <content type="html">&lt;h1&gt;Something completely useless - Redux Implemented in Elixir&lt;/h1&gt;
-
-&lt;p&gt;I got a chance to teach &lt;a href="http://redux.js.org/"&gt;Redux&lt;/a&gt; recently and what a time! For something so simple, it sure can get complicated. If you take a look at my &lt;a href="/2014/04/13/closures.html"&gt;previous articles&lt;/a&gt; you might notice a technique I use to get my head around concepts. Bring that bad boy on to my own turf.&lt;/p&gt;
+    <content type="html">&lt;p&gt;I got a chance to teach &lt;a href="http://redux.js.org/"&gt;Redux&lt;/a&gt; recently and what a time! For something so simple, it sure can get complicated. If you take a look at my &lt;a href="/2014/04/13/closures.html"&gt;previous articles&lt;/a&gt; you might notice a technique I use to get my head around concepts. Bring that bad boy on to my own turf.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src="https://media.giphy.com/media/OhQBBFi64Z81a/giphy.gif" /&gt;&lt;/p&gt;
 
 &lt;p&gt;A naïve implementation of Redux using JavaScript might look something like this:&lt;/p&gt;
-&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -1040,8 +992,8 @@ Notice that the only message we&amp;rsquo;ve received so far is our terminal pro
 35
 36
 37
-&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;initializerAction&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="na"&gt;type&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;"@@INIT"&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
-&lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;createStore&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;reducer&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;state&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;undefined&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="kd"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;initializerAction&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="na"&gt;type&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;"@@INIT"&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="kd"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;createStore&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;reducer&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;state&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;undefined&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
 &lt;span class="nx"&gt;state&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;reducer&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;state&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;initializerAction&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;span class="kd"&gt;let&lt;/span&gt; &lt;span class="nx"&gt;subscribers&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[]&lt;/span&gt;
   &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
@@ -1061,7 +1013,7 @@ Notice that the only message we&amp;rsquo;ve received so far is our terminal pro
   &lt;span class="p"&gt;}&lt;/span&gt;
 &lt;span class="p"&gt;}&lt;/span&gt;
 
-&lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;countReducer&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;state&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;action&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="kd"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;countReducer&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;state&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;action&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
   &lt;span class="k"&gt;switch&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;action&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;type&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;
     &lt;span class="k"&gt;case&lt;/span&gt; &lt;span class="s2"&gt;"INCREMENT"&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
       &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nx"&gt;state&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;
@@ -1069,22 +1021,21 @@ Notice that the only message we&amp;rsquo;ve received so far is our terminal pro
       &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nx"&gt;state&lt;/span&gt;
   &lt;span class="p"&gt;}&lt;/span&gt;
 &lt;span class="p"&gt;}&lt;/span&gt;
-&lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;store&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;createStore&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;countReducer&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;removeSubscriber&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;store&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;subscribe&lt;/span&gt;&lt;span class="p"&gt;(()&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="nx"&gt;console&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;log&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;"I got called"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;store&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;getState&lt;/span&gt;&lt;span class="p"&gt;()))&lt;/span&gt;
+&lt;span class="kd"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;store&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;createStore&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;countReducer&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="kd"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;removeSubscriber&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;store&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;subscribe&lt;/span&gt;&lt;span class="p"&gt;(()&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="nx"&gt;console&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;log&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;"I got called"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;store&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;getState&lt;/span&gt;&lt;span class="p"&gt;()))&lt;/span&gt;
 &lt;span class="nx"&gt;store&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;dispatch&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;&lt;span class="na"&gt;type&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;"INCREMENT"&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt;
 &lt;span class="c1"&gt;// Should log "I got called: 1"&lt;/span&gt;
 
 &lt;span class="nx"&gt;removeSubscriber&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
 &lt;span class="nx"&gt;store&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;dispatch&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;&lt;span class="na"&gt;type&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;"INCREMENT"&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt;
 &lt;span class="c1"&gt;// Should log nothing"&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Cool. So we can build out a store that calls a single reducer. The store can notify subscribers of changes. We&amp;rsquo;ll work on implementing this in Elixir, and we&amp;rsquo;ll even handle the case with combined reducers. Along the way, we&amp;rsquo;ll see where the JavaScript implementation falters, blocking execution of independent reducers and how to get around that in Elixir.&lt;/p&gt;
 
 &lt;h1&gt;Let&amp;rsquo;s dream&lt;/h1&gt;
 
 &lt;p&gt;The code of my dreams looks something like:&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -1108,15 +1059,14 @@ Notice that the only message we&amp;rsquo;ve received so far is our terminal pro
 &lt;span class="no"&gt;Store&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;remove_subscriber&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;store&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;subscriber_ref&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;span class="no"&gt;Store&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;dispatch&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;store&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="ss"&gt;type:&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;INCREMENT"&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt;
 &lt;span class="c1"&gt;# Should log nothing"&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;We swapped out a few things. This is Elixir so we&amp;rsquo;re passing in a reference to the &lt;code&gt;Store&lt;/code&gt; pid on every invocation. We also changed how we unsubscribe from a store, returning a reference value instead of a function that magically calls in the right scope. Also, we pass the current state to the subscribers on every call. This looks great, but how do we build it?&lt;/p&gt;
 
 &lt;h2&gt;Enter the GenServer&lt;/h2&gt;
 
 &lt;p&gt;I &lt;em&gt;love&lt;/em&gt; the Erlang lords for creating the GenServer. It works for EVERYTHING.
 Let&amp;rsquo;s start by implementing the &lt;code&gt;get_state&lt;/code&gt; function on a &lt;code&gt;Store&lt;/code&gt; process.&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -1160,8 +1110,7 @@ Let&amp;rsquo;s start by implementing the &lt;code&gt;get_state&lt;/code&gt; fun
     &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:reply&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="no"&gt;Map&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:store_state&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
   &lt;span class="k"&gt;end&lt;/span&gt;
 &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;The code above will use the &lt;code&gt;apply&lt;/code&gt; function to dispatch a message to a module. If our reducer is a module named &lt;code&gt;CountReducer&lt;/code&gt;, it would call &lt;code&gt;CountReducer.reduce(state, action)&lt;/code&gt;. Pretty nice.&lt;/p&gt;
 
 &lt;p&gt;The reducer will be a module with a &lt;code&gt;reduce/2&lt;/code&gt; function. Reducers have a few responsibilities.
@@ -1170,7 +1119,7 @@ Let&amp;rsquo;s start by implementing the &lt;code&gt;get_state&lt;/code&gt; fun
 * They ignore messages it doesn&amp;rsquo;t care for&lt;/p&gt;
 
 &lt;p&gt;The Reducers don&amp;rsquo;t care what the state is, all they do is get state, and an action, then respond with new state. Here&amp;rsquo;s a sample reducer:&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -1194,14 +1143,13 @@ Let&amp;rsquo;s start by implementing the &lt;code&gt;get_state&lt;/code&gt; fun
   &lt;span class="k"&gt;defp&lt;/span&gt; &lt;span class="n"&gt;do_reduce&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="ss"&gt;type:&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;INCREMENT"&lt;/span&gt;&lt;span class="p"&gt;}),&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;state&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="m"&gt;1&lt;/span&gt;
   &lt;span class="k"&gt;defp&lt;/span&gt; &lt;span class="n"&gt;do_reduce&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;state&lt;/span&gt;
 &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;We first create a &lt;code&gt;behaviour&lt;/code&gt; to ensure anyone that plays the &lt;code&gt;Reducer&lt;/code&gt; role knows how to do the job. We need it to have a &lt;code&gt;reduce/2&lt;/code&gt; function to support the &lt;code&gt;Store&lt;/code&gt; module&amp;rsquo;s expectation. The rest is just some good old fashioned PATTERN MATCHING. The first 2 &lt;code&gt;reduce/2&lt;/code&gt; heads are just clean up. If we get a nil value, then just call it again with a 0, our &lt;code&gt;do_reduce/2&lt;/code&gt; functions are where the actual reducing happens.&lt;/p&gt;
 
 &lt;h2&gt;Time to run it&lt;/h2&gt;
 
 &lt;p&gt;Throw all of that in a file named &lt;code&gt;e_dux.exs&lt;/code&gt; a open up &lt;code&gt;iex&lt;/code&gt;.&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -1209,10 +1157,9 @@ Let&amp;rsquo;s start by implementing the &lt;code&gt;get_state&lt;/code&gt; fun
 
 &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:ok&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;store&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="no"&gt;Store&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;start_link&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="no"&gt;CountReducer&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;span class="no"&gt;Store&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get_state&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;store&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="c1"&gt;# =&amp;gt; 0&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Not too exciting. Let&amp;rsquo;s add the ability to &lt;code&gt;dispatch&lt;/code&gt; an action. Back in our &lt;code&gt;Store&lt;/code&gt;:&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -1238,10 +1185,9 @@ Let&amp;rsquo;s start by implementing the &lt;code&gt;get_state&lt;/code&gt; fun
     &lt;span class="n"&gt;store_state&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;apply&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;reducer&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:reduce&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;store_state&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;action&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
     &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:noreply&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="no"&gt;Map&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;put&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:store_state&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;store_state&lt;/span&gt;&lt;span class="p"&gt;)}&lt;/span&gt;
   &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Here we cast asynchronously using &lt;code&gt;GenServer.cast/2&lt;/code&gt;. This strategy makes it so our dispatch code won&amp;rsquo;t block our calling code. Imagine if a reducer took a long time to finish. Or better yet, imagine if we have to run through several reducers? This not blocking takes advantage of Elixir&amp;rsquo;s real power: Concurrency. Try this out by loading the file like before and run this:&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -1253,14 +1199,13 @@ Let&amp;rsquo;s start by implementing the &lt;code&gt;get_state&lt;/code&gt; fun
 &lt;span class="no"&gt;Store&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get_state&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;store&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="c1"&gt;# =&amp;gt; 0&lt;/span&gt;
 &lt;span class="no"&gt;Store&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;dispatch&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;store&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="ss"&gt;type:&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;INCREMENT"&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt;
 &lt;span class="no"&gt;Store&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get_state&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;store&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="c1"&gt;# =&amp;gt; 1&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;WOOT! Got some &lt;code&gt;INCREMENT&lt;/code&gt; action! Let&amp;rsquo;s move on to adding subscribers and notifying them.&lt;/p&gt;
 
 &lt;h2&gt;I&amp;rsquo;d like to subscribe to your newsletter&lt;/h2&gt;
 
 &lt;p&gt;Back to our dream code:&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -1284,12 +1229,11 @@ Let&amp;rsquo;s start by implementing the &lt;code&gt;get_state&lt;/code&gt; fun
 &lt;span class="no"&gt;Store&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;remove_subscriber&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;store&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;subscriber_ref&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;span class="no"&gt;Store&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;dispatch&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;store&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="ss"&gt;type:&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;INCREMENT"&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt;
 &lt;span class="c1"&gt;# Should log nothing"&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;We want a &lt;code&gt;dispatch&lt;/code&gt; to notify our existing subscribers after we&amp;rsquo;ve updated our state. We&amp;rsquo;ll also have our &lt;code&gt;store&lt;/code&gt; track its subscribers. We&amp;rsquo;ll be updating &lt;code&gt;init/1&lt;/code&gt;, as well as adding &lt;code&gt;subscribe/2&lt;/code&gt; and &lt;code&gt;remove_subscriber/2&lt;/code&gt;&lt;/p&gt;
 
 &lt;h3&gt;init/1&lt;/h3&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -1297,12 +1241,11 @@ Let&amp;rsquo;s start by implementing the &lt;code&gt;get_state&lt;/code&gt; fun
   &lt;span class="n"&gt;store_state&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;apply&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;reducer&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:reduce&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;initial_state&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nv"&gt;@initializer_action&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
   &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:ok&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="ss"&gt;reducer:&lt;/span&gt; &lt;span class="n"&gt;reducer&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;store_state:&lt;/span&gt; &lt;span class="n"&gt;store_state&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;subscribers:&lt;/span&gt; &lt;span class="p"&gt;%{}}}&lt;/span&gt; &lt;span class="c1"&gt;# add new subscribers map to state&lt;/span&gt;
 &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Here we add a new key to our state map: subscribers. We&amp;rsquo;ll be taking advantage of this being a map when we delete subscribers in &lt;code&gt;remove_subscriber/2&lt;/code&gt;&lt;/p&gt;
 
 &lt;h3&gt;subscribe/2 remove_subscriber/2 and call backs&lt;/h3&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -1340,12 +1283,11 @@ Let&amp;rsquo;s start by implementing the &lt;code&gt;get_state&lt;/code&gt; fun
   &lt;span class="n"&gt;subscribers&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="no"&gt;Map&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;delete&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;subscribers&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;ref&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
   &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:noreply&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="no"&gt;Map&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;put&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:subscribers&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;subscribers&lt;/span&gt;&lt;span class="p"&gt;)}&lt;/span&gt;
 &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Our &lt;code&gt;subscribe/2&lt;/code&gt; function will add our subscriber to our map, storing a &lt;code&gt;ref&lt;/code&gt; as the key. Since a ref is a unique value, it&amp;rsquo;s a great way to well&amp;hellip; reference stuff. We&amp;rsquo;ll return that &lt;code&gt;ref&lt;/code&gt; to our caller. &lt;code&gt;remove_subscriber/2&lt;/code&gt; takes a &lt;code&gt;store&lt;/code&gt; pid and a &lt;code&gt;ref&lt;/code&gt;. This updates our &lt;code&gt;subscriber&lt;/code&gt; map. This is done in a &lt;code&gt;cast&lt;/code&gt; since we don&amp;rsquo;t care about the return value.&lt;/p&gt;
 
 &lt;h3&gt;dispatch/2&lt;/h3&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -1355,12 +1297,11 @@ Let&amp;rsquo;s start by implementing the &lt;code&gt;get_state&lt;/code&gt; fun
   &lt;span class="n"&gt;for&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="n"&gt;_ref&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;sub&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; &lt;span class="n"&gt;subscribers&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;sub&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;store_state&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="c1"&gt;# notify those subscribers&lt;/span&gt;
   &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:noreply&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="no"&gt;Map&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;put&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:store_state&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;store_state&lt;/span&gt;&lt;span class="p"&gt;)}&lt;/span&gt;
 &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;FINALLY we update &lt;code&gt;handle_cast/2&lt;/code&gt; for our &lt;code&gt;dispatch/2&lt;/code&gt; function to call every subscriber.&lt;/p&gt;
 
 &lt;p&gt;With this code, our dreams are ALIVE!&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -1384,12 +1325,11 @@ Let&amp;rsquo;s start by implementing the &lt;code&gt;get_state&lt;/code&gt; fun
 &lt;span class="no"&gt;Store&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;remove_subscriber&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;store&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;subscriber_ref&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;span class="no"&gt;Store&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;dispatch&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;store&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="ss"&gt;type:&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;INCREMENT"&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt;
 &lt;span class="c1"&gt;# Should log nothing"&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;h2&gt;Combined Reducers&lt;/h2&gt;
 
 &lt;p&gt;So Redux lets you break down complex logic into multiple reducers. Something like:&lt;/p&gt;
-&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -1398,19 +1338,18 @@ Let&amp;rsquo;s start by implementing the &lt;code&gt;get_state&lt;/code&gt; fun
 7
 8
 9
-&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;rootReducer&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;combineReducers&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="kd"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;rootReducer&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;combineReducers&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;
   &lt;span class="na"&gt;count&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;countReducer&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
   &lt;span class="na"&gt;square&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;squareReducer&lt;/span&gt;
 &lt;span class="p"&gt;})&lt;/span&gt;
 
-&lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;store&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;createStore&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;rootReducer&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="kd"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;store&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;createStore&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;rootReducer&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;span class="nx"&gt;store&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;getState&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="c1"&gt;// {count: 0, square: 2} // default to 2 so we can get some good squaring action&lt;/span&gt;
 &lt;span class="nx"&gt;store&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;dispatch&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;&lt;span class="na"&gt;type&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;"INCREMENT"&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt;
 &lt;span class="nx"&gt;store&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;getState&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="c1"&gt;// {count: 1, square: 4}&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Internally all a combined reducer is is a reducer that delegates to other reducers. More naive code:&lt;/p&gt;
-&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -1439,7 +1378,7 @@ Let&amp;rsquo;s start by implementing the &lt;code&gt;get_state&lt;/code&gt; fun
 27
 28
 29
-&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;combineReducers&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;reducerMap&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="kd"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;combineReducers&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;reducerMap&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
   &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;state&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;action&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
     &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nb"&gt;Object&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;keys&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;reducerMap&lt;/span&gt;&lt;span class="p"&gt;).&lt;/span&gt;&lt;span class="nx"&gt;reduce&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="nx"&gt;map&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;stateName&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
       &lt;span class="nx"&gt;map&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;stateName&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;reducerMap&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;stateName&lt;/span&gt;&lt;span class="p"&gt;](&lt;/span&gt;&lt;span class="nx"&gt;state&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;stateName&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="nx"&gt;action&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
@@ -1448,7 +1387,7 @@ Let&amp;rsquo;s start by implementing the &lt;code&gt;get_state&lt;/code&gt; fun
   &lt;span class="p"&gt;}&lt;/span&gt;
 &lt;span class="p"&gt;}&lt;/span&gt;
 
-&lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;countReducer&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;state&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;action&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="kd"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;countReducer&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;state&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;action&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
   &lt;span class="k"&gt;switch&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;action&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;type&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
     &lt;span class="k"&gt;case&lt;/span&gt; &lt;span class="s2"&gt;"INCREMENT"&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
       &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nx"&gt;state&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;
@@ -1457,7 +1396,7 @@ Let&amp;rsquo;s start by implementing the &lt;code&gt;get_state&lt;/code&gt; fun
   &lt;span class="p"&gt;}&lt;/span&gt;
 &lt;span class="p"&gt;}&lt;/span&gt;
 
-&lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;squareReducer&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;state&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;action&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="kd"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;squareReducer&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;state&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;action&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
   &lt;span class="k"&gt;switch&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;action&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;type&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
     &lt;span class="k"&gt;case&lt;/span&gt; &lt;span class="s2"&gt;"INCREMENT"&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
       &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nx"&gt;state&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="nx"&gt;state&lt;/span&gt;
@@ -1466,16 +1405,15 @@ Let&amp;rsquo;s start by implementing the &lt;code&gt;get_state&lt;/code&gt; fun
   &lt;span class="p"&gt;}&lt;/span&gt;
 &lt;span class="p"&gt;}&lt;/span&gt;
 
-&lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;rootReducer&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;combineReducers&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;&lt;span class="na"&gt;count&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;countReducer&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="na"&gt;square&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;squareReducer&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt;
+&lt;span class="kd"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;rootReducer&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;combineReducers&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;&lt;span class="na"&gt;count&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;countReducer&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="na"&gt;square&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;squareReducer&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt;
 &lt;span class="nx"&gt;rootReducer&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;&lt;span class="na"&gt;count&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="na"&gt;square&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="na"&gt;type&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;"INCREMENT"&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt; &lt;span class="c1"&gt;// {count: 1, square: 4}&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Here we return a function that when called with a state and action will delegate portions of the state to specific reducers. Pretty nice! But something wicked lies in this code. When our reducer dispatches, it can only delegate to one reducer at a time, even though their state is completely isolated. This would be a perfect time for some concurrency! Let&amp;rsquo;s look at how we can handle this in Elixir.&lt;/p&gt;
 
 &lt;h3&gt;CombineReducer Module&lt;/h3&gt;
 
 &lt;p&gt;We&amp;rsquo;ll start out with a change to how treat individual reducers vs a Map with reducers. Above our existing &lt;code&gt;init/1&lt;/code&gt; function, add this:&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -1499,12 +1437,11 @@ Let&amp;rsquo;s start by implementing the &lt;code&gt;get_state&lt;/code&gt; fun
   &lt;span class="n"&gt;store_state&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;apply&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;reducer&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:reduce&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;initial_state&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nv"&gt;@initializer_action&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
   &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:ok&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="ss"&gt;reducer:&lt;/span&gt; &lt;span class="n"&gt;reducer&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;store_state:&lt;/span&gt; &lt;span class="n"&gt;store_state&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;subscribers:&lt;/span&gt; &lt;span class="p"&gt;%{}}}&lt;/span&gt; &lt;span class="c1"&gt;# add new subscribers map to state&lt;/span&gt;
 &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Converting nil values to an empty map will let our reducers receive &lt;code&gt;nil&lt;/code&gt; as their state when we call something like &lt;code&gt;state[:count]&lt;/code&gt;. They&amp;rsquo;ll then convert that to their expected default state.&lt;/p&gt;
 
 &lt;p&gt;One small change to &lt;code&gt;dispatch/2&lt;/code&gt; to support our reducer potentially being a map instead of a module:&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -1530,10 +1467,9 @@ Let&amp;rsquo;s start by implementing the &lt;code&gt;get_state&lt;/code&gt; fun
   &lt;span class="n"&gt;for&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="n"&gt;_ref&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;sub&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; &lt;span class="n"&gt;subscribers&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;sub&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;store_state&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="c1"&gt;# notify those subscribers&lt;/span&gt;
   &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:noreply&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="no"&gt;Map&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;put&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:store_state&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;store_state&lt;/span&gt;&lt;span class="p"&gt;)}&lt;/span&gt;
 &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;And finally, our brand new module a brand new module to handle our CombineReducers logic.&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -1555,12 +1491,11 @@ Let&amp;rsquo;s start by implementing the &lt;code&gt;get_state&lt;/code&gt; fun
     &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="no"&gt;Enum&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;into&lt;/span&gt;&lt;span class="p"&gt;(%{})&lt;/span&gt;
   &lt;span class="k"&gt;end&lt;/span&gt;
 &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Ok, dopeness alert. Notice how we&amp;rsquo;re using a task to run this calculation. This means that the calculation for ALL of the reducers will take as long as the slowest one, not the culmination of all of their time. THIS IS REALLY COOL. How are you not excited?!&lt;/p&gt;
 
 &lt;p&gt;Let&amp;rsquo;s test it out. First create a &lt;code&gt;SquareReducer&lt;/code&gt;:&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -1576,10 +1511,9 @@ Let&amp;rsquo;s start by implementing the &lt;code&gt;get_state&lt;/code&gt; fun
   &lt;span class="k"&gt;defp&lt;/span&gt; &lt;span class="n"&gt;do_reduce&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="ss"&gt;type:&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;INCREMENT"&lt;/span&gt;&lt;span class="p"&gt;}),&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;state&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="m"&gt;1&lt;/span&gt;
   &lt;span class="k"&gt;defp&lt;/span&gt; &lt;span class="n"&gt;do_reduce&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;state&lt;/span&gt;
 &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Then Run this!&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -1587,8 +1521,7 @@ Let&amp;rsquo;s start by implementing the &lt;code&gt;get_state&lt;/code&gt; fun
 
 &lt;span class="no"&gt;Store&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;dispatch&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;store&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="ss"&gt;type:&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;INCREMENT"&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt;
 &lt;span class="no"&gt;Store&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get_state&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;store&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;SO COOL!!!&lt;/p&gt;
 
 &lt;h1&gt;Closing up&lt;/h1&gt;
@@ -1605,13 +1538,11 @@ Let&amp;rsquo;s start by implementing the &lt;code&gt;get_state&lt;/code&gt; fun
     <link rel="alternate" href="http://blog.url.com/2016/08/24/learn-to-program-with-elixir.html"/>
     <id>http://blog.url.com/2016/08/24/learn-to-program-with-elixir.html</id>
     <published>2016-08-24T23:47:00Z</published>
-    <updated>2017-09-21T15:03:43-04:00</updated>
+    <updated>2017-12-23T17:45:57-05:00</updated>
     <author>
       <name>Article Author</name>
     </author>
-    <content type="html">&lt;h1&gt;Learn to Program&lt;/h1&gt;
-
-&lt;p&gt;I&amp;rsquo;ve been helping people become programmers at &lt;a href="https://flatironschool.com"&gt;The Flatiron
+    <content type="html">&lt;p&gt;I&amp;rsquo;ve been helping people become programmers at &lt;a href="https://flatironschool.com"&gt;The Flatiron
 School&lt;/a&gt; for the last few years. I&amp;rsquo;ve taught hundreds
 of people how to program using Ruby. I love Ruby. It&amp;rsquo;s simple. Low ceremony and most
 importantly, it gets out of your way and lets you code.&lt;/p&gt;
@@ -1649,7 +1580,7 @@ applications? I think there is, with Elixir.&lt;/p&gt;
     <link rel="alternate" href="http://blog.url.com/2016/05/23/guard-this-with-your-life-or-authenticating-apis-with-guardian.html"/>
     <id>http://blog.url.com/2016/05/23/guard-this-with-your-life-or-authenticating-apis-with-guardian.html</id>
     <published>2016-05-23T21:58:00Z</published>
-    <updated>2017-09-21T15:03:43-04:00</updated>
+    <updated>2017-12-23T17:25:11-05:00</updated>
     <author>
       <name>Article Author</name>
     </author>
@@ -1685,7 +1616,7 @@ applications? I think there is, with Elixir.&lt;/p&gt;
 &lt;p&gt;Run &lt;code&gt;mix phoenix.gen.model Account accounts email password_digest&lt;/code&gt; then &lt;code&gt;mix ecto.migrate&lt;/code&gt;.&lt;/p&gt;
 
 &lt;p&gt;Open the new model, and update the schema to have a virtual attribute:&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -1699,8 +1630,7 @@ applications? I think there is, with Elixir.&lt;/p&gt;
 
   &lt;span class="n"&gt;timestamps&lt;/span&gt;
 &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Virtual attributes are a great way of taking a value from an interaction, but not persisting. In our case, we&amp;rsquo;ll be using it to hold the value a users gives us before we hash and persist it.&lt;/p&gt;
 
 &lt;h1&gt;Changesets&lt;/h1&gt;
@@ -1712,24 +1642,23 @@ applications? I think there is, with Elixir.&lt;/p&gt;
 &lt;p&gt;Creating a changeset is easy. In the model, we call &lt;code&gt;cast&lt;/code&gt; and pass in the model, a map with proposed values, and the fields we require, and permit.&lt;/p&gt;
 
 &lt;p&gt;This is the built in one from our project. Be sure to change the &lt;code&gt;password_digest&lt;/code&gt; in our &lt;code&gt;@required_fields&lt;/code&gt; to &lt;code&gt;password&lt;/code&gt;. The user will never pass us a &lt;code&gt;password_digest&lt;/code&gt;&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
 5
 6
 7
-&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="nv"&gt;@required_fields&lt;/span&gt; &lt;span class="err"&gt;~&lt;/span&gt;&lt;span class="n"&gt;w&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;email&lt;/span&gt; &lt;span class="n"&gt;password&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="c1"&gt;# &amp;lt;- Changed from password_digest to password&lt;/span&gt;
-&lt;span class="nv"&gt;@optional_fields&lt;/span&gt; &lt;span class="err"&gt;~&lt;/span&gt;&lt;span class="n"&gt;w&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="nv"&gt;@required_fields&lt;/span&gt; &lt;span class="sx"&gt;~w(email password)&lt;/span&gt; &lt;span class="c1"&gt;# &amp;lt;- Changed from password_digest to password&lt;/span&gt;
+&lt;span class="nv"&gt;@optional_fields&lt;/span&gt; &lt;span class="sx"&gt;~w()&lt;/span&gt;
 
 &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;changeset&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;model&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;params&lt;/span&gt; &lt;span class="p"&gt;\\&lt;/span&gt; &lt;span class="ss"&gt;:empty&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
   &lt;span class="n"&gt;model&lt;/span&gt;
   &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;cast&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;params&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nv"&gt;@required_fields&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nv"&gt;@optional_fields&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;This returns a changeset back. We can tag along another function, as long as it returns a changeset as well. Let&amp;rsquo;s do some work to obfuscate the user&amp;rsquo;s password.&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -1749,17 +1678,15 @@ applications? I think there is, with Elixir.&lt;/p&gt;
   &lt;span class="n"&gt;password&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;changeset&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;changes&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;password&lt;/span&gt;
   &lt;span class="n"&gt;put_change&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;changeset&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:password_digest&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="no"&gt;String&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;reverse&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;password&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
 &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Open up &lt;code&gt;iex -S mix&lt;/code&gt; and try this out:&lt;/p&gt;
-&lt;pre class="highlight plaintext"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight plaintext"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 &lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;iex&amp;gt; alias ArticleTrackerHd.Account
 iex&amp;gt; changeset = Account.changeset(%Account{}, %{email: "steven@example.com", password: "beef101"})
 iex&amp;gt; changeset.changes.password_digest # =&amp;gt; "101feeb"
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;#security #hashtag. I think we need to be a bit more deliberate in our approach.&lt;/p&gt;
 
 &lt;h1&gt;Come on in!&lt;/h1&gt;
@@ -1767,7 +1694,7 @@ iex&amp;gt; changeset.changes.password_digest # =&amp;gt; "101feeb"
 &lt;p&gt;Maybe not what you want to hear in a security library, but, hey&amp;hellip; We&amp;rsquo;ll be adding this library to handle our password hashing.&lt;/p&gt;
 
 &lt;p&gt;Checkout their &lt;a href="https://github.com/elixircnx/comeonin"&gt;github&lt;/a&gt; and add the latest version to your &lt;code&gt;mix.exs&lt;/code&gt; file.&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -1791,10 +1718,9 @@ iex&amp;gt; changeset.changes.password_digest # =&amp;gt; "101feeb"
 &lt;span class="k"&gt;end&lt;/span&gt;
 
 
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Then start the application:&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -1822,14 +1748,13 @@ iex&amp;gt; changeset.changes.password_digest # =&amp;gt; "101feeb"
     &lt;span class="p"&gt;]&lt;/span&gt;
   &lt;span class="p"&gt;]&lt;/span&gt;
 &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;&lt;code&gt;mix deps.get&lt;/code&gt; and we&amp;rsquo;re good to go.&lt;/p&gt;
 
 &lt;h3&gt;Updating our changeset&lt;/h3&gt;
 
 &lt;p&gt;Let&amp;rsquo;s update to our super secure hashing algorithm.&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -1837,10 +1762,9 @@ iex&amp;gt; changeset.changes.password_digest # =&amp;gt; "101feeb"
   &lt;span class="n"&gt;password&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;changeset&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;changes&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;password&lt;/span&gt;
   &lt;span class="n"&gt;put_change&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;changeset&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:password_digest&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="no"&gt;Comeonin&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Bcrypt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;hashpwsalt&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;password&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
 &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Open up &lt;code&gt;iex -S mix&lt;/code&gt; and try again:&lt;/p&gt;
-&lt;pre class="highlight plaintext"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight plaintext"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -1848,8 +1772,7 @@ iex&amp;gt; changeset.changes.password_digest # =&amp;gt; "101feeb"
 iex&amp;gt; changeset = Account.changeset(%Account{}, %{email: "steven@example.com", password: "beef101"})
 iex&amp;gt; changeset.changes.password_digest # =&amp;gt; "Something crazy"
 iex&amp;gt; Repo.insert!(changeset)
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;WIN! We&amp;rsquo;re doing right by our users. Note that we saved user with an email of &lt;code&gt;steven@example.com&lt;/code&gt; and a password of &lt;code&gt;beef101&lt;/code&gt;.&lt;/p&gt;
 
 &lt;h3&gt;Authenticating users&lt;/h3&gt;
@@ -1858,15 +1781,13 @@ iex&amp;gt; Repo.insert!(changeset)
 &lt;img alt="getinsertpic.com" src="https://media3.giphy.com/media/ZvRz1cnhjyecw/200.gif" /&gt;&lt;/p&gt;
 
 &lt;p&gt;In Phoenix, we create &amp;ldquo;pure&amp;rdquo; function in our models and views, and &amp;ldquo;impure&amp;rdquo; functions&amp;hellip; elsewhere. What is a &amp;ldquo;pure&amp;rdquo; function? Think of a function that takes in 2 values&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 &lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="k"&gt;fn&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;If you call this function with 1 and 2, the result will always be the same. Now imagine calling this code:&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 &lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="no"&gt;Repo&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;all&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="no"&gt;Account&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;This code might return 1 User, or 300. We&amp;rsquo;re touching the outside world. Fancy terms for simple things.&lt;/p&gt;
 
 &lt;p&gt;Back to authentication. We need a place to handle our impure operations. I&amp;rsquo;m coining a new term, We need a &lt;em&gt;Service Module&lt;/em&gt;&lt;/p&gt;
@@ -1874,7 +1795,7 @@ iex&amp;gt; Repo.insert!(changeset)
 &lt;p&gt;&lt;img alt="getinsertpic.com" src="http://media0.giphy.com/media/GsYaDdbX7k3Kw/200.gif" /&gt;&lt;/p&gt;
 
 &lt;p&gt;This module will hold our impure auth related stuff. Make a new file in &lt;code&gt;web/services&lt;/code&gt; called &lt;code&gt;auth.ex&lt;/code&gt;.&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -1908,10 +1829,9 @@ iex&amp;gt; Repo.insert!(changeset)
     &lt;span class="k"&gt;end&lt;/span&gt;
   &lt;span class="k"&gt;end&lt;/span&gt;
 &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;So IMPURE! We have one nugget of purity and that&amp;rsquo;s in the &lt;code&gt;find_by_email&lt;/code&gt; function. That will return the query we&amp;rsquo;ll pass to &lt;code&gt;Repo.one&lt;/code&gt;. Here it is:&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -1919,10 +1839,9 @@ iex&amp;gt; Repo.insert!(changeset)
   &lt;span class="n"&gt;from&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="bp"&gt;__MODULE__&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
   &lt;span class="ss"&gt;where:&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;email&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="n"&gt;email&lt;/span&gt;
 &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Try it out. &lt;code&gt;iex -S mix&lt;/code&gt;.&lt;/p&gt;
-&lt;pre class="highlight plaintext"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight plaintext"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -1946,8 +1865,7 @@ iex&amp;gt; Auth.verify("steven@example.com", "wrongpw")
 {:error, :bad_password}
 iex&amp;gt; Auth.verify("nope@example.com", "wrongpw")  
 {:error, :not_found}
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;GLORIOUS!!&lt;/p&gt;
 
 &lt;h1&gt;Guardian&lt;/h1&gt;
@@ -1959,7 +1877,7 @@ iex&amp;gt; Auth.verify("nope@example.com", "wrongpw")
 &lt;p&gt;Let&amp;rsquo;s set it up. You&amp;rsquo;ll need a key for the next part. Run &lt;code&gt;mix phoenix.gen.secret&lt;/code&gt; and hold on to the value.&lt;/p&gt;
 
 &lt;p&gt;Open up &lt;code&gt;mix.exs&lt;/code&gt;:&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -1981,12 +1899,11 @@ iex&amp;gt; Auth.verify("nope@example.com", "wrongpw")
    &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:guardian&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;~&amp;gt; 0.10.0"&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="c1"&gt;# &amp;lt;- New line&lt;/span&gt;
    &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:cowboy&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;~&amp;gt; 1.0"&lt;/span&gt;&lt;span class="p"&gt;}]&lt;/span&gt;
 &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Run &lt;code&gt;mix deps.get&lt;/code&gt; to get setup.&lt;/p&gt;
 
 &lt;p&gt;We&amp;rsquo;ll need to create a configuration for Guardian in our &lt;code&gt;config.exs&lt;/code&gt;.&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -1996,8 +1913,7 @@ iex&amp;gt; Auth.verify("nope@example.com", "wrongpw")
   &lt;span class="ss"&gt;ttl:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="m"&gt;30&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:days&lt;/span&gt; &lt;span class="p"&gt;},&lt;/span&gt;
   &lt;span class="ss"&gt;secret_key:&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;46l5yfRFGorxAArf64nGzHlfvSDAOUEV7m6c3/lf4LzZcBfUClDsSfNETrosmsdO"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="c1"&gt;# &amp;lt;- Your Key&lt;/span&gt;
   &lt;span class="ss"&gt;serializer:&lt;/span&gt; &lt;span class="no"&gt;ArticleTrackerHd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;GuardianSerializer&lt;/span&gt; &lt;span class="c1"&gt;# &amp;lt;- We'll create this next&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;OK, so a bunch of stuff is about to happen&amp;hellip; Brace yourself.&lt;/p&gt;
 
 &lt;p&gt;&lt;img alt="getinsertpic.com" src="http://media3.giphy.com/media/psK7tSNSAE8Te/200.gif" /&gt;&lt;/p&gt;
@@ -2005,7 +1921,7 @@ iex&amp;gt; Auth.verify("nope@example.com", "wrongpw")
 &lt;p&gt;We&amp;rsquo;re going to add 2 plugs. One to teach Guardian how to find our token, and another that lets us convert the token to an account.&lt;/p&gt;
 
 &lt;p&gt;Open up your router and add:&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -2015,14 +1931,13 @@ iex&amp;gt; Auth.verify("nope@example.com", "wrongpw")
   &lt;span class="n"&gt;plug&lt;/span&gt; &lt;span class="no"&gt;Guardian&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Plug&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;VerifyHeader&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;realm:&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;Bearer"&lt;/span&gt; &lt;span class="c1"&gt;# &amp;lt;- New line (1)&lt;/span&gt;
   &lt;span class="n"&gt;plug&lt;/span&gt; &lt;span class="no"&gt;Guardian&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Plug&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;LoadResource&lt;/span&gt;                  &lt;span class="c1"&gt;# &amp;lt;- New line (2)&lt;/span&gt;
 &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;The first line tells Guardian to look in the header for &lt;code&gt;Authorization: Bearer some_crazy_token&lt;/code&gt;. If you didn&amp;rsquo;t provide a realm, it would expect &lt;code&gt;Authorization: some_crazy_token&lt;/code&gt;.&lt;/p&gt;
 
 &lt;p&gt;The second line works in tandem with the &lt;em&gt;not yet written&lt;/em&gt; &lt;code&gt;ArticleTrackerHd.GuardianSerializer&lt;/code&gt; to convert a token value into a record.&lt;/p&gt;
 
 &lt;p&gt;Let&amp;rsquo;s go write that serializer. Create a file in &lt;code&gt;web/serializers&lt;/code&gt; named &lt;code&gt;guardian_serializer.ex&lt;/code&gt;&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -2046,8 +1961,7 @@ iex&amp;gt; Auth.verify("nope@example.com", "wrongpw")
   &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;from_token&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;Account:"&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;id&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="ss"&gt;:ok&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="no"&gt;Repo&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="no"&gt;Account&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;id&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt;
   &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;from_token&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="ss"&gt;:error&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;Unknown resource type"&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt;
 &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Nothing too crazy here. If you find a claim in the token like &lt;code&gt;Account:1&lt;/code&gt;, find account with an id of 1.&lt;/p&gt;
 
 &lt;p&gt;That&amp;rsquo;s it for Guardian Setup!&lt;/p&gt;
@@ -2059,7 +1973,7 @@ iex&amp;gt; Auth.verify("nope@example.com", "wrongpw")
 &lt;p&gt;Let&amp;rsquo;s tie this all together. We&amp;rsquo;ll create a &lt;code&gt;SessionController&lt;/code&gt; with a &lt;code&gt;create&lt;/code&gt; action. It will check if the username and password are valid and if it is, we&amp;rsquo;ll sign them in.&lt;/p&gt;
 
 &lt;p&gt;Modify your router:&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -2069,10 +1983,9 @@ iex&amp;gt; Auth.verify("nope@example.com", "wrongpw")
   &lt;span class="n"&gt;resources&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;/articles"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="no"&gt;ArticleController&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;except:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="ss"&gt;:new&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:edit&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
   &lt;span class="n"&gt;post&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;/log-in"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="no"&gt;SessionController&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:create&lt;/span&gt; &lt;span class="c1"&gt;# &amp;lt;- New line&lt;/span&gt;
 &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Then make a file in &lt;code&gt;web/controllers/&lt;/code&gt; named &lt;code&gt;session_controller.ex&lt;/code&gt;.&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -2128,10 +2041,9 @@ iex&amp;gt; Auth.verify("nope@example.com", "wrongpw")
   &lt;span class="k"&gt;end&lt;/span&gt;
 &lt;span class="k"&gt;end&lt;/span&gt;
 
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Create a file named &lt;code&gt;session_view.ex&lt;/code&gt; in &lt;code&gt;web/views/&lt;/code&gt;:&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -2145,8 +2057,7 @@ iex&amp;gt; Auth.verify("nope@example.com", "wrongpw")
     &lt;span class="p"&gt;%{&lt;/span&gt; &lt;span class="ss"&gt;jwt:&lt;/span&gt; &lt;span class="n"&gt;jwt&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt;
   &lt;span class="k"&gt;end&lt;/span&gt;
 &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;The important parts are are numbered.&lt;/p&gt;
 
 &lt;ol&gt;
@@ -2156,12 +2067,11 @@ iex&amp;gt; Auth.verify("nope@example.com", "wrongpw")
 &lt;/ol&gt;
 
 &lt;p&gt;Let&amp;rsquo;s test it out!&lt;/p&gt;
-&lt;pre class="highlight shell"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight shell"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
-&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;curl --data &lt;span class="s2"&gt;"account[email]=steven@example.com&amp;amp;account[password]=beef101"&lt;/span&gt; http://localhost:4000/api/log-in
+&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;curl &lt;span class="nt"&gt;--data&lt;/span&gt; &lt;span class="s2"&gt;"account[email]=steven@example.com&amp;amp;account[password]=beef101"&lt;/span&gt; http://localhost:4000/api/log-in
 &lt;span class="c"&gt;# {"jwt":"eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJBY2NvdW50OjEiLCJleHAiOjE0NjY2NTQxMzUsImlhdCI6MTQ2NDA2MjEzNSwiaXNzIjoiQXJ0aWNsZVRyYWNrZXJIZCIsImp0aSI6IjhlOTE2ZjQ2LWM5MmEtNDBhMi1iYzE0LTY3Y2VjMmEyYzI1OSIsInBlbSI6e30sInN1YiI6IkFjY291bnQ6MSIsInR5cCI6InRva2VuIn0.OXK_Hu6uJRo3QClBdY05_xFuUdXK2NS3oTCRNZFd6yhyyl-ub1bjBZQV-flM3J6i7WIh1QUvTV4L7I6x72VADA"}&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;WOOOOOOOOT! Now we just need to make a request with that token, and we should be good to go.&lt;/p&gt;
 
 &lt;h2&gt;User Autorization&lt;/h2&gt;
@@ -2169,7 +2079,7 @@ iex&amp;gt; Auth.verify("nope@example.com", "wrongpw")
 &lt;p&gt;So we&amp;rsquo;re logged in. Now we want to restrict creating new articles to logged in users, but we want all users to be able to see them.&lt;/p&gt;
 
 &lt;p&gt;Open up the &lt;code&gt;ArticleTrackerHd.ArticleController&lt;/code&gt;.&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -2187,12 +2097,11 @@ iex&amp;gt; Auth.verify("nope@example.com", "wrongpw")
   &lt;span class="n"&gt;plug&lt;/span&gt; &lt;span class="ss"&gt;:scrub_params&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;article"&lt;/span&gt; &lt;span class="ow"&gt;when&lt;/span&gt; &lt;span class="n"&gt;action&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="ss"&gt;:create&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:update&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
 &lt;span class="c1"&gt;#...&lt;/span&gt;
 &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;This line makes it so only authenticated users can create articles. We&amp;rsquo;ll have to create a new controller for handling guardian errors. If it fails authentication, it will call the &lt;code&gt;unauthenticated&lt;/code&gt; function in the module you give it.&lt;/p&gt;
 
 &lt;p&gt;Put this in &lt;code&gt;web/controllers/guardian_error_handler&lt;/code&gt;:&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -2212,10 +2121,9 @@ iex&amp;gt; Auth.verify("nope@example.com", "wrongpw")
       &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;render&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="no"&gt;GuardianErrorView&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:forbidden&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
     &lt;span class="k"&gt;end&lt;/span&gt;
 &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;If it fails we want to render a view that returns a JSON message of forbidden. Make a new file in &lt;code&gt;web/views&lt;/code&gt; named &lt;code&gt;guardian_error_view.ex&lt;/code&gt;:&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -2227,10 +2135,9 @@ iex&amp;gt; Auth.verify("nope@example.com", "wrongpw")
     &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="ss"&gt;message:&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;Forbidden"&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
   &lt;span class="k"&gt;end&lt;/span&gt;
 &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Let&amp;rsquo;s try this out, then get a beer.&lt;/p&gt;
-&lt;pre class="highlight shell"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight shell"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -2238,16 +2145,15 @@ iex&amp;gt; Auth.verify("nope@example.com", "wrongpw")
 6
 7
 8
-&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;curl --data &lt;span class="s2"&gt;"account[email]=steven@example.com&amp;amp;account[password]=beef101"&lt;/span&gt; http://localhost:4000/api/log-in
+&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;curl &lt;span class="nt"&gt;--data&lt;/span&gt; &lt;span class="s2"&gt;"account[email]=steven@example.com&amp;amp;account[password]=beef101"&lt;/span&gt; http://localhost:4000/api/log-in
 &lt;span class="c"&gt;# {"jwt":"eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJBY2NvdW50OjEiLCJleHAiOjE0NjY2NTQ2NzUsImlhdCI6MTQ2NDA2MjY3NSwiaXNzIjoiQXJ0aWNsZVRyYWNrZXJIZCIsImp0aSI6IjBjZDNiYWZhLTY4MjYtNGJlNi1hYWM3LTMzZWJkNTAwMzM5NyIsInBlbSI6e30sInN1YiI6IkFjY291bnQ6MSIsInR5cCI6InRva2VuIn0.S3jQkmtia-mlAv0O0u1QZxWr3MFH5IBnG1C_u0Uyjq6-DOA5is3l8tKiI0M83Vfw5ADUi55uXfoRqYRY7EQ-DQ"}&lt;/span&gt;
 curl http://localhost:4000/api/articles
 &lt;span class="c"&gt;# all the articles&lt;/span&gt;
-curl --data &lt;span class="s2"&gt;"article[url]=http://example.com&amp;amp;article[title]=A+Great+one&amp;amp;article[categories]=foo.bar.baz"&lt;/span&gt; http://localhost:4000/api/articles
+curl &lt;span class="nt"&gt;--data&lt;/span&gt; &lt;span class="s2"&gt;"article[url]=http://example.com&amp;amp;article[title]=A+Great+one&amp;amp;article[categories]=foo.bar.baz"&lt;/span&gt; http://localhost:4000/api/articles
 &lt;span class="c"&gt;# Forbidden&lt;/span&gt;
-curl --data &lt;span class="s2"&gt;"article[url]=http://example.com&amp;amp;article[title]=A+Great+one&amp;amp;article[categories]=foo.bar.baz"&lt;/span&gt; http://localhost:4000/api/articles --header &lt;span class="s2"&gt;"Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJBY2NvdW50OjEiLCJleHAiOjE0NjY2NTQ2NzUsImlhdCI6MTQ2NDA2MjY3NSwiaXNzIjoiQXJ0aWNsZVRyYWNrZXJIZCIsImp0aSI6IjBjZDNiYWZhLTY4MjYtNGJlNi1hYWM3LTMzZWJkNTAwMzM5NyIsInBlbSI6e30sInN1YiI6IkFjY291bnQ6MSIsInR5cCI6InRva2VuIn0.S3jQkmtia-mlAv0O0u1QZxWr3MFH5IBnG1C_u0Uyjq6-DOA5is3l8tKiI0M83Vfw5ADUi55uXfoRqYRY7EQ-DQ"&lt;/span&gt;
+curl &lt;span class="nt"&gt;--data&lt;/span&gt; &lt;span class="s2"&gt;"article[url]=http://example.com&amp;amp;article[title]=A+Great+one&amp;amp;article[categories]=foo.bar.baz"&lt;/span&gt; http://localhost:4000/api/articles &lt;span class="nt"&gt;--header&lt;/span&gt; &lt;span class="s2"&gt;"Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJBY2NvdW50OjEiLCJleHAiOjE0NjY2NTQ2NzUsImlhdCI6MTQ2NDA2MjY3NSwiaXNzIjoiQXJ0aWNsZVRyYWNrZXJIZCIsImp0aSI6IjBjZDNiYWZhLTY4MjYtNGJlNi1hYWM3LTMzZWJkNTAwMzM5NyIsInBlbSI6e30sInN1YiI6IkFjY291bnQ6MSIsInR5cCI6InRva2VuIn0.S3jQkmtia-mlAv0O0u1QZxWr3MFH5IBnG1C_u0Uyjq6-DOA5is3l8tKiI0M83Vfw5ADUi55uXfoRqYRY7EQ-DQ"&lt;/span&gt;
 curl http://localhost:4000/api/articles
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;VICTORY!&lt;/p&gt;
 
 &lt;h2&gt;Quick associations&lt;/h2&gt;
@@ -2257,7 +2163,7 @@ curl http://localhost:4000/api/articles
 &lt;p&gt;Run &lt;code&gt;mix ecto.gen.migration add_account_reference_to_article&lt;/code&gt;&lt;/p&gt;
 
 &lt;p&gt;Then modify it to say:&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -2275,11 +2181,10 @@ curl http://localhost:4000/api/articles
     &lt;span class="k"&gt;end&lt;/span&gt;
   &lt;span class="k"&gt;end&lt;/span&gt;
 &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Wire up the models:
 In &lt;code&gt;article.ex&lt;/code&gt;:&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -2299,10 +2204,9 @@ In &lt;code&gt;article.ex&lt;/code&gt;:&lt;/p&gt;
     &lt;span class="n"&gt;timestamps&lt;/span&gt;
   &lt;span class="k"&gt;end&lt;/span&gt;
 
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;And in &lt;code&gt;account.ex&lt;/code&gt;:&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -2318,10 +2222,9 @@ In &lt;code&gt;article.ex&lt;/code&gt;:&lt;/p&gt;
 
   &lt;span class="n"&gt;timestamps&lt;/span&gt;
 &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Then in our ArticleController, we need to find the user and create an associated:&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -2335,13 +2238,11 @@ In &lt;code&gt;article.ex&lt;/code&gt;:&lt;/p&gt;
   &lt;span class="c1"&gt;# ...&lt;/span&gt;
 
 &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Try it one more time&lt;/p&gt;
-&lt;pre class="highlight shell"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
-&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;curl --data &lt;span class="s2"&gt;"article[url]=http://example.com&amp;amp;article[title]=A+Great+one&amp;amp;article[categories]=foo.bar.baz"&lt;/span&gt; http://localhost:4000/api/articles --header &lt;span class="s2"&gt;"Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJBY2NvdW50OjEiLCJleHAiOjE0NjY2NTQ2NzUsImlhdCI6MTQ2NDA2MjY3NSwiaXNzIjoiQXJ0aWNsZVRyYWNrZXJIZCIsImp0aSI6IjBjZDNiYWZhLTY4MjYtNGJlNi1hYWM3LTMzZWJkNTAwMzM5NyIsInBlbSI6e30sInN1YiI6IkFjY291bnQ6MSIsInR5cCI6InRva2VuIn0.S3jQkmtia-mlAv0O0u1QZxWr3MFH5IBnG1C_u0Uyjq6-DOA5is3l8tKiI0M83Vfw5ADUi55uXfoRqYRY7EQ-DQ"&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;div class="highlight"&gt;&lt;pre class="highlight shell"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;curl &lt;span class="nt"&gt;--data&lt;/span&gt; &lt;span class="s2"&gt;"article[url]=http://example.com&amp;amp;article[title]=A+Great+one&amp;amp;article[categories]=foo.bar.baz"&lt;/span&gt; http://localhost:4000/api/articles &lt;span class="nt"&gt;--header&lt;/span&gt; &lt;span class="s2"&gt;"Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJBY2NvdW50OjEiLCJleHAiOjE0NjY2NTQ2NzUsImlhdCI6MTQ2NDA2MjY3NSwiaXNzIjoiQXJ0aWNsZVRyYWNrZXJIZCIsImp0aSI6IjBjZDNiYWZhLTY4MjYtNGJlNi1hYWM3LTMzZWJkNTAwMzM5NyIsInBlbSI6e30sInN1YiI6IkFjY291bnQ6MSIsInR5cCI6InRva2VuIn0.S3jQkmtia-mlAv0O0u1QZxWr3MFH5IBnG1C_u0Uyjq6-DOA5is3l8tKiI0M83Vfw5ADUi55uXfoRqYRY7EQ-DQ"&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;And now it&amp;rsquo;s all associated.&lt;/p&gt;
 
 &lt;p&gt;&lt;img alt="getinsertpic.com" src="http://media0.giphy.com/media/3puXxCB93ysGA/200.gif" /&gt;&lt;/p&gt;
@@ -2364,13 +2265,11 @@ In &lt;code&gt;article.ex&lt;/code&gt;:&lt;/p&gt;
     <link rel="alternate" href="http://blog.url.com/2016/04/26/processes-in-elixir.html"/>
     <id>http://blog.url.com/2016/04/26/processes-in-elixir.html</id>
     <published>2016-04-26T15:47:00Z</published>
-    <updated>2017-09-21T15:03:43-04:00</updated>
+    <updated>2017-12-23T17:46:25-05:00</updated>
     <author>
       <name>Article Author</name>
     </author>
-    <content type="html">&lt;h1&gt;Processes&lt;/h1&gt;
-
-&lt;blockquote&gt;
+    <content type="html">&lt;blockquote&gt;
 &lt;p&gt;The unit of concurrency in Elixir is a process. A process is  capable of responding to messages, and maintaining state. The only way to interact with a process is to send it a message.&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;Steven Nunez (Hostile Developer)&lt;/strong&gt;&lt;/p&gt;
@@ -2383,7 +2282,7 @@ In &lt;code&gt;article.ex&lt;/code&gt;:&lt;/p&gt;
 &lt;p&gt;&lt;img alt="getinsertpic.com" src="http://media0.giphy.com/media/byvw3EmW6L37q/200.gif" /&gt;&lt;/p&gt;
 
 &lt;p&gt;We use the &lt;code&gt;spawn&lt;/code&gt; function to create a new process. We pass it a function and that code will run in an isolated process.&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -2391,8 +2290,7 @@ In &lt;code&gt;article.ex&lt;/code&gt;:&lt;/p&gt;
   &lt;span class="no"&gt;IO&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;puts&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;I run in a different process)"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
   &lt;span class="no"&gt;IO&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;inspect&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;self&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;span class="k"&gt;end&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;This code will print its process id. Don&amp;rsquo;t be fooled! It&amp;rsquo;s running in a separate process, but &lt;code&gt;IO.puts&lt;/code&gt; is set to print output to the &lt;code&gt;group_leader&lt;/code&gt;. That&amp;rsquo;s your main console by default.&lt;/p&gt;
 
 &lt;p&gt;Try checking if this process is alive and you&amp;rsquo;ll be met with sad news:
@@ -2413,12 +2311,11 @@ Process.alive?(pid) # =&amp;gt; true
 &lt;/code&gt;&lt;/p&gt;
 
 &lt;p&gt;Doing this will keep the process alive. We can send this process a message to trigger the corresponding code.&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 &lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="n"&gt;send&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pid&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:help&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt; &lt;span class="c1"&gt;# prints Helping!&lt;/span&gt;
 &lt;span class="no"&gt;Process&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;alive?&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pid&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="c1"&gt;# =&amp;gt; false&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;h3&gt;send and receive&lt;/h3&gt;
 
 &lt;p&gt;&lt;code&gt;send&lt;/code&gt; is how we send messages to a process. We can send ANY message to a process, and it&amp;rsquo;s up to the process to respond to the message. You define which messages you respond to with a &lt;code&gt;receive&lt;/code&gt; block and a list of messages you can respond to.&lt;/p&gt;
@@ -2426,7 +2323,7 @@ Process.alive?(pid) # =&amp;gt; true
 &lt;p&gt;One consideration here: &lt;em&gt;If you don&amp;rsquo;t give your process a way to respond to a message, it will keep  it unprocessed. This could lead to memory issues by filling your MAILBOX (real term, look it up)&lt;/em&gt;&lt;/p&gt;
 
 &lt;p&gt;Pretty easy to solve for this. Modify our last &lt;code&gt;receive&lt;/code&gt; block to look like this:&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -2440,8 +2337,7 @@ Process.alive?(pid) # =&amp;gt; true
   &lt;span class="k"&gt;end&lt;/span&gt;
 &lt;span class="k"&gt;end&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;span class="n"&gt;send&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pid&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:beef&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="c1"&gt;# prints "Don't know what to do with that"&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Once something matches code in the &lt;code&gt;receive&lt;/code&gt; block, the block exits. If that&amp;rsquo;s the last thing in the process, the process dies. We&amp;rsquo;ll need to define a loop to create an immortal process.&lt;/p&gt;
 
 &lt;h2&gt;loops with recursion&lt;/h2&gt;
@@ -2470,16 +2366,15 @@ send(pid, {:help}) # prints &amp;quot;Helping!&amp;quot;
 &lt;p&gt;What&amp;rsquo;s going on? First off, in our &lt;code&gt;loop&lt;/code&gt; function, we&amp;rsquo;re doing the same &lt;code&gt;receive&lt;/code&gt; block, preventing our process from moving forward. Once something matches, we call &lt;code&gt;loop&lt;/code&gt; again, locking us in a receive block again.&lt;/p&gt;
 
 &lt;p&gt;When working with modules, you can spawn processes in a couple of ways. We used &lt;code&gt;MFA&lt;/code&gt; which stands for Module/Function/Arguments, but we could have done it this way.&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 &lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="n"&gt;spawn&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="no"&gt;Help&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="k"&gt;loop&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Both work fine.&lt;/p&gt;
 
 &lt;h2&gt;Return to sender&lt;/h2&gt;
 
 &lt;p&gt;Until now, we&amp;rsquo;ve been printing our result to the screen, but that&amp;rsquo;s returning a value to &lt;strong&gt;you&lt;/strong&gt; dear reader, not your process. To do that, we&amp;rsquo;ll need to have our &lt;code&gt;loop&lt;/code&gt; function send a message instead of printing. For THAT to work, we&amp;rsquo;ll need to include the sender in the message we send. Referencing the current process is easy: use &lt;code&gt;self&lt;/code&gt;.&lt;/p&gt;
-&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
 2
 3
 4
@@ -2509,8 +2404,7 @@ send(pid, {:help}) # prints &amp;quot;Helping!&amp;quot;
 &lt;span class="n"&gt;send&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;helper&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:help&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;self&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt;
 &lt;span class="c1"&gt;# There's a message in my mailbox!!!!&lt;/span&gt;
 &lt;span class="n"&gt;flush&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Wall of code! We updated our &lt;code&gt;receive&lt;/code&gt; to match on the tuple &lt;code&gt;{:help, help_seeker}&lt;/code&gt;. We later send this process a message, passing the console process (yes, it&amp;rsquo;s a process too!) as the one seeking help. We finish up by calling &lt;code&gt;flush&lt;/code&gt; to show our messages in the console.&lt;/p&gt;
 
 &lt;h1&gt;Wrap up&lt;/h1&gt;

