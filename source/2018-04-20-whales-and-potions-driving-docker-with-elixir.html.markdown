@@ -2,6 +2,7 @@
 title: Whales and Potions. Driving Docker with Elixir
 date: 2018-04-20 22:44 UTC
 tags: Elixir, Docker, Unix Sockets
+published: false
 ---
 
 [On an episode of SoBroCodeBros](https://www.youtube.com/watch?v=q44qxXxsIUQ), we explored connecting to Docker's API with Elixir. The way the show works is my brother and I pick a topic we're pretty good at, and use it in an unfamilar domain. In this case, I'm really familar with Elixir and Docker, but working with it through it's Unix Socket interface was new.
