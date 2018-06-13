@@ -5,10 +5,170 @@
   <id>http://blog.url.com/</id>
   <link href="http://blog.url.com/"/>
   <link href="http://blog.url.com/feed.xml" rel="self"/>
-  <updated>2017-06-17T16:38:00Z</updated>
+  <updated>2018-04-20T22:44:00Z</updated>
   <author>
     <name>Blog Author</name>
   </author>
+  <entry>
+    <title>Whales and Potions. Driving Docker with Elixir</title>
+    <link rel="alternate" href="http://blog.url.com/2018/04/20/whales-and-potions-driving-docker-with-elixir.html"/>
+    <id>http://blog.url.com/2018/04/20/whales-and-potions-driving-docker-with-elixir.html</id>
+    <published>2018-04-20T22:44:00Z</published>
+    <updated>2018-06-13T10:25:23-04:00</updated>
+    <author>
+      <name>Article Author</name>
+    </author>
+    <content type="html">&lt;p&gt;&lt;a href="https://www.youtube.com/watch?v=q44qxXxsIUQ"&gt;On an episode of SoBroCodeBros&lt;/a&gt;, we explored connecting to Docker&amp;rsquo;s API with Elixir. The way the show works is my brother and I pick a topic we&amp;rsquo;re pretty good at, and use it in an unfamilar domain. In this case, I&amp;rsquo;m really familar with Elixir and Docker, but working with it through it&amp;rsquo;s Unix Socket interface was new.&lt;/p&gt;
+
+&lt;p&gt;The intention of this post is to summarize some of our learnings. As always, be sure to &lt;a href="https://www.youtube.com/channel/UC0tLqS7es8MmM_rrcTF1cbA"&gt;Like and subscribe&lt;/a&gt; to our channel over on YouTube, and let me know if you want to see this blog post in video format. Off we go.&lt;/p&gt;
+
+&lt;h2&gt;Assumptions&lt;/h2&gt;
+
+&lt;p&gt;You&amp;rsquo;re running at least Elixir 1.6, and have Docker installed. I&amp;rsquo;m running API version 1.37 but I don&amp;rsquo;t think we&amp;rsquo;re using any bleeding edge docker stuff.&lt;/p&gt;
+
+&lt;h2&gt;Getting Started&lt;/h2&gt;
+
+&lt;p&gt;Let&amp;rsquo;s create a plain Elixir project with &lt;code&gt;mix new docker_driver&lt;/code&gt;, then open up &lt;code&gt;mix.exs&lt;/code&gt;. Here we&amp;rsquo;ll add a few dependencies. &lt;code&gt;HTTPoison&lt;/code&gt; to make requests, and &lt;code&gt;Poison&lt;/code&gt; to parse JSON responses.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4
+5
+6
+7
+&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="c1"&gt;# mix.exs&lt;/span&gt;
+&lt;span class="k"&gt;defp&lt;/span&gt; &lt;span class="n"&gt;deps&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="p"&gt;[&lt;/span&gt;
+    &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:poison&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;~&amp;gt; 3.1"&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt;
+    &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:httpoison&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;~&amp;gt; 1.0"&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt;
+  &lt;span class="p"&gt;]&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;and run &lt;code&gt;mix deps.get&lt;/code&gt; &lt;/p&gt;
+
+&lt;p&gt;Then create a new module to wrap a few of our operations named &lt;code&gt;docker_adapter.ex&lt;/code&gt; in &lt;code&gt;lib/docker_driver/&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h2&gt;Connecting to Unix Sockets&lt;/h2&gt;
+
+&lt;p&gt;Here&amp;rsquo;s our first pass at our module.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="k"&gt;defmodule&lt;/span&gt; &lt;span class="no"&gt;DockerDriver&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;DockerAdapter&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="nv"&gt;@socket&lt;/span&gt;  &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;/var/run/docker.sock"&lt;/span&gt; &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="no"&gt;URI&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;encode_www_form&lt;/span&gt;
+  &lt;span class="nv"&gt;@url&lt;/span&gt;     &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;http+unix://&lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="nv"&gt;@socket&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;"&lt;/span&gt;
+
+  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;running_containers&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+    &lt;span class="n"&gt;with&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:ok&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;%&lt;/span&gt;&lt;span class="no"&gt;HTTPoison&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Response&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;body:&lt;/span&gt; &lt;span class="n"&gt;body&lt;/span&gt;&lt;span class="p"&gt;}}&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; &lt;span class="no"&gt;HTTPoison&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="nv"&gt;@url&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;/containers/json"&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+         &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:ok&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;parsed&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; &lt;span class="no"&gt;Poison&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;decode&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;body&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; 
+    &lt;span class="k"&gt;do&lt;/span&gt;
+      &lt;span class="n"&gt;parsed&lt;/span&gt;
+    &lt;span class="k"&gt;else&lt;/span&gt;
+      &lt;span class="n"&gt;err&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; 
+        &lt;span class="no"&gt;IO&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;puts&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;something Broke"&lt;/span&gt;
+        &lt;span class="no"&gt;IO&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;inspect&lt;/span&gt; &lt;span class="n"&gt;err&lt;/span&gt;
+    &lt;span class="k"&gt;end&lt;/span&gt;
+  &lt;span class="k"&gt;end&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Add this to &lt;code&gt;.iex.exs&lt;/code&gt; in your project so you don&amp;rsquo;t have to keep aliasing stuff&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="n"&gt;alias&lt;/span&gt; &lt;span class="no"&gt;DockerDriver&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;DockerAdapter&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Start a container and backround it. That way something will show up in our shell in a bit with &lt;code&gt;docker run -itd busybox&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;In &lt;code&gt;iex -S mix&lt;/code&gt; run &lt;code&gt;DockerAdapter.running_containers&lt;/code&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre class="highlight plaintext"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;[
+  %{
+    "Command" =&amp;gt; "sh",
+    "Created" =&amp;gt; 1524266416,
+    "HostConfig" =&amp;gt; %{"NetworkMode" =&amp;gt; "default"},
+    "Id" =&amp;gt; "3ccab1ee2ee3509cf8b955604638cca4ed2044b0f71434876d490837158defda",
+    "Image" =&amp;gt; "busybox",
+    "ImageID" =&amp;gt; "sha256:8ac48589692a53a9b8c2d1ceaa6b402665aa7fe667ba51ccc03002300856d8c7",
+    "Labels" =&amp;gt; %{},
+    "Mounts" =&amp;gt; [],
+    "Names" =&amp;gt; ["/affectionate_pare"],
+    "NetworkSettings" =&amp;gt; %{
+      "Networks" =&amp;gt; %{
+        "bridge" =&amp;gt; %{
+          "Aliases" =&amp;gt; nil,
+          "DriverOpts" =&amp;gt; nil,
+          "EndpointID" =&amp;gt; "558ee96cab03aafaf33c1233422fdf2601eca404473d2abec8f4593fe706ceb0",
+          "Gateway" =&amp;gt; "172.17.0.1",
+          "GlobalIPv6Address" =&amp;gt; "",
+          "GlobalIPv6PrefixLen" =&amp;gt; 0,
+          "IPAMConfig" =&amp;gt; nil,
+          "IPAddress" =&amp;gt; "172.17.0.2",
+          "IPPrefixLen" =&amp;gt; 16,
+          "IPv6Gateway" =&amp;gt; "",
+          "Links" =&amp;gt; nil,
+          "MacAddress" =&amp;gt; "02:42:ac:11:00:02",
+          "NetworkID" =&amp;gt; "2993a0d3c34044b0f615eb8c149342d5ce9148835258260e66fca1366b6ac473"
+        }
+      }
+    },
+    "Ports" =&amp;gt; [],
+    "State" =&amp;gt; "running",
+    "Status" =&amp;gt; "Up 10 seconds"
+  }
+]
+
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;DATA&lt;/p&gt;
+
+&lt;p&gt;link to https://docs.docker.com/engine/api/v1.30/#operation/ContainerList, do Inspect, then logs, followed by attaching to a stream.&lt;/p&gt;
+</content>
+  </entry>
   <entry>
     <title>LTrees in Phoenix</title>
     <link rel="alternate" href="http://blog.url.com/2017/06/17/ltrees-in-phoenix.html"/>
@@ -952,7 +1112,7 @@ Notice that the only message we&amp;rsquo;ve received so far is our terminal pro
     </author>
     <content type="html">&lt;p&gt;I got a chance to teach &lt;a href="http://redux.js.org/"&gt;Redux&lt;/a&gt; recently and what a time! For something so simple, it sure can get complicated. If you take a look at my &lt;a href="/2014/04/13/closures.html"&gt;previous articles&lt;/a&gt; you might notice a technique I use to get my head around concepts. Bring that bad boy on to my own turf.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src="https://media.giphy.com/media/OhQBBFi64Z81a/giphy.gif" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Giphy" src="https://media.giphy.com/media/OhQBBFi64Z81a/giphy.gif" /&gt;&lt;/p&gt;
 
 &lt;p&gt;A naïve implementation of Redux using JavaScript might look something like this:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
@@ -1563,7 +1723,7 @@ for what?! &lt;/p&gt;
 &lt;p&gt;Instead, I&amp;rsquo;d suggest you learn a language that not only prepares you for the
 code of today, but the code of the FUTURE!&lt;/p&gt;
 
-&lt;p&gt;&lt;img src="http://media4.giphy.com/media/t7VoC89YpXFbW/200.gif" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="200" src="http://media4.giphy.com/media/t7VoC89YpXFbW/200.gif" /&gt;&lt;/p&gt;
 
 &lt;p&gt;One thing is for sure. The world is changing. For years, developers could wait
 for the machines we ran our code on to get faster, and for a long time, it
@@ -2258,162 +2418,6 @@ In &lt;code&gt;article.ex&lt;/code&gt;:&lt;/p&gt;
 &lt;p&gt;&lt;a href="https://twitter.com/share" class="twitter-share-button" data-text="User Auth with JWT and Phoenix" data-via="_StevenNunez" data-size="large"&gt;Tweet&lt;/a&gt;&lt;/p&gt;
 
 &lt;script&gt;!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');&lt;/script&gt;
-</content>
-  </entry>
-  <entry>
-    <title>Processes in Elixir</title>
-    <link rel="alternate" href="http://blog.url.com/2016/04/26/processes-in-elixir.html"/>
-    <id>http://blog.url.com/2016/04/26/processes-in-elixir.html</id>
-    <published>2016-04-26T15:47:00Z</published>
-    <updated>2017-12-23T17:46:25-05:00</updated>
-    <author>
-      <name>Article Author</name>
-    </author>
-    <content type="html">&lt;blockquote&gt;
-&lt;p&gt;The unit of concurrency in Elixir is a process. A process is  capable of responding to messages, and maintaining state. The only way to interact with a process is to send it a message.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Steven Nunez (Hostile Developer)&lt;/strong&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h2&gt;Creating a process&lt;/h2&gt;
-
-&lt;p&gt;We&amp;rsquo;ll be climbing the ladder of abstraction but let&amp;rsquo;s start at the bottom.&lt;/p&gt;
-
-&lt;p&gt;&lt;img alt="getinsertpic.com" src="http://media0.giphy.com/media/byvw3EmW6L37q/200.gif" /&gt;&lt;/p&gt;
-
-&lt;p&gt;We use the &lt;code&gt;spawn&lt;/code&gt; function to create a new process. We pass it a function and that code will run in an isolated process.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
-2
-3
-4
-&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="n"&gt;pid&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;spawn&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;fn&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;
-  &lt;span class="no"&gt;IO&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;puts&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;I run in a different process)"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-  &lt;span class="no"&gt;IO&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;inspect&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;self&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="k"&gt;end&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;This code will print its process id. Don&amp;rsquo;t be fooled! It&amp;rsquo;s running in a separate process, but &lt;code&gt;IO.puts&lt;/code&gt; is set to print output to the &lt;code&gt;group_leader&lt;/code&gt;. That&amp;rsquo;s your main console by default.&lt;/p&gt;
-
-&lt;p&gt;Try checking if this process is alive and you&amp;rsquo;ll be met with sad news:
-&lt;code&gt;elixir
-Process.alive?(pid) # =&amp;gt; false
-&lt;/code&gt;
-Once a process&amp;rsquo; is done with it&amp;rsquo;s job&amp;hellip; it dies. Cruel world.
-&lt;img alt="getinsertpic.com" src="http://media3.giphy.com/media/XrT2XN8L6yoMg/200.gif" /&gt;&lt;/p&gt;
-
-&lt;p&gt;To interact with the process, we have to teach a process how to receive a message.
-&lt;code&gt;elixir
-pid = spawn(fn -&amp;gt;
-  receive do
-    {:help} -&amp;gt; IO.puts &amp;quot;Helping!&amp;quot;
-  end
-end)
-Process.alive?(pid) # =&amp;gt; true
-&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;Doing this will keep the process alive. We can send this process a message to trigger the corresponding code.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
-2
-&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="n"&gt;send&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pid&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:help&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt; &lt;span class="c1"&gt;# prints Helping!&lt;/span&gt;
-&lt;span class="no"&gt;Process&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;alive?&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pid&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="c1"&gt;# =&amp;gt; false&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;h3&gt;send and receive&lt;/h3&gt;
-
-&lt;p&gt;&lt;code&gt;send&lt;/code&gt; is how we send messages to a process. We can send ANY message to a process, and it&amp;rsquo;s up to the process to respond to the message. You define which messages you respond to with a &lt;code&gt;receive&lt;/code&gt; block and a list of messages you can respond to.&lt;/p&gt;
-
-&lt;p&gt;One consideration here: &lt;em&gt;If you don&amp;rsquo;t give your process a way to respond to a message, it will keep  it unprocessed. This could lead to memory issues by filling your MAILBOX (real term, look it up)&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;Pretty easy to solve for this. Modify our last &lt;code&gt;receive&lt;/code&gt; block to look like this:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
-2
-3
-4
-5
-6
-7
-&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="n"&gt;pid&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;spawn&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;fn&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;
-  &lt;span class="k"&gt;receive&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-    &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:help&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="no"&gt;IO&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;puts&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;Helping!"&lt;/span&gt;
-    &lt;span class="n"&gt;_&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="no"&gt;IO&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;puts&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;Don't know what to do with that"&lt;/span&gt;
-  &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;span class="k"&gt;end&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="n"&gt;send&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pid&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:beef&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="c1"&gt;# prints "Don't know what to do with that"&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;Once something matches code in the &lt;code&gt;receive&lt;/code&gt; block, the block exits. If that&amp;rsquo;s the last thing in the process, the process dies. We&amp;rsquo;ll need to define a loop to create an immortal process.&lt;/p&gt;
-
-&lt;h2&gt;loops with recursion&lt;/h2&gt;
-
-&lt;p&gt;For this next part, we&amp;rsquo;ll define a module with a loop function.
-&lt;code&gt;elixir
-defmodule Help do
-  def loop do
-    receive do
-      {:help} -&amp;gt; IO.puts &amp;quot;Helping!&amp;quot;
-      _ -&amp;gt; IO.puts &amp;quot;Don&amp;#39;t know what to do with that&amp;quot;
-    end
-    loop # &amp;lt;------ Super important!
-  end
-end
-&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;Then we&amp;rsquo;ll run this function in a process using &lt;code&gt;MFA&lt;/code&gt; notation.
-&lt;code&gt;elixir
-pid = spawn(Help, :loop, [])
-send(pid, {:help}) # prints &amp;quot;Helping!&amp;quot;
-send(pid, {:beef}) # prints &amp;quot;Don&amp;#39;t know what to do with that&amp;quot;
-send(pid, {:help}) # prints &amp;quot;Helping!&amp;quot;
-&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;What&amp;rsquo;s going on? First off, in our &lt;code&gt;loop&lt;/code&gt; function, we&amp;rsquo;re doing the same &lt;code&gt;receive&lt;/code&gt; block, preventing our process from moving forward. Once something matches, we call &lt;code&gt;loop&lt;/code&gt; again, locking us in a receive block again.&lt;/p&gt;
-
-&lt;p&gt;When working with modules, you can spawn processes in a couple of ways. We used &lt;code&gt;MFA&lt;/code&gt; which stands for Module/Function/Arguments, but we could have done it this way.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
-&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="n"&gt;spawn&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="no"&gt;Help&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="k"&gt;loop&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;Both work fine.&lt;/p&gt;
-
-&lt;h2&gt;Return to sender&lt;/h2&gt;
-
-&lt;p&gt;Until now, we&amp;rsquo;ve been printing our result to the screen, but that&amp;rsquo;s returning a value to &lt;strong&gt;you&lt;/strong&gt; dear reader, not your process. To do that, we&amp;rsquo;ll need to have our &lt;code&gt;loop&lt;/code&gt; function send a message instead of printing. For THAT to work, we&amp;rsquo;ll need to include the sender in the message we send. Referencing the current process is easy: use &lt;code&gt;self&lt;/code&gt;.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="k"&gt;defmodule&lt;/span&gt; &lt;span class="no"&gt;Help&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="k"&gt;loop&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-    &lt;span class="k"&gt;receive&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-      &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:help&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;help_seeker&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;
-        &lt;span class="n"&gt;send&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;help_seeker&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:reponse&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;Helping!"&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt;
-      &lt;span class="n"&gt;_&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;
-        &lt;span class="no"&gt;IO&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;puts&lt;/span&gt; &lt;span class="sd"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;Don't know what to do with that"&lt;/span&gt;
-    &lt;span class="k"&gt;end&lt;/span&gt;
-    &lt;span class="k"&gt;loop&lt;/span&gt;
-  &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;span class="k"&gt;end&lt;/span&gt;
-&lt;span class="n"&gt;helper&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;spawn&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="no"&gt;Help&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:loop&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;[])&lt;/span&gt;
-&lt;span class="n"&gt;send&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;helper&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:help&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;self&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt;
-&lt;span class="c1"&gt;# There's a message in my mailbox!!!!&lt;/span&gt;
-&lt;span class="n"&gt;flush&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;Wall of code! We updated our &lt;code&gt;receive&lt;/code&gt; to match on the tuple &lt;code&gt;{:help, help_seeker}&lt;/code&gt;. We later send this process a message, passing the console process (yes, it&amp;rsquo;s a process too!) as the one seeking help. We finish up by calling &lt;code&gt;flush&lt;/code&gt; to show our messages in the console.&lt;/p&gt;
-
-&lt;h1&gt;Wrap up&lt;/h1&gt;
-
-&lt;p&gt;We&amp;rsquo;ve seen 2 patterns for processes. Tasks where you care about the return value, and others where you don&amp;rsquo;t. There a time and  a place for both, and in the next post, we&amp;rsquo;ll see how Elixir provides an abstraction for handling these messages with GenServers.&lt;/p&gt;
-
-&lt;p&gt;Want to try out your understanding? Clone &lt;a href="https://github.com/StevenNunez/processes_in_elixir"&gt;this repo&lt;/a&gt; and get all of the tests passing!&lt;/p&gt;
-
-&lt;p&gt;If you get stuck, be sure to checkout the &lt;code&gt;solution&lt;/code&gt; branch.&lt;/p&gt;
 </content>
   </entry>
 </feed>
