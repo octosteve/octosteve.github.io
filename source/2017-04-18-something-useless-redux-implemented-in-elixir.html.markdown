@@ -13,7 +13,7 @@ A naïve implementation of Redux using JavaScript might look something like this
 const initializerAction = {type: "@@INIT"}
 const createStore = (reducer, state=undefined) => {
 state = reducer(state, initializerAction)
-let subscribers = []
+  let subscribers = []
   return {
     getState() {
       return state
@@ -79,7 +79,6 @@ Let's start by implementing the `get_state` function on a `Store` process.
 defmodule Store do
   @initializer_action %{type: "@@INIT"}
 
-  # Code your Mom calls
   def start_link(reducer, initial_state \\ nil) do
     GenServer.start_link(__MODULE__, [reducer, initial_state])
   end
@@ -88,9 +87,8 @@ defmodule Store do
     GenServer.call(store, {:get_state})
   end
 
-  # Code Joe Armstrong Calls
   def init([reducer, initial_state]) do
-    store_state = apply(reducer, :reduce, [initial_state, @initializer_action])
+    store_state = reducer.reduce(initial_state, @initializer_action)
     {:ok, %{reducer: reducer, store_state: store_state}}
   end
 
@@ -99,8 +97,6 @@ defmodule Store do
   end
 end
 ```
-
-The code above will use the `apply` function to dispatch a message to a module. If our reducer is a module named `CountReducer`, it would call `CountReducer.reduce(state, action)`. Pretty nice.
 
 The reducer will be a module with a `reduce/2` function. Reducers have a few responsibilities.
 * They provide default values for state on initialization
@@ -117,14 +113,12 @@ end
 defmodule CountReducer do
   @behaviour Reducer
   def reduce(nil, action), do: reduce(0, action)
-  def reduce(state, action), do: do_reduce(state, action)
-
-  defp do_reduce(state, %{type: "INCREMENT"}), do: state + 1
-  defp do_reduce(state, _), do: state
+  def reduce(state, %{type: "INCREMENT"}), do: state + 1
+  def reduce(state, _), do: state
 end
 ```
 
-We first create a `behaviour` to ensure anyone that plays the `Reducer` role knows how to do the job. We need it to have a `reduce/2` function to support the `Store` module's expectation. The rest is just some good old fashioned PATTERN MATCHING. The first 2 `reduce/2` heads are just clean up. If we get a nil value, then just call it again with a 0, our `do_reduce/2` functions are where the actual reducing happens.
+We first create a `behaviour` to ensure anyone that plays the `Reducer` role knows how to do the job. We need it to have a `reduce/2` function to support the `Store` module's expectation. The rest is just some good old fashioned PATTERN MATCHING. The first `reduce/2` deals a new reducer call. If we get a nil state, then just call it again with a 0. We're then matching on a map key, or falling down to an unhandled case where we return the old state.
 
 ## Time to run it
 
@@ -141,14 +135,13 @@ Not too exciting. Let's add the ability to `dispatch` an action. Back in our `St
 
 ``` elixir
 defmodule Store do
-  # Code for your Mom
-  # Existing Mom code...
+  # Existing code...
+
   def dispatch(store, action) do
     GenServer.cast(store, {:dispatch, action})
   end
 
-  # Code for Joe Armstrong
-  # Existing Joe code...
+  # Existing code...
   def handle_cast({:dispatch, action}, %{reducer: reducer, store_state: store_state} = state) do
     store_state = apply(reducer, :reduce, [store_state, action])
     {:noreply, Map.put(state, :store_state, store_state)}
@@ -202,7 +195,6 @@ Here we add a new key to our state map: subscribers. We'll be taking advantage o
 ### subscribe/2 remove_subscriber/2 and call backs
 
 ``` elixir
-# For mama
 def subscribe(store, subscriber) do
   GenServer.call(store, {:subscribe, subscriber})
 end
@@ -211,7 +203,6 @@ def remove_subscriber(store, ref) do
   GenServer.cast(store, {:remove_subscriber, ref})
 end
 
-# For Joey
 def handle_call({:subscribe, subscriber}, _from, %{subscribers: subscribers} = state) do
   ref = make_ref()
   {:reply, ref, put_in(state, [:subscribers, ref], subscriber)}
@@ -227,7 +218,7 @@ Our `subscribe/2` function will add our subscriber to our map, storing a `ref` a
 ### dispatch/2
 ```elixir
 def handle_cast({:dispatch, action}, %{reducer: reducer, store_state: store_state, subscribers: subscribers} = state) do
-  store_state = apply(reducer, :reduce, [store_state, action])
+  store_state = reducer.reduce(store_state, action)
   for {_ref, sub} <- subscribers, do: sub.(store_state) # notify those subscribers
   {:noreply, Map.put(state, :store_state, store_state)}
 end
@@ -274,7 +265,7 @@ const combineReducers = (reducerMap) => {
     return Object.keys(reducerMap).reduce((map, stateName) => {
       map[stateName] = reducerMap[stateName](state[stateName], action)
       return map
-    }, {})  
+    }, {})
   }
 }
 
@@ -306,17 +297,17 @@ Here we return a function that when called with a state and action will delegate
 We'll start out with a change to how treat individual reducers vs a Map with reducers. Above our existing `init/1` function, add this:
 
 ```elixir
-# New stuff!
+# Multi-Reducer code
 def init([reducer_map, nil]) when is_map(reducer_map), do: init([reducer_map, %{}])
 def init([reducer_map, initial_state]) when is_map(reducer_map) do
   store_state = CombineReducers.reduce(reducer_map, initial_state, @initializer_action)
-  {:ok, %{reducer: reducer_map, store_state: store_state, subscribers: %{}}} # add new subscribers map to state
+  {:ok, %{reducer: reducer_map, store_state: store_state, subscribers: %{}}}
 end
 
-# Crusty old code
+# Solo reducer code
 def init([reducer, initial_state]) do
   store_state = apply(reducer, :reduce, [initial_state, @initializer_action])
-  {:ok, %{reducer: reducer, store_state: store_state, subscribers: %{}}} # add new subscribers map to state
+  {:ok, %{reducer: reducer, store_state: store_state, subscribers: %{}}}
 end
 ```
 
@@ -325,29 +316,29 @@ Converting nil values to an empty map will let our reducers receive `nil` as the
 One small change to `dispatch/2` to support our reducer potentially being a map instead of a module:
 
 ```elixir
-# New hotness
+# Multi-Reducer code
 def handle_cast({:dispatch, action}, %{reducer: reducer_map, store_state: store_state, subscribers: subscribers} = state) when is_map(reducer_map) do
   store_state = CombineReducers.reduce(reducer_map, store_state, action)
-  for {_ref, sub} <- subscribers, do: sub.(store_state) # notify those subscribers
+  for {_ref, sub} <- subscribers, do: sub.(store_state)
   {:noreply, Map.put(state, :store_state, store_state)}
 end
 
-# Old and crust
+# Solo reducer code
 def handle_cast({:dispatch, action}, %{reducer: reducer, store_state: store_state, subscribers: subscribers} = state) do
   store_state = apply(reducer, :reduce, [store_state, action])
-  for {_ref, sub} <- subscribers, do: sub.(store_state) # notify those subscribers
+  for {_ref, sub} <- subscribers, do: sub.(store_state)
   {:noreply, Map.put(state, :store_state, store_state)}
 end
 ```
 
-And finally, our brand new module a brand new module to handle our CombineReducers logic.
+And finally, a brand new module to handle our CombineReducers logic.
 
 ``` elixir
 defmodule CombineReducers do
   def reduce(reducers, state, action) do
     for {state_name, reducer} <- reducers do
       Task.async(fn () ->
-        {state_name, apply(reducer, :reduce, [state[state_name], action])}
+        {state_name, reducer.reduce(state[state_name], action)}
       end)
     end
     |> Enum.map(&Task.await/1)
