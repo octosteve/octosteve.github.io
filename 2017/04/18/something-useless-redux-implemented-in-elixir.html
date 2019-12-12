@@ -71,7 +71,7 @@
 </pre></td><td class="rouge-code"><pre><span class="kd">const</span> <span class="nx">initializerAction</span> <span class="o">=</span> <span class="p">{</span><span class="na">type</span><span class="p">:</span> <span class="s2">"@@INIT"</span><span class="p">}</span>
 <span class="kd">const</span> <span class="nx">createStore</span> <span class="o">=</span> <span class="p">(</span><span class="nx">reducer</span><span class="p">,</span> <span class="nx">state</span><span class="o">=</span><span class="kc">undefined</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
 <span class="nx">state</span> <span class="o">=</span> <span class="nx">reducer</span><span class="p">(</span><span class="nx">state</span><span class="p">,</span> <span class="nx">initializerAction</span><span class="p">)</span>
-<span class="kd">let</span> <span class="nx">subscribers</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="kd">let</span> <span class="nx">subscribers</span> <span class="o">=</span> <span class="p">[]</span>
   <span class="k">return</span> <span class="p">{</span>
     <span class="nx">getState</span><span class="p">()</span> <span class="p">{</span>
       <span class="k">return</span> <span class="nx">state</span>
@@ -162,12 +162,9 @@ Let&rsquo;s start by implementing the <code>get_state</code> function on a <code
 18
 19
 20
-21
-22
 </pre></td><td class="rouge-code"><pre><span class="k">defmodule</span> <span class="no">Store</span> <span class="k">do</span>
   <span class="nv">@initializer_action</span> <span class="p">%{</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">@@INIT"</span><span class="p">}</span>
 
-  <span class="c1"># Code your Mom calls</span>
   <span class="k">def</span> <span class="n">start_link</span><span class="p">(</span><span class="n">reducer</span><span class="p">,</span> <span class="n">initial_state</span> <span class="p">\\</span> <span class="no">nil</span><span class="p">)</span> <span class="k">do</span>
     <span class="no">GenServer</span><span class="o">.</span><span class="n">start_link</span><span class="p">(</span><span class="bp">__MODULE__</span><span class="p">,</span> <span class="p">[</span><span class="n">reducer</span><span class="p">,</span> <span class="n">initial_state</span><span class="p">])</span>
   <span class="k">end</span>
@@ -176,9 +173,8 @@ Let&rsquo;s start by implementing the <code>get_state</code> function on a <code
     <span class="no">GenServer</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="p">{</span><span class="ss">:get_state</span><span class="p">})</span>
   <span class="k">end</span>
 
-  <span class="c1"># Code Joe Armstrong Calls</span>
   <span class="k">def</span> <span class="n">init</span><span class="p">([</span><span class="n">reducer</span><span class="p">,</span> <span class="n">initial_state</span><span class="p">])</span> <span class="k">do</span>
-    <span class="n">store_state</span> <span class="o">=</span> <span class="n">apply</span><span class="p">(</span><span class="n">reducer</span><span class="p">,</span> <span class="ss">:reduce</span><span class="p">,</span> <span class="p">[</span><span class="n">initial_state</span><span class="p">,</span> <span class="nv">@initializer_action</span><span class="p">])</span>
+    <span class="n">store_state</span> <span class="o">=</span> <span class="n">reducer</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="n">initial_state</span><span class="p">,</span> <span class="nv">@initializer_action</span><span class="p">)</span>
     <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="p">%{</span><span class="ss">reducer:</span> <span class="n">reducer</span><span class="p">,</span> <span class="ss">store_state:</span> <span class="n">store_state</span><span class="p">}}</span>
   <span class="k">end</span>
 
@@ -187,8 +183,6 @@ Let&rsquo;s start by implementing the <code>get_state</code> function on a <code
   <span class="k">end</span>
 <span class="k">end</span>
 </pre></td></tr></tbody></table></code></pre></div>
-<p>The code above will use the <code>apply</code> function to dispatch a message to a module. If our reducer is a module named <code>CountReducer</code>, it would call <code>CountReducer.reduce(state, action)</code>. Pretty nice.</p>
-
 <p>The reducer will be a module with a <code>reduce/2</code> function. Reducers have a few responsibilities.
 * They provide default values for state on initialization
 * They return a new version of state based on an action being passed
@@ -205,8 +199,6 @@ Let&rsquo;s start by implementing the <code>get_state</code> function on a <code
 8
 9
 10
-11
-12
 </pre></td><td class="rouge-code"><pre><span class="k">defmodule</span> <span class="no">Reducer</span> <span class="k">do</span>
   <span class="nv">@callback</span> <span class="n">reduce</span><span class="p">(</span><span class="n">any</span><span class="p">,</span> <span class="p">%{</span><span class="ss">type:</span> <span class="n">any</span><span class="p">})</span> <span class="p">::</span> <span class="n">any</span>
 <span class="k">end</span>
@@ -214,13 +206,11 @@ Let&rsquo;s start by implementing the <code>get_state</code> function on a <code
 <span class="k">defmodule</span> <span class="no">CountReducer</span> <span class="k">do</span>
   <span class="nv">@behaviour</span> <span class="no">Reducer</span>
   <span class="k">def</span> <span class="n">reduce</span><span class="p">(</span><span class="no">nil</span><span class="p">,</span> <span class="n">action</span><span class="p">),</span> <span class="k">do</span><span class="p">:</span> <span class="n">reduce</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="n">action</span><span class="p">)</span>
-  <span class="k">def</span> <span class="n">reduce</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">),</span> <span class="k">do</span><span class="p">:</span> <span class="n">do_reduce</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">)</span>
-
-  <span class="k">defp</span> <span class="n">do_reduce</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="p">%{</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">INCREMENT"</span><span class="p">}),</span> <span class="k">do</span><span class="p">:</span> <span class="n">state</span> <span class="o">+</span> <span class="m">1</span>
-  <span class="k">defp</span> <span class="n">do_reduce</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">_</span><span class="p">),</span> <span class="k">do</span><span class="p">:</span> <span class="n">state</span>
+  <span class="k">def</span> <span class="n">reduce</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="p">%{</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">INCREMENT"</span><span class="p">}),</span> <span class="k">do</span><span class="p">:</span> <span class="n">state</span> <span class="o">+</span> <span class="m">1</span>
+  <span class="k">def</span> <span class="n">reduce</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">_</span><span class="p">),</span> <span class="k">do</span><span class="p">:</span> <span class="n">state</span>
 <span class="k">end</span>
 </pre></td></tr></tbody></table></code></pre></div>
-<p>We first create a <code>behaviour</code> to ensure anyone that plays the <code>Reducer</code> role knows how to do the job. We need it to have a <code>reduce/2</code> function to support the <code>Store</code> module&rsquo;s expectation. The rest is just some good old fashioned PATTERN MATCHING. The first 2 <code>reduce/2</code> heads are just clean up. If we get a nil value, then just call it again with a 0, our <code>do_reduce/2</code> functions are where the actual reducing happens.</p>
+<p>We first create a <code>behaviour</code> to ensure anyone that plays the <code>Reducer</code> role knows how to do the job. We need it to have a <code>reduce/2</code> function to support the <code>Store</code> module&rsquo;s expectation. The rest is just some good old fashioned PATTERN MATCHING. The first <code>reduce/2</code> deals a new reducer call. If we get a nil state, then just call it again with a 0. We&rsquo;re then matching on a map key, or falling down to an unhandled case where we return the old state.</p>
 
 <h2>Time to run it</h2>
 
@@ -247,16 +237,14 @@ Let&rsquo;s start by implementing the <code>get_state</code> function on a <code
 10
 11
 12
-13
 </pre></td><td class="rouge-code"><pre><span class="k">defmodule</span> <span class="no">Store</span> <span class="k">do</span>
-  <span class="c1"># Code for your Mom</span>
-  <span class="c1"># Existing Mom code...</span>
+  <span class="c1"># Existing code...</span>
+
   <span class="k">def</span> <span class="n">dispatch</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="n">action</span><span class="p">)</span> <span class="k">do</span>
     <span class="no">GenServer</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="p">{</span><span class="ss">:dispatch</span><span class="p">,</span> <span class="n">action</span><span class="p">})</span>
   <span class="k">end</span>
 
-  <span class="c1"># Code for Joe Armstrong</span>
-  <span class="c1"># Existing Joe code...</span>
+  <span class="c1"># Existing code...</span>
   <span class="k">def</span> <span class="n">handle_cast</span><span class="p">({</span><span class="ss">:dispatch</span><span class="p">,</span> <span class="n">action</span><span class="p">},</span> <span class="p">%{</span><span class="ss">reducer:</span> <span class="n">reducer</span><span class="p">,</span> <span class="ss">store_state:</span> <span class="n">store_state</span><span class="p">}</span> <span class="o">=</span> <span class="n">state</span><span class="p">)</span> <span class="k">do</span>
     <span class="n">store_state</span> <span class="o">=</span> <span class="n">apply</span><span class="p">(</span><span class="n">reducer</span><span class="p">,</span> <span class="ss">:reduce</span><span class="p">,</span> <span class="p">[</span><span class="n">store_state</span><span class="p">,</span> <span class="n">action</span><span class="p">])</span>
     <span class="p">{</span><span class="ss">:noreply</span><span class="p">,</span> <span class="no">Map</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="ss">:store_state</span><span class="p">,</span> <span class="n">store_state</span><span class="p">)}</span>
@@ -338,10 +326,7 @@ Let&rsquo;s start by implementing the <code>get_state</code> function on a <code
 15
 16
 17
-18
-19
-</pre></td><td class="rouge-code"><pre><span class="c1"># For mama</span>
-<span class="k">def</span> <span class="n">subscribe</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="n">subscriber</span><span class="p">)</span> <span class="k">do</span>
+</pre></td><td class="rouge-code"><pre><span class="k">def</span> <span class="n">subscribe</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="n">subscriber</span><span class="p">)</span> <span class="k">do</span>
   <span class="no">GenServer</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="p">{</span><span class="ss">:subscribe</span><span class="p">,</span> <span class="n">subscriber</span><span class="p">})</span>
 <span class="k">end</span>
 
@@ -349,7 +334,6 @@ Let&rsquo;s start by implementing the <code>get_state</code> function on a <code
   <span class="no">GenServer</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="p">{</span><span class="ss">:remove_subscriber</span><span class="p">,</span> <span class="n">ref</span><span class="p">})</span>
 <span class="k">end</span>
 
-<span class="c1"># For Joey</span>
 <span class="k">def</span> <span class="n">handle_call</span><span class="p">({</span><span class="ss">:subscribe</span><span class="p">,</span> <span class="n">subscriber</span><span class="p">},</span> <span class="n">_from</span><span class="p">,</span> <span class="p">%{</span><span class="ss">subscribers:</span> <span class="n">subscribers</span><span class="p">}</span> <span class="o">=</span> <span class="n">state</span><span class="p">)</span> <span class="k">do</span>
   <span class="n">ref</span> <span class="o">=</span> <span class="n">make_ref</span><span class="p">()</span>
   <span class="p">{</span><span class="ss">:reply</span><span class="p">,</span> <span class="n">ref</span><span class="p">,</span> <span class="n">put_in</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="p">[</span><span class="ss">:subscribers</span><span class="p">,</span> <span class="n">ref</span><span class="p">],</span> <span class="n">subscriber</span><span class="p">)}</span>
@@ -369,7 +353,7 @@ Let&rsquo;s start by implementing the <code>get_state</code> function on a <code
 4
 5
 </pre></td><td class="rouge-code"><pre><span class="k">def</span> <span class="n">handle_cast</span><span class="p">({</span><span class="ss">:dispatch</span><span class="p">,</span> <span class="n">action</span><span class="p">},</span> <span class="p">%{</span><span class="ss">reducer:</span> <span class="n">reducer</span><span class="p">,</span> <span class="ss">store_state:</span> <span class="n">store_state</span><span class="p">,</span> <span class="ss">subscribers:</span> <span class="n">subscribers</span><span class="p">}</span> <span class="o">=</span> <span class="n">state</span><span class="p">)</span> <span class="k">do</span>
-  <span class="n">store_state</span> <span class="o">=</span> <span class="n">apply</span><span class="p">(</span><span class="n">reducer</span><span class="p">,</span> <span class="ss">:reduce</span><span class="p">,</span> <span class="p">[</span><span class="n">store_state</span><span class="p">,</span> <span class="n">action</span><span class="p">])</span>
+  <span class="n">store_state</span> <span class="o">=</span> <span class="n">reducer</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="n">store_state</span><span class="p">,</span> <span class="n">action</span><span class="p">)</span>
   <span class="n">for</span> <span class="p">{</span><span class="n">_ref</span><span class="p">,</span> <span class="n">sub</span><span class="p">}</span> <span class="o">&lt;-</span> <span class="n">subscribers</span><span class="p">,</span> <span class="k">do</span><span class="p">:</span> <span class="n">sub</span><span class="o">.</span><span class="p">(</span><span class="n">store_state</span><span class="p">)</span> <span class="c1"># notify those subscribers</span>
   <span class="p">{</span><span class="ss">:noreply</span><span class="p">,</span> <span class="no">Map</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="ss">:store_state</span><span class="p">,</span> <span class="n">store_state</span><span class="p">)}</span>
 <span class="k">end</span>
@@ -459,7 +443,7 @@ Let&rsquo;s start by implementing the <code>get_state</code> function on a <code
     <span class="k">return</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">reducerMap</span><span class="p">).</span><span class="nx">reduce</span><span class="p">((</span><span class="nx">map</span><span class="p">,</span> <span class="nx">stateName</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
       <span class="nx">map</span><span class="p">[</span><span class="nx">stateName</span><span class="p">]</span> <span class="o">=</span> <span class="nx">reducerMap</span><span class="p">[</span><span class="nx">stateName</span><span class="p">](</span><span class="nx">state</span><span class="p">[</span><span class="nx">stateName</span><span class="p">],</span> <span class="nx">action</span><span class="p">)</span>
       <span class="k">return</span> <span class="nx">map</span>
-    <span class="p">},</span> <span class="p">{})</span>  
+    <span class="p">},</span> <span class="p">{})</span>
   <span class="p">}</span>
 <span class="p">}</span>
 
@@ -501,17 +485,17 @@ Let&rsquo;s start by implementing the <code>get_state</code> function on a <code
 10
 11
 12
-</pre></td><td class="rouge-code"><pre><span class="c1"># New stuff!</span>
+</pre></td><td class="rouge-code"><pre><span class="c1"># Multi-Reducer code</span>
 <span class="k">def</span> <span class="n">init</span><span class="p">([</span><span class="n">reducer_map</span><span class="p">,</span> <span class="no">nil</span><span class="p">])</span> <span class="ow">when</span> <span class="n">is_map</span><span class="p">(</span><span class="n">reducer_map</span><span class="p">),</span> <span class="k">do</span><span class="p">:</span> <span class="n">init</span><span class="p">([</span><span class="n">reducer_map</span><span class="p">,</span> <span class="p">%{}])</span>
 <span class="k">def</span> <span class="n">init</span><span class="p">([</span><span class="n">reducer_map</span><span class="p">,</span> <span class="n">initial_state</span><span class="p">])</span> <span class="ow">when</span> <span class="n">is_map</span><span class="p">(</span><span class="n">reducer_map</span><span class="p">)</span> <span class="k">do</span>
   <span class="n">store_state</span> <span class="o">=</span> <span class="no">CombineReducers</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="n">reducer_map</span><span class="p">,</span> <span class="n">initial_state</span><span class="p">,</span> <span class="nv">@initializer_action</span><span class="p">)</span>
-  <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="p">%{</span><span class="ss">reducer:</span> <span class="n">reducer_map</span><span class="p">,</span> <span class="ss">store_state:</span> <span class="n">store_state</span><span class="p">,</span> <span class="ss">subscribers:</span> <span class="p">%{}}}</span> <span class="c1"># add new subscribers map to state</span>
+  <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="p">%{</span><span class="ss">reducer:</span> <span class="n">reducer_map</span><span class="p">,</span> <span class="ss">store_state:</span> <span class="n">store_state</span><span class="p">,</span> <span class="ss">subscribers:</span> <span class="p">%{}}}</span>
 <span class="k">end</span>
 
-<span class="c1"># Crusty old code</span>
+<span class="c1"># Solo reducer code</span>
 <span class="k">def</span> <span class="n">init</span><span class="p">([</span><span class="n">reducer</span><span class="p">,</span> <span class="n">initial_state</span><span class="p">])</span> <span class="k">do</span>
   <span class="n">store_state</span> <span class="o">=</span> <span class="n">apply</span><span class="p">(</span><span class="n">reducer</span><span class="p">,</span> <span class="ss">:reduce</span><span class="p">,</span> <span class="p">[</span><span class="n">initial_state</span><span class="p">,</span> <span class="nv">@initializer_action</span><span class="p">])</span>
-  <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="p">%{</span><span class="ss">reducer:</span> <span class="n">reducer</span><span class="p">,</span> <span class="ss">store_state:</span> <span class="n">store_state</span><span class="p">,</span> <span class="ss">subscribers:</span> <span class="p">%{}}}</span> <span class="c1"># add new subscribers map to state</span>
+  <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="p">%{</span><span class="ss">reducer:</span> <span class="n">reducer</span><span class="p">,</span> <span class="ss">store_state:</span> <span class="n">store_state</span><span class="p">,</span> <span class="ss">subscribers:</span> <span class="p">%{}}}</span>
 <span class="k">end</span>
 </pre></td></tr></tbody></table></code></pre></div>
 <p>Converting nil values to an empty map will let our reducers receive <code>nil</code> as their state when we call something like <code>state[:count]</code>. They&rsquo;ll then convert that to their expected default state.</p>
@@ -530,21 +514,21 @@ Let&rsquo;s start by implementing the <code>get_state</code> function on a <code
 11
 12
 13
-</pre></td><td class="rouge-code"><pre><span class="c1"># New hotness</span>
+</pre></td><td class="rouge-code"><pre><span class="c1"># Multi-Reducer code</span>
 <span class="k">def</span> <span class="n">handle_cast</span><span class="p">({</span><span class="ss">:dispatch</span><span class="p">,</span> <span class="n">action</span><span class="p">},</span> <span class="p">%{</span><span class="ss">reducer:</span> <span class="n">reducer_map</span><span class="p">,</span> <span class="ss">store_state:</span> <span class="n">store_state</span><span class="p">,</span> <span class="ss">subscribers:</span> <span class="n">subscribers</span><span class="p">}</span> <span class="o">=</span> <span class="n">state</span><span class="p">)</span> <span class="ow">when</span> <span class="n">is_map</span><span class="p">(</span><span class="n">reducer_map</span><span class="p">)</span> <span class="k">do</span>
   <span class="n">store_state</span> <span class="o">=</span> <span class="no">CombineReducers</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="n">reducer_map</span><span class="p">,</span> <span class="n">store_state</span><span class="p">,</span> <span class="n">action</span><span class="p">)</span>
-  <span class="n">for</span> <span class="p">{</span><span class="n">_ref</span><span class="p">,</span> <span class="n">sub</span><span class="p">}</span> <span class="o">&lt;-</span> <span class="n">subscribers</span><span class="p">,</span> <span class="k">do</span><span class="p">:</span> <span class="n">sub</span><span class="o">.</span><span class="p">(</span><span class="n">store_state</span><span class="p">)</span> <span class="c1"># notify those subscribers</span>
+  <span class="n">for</span> <span class="p">{</span><span class="n">_ref</span><span class="p">,</span> <span class="n">sub</span><span class="p">}</span> <span class="o">&lt;-</span> <span class="n">subscribers</span><span class="p">,</span> <span class="k">do</span><span class="p">:</span> <span class="n">sub</span><span class="o">.</span><span class="p">(</span><span class="n">store_state</span><span class="p">)</span>
   <span class="p">{</span><span class="ss">:noreply</span><span class="p">,</span> <span class="no">Map</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="ss">:store_state</span><span class="p">,</span> <span class="n">store_state</span><span class="p">)}</span>
 <span class="k">end</span>
 
-<span class="c1"># Old and crust</span>
+<span class="c1"># Solo reducer code</span>
 <span class="k">def</span> <span class="n">handle_cast</span><span class="p">({</span><span class="ss">:dispatch</span><span class="p">,</span> <span class="n">action</span><span class="p">},</span> <span class="p">%{</span><span class="ss">reducer:</span> <span class="n">reducer</span><span class="p">,</span> <span class="ss">store_state:</span> <span class="n">store_state</span><span class="p">,</span> <span class="ss">subscribers:</span> <span class="n">subscribers</span><span class="p">}</span> <span class="o">=</span> <span class="n">state</span><span class="p">)</span> <span class="k">do</span>
   <span class="n">store_state</span> <span class="o">=</span> <span class="n">apply</span><span class="p">(</span><span class="n">reducer</span><span class="p">,</span> <span class="ss">:reduce</span><span class="p">,</span> <span class="p">[</span><span class="n">store_state</span><span class="p">,</span> <span class="n">action</span><span class="p">])</span>
-  <span class="n">for</span> <span class="p">{</span><span class="n">_ref</span><span class="p">,</span> <span class="n">sub</span><span class="p">}</span> <span class="o">&lt;-</span> <span class="n">subscribers</span><span class="p">,</span> <span class="k">do</span><span class="p">:</span> <span class="n">sub</span><span class="o">.</span><span class="p">(</span><span class="n">store_state</span><span class="p">)</span> <span class="c1"># notify those subscribers</span>
+  <span class="n">for</span> <span class="p">{</span><span class="n">_ref</span><span class="p">,</span> <span class="n">sub</span><span class="p">}</span> <span class="o">&lt;-</span> <span class="n">subscribers</span><span class="p">,</span> <span class="k">do</span><span class="p">:</span> <span class="n">sub</span><span class="o">.</span><span class="p">(</span><span class="n">store_state</span><span class="p">)</span>
   <span class="p">{</span><span class="ss">:noreply</span><span class="p">,</span> <span class="no">Map</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="ss">:store_state</span><span class="p">,</span> <span class="n">store_state</span><span class="p">)}</span>
 <span class="k">end</span>
 </pre></td></tr></tbody></table></code></pre></div>
-<p>And finally, our brand new module a brand new module to handle our CombineReducers logic.</p>
+<p>And finally, a brand new module to handle our CombineReducers logic.</p>
 <div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
@@ -560,7 +544,7 @@ Let&rsquo;s start by implementing the <code>get_state</code> function on a <code
   <span class="k">def</span> <span class="n">reduce</span><span class="p">(</span><span class="n">reducers</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">)</span> <span class="k">do</span>
     <span class="n">for</span> <span class="p">{</span><span class="n">state_name</span><span class="p">,</span> <span class="n">reducer</span><span class="p">}</span> <span class="o">&lt;-</span> <span class="n">reducers</span> <span class="k">do</span>
       <span class="no">Task</span><span class="o">.</span><span class="n">async</span><span class="p">(</span><span class="k">fn</span> <span class="p">()</span> <span class="o">-&gt;</span>
-        <span class="p">{</span><span class="n">state_name</span><span class="p">,</span> <span class="n">apply</span><span class="p">(</span><span class="n">reducer</span><span class="p">,</span> <span class="ss">:reduce</span><span class="p">,</span> <span class="p">[</span><span class="n">state</span><span class="p">[</span><span class="n">state_name</span><span class="p">],</span> <span class="n">action</span><span class="p">])}</span>
+        <span class="p">{</span><span class="n">state_name</span><span class="p">,</span> <span class="n">reducer</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="n">state_name</span><span class="p">],</span> <span class="n">action</span><span class="p">)}</span>
       <span class="k">end</span><span class="p">)</span>
     <span class="k">end</span>
     <span class="o">|&gt;</span> <span class="no">Enum</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="o">&amp;</span><span class="no">Task</span><span class="o">.</span><span class="n">await</span><span class="o">/</span><span class="m">1</span><span class="p">)</span>
@@ -636,7 +620,7 @@ Let&rsquo;s start by implementing the <code>get_state</code> function on a <code
 
 </script>
 
- <em>Copyright &copy; 2018 Steven Nu&ntilde;ez - HostileDeveloper</em>
+ <em>Copyright &copy; 2019 Steven Nu&ntilde;ez - HostileDeveloper</em>
 
 </div>
 </body>
