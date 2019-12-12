@@ -65,7 +65,7 @@
 5
 6
 7
-</pre></td><td class="rouge-code"><pre><span class="n">schema</span> <span class="sd">"</span><span class="s2">accounts"</span> <span class="k">do</span>
+</pre></td><td class="rouge-code"><pre><span class="n">schema</span> <span class="s2">"accounts"</span> <span class="k">do</span>
   <span class="n">field</span> <span class="ss">:email</span><span class="p">,</span> <span class="ss">:string</span>
   <span class="n">field</span> <span class="ss">:password_digest</span><span class="p">,</span> <span class="ss">:string</span>
   <span class="n">field</span> <span class="ss">:password</span><span class="p">,</span> <span class="ss">:string</span><span class="p">,</span> <span class="ss">virtual:</span> <span class="no">true</span> <span class="c1"># &lt;- New line</span>
@@ -149,14 +149,14 @@ iex&gt; changeset.changes.password_digest # =&gt; "101feeb"
 11
 12
 </pre></td><td class="rouge-code"><pre><span class="k">defp</span> <span class="n">deps</span> <span class="k">do</span>
-  <span class="p">[{</span><span class="ss">:phoenix</span><span class="p">,</span> <span class="sd">"</span><span class="s2">~&gt; 1.1.4"</span><span class="p">},</span>
-   <span class="p">{</span><span class="ss">:postgrex</span><span class="p">,</span> <span class="sd">"</span><span class="s2">&gt;= 0.0.0"</span><span class="p">},</span>
-   <span class="p">{</span><span class="ss">:phoenix_ecto</span><span class="p">,</span> <span class="sd">"</span><span class="s2">~&gt; 2.0"</span><span class="p">},</span>
-   <span class="p">{</span><span class="ss">:phoenix_html</span><span class="p">,</span> <span class="sd">"</span><span class="s2">~&gt; 2.4"</span><span class="p">},</span>
-   <span class="p">{</span><span class="ss">:phoenix_live_reload</span><span class="p">,</span> <span class="sd">"</span><span class="s2">~&gt; 1.0"</span><span class="p">,</span> <span class="ss">only:</span> <span class="ss">:dev</span><span class="p">},</span>
-   <span class="p">{</span><span class="ss">:gettext</span><span class="p">,</span> <span class="sd">"</span><span class="s2">~&gt; 0.9"</span><span class="p">},</span>
-   <span class="p">{</span><span class="ss">:comeonin</span><span class="p">,</span> <span class="sd">"</span><span class="s2">~&gt; 2.4"</span><span class="p">},</span> <span class="c1"># &lt;- New line</span>
-   <span class="p">{</span><span class="ss">:cowboy</span><span class="p">,</span> <span class="sd">"</span><span class="s2">~&gt; 1.0"</span><span class="p">}]</span>
+  <span class="p">[{</span><span class="ss">:phoenix</span><span class="p">,</span> <span class="s2">"~&gt; 1.1.4"</span><span class="p">},</span>
+   <span class="p">{</span><span class="ss">:postgrex</span><span class="p">,</span> <span class="s2">"&gt;= 0.0.0"</span><span class="p">},</span>
+   <span class="p">{</span><span class="ss">:phoenix_ecto</span><span class="p">,</span> <span class="s2">"~&gt; 2.0"</span><span class="p">},</span>
+   <span class="p">{</span><span class="ss">:phoenix_html</span><span class="p">,</span> <span class="s2">"~&gt; 2.4"</span><span class="p">},</span>
+   <span class="p">{</span><span class="ss">:phoenix_live_reload</span><span class="p">,</span> <span class="s2">"~&gt; 1.0"</span><span class="p">,</span> <span class="ss">only:</span> <span class="ss">:dev</span><span class="p">},</span>
+   <span class="p">{</span><span class="ss">:gettext</span><span class="p">,</span> <span class="s2">"~&gt; 0.9"</span><span class="p">},</span>
+   <span class="p">{</span><span class="ss">:comeonin</span><span class="p">,</span> <span class="s2">"~&gt; 2.4"</span><span class="p">},</span> <span class="c1"># &lt;- New line</span>
+   <span class="p">{</span><span class="ss">:cowboy</span><span class="p">,</span> <span class="s2">"~&gt; 1.0"</span><span class="p">}]</span>
 <span class="k">end</span>
 
 
@@ -256,7 +256,7 @@ iex&gt; Repo.insert!(changeset)
 17
 </pre></td><td class="rouge-code"><pre><span class="k">defmodule</span> <span class="no">ArticleTrackerHd</span><span class="o">.</span><span class="no">Auth</span> <span class="k">do</span>
   <span class="n">alias</span> <span class="no">ArticleTrackerHd</span><span class="o">.</span><span class="p">{</span><span class="no">Repo</span><span class="p">,</span> <span class="no">Account</span><span class="p">}</span>
-  <span class="kn">import</span> <span class="no">Comeonin</span><span class="o">.</span><span class="no">Bcrypt</span><span class="p">,</span> <span class="ss">only:</span> <span class="p">[</span><span class="ss">checkpw:</span> <span class="m">2</span><span class="p">,</span> <span class="ss">dummy_checkpw:</span> <span class="m">0</span><span class="p">]</span>
+  <span class="kn">import</span> <span class="no">Comeonin</span><span class="o">.</span><span class="no">Bcrypt</span><span class="p">,</span> <span class="ss">only:</span> <span class="p">[</span><span class="ss">checkpw:</span> <span class="mi">2</span><span class="p">,</span> <span class="ss">dummy_checkpw:</span> <span class="mi">0</span><span class="p">]</span>
 
   <span class="k">def</span> <span class="n">verify</span><span class="p">(</span><span class="n">email</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span> <span class="k">do</span>
     <span class="n">account</span> <span class="o">=</span>  <span class="no">Repo</span><span class="o">.</span><span class="n">one</span><span class="p">(</span><span class="no">Account</span><span class="o">.</span><span class="n">find_by_email</span><span class="p">(</span><span class="n">email</span><span class="p">))</span> <span class="c1"># &lt;- Need to define find_by_email</span>
@@ -331,15 +331,15 @@ iex&gt; Auth.verify("nope@example.com", "wrongpw")
 10
 11
 </pre></td><td class="rouge-code"><pre><span class="k">defp</span> <span class="n">deps</span> <span class="k">do</span>
-  <span class="p">[{</span><span class="ss">:phoenix</span><span class="p">,</span> <span class="sd">"</span><span class="s2">~&gt; 1.1.4"</span><span class="p">},</span>
-   <span class="p">{</span><span class="ss">:postgrex</span><span class="p">,</span> <span class="sd">"</span><span class="s2">&gt;= 0.0.0"</span><span class="p">},</span>
-   <span class="p">{</span><span class="ss">:phoenix_ecto</span><span class="p">,</span> <span class="sd">"</span><span class="s2">~&gt; 2.0"</span><span class="p">},</span>
-   <span class="p">{</span><span class="ss">:phoenix_html</span><span class="p">,</span> <span class="sd">"</span><span class="s2">~&gt; 2.4"</span><span class="p">},</span>
-   <span class="p">{</span><span class="ss">:phoenix_live_reload</span><span class="p">,</span> <span class="sd">"</span><span class="s2">~&gt; 1.0"</span><span class="p">,</span> <span class="ss">only:</span> <span class="ss">:dev</span><span class="p">},</span>
-   <span class="p">{</span><span class="ss">:gettext</span><span class="p">,</span> <span class="sd">"</span><span class="s2">~&gt; 0.9"</span><span class="p">},</span>
-   <span class="p">{</span><span class="ss">:comeonin</span><span class="p">,</span> <span class="sd">"</span><span class="s2">~&gt; 2.4"</span><span class="p">},</span>
-   <span class="p">{</span><span class="ss">:guardian</span><span class="p">,</span> <span class="sd">"</span><span class="s2">~&gt; 0.10.0"</span><span class="p">},</span> <span class="c1"># &lt;- New line</span>
-   <span class="p">{</span><span class="ss">:cowboy</span><span class="p">,</span> <span class="sd">"</span><span class="s2">~&gt; 1.0"</span><span class="p">}]</span>
+  <span class="p">[{</span><span class="ss">:phoenix</span><span class="p">,</span> <span class="s2">"~&gt; 1.1.4"</span><span class="p">},</span>
+   <span class="p">{</span><span class="ss">:postgrex</span><span class="p">,</span> <span class="s2">"&gt;= 0.0.0"</span><span class="p">},</span>
+   <span class="p">{</span><span class="ss">:phoenix_ecto</span><span class="p">,</span> <span class="s2">"~&gt; 2.0"</span><span class="p">},</span>
+   <span class="p">{</span><span class="ss">:phoenix_html</span><span class="p">,</span> <span class="s2">"~&gt; 2.4"</span><span class="p">},</span>
+   <span class="p">{</span><span class="ss">:phoenix_live_reload</span><span class="p">,</span> <span class="s2">"~&gt; 1.0"</span><span class="p">,</span> <span class="ss">only:</span> <span class="ss">:dev</span><span class="p">},</span>
+   <span class="p">{</span><span class="ss">:gettext</span><span class="p">,</span> <span class="s2">"~&gt; 0.9"</span><span class="p">},</span>
+   <span class="p">{</span><span class="ss">:comeonin</span><span class="p">,</span> <span class="s2">"~&gt; 2.4"</span><span class="p">},</span>
+   <span class="p">{</span><span class="ss">:guardian</span><span class="p">,</span> <span class="s2">"~&gt; 0.10.0"</span><span class="p">},</span> <span class="c1"># &lt;- New line</span>
+   <span class="p">{</span><span class="ss">:cowboy</span><span class="p">,</span> <span class="s2">"~&gt; 1.0"</span><span class="p">}]</span>
 <span class="k">end</span>
 </pre></td></tr></tbody></table></code></pre></div>
 <p>Run <code>mix deps.get</code> to get setup.</p>
@@ -351,9 +351,9 @@ iex&gt; Auth.verify("nope@example.com", "wrongpw")
 4
 5
 </pre></td><td class="rouge-code"><pre><span class="n">config</span> <span class="ss">:guardian</span><span class="p">,</span> <span class="no">Guardian</span><span class="p">,</span>
-  <span class="ss">issuer:</span> <span class="sd">"</span><span class="s2">ArticleTrackerHd"</span><span class="p">,</span>
-  <span class="ss">ttl:</span> <span class="p">{</span> <span class="m">30</span><span class="p">,</span> <span class="ss">:days</span> <span class="p">},</span>
-  <span class="ss">secret_key:</span> <span class="sd">"</span><span class="s2">46l5yfRFGorxAArf64nGzHlfvSDAOUEV7m6c3/lf4LzZcBfUClDsSfNETrosmsdO"</span><span class="p">,</span> <span class="c1"># &lt;- Your Key</span>
+  <span class="ss">issuer:</span> <span class="s2">"ArticleTrackerHd"</span><span class="p">,</span>
+  <span class="ss">ttl:</span> <span class="p">{</span> <span class="mi">30</span><span class="p">,</span> <span class="ss">:days</span> <span class="p">},</span>
+  <span class="ss">secret_key:</span> <span class="s2">"46l5yfRFGorxAArf64nGzHlfvSDAOUEV7m6c3/lf4LzZcBfUClDsSfNETrosmsdO"</span><span class="p">,</span> <span class="c1"># &lt;- Your Key</span>
   <span class="ss">serializer:</span> <span class="no">ArticleTrackerHd</span><span class="o">.</span><span class="no">GuardianSerializer</span> <span class="c1"># &lt;- We'll create this next</span>
 </pre></td></tr></tbody></table></code></pre></div>
 <p>OK, so a bunch of stuff is about to happen&hellip; Brace yourself.</p>
@@ -369,8 +369,8 @@ iex&gt; Auth.verify("nope@example.com", "wrongpw")
 4
 5
 </pre></td><td class="rouge-code"><pre><span class="n">pipeline</span> <span class="ss">:api</span> <span class="k">do</span>
-  <span class="n">plug</span> <span class="ss">:accepts</span><span class="p">,</span> <span class="p">[</span><span class="sd">"</span><span class="s2">json"</span><span class="p">]</span>
-  <span class="n">plug</span> <span class="no">Guardian</span><span class="o">.</span><span class="no">Plug</span><span class="o">.</span><span class="no">VerifyHeader</span><span class="p">,</span> <span class="ss">realm:</span> <span class="sd">"</span><span class="s2">Bearer"</span> <span class="c1"># &lt;- New line (1)</span>
+  <span class="n">plug</span> <span class="ss">:accepts</span><span class="p">,</span> <span class="p">[</span><span class="s2">"json"</span><span class="p">]</span>
+  <span class="n">plug</span> <span class="no">Guardian</span><span class="o">.</span><span class="no">Plug</span><span class="o">.</span><span class="no">VerifyHeader</span><span class="p">,</span> <span class="ss">realm:</span> <span class="s2">"Bearer"</span> <span class="c1"># &lt;- New line (1)</span>
   <span class="n">plug</span> <span class="no">Guardian</span><span class="o">.</span><span class="no">Plug</span><span class="o">.</span><span class="no">LoadResource</span>                  <span class="c1"># &lt;- New line (2)</span>
 <span class="k">end</span>
 </pre></td></tr></tbody></table></code></pre></div>
@@ -397,11 +397,11 @@ iex&gt; Auth.verify("nope@example.com", "wrongpw")
   <span class="n">alias</span> <span class="no">ArticleTrackerHd</span><span class="o">.</span><span class="no">Repo</span>
   <span class="n">alias</span> <span class="no">ArticleTrackerHd</span><span class="o">.</span><span class="no">Account</span>
 
-  <span class="k">def</span> <span class="n">for_token</span><span class="p">(</span><span class="n">account</span> <span class="o">=</span> <span class="p">%</span><span class="no">Account</span><span class="p">{}),</span> <span class="k">do</span><span class="p">:</span> <span class="p">{</span> <span class="ss">:ok</span><span class="p">,</span> <span class="sd">"</span><span class="s2">Account:</span><span class="si">#{</span><span class="n">account</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">"</span> <span class="p">}</span>
-  <span class="k">def</span> <span class="n">for_token</span><span class="p">(</span><span class="n">_</span><span class="p">),</span> <span class="k">do</span><span class="p">:</span> <span class="p">{</span> <span class="ss">:error</span><span class="p">,</span> <span class="sd">"</span><span class="s2">Unknown resource type"</span> <span class="p">}</span>
+  <span class="k">def</span> <span class="n">for_token</span><span class="p">(</span><span class="n">account</span> <span class="o">=</span> <span class="p">%</span><span class="no">Account</span><span class="p">{}),</span> <span class="k">do</span><span class="p">:</span> <span class="p">{</span> <span class="ss">:ok</span><span class="p">,</span> <span class="s2">"Account:</span><span class="si">#{</span><span class="n">account</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">"</span> <span class="p">}</span>
+  <span class="k">def</span> <span class="n">for_token</span><span class="p">(</span><span class="n">_</span><span class="p">),</span> <span class="k">do</span><span class="p">:</span> <span class="p">{</span> <span class="ss">:error</span><span class="p">,</span> <span class="s2">"Unknown resource type"</span> <span class="p">}</span>
 
-  <span class="k">def</span> <span class="n">from_token</span><span class="p">(</span><span class="sd">"</span><span class="s2">Account:"</span> <span class="o">&lt;&gt;</span> <span class="n">id</span><span class="p">),</span> <span class="k">do</span><span class="p">:</span> <span class="p">{</span> <span class="ss">:ok</span><span class="p">,</span> <span class="no">Repo</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="no">Account</span><span class="p">,</span> <span class="n">id</span><span class="p">)</span> <span class="p">}</span>
-  <span class="k">def</span> <span class="n">from_token</span><span class="p">(</span><span class="n">_</span><span class="p">),</span> <span class="k">do</span><span class="p">:</span> <span class="p">{</span> <span class="ss">:error</span><span class="p">,</span> <span class="sd">"</span><span class="s2">Unknown resource type"</span> <span class="p">}</span>
+  <span class="k">def</span> <span class="n">from_token</span><span class="p">(</span><span class="s2">"Account:"</span> <span class="o">&lt;&gt;</span> <span class="n">id</span><span class="p">),</span> <span class="k">do</span><span class="p">:</span> <span class="p">{</span> <span class="ss">:ok</span><span class="p">,</span> <span class="no">Repo</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="no">Account</span><span class="p">,</span> <span class="n">id</span><span class="p">)</span> <span class="p">}</span>
+  <span class="k">def</span> <span class="n">from_token</span><span class="p">(</span><span class="n">_</span><span class="p">),</span> <span class="k">do</span><span class="p">:</span> <span class="p">{</span> <span class="ss">:error</span><span class="p">,</span> <span class="s2">"Unknown resource type"</span> <span class="p">}</span>
 <span class="k">end</span>
 </pre></td></tr></tbody></table></code></pre></div>
 <p>Nothing too crazy here. If you find a claim in the token like <code>Account:1</code>, find account with an id of 1.</p>
@@ -420,10 +420,10 @@ iex&gt; Auth.verify("nope@example.com", "wrongpw")
 3
 4
 5
-</pre></td><td class="rouge-code"><pre><span class="n">scope</span> <span class="sd">"</span><span class="s2">/api"</span><span class="p">,</span> <span class="no">ArticleTrackerHd</span> <span class="k">do</span>
+</pre></td><td class="rouge-code"><pre><span class="n">scope</span> <span class="s2">"/api"</span><span class="p">,</span> <span class="no">ArticleTrackerHd</span> <span class="k">do</span>
   <span class="n">pipe_through</span> <span class="ss">:api</span>
-  <span class="n">resources</span> <span class="sd">"</span><span class="s2">/articles"</span><span class="p">,</span> <span class="no">ArticleController</span><span class="p">,</span> <span class="ss">except:</span> <span class="p">[</span><span class="ss">:new</span><span class="p">,</span> <span class="ss">:edit</span><span class="p">]</span>
-  <span class="n">post</span> <span class="sd">"</span><span class="s2">/log-in"</span><span class="p">,</span> <span class="no">SessionController</span><span class="p">,</span> <span class="ss">:create</span> <span class="c1"># &lt;- New line</span>
+  <span class="n">resources</span> <span class="s2">"/articles"</span><span class="p">,</span> <span class="no">ArticleController</span><span class="p">,</span> <span class="ss">except:</span> <span class="p">[</span><span class="ss">:new</span><span class="p">,</span> <span class="ss">:edit</span><span class="p">]</span>
+  <span class="n">post</span> <span class="s2">"/log-in"</span><span class="p">,</span> <span class="no">SessionController</span><span class="p">,</span> <span class="ss">:create</span> <span class="c1"># &lt;- New line</span>
 <span class="k">end</span>
 </pre></td></tr></tbody></table></code></pre></div>
 <p>Then make a file in <code>web/controllers/</code> named <code>session_controller.ex</code>.</p>
@@ -459,12 +459,12 @@ iex&gt; Auth.verify("nope@example.com", "wrongpw")
   <span class="kn">use</span> <span class="no">ArticleTrackerHd</span><span class="o">.</span><span class="no">Web</span><span class="p">,</span> <span class="ss">:controller</span>
   <span class="n">alias</span> <span class="no">ArticleTrackerHd</span><span class="o">.</span><span class="no">Auth</span>
 
-  <span class="k">def</span> <span class="n">create</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="p">%{</span><span class="sd">"</span><span class="s2">account"</span> <span class="o">=&gt;</span> <span class="p">%{</span><span class="sd">"</span><span class="s2">email"</span> <span class="o">=&gt;</span> <span class="n">email</span><span class="p">,</span> <span class="sd">"</span><span class="s2">password"</span> <span class="o">=&gt;</span> <span class="n">password</span><span class="p">}})</span> <span class="k">do</span>
+  <span class="k">def</span> <span class="n">create</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="p">%{</span><span class="s2">"account"</span> <span class="o">=&gt;</span> <span class="p">%{</span><span class="s2">"email"</span> <span class="o">=&gt;</span> <span class="n">email</span><span class="p">,</span> <span class="s2">"password"</span> <span class="o">=&gt;</span> <span class="n">password</span><span class="p">}})</span> <span class="k">do</span>
     <span class="k">case</span> <span class="no">Auth</span><span class="o">.</span><span class="n">verify</span><span class="p">(</span><span class="n">email</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span> <span class="k">do</span> <span class="c1"># &lt;- 1</span>
       <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">account</span><span class="p">}</span> <span class="o">-&gt;</span>
          <span class="n">conn</span>
          <span class="o">|&gt;</span> <span class="n">sign_in</span><span class="p">(</span><span class="n">account</span><span class="p">)</span>
-         <span class="o">|&gt;</span> <span class="n">render</span><span class="p">(</span><span class="sd">"</span><span class="s2">login.json"</span><span class="p">)</span>
+         <span class="o">|&gt;</span> <span class="n">render</span><span class="p">(</span><span class="s2">"login.json"</span><span class="p">)</span>
       <span class="p">{</span><span class="ss">:error</span><span class="p">,</span> <span class="n">_</span><span class="p">}</span> <span class="o">-&gt;</span>
         <span class="n">conn</span>
         <span class="o">|&gt;</span> <span class="n">put_status</span><span class="p">(</span><span class="ss">:unprocessable_entity</span><span class="p">)</span>
@@ -495,7 +495,7 @@ iex&gt; Auth.verify("nope@example.com", "wrongpw")
 </pre></td><td class="rouge-code"><pre><span class="k">defmodule</span> <span class="no">ArticleTrackerHd</span><span class="o">.</span><span class="no">SessionView</span> <span class="k">do</span>
   <span class="kn">use</span> <span class="no">ArticleTrackerHd</span><span class="o">.</span><span class="no">Web</span><span class="p">,</span> <span class="ss">:view</span>
 
-  <span class="k">def</span> <span class="n">render</span><span class="p">(</span><span class="sd">"</span><span class="s2">login.json"</span><span class="p">,</span> <span class="p">%{</span><span class="ss">jwt:</span> <span class="n">jwt</span><span class="p">})</span> <span class="k">do</span>
+  <span class="k">def</span> <span class="n">render</span><span class="p">(</span><span class="s2">"login.json"</span><span class="p">,</span> <span class="p">%{</span><span class="ss">jwt:</span> <span class="n">jwt</span><span class="p">})</span> <span class="k">do</span>
     <span class="p">%{</span> <span class="ss">jwt:</span> <span class="n">jwt</span> <span class="p">}</span>
   <span class="k">end</span>
 <span class="k">end</span>
@@ -536,7 +536,7 @@ iex&gt; Auth.verify("nope@example.com", "wrongpw")
   <span class="n">alias</span> <span class="no">ArticleTrackerHd</span><span class="o">.</span><span class="no">Article</span>
 
   <span class="n">plug</span> <span class="no">Guardian</span><span class="o">.</span><span class="no">Plug</span><span class="o">.</span><span class="no">EnsureAuthenticated</span><span class="p">,</span> <span class="p">[</span><span class="ss">handler:</span> <span class="no">ArticleTrackerHd</span><span class="o">.</span><span class="no">GuardianErrorHandler</span><span class="p">]</span>  <span class="ow">when</span> <span class="n">action</span> <span class="ow">in</span> <span class="p">[</span><span class="ss">:create</span><span class="p">,</span> <span class="ss">:update</span><span class="p">,</span> <span class="ss">:delete</span><span class="p">]</span> <span class="c1"># &lt;- New line</span>
-  <span class="n">plug</span> <span class="ss">:scrub_params</span><span class="p">,</span> <span class="sd">"</span><span class="s2">article"</span> <span class="ow">when</span> <span class="n">action</span> <span class="ow">in</span> <span class="p">[</span><span class="ss">:create</span><span class="p">,</span> <span class="ss">:update</span><span class="p">]</span>
+  <span class="n">plug</span> <span class="ss">:scrub_params</span><span class="p">,</span> <span class="s2">"article"</span> <span class="ow">when</span> <span class="n">action</span> <span class="ow">in</span> <span class="p">[</span><span class="ss">:create</span><span class="p">,</span> <span class="ss">:update</span><span class="p">]</span>
 <span class="c1">#...</span>
 <span class="k">end</span>
 </pre></td></tr></tbody></table></code></pre></div>
@@ -573,8 +573,8 @@ iex&gt; Auth.verify("nope@example.com", "wrongpw")
 6
 </pre></td><td class="rouge-code"><pre><span class="k">defmodule</span> <span class="no">ArticleTrackerHd</span><span class="o">.</span><span class="no">GuardianErrorView</span> <span class="k">do</span>
   <span class="kn">use</span> <span class="no">ArticleTrackerHd</span><span class="o">.</span><span class="no">Web</span><span class="p">,</span> <span class="ss">:view</span>
-  <span class="k">def</span> <span class="n">render</span><span class="p">(</span><span class="sd">"</span><span class="s2">forbidden.json"</span><span class="p">,</span> <span class="n">_assigns</span><span class="p">)</span> <span class="k">do</span>
-    <span class="p">%{</span><span class="ss">message:</span> <span class="sd">"</span><span class="s2">Forbidden"</span><span class="p">}</span>
+  <span class="k">def</span> <span class="n">render</span><span class="p">(</span><span class="s2">"forbidden.json"</span><span class="p">,</span> <span class="n">_assigns</span><span class="p">)</span> <span class="k">do</span>
+    <span class="p">%{</span><span class="ss">message:</span> <span class="s2">"Forbidden"</span><span class="p">}</span>
   <span class="k">end</span>
 <span class="k">end</span>
 </pre></td></tr></tbody></table></code></pre></div>
@@ -637,7 +637,7 @@ In <code>article.ex</code>:</p>
 9
 10
 </pre></td><td class="rouge-code"><pre>
-  <span class="n">schema</span> <span class="sd">"</span><span class="s2">articles"</span> <span class="k">do</span>
+  <span class="n">schema</span> <span class="s2">"articles"</span> <span class="k">do</span>
     <span class="n">field</span> <span class="ss">:title</span><span class="p">,</span> <span class="ss">:string</span>
     <span class="n">field</span> <span class="ss">:url</span><span class="p">,</span> <span class="ss">:string</span>
     <span class="n">field</span> <span class="ss">:categories</span><span class="p">,</span> <span class="ss">:string</span>
@@ -656,7 +656,7 @@ In <code>article.ex</code>:</p>
 6
 7
 8
-</pre></td><td class="rouge-code"><pre><span class="n">schema</span> <span class="sd">"</span><span class="s2">accounts"</span> <span class="k">do</span>
+</pre></td><td class="rouge-code"><pre><span class="n">schema</span> <span class="s2">"accounts"</span> <span class="k">do</span>
   <span class="n">field</span> <span class="ss">:email</span><span class="p">,</span> <span class="ss">:string</span>
   <span class="n">field</span> <span class="ss">:password_digest</span><span class="p">,</span> <span class="ss">:string</span>
   <span class="n">field</span> <span class="ss">:password</span><span class="p">,</span> <span class="ss">:string</span><span class="p">,</span> <span class="ss">virtual:</span> <span class="no">true</span>
@@ -673,7 +673,7 @@ In <code>article.ex</code>:</p>
 5
 6
 7
-</pre></td><td class="rouge-code"><pre><span class="k">def</span> <span class="n">create</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="p">%{</span><span class="sd">"</span><span class="s2">article"</span> <span class="o">=&gt;</span> <span class="n">article_params</span><span class="p">})</span> <span class="k">do</span>
+</pre></td><td class="rouge-code"><pre><span class="k">def</span> <span class="n">create</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="p">%{</span><span class="s2">"article"</span> <span class="o">=&gt;</span> <span class="n">article_params</span><span class="p">})</span> <span class="k">do</span>
   <span class="n">account</span> <span class="o">=</span> <span class="no">Guardian</span><span class="o">.</span><span class="no">Plug</span><span class="o">.</span><span class="n">current_resource</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span> <span class="c1"># &lt;- New line</span>
   <span class="n">article</span> <span class="o">=</span> <span class="no">Ecto</span><span class="o">.</span><span class="n">build_assoc</span><span class="p">(</span><span class="n">account</span><span class="p">,</span> <span class="ss">:articles</span><span class="p">)</span> <span class="c1"># &lt;- New line</span>
   <span class="n">changeset</span> <span class="o">=</span> <span class="no">Article</span><span class="o">.</span><span class="n">changeset</span><span class="p">(</span><span class="n">article</span><span class="p">,</span> <span class="n">article_params</span><span class="p">)</span> <span class="c1"># &lt;- New line</span>

@@ -68,7 +68,7 @@
 35
 36
 37
-</pre></td><td class="rouge-code"><pre><span class="kd">const</span> <span class="nx">initializerAction</span> <span class="o">=</span> <span class="p">{</span><span class="na">type</span><span class="p">:</span> <span class="s2">"@@INIT"</span><span class="p">}</span>
+</pre></td><td class="rouge-code"><pre><span class="kd">const</span> <span class="nx">initializerAction</span> <span class="o">=</span> <span class="p">{</span><span class="na">type</span><span class="p">:</span> <span class="dl">"</span><span class="s2">@@INIT</span><span class="dl">"</span><span class="p">}</span>
 <span class="kd">const</span> <span class="nx">createStore</span> <span class="o">=</span> <span class="p">(</span><span class="nx">reducer</span><span class="p">,</span> <span class="nx">state</span><span class="o">=</span><span class="kc">undefined</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
 <span class="nx">state</span> <span class="o">=</span> <span class="nx">reducer</span><span class="p">(</span><span class="nx">state</span><span class="p">,</span> <span class="nx">initializerAction</span><span class="p">)</span>
   <span class="kd">let</span> <span class="nx">subscribers</span> <span class="o">=</span> <span class="p">[]</span>
@@ -91,19 +91,19 @@
 
 <span class="kd">const</span> <span class="nx">countReducer</span> <span class="o">=</span> <span class="p">(</span><span class="nx">state</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nx">action</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
   <span class="k">switch</span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">type</span><span class="p">){</span>
-    <span class="k">case</span> <span class="s2">"INCREMENT"</span><span class="p">:</span>
+    <span class="k">case</span> <span class="dl">"</span><span class="s2">INCREMENT</span><span class="dl">"</span><span class="p">:</span>
       <span class="k">return</span> <span class="nx">state</span> <span class="o">+</span> <span class="mi">1</span>
     <span class="na">default</span><span class="p">:</span>
       <span class="k">return</span> <span class="nx">state</span>
   <span class="p">}</span>
 <span class="p">}</span>
 <span class="kd">const</span> <span class="nx">store</span> <span class="o">=</span> <span class="nx">createStore</span><span class="p">(</span><span class="nx">countReducer</span><span class="p">)</span>
-<span class="kd">const</span> <span class="nx">removeSubscriber</span> <span class="o">=</span> <span class="nx">store</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"I got called"</span><span class="p">,</span> <span class="nx">store</span><span class="p">.</span><span class="nx">getState</span><span class="p">()))</span>
-<span class="nx">store</span><span class="p">.</span><span class="nx">dispatch</span><span class="p">({</span><span class="na">type</span><span class="p">:</span> <span class="s2">"INCREMENT"</span><span class="p">})</span>
+<span class="kd">const</span> <span class="nx">removeSubscriber</span> <span class="o">=</span> <span class="nx">store</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">I got called</span><span class="dl">"</span><span class="p">,</span> <span class="nx">store</span><span class="p">.</span><span class="nx">getState</span><span class="p">()))</span>
+<span class="nx">store</span><span class="p">.</span><span class="nx">dispatch</span><span class="p">({</span><span class="na">type</span><span class="p">:</span> <span class="dl">"</span><span class="s2">INCREMENT</span><span class="dl">"</span><span class="p">})</span>
 <span class="c1">// Should log "I got called: 1"</span>
 
 <span class="nx">removeSubscriber</span><span class="p">()</span>
-<span class="nx">store</span><span class="p">.</span><span class="nx">dispatch</span><span class="p">({</span><span class="na">type</span><span class="p">:</span> <span class="s2">"INCREMENT"</span><span class="p">})</span>
+<span class="nx">store</span><span class="p">.</span><span class="nx">dispatch</span><span class="p">({</span><span class="na">type</span><span class="p">:</span> <span class="dl">"</span><span class="s2">INCREMENT</span><span class="dl">"</span><span class="p">})</span>
 <span class="c1">// Should log nothing"</span>
 </pre></td></tr></tbody></table></code></pre></div>
 <p>Cool. So we can build out a store that calls a single reducer. The store can notify subscribers of changes. We&rsquo;ll work on implementing this in Elixir, and we&rsquo;ll even handle the case with combined reducers. Along the way, we&rsquo;ll see where the JavaScript implementation falters, blocking execution of independent reducers and how to get around that in Elixir.</p>
@@ -126,14 +126,14 @@
 </pre></td><td class="rouge-code"><pre><span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">store</span><span class="p">}</span> <span class="o">=</span> <span class="no">Store</span><span class="o">.</span><span class="n">start_link</span><span class="p">(</span><span class="no">CountReducer</span><span class="p">)</span>
 
 <span class="n">subscriber_ref</span> <span class="o">=</span> <span class="no">Store</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="k">fn</span> <span class="p">(</span><span class="n">state</span><span class="p">)</span> <span class="o">-&gt;</span>
-    <span class="no">IO</span><span class="o">.</span><span class="n">puts</span> <span class="sd">"</span><span class="s2">I Got called: </span><span class="si">#{</span><span class="n">state</span><span class="si">}</span><span class="s2">"</span>
+    <span class="no">IO</span><span class="o">.</span><span class="n">puts</span> <span class="s2">"I Got called: </span><span class="si">#{</span><span class="n">state</span><span class="si">}</span><span class="s2">"</span>
 <span class="k">end</span><span class="p">)</span>
 
-<span class="no">Store</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="p">%{</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">INCREMENT"</span><span class="p">})</span>
+<span class="no">Store</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="p">%{</span><span class="ss">type:</span> <span class="s2">"INCREMENT"</span><span class="p">})</span>
 <span class="c1"># Should log "I got called: 1"</span>
 
 <span class="no">Store</span><span class="o">.</span><span class="n">remove_subscriber</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="n">subscriber_ref</span><span class="p">)</span>
-<span class="no">Store</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="p">%{</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">INCREMENT"</span><span class="p">})</span>
+<span class="no">Store</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="p">%{</span><span class="ss">type:</span> <span class="s2">"INCREMENT"</span><span class="p">})</span>
 <span class="c1"># Should log nothing"</span>
 </pre></td></tr></tbody></table></code></pre></div>
 <p>We swapped out a few things. This is Elixir so we&rsquo;re passing in a reference to the <code>Store</code> pid on every invocation. We also changed how we unsubscribe from a store, returning a reference value instead of a function that magically calls in the right scope. Also, we pass the current state to the subscribers on every call. This looks great, but how do we build it?</p>
@@ -163,7 +163,7 @@ Let&rsquo;s start by implementing the <code>get_state</code> function on a <code
 19
 20
 </pre></td><td class="rouge-code"><pre><span class="k">defmodule</span> <span class="no">Store</span> <span class="k">do</span>
-  <span class="nv">@initializer_action</span> <span class="p">%{</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">@@INIT"</span><span class="p">}</span>
+  <span class="nv">@initializer_action</span> <span class="p">%{</span><span class="ss">type:</span> <span class="s2">"@@INIT"</span><span class="p">}</span>
 
   <span class="k">def</span> <span class="n">start_link</span><span class="p">(</span><span class="n">reducer</span><span class="p">,</span> <span class="n">initial_state</span> <span class="p">\\</span> <span class="no">nil</span><span class="p">)</span> <span class="k">do</span>
     <span class="no">GenServer</span><span class="o">.</span><span class="n">start_link</span><span class="p">(</span><span class="bp">__MODULE__</span><span class="p">,</span> <span class="p">[</span><span class="n">reducer</span><span class="p">,</span> <span class="n">initial_state</span><span class="p">])</span>
@@ -205,8 +205,8 @@ Let&rsquo;s start by implementing the <code>get_state</code> function on a <code
 
 <span class="k">defmodule</span> <span class="no">CountReducer</span> <span class="k">do</span>
   <span class="nv">@behaviour</span> <span class="no">Reducer</span>
-  <span class="k">def</span> <span class="n">reduce</span><span class="p">(</span><span class="no">nil</span><span class="p">,</span> <span class="n">action</span><span class="p">),</span> <span class="k">do</span><span class="p">:</span> <span class="n">reduce</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="n">action</span><span class="p">)</span>
-  <span class="k">def</span> <span class="n">reduce</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="p">%{</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">INCREMENT"</span><span class="p">}),</span> <span class="k">do</span><span class="p">:</span> <span class="n">state</span> <span class="o">+</span> <span class="m">1</span>
+  <span class="k">def</span> <span class="n">reduce</span><span class="p">(</span><span class="no">nil</span><span class="p">,</span> <span class="n">action</span><span class="p">),</span> <span class="k">do</span><span class="p">:</span> <span class="n">reduce</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">action</span><span class="p">)</span>
+  <span class="k">def</span> <span class="n">reduce</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="p">%{</span><span class="ss">type:</span> <span class="s2">"INCREMENT"</span><span class="p">}),</span> <span class="k">do</span><span class="p">:</span> <span class="n">state</span> <span class="o">+</span> <span class="mi">1</span>
   <span class="k">def</span> <span class="n">reduce</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">_</span><span class="p">),</span> <span class="k">do</span><span class="p">:</span> <span class="n">state</span>
 <span class="k">end</span>
 </pre></td></tr></tbody></table></code></pre></div>
@@ -219,7 +219,7 @@ Let&rsquo;s start by implementing the <code>get_state</code> function on a <code
 2
 3
 4
-</pre></td><td class="rouge-code"><pre><span class="n">c</span> <span class="sd">"</span><span class="s2">e_dux.exs"</span>
+</pre></td><td class="rouge-code"><pre><span class="n">c</span> <span class="s2">"e_dux.exs"</span>
 
 <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">store</span><span class="p">}</span> <span class="o">=</span> <span class="no">Store</span><span class="o">.</span><span class="n">start_link</span><span class="p">(</span><span class="no">CountReducer</span><span class="p">)</span>
 <span class="no">Store</span><span class="o">.</span><span class="n">get_state</span><span class="p">(</span><span class="n">store</span><span class="p">)</span> <span class="c1"># =&gt; 0</span>
@@ -257,11 +257,11 @@ Let&rsquo;s start by implementing the <code>get_state</code> function on a <code
 4
 5
 6
-</pre></td><td class="rouge-code"><pre><span class="n">c</span> <span class="sd">"</span><span class="s2">e_dux.exs"</span>
+</pre></td><td class="rouge-code"><pre><span class="n">c</span> <span class="s2">"e_dux.exs"</span>
 
 <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">store</span><span class="p">}</span> <span class="o">=</span> <span class="no">Store</span><span class="o">.</span><span class="n">start_link</span><span class="p">(</span><span class="no">CountReducer</span><span class="p">)</span>
 <span class="no">Store</span><span class="o">.</span><span class="n">get_state</span><span class="p">(</span><span class="n">store</span><span class="p">)</span> <span class="c1"># =&gt; 0</span>
-<span class="no">Store</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="p">%{</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">INCREMENT"</span><span class="p">})</span>
+<span class="no">Store</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="p">%{</span><span class="ss">type:</span> <span class="s2">"INCREMENT"</span><span class="p">})</span>
 <span class="no">Store</span><span class="o">.</span><span class="n">get_state</span><span class="p">(</span><span class="n">store</span><span class="p">)</span> <span class="c1"># =&gt; 1</span>
 </pre></td></tr></tbody></table></code></pre></div>
 <p>WOOT! Got some <code>INCREMENT</code> action! Let&rsquo;s move on to adding subscribers and notifying them.</p>
@@ -284,14 +284,14 @@ Let&rsquo;s start by implementing the <code>get_state</code> function on a <code
 </pre></td><td class="rouge-code"><pre><span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">store</span><span class="p">}</span> <span class="o">=</span> <span class="no">Store</span><span class="o">.</span><span class="n">start_link</span><span class="p">(</span><span class="no">CountReducer</span><span class="p">)</span>
 
 <span class="n">subscriber_ref</span> <span class="o">=</span> <span class="no">Store</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="k">fn</span> <span class="p">(</span><span class="n">state</span><span class="p">)</span> <span class="o">-&gt;</span>
-    <span class="no">IO</span><span class="o">.</span><span class="n">puts</span> <span class="sd">"</span><span class="s2">I Got called: </span><span class="si">#{</span><span class="n">state</span><span class="si">}</span><span class="s2">"</span>
+    <span class="no">IO</span><span class="o">.</span><span class="n">puts</span> <span class="s2">"I Got called: </span><span class="si">#{</span><span class="n">state</span><span class="si">}</span><span class="s2">"</span>
 <span class="k">end</span><span class="p">)</span>
 
-<span class="no">Store</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="p">%{</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">INCREMENT"</span><span class="p">})</span>
+<span class="no">Store</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="p">%{</span><span class="ss">type:</span> <span class="s2">"INCREMENT"</span><span class="p">})</span>
 <span class="c1"># Should log "I got called: 1"</span>
 
 <span class="no">Store</span><span class="o">.</span><span class="n">remove_subscriber</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="n">subscriber_ref</span><span class="p">)</span>
-<span class="no">Store</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="p">%{</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">INCREMENT"</span><span class="p">})</span>
+<span class="no">Store</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="p">%{</span><span class="ss">type:</span> <span class="s2">"INCREMENT"</span><span class="p">})</span>
 <span class="c1"># Should log nothing"</span>
 </pre></td></tr></tbody></table></code></pre></div>
 <p>We want a <code>dispatch</code> to notify our existing subscribers after we&rsquo;ve updated our state. We&rsquo;ll also have our <code>store</code> track its subscribers. We&rsquo;ll be updating <code>init/1</code>, as well as adding <code>subscribe/2</code> and <code>remove_subscriber/2</code></p>
@@ -376,14 +376,14 @@ Let&rsquo;s start by implementing the <code>get_state</code> function on a <code
 </pre></td><td class="rouge-code"><pre><span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">store</span><span class="p">}</span> <span class="o">=</span> <span class="no">Store</span><span class="o">.</span><span class="n">start_link</span><span class="p">(</span><span class="no">CountReducer</span><span class="p">)</span>
 
 <span class="n">subscriber_ref</span> <span class="o">=</span> <span class="no">Store</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="k">fn</span> <span class="p">(</span><span class="n">state</span><span class="p">)</span> <span class="o">-&gt;</span>
-    <span class="no">IO</span><span class="o">.</span><span class="n">puts</span> <span class="sd">"</span><span class="s2">I Got called: </span><span class="si">#{</span><span class="n">state</span><span class="si">}</span><span class="s2">"</span>
+    <span class="no">IO</span><span class="o">.</span><span class="n">puts</span> <span class="s2">"I Got called: </span><span class="si">#{</span><span class="n">state</span><span class="si">}</span><span class="s2">"</span>
 <span class="k">end</span><span class="p">)</span>
 
-<span class="no">Store</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="p">%{</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">INCREMENT"</span><span class="p">})</span>
+<span class="no">Store</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="p">%{</span><span class="ss">type:</span> <span class="s2">"INCREMENT"</span><span class="p">})</span>
 <span class="c1"># Should log "I got called: 1"</span>
 
 <span class="no">Store</span><span class="o">.</span><span class="n">remove_subscriber</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="n">subscriber_ref</span><span class="p">)</span>
-<span class="no">Store</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="p">%{</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">INCREMENT"</span><span class="p">})</span>
+<span class="no">Store</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="p">%{</span><span class="ss">type:</span> <span class="s2">"INCREMENT"</span><span class="p">})</span>
 <span class="c1"># Should log nothing"</span>
 </pre></td></tr></tbody></table></code></pre></div>
 <h2>Combined Reducers</h2>
@@ -405,7 +405,7 @@ Let&rsquo;s start by implementing the <code>get_state</code> function on a <code
 
 <span class="kd">const</span> <span class="nx">store</span> <span class="o">=</span> <span class="nx">createStore</span><span class="p">(</span><span class="nx">rootReducer</span><span class="p">)</span>
 <span class="nx">store</span><span class="p">.</span><span class="nx">getState</span><span class="p">()</span> <span class="c1">// {count: 0, square: 2} // default to 2 so we can get some good squaring action</span>
-<span class="nx">store</span><span class="p">.</span><span class="nx">dispatch</span><span class="p">({</span><span class="na">type</span><span class="p">:</span> <span class="s2">"INCREMENT"</span><span class="p">})</span>
+<span class="nx">store</span><span class="p">.</span><span class="nx">dispatch</span><span class="p">({</span><span class="na">type</span><span class="p">:</span> <span class="dl">"</span><span class="s2">INCREMENT</span><span class="dl">"</span><span class="p">})</span>
 <span class="nx">store</span><span class="p">.</span><span class="nx">getState</span><span class="p">()</span> <span class="c1">// {count: 1, square: 4}</span>
 </pre></td></tr></tbody></table></code></pre></div>
 <p>Internally all a combined reducer is is a reducer that delegates to other reducers. More naive code:</p>
@@ -449,7 +449,7 @@ Let&rsquo;s start by implementing the <code>get_state</code> function on a <code
 
 <span class="kd">const</span> <span class="nx">countReducer</span> <span class="o">=</span> <span class="p">(</span><span class="nx">state</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nx">action</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
   <span class="k">switch</span> <span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">case</span> <span class="s2">"INCREMENT"</span><span class="p">:</span>
+    <span class="k">case</span> <span class="dl">"</span><span class="s2">INCREMENT</span><span class="dl">"</span><span class="p">:</span>
       <span class="k">return</span> <span class="nx">state</span> <span class="o">+</span> <span class="mi">1</span>
     <span class="na">default</span><span class="p">:</span>
       <span class="k">return</span> <span class="nx">state</span>
@@ -458,7 +458,7 @@ Let&rsquo;s start by implementing the <code>get_state</code> function on a <code
 
 <span class="kd">const</span> <span class="nx">squareReducer</span> <span class="o">=</span> <span class="p">(</span><span class="nx">state</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="nx">action</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
   <span class="k">switch</span> <span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">case</span> <span class="s2">"INCREMENT"</span><span class="p">:</span>
+    <span class="k">case</span> <span class="dl">"</span><span class="s2">INCREMENT</span><span class="dl">"</span><span class="p">:</span>
       <span class="k">return</span> <span class="nx">state</span> <span class="o">*</span> <span class="nx">state</span>
     <span class="na">default</span><span class="p">:</span>
       <span class="k">return</span> <span class="nx">state</span>
@@ -466,7 +466,7 @@ Let&rsquo;s start by implementing the <code>get_state</code> function on a <code
 <span class="p">}</span>
 
 <span class="kd">const</span> <span class="nx">rootReducer</span> <span class="o">=</span> <span class="nx">combineReducers</span><span class="p">({</span><span class="na">count</span><span class="p">:</span> <span class="nx">countReducer</span><span class="p">,</span> <span class="na">square</span><span class="p">:</span> <span class="nx">squareReducer</span><span class="p">})</span>
-<span class="nx">rootReducer</span><span class="p">({</span><span class="na">count</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="na">square</span><span class="p">:</span> <span class="mi">2</span><span class="p">},</span> <span class="p">{</span><span class="na">type</span><span class="p">:</span> <span class="s2">"INCREMENT"</span><span class="p">})</span> <span class="c1">// {count: 1, square: 4}</span>
+<span class="nx">rootReducer</span><span class="p">({</span><span class="na">count</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="na">square</span><span class="p">:</span> <span class="mi">2</span><span class="p">},</span> <span class="p">{</span><span class="na">type</span><span class="p">:</span> <span class="dl">"</span><span class="s2">INCREMENT</span><span class="dl">"</span><span class="p">})</span> <span class="c1">// {count: 1, square: 4}</span>
 </pre></td></tr></tbody></table></code></pre></div>
 <p>Here we return a function that when called with a state and action will delegate portions of the state to specific reducers. Pretty nice! But something wicked lies in this code. When our reducer dispatches, it can only delegate to one reducer at a time, even though their state is completely isolated. This would be a perfect time for some concurrency! Let&rsquo;s look at how we can handle this in Elixir.</p>
 
@@ -547,7 +547,7 @@ Let&rsquo;s start by implementing the <code>get_state</code> function on a <code
         <span class="p">{</span><span class="n">state_name</span><span class="p">,</span> <span class="n">reducer</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="n">state_name</span><span class="p">],</span> <span class="n">action</span><span class="p">)}</span>
       <span class="k">end</span><span class="p">)</span>
     <span class="k">end</span>
-    <span class="o">|&gt;</span> <span class="no">Enum</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="o">&amp;</span><span class="no">Task</span><span class="o">.</span><span class="n">await</span><span class="o">/</span><span class="m">1</span><span class="p">)</span>
+    <span class="o">|&gt;</span> <span class="no">Enum</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="o">&amp;</span><span class="no">Task</span><span class="o">.</span><span class="n">await</span><span class="o">/</span><span class="mi">1</span><span class="p">)</span>
     <span class="o">|&gt;</span> <span class="no">Enum</span><span class="o">.</span><span class="n">into</span><span class="p">(%{})</span>
   <span class="k">end</span>
 <span class="k">end</span>
@@ -565,10 +565,10 @@ Let&rsquo;s start by implementing the <code>get_state</code> function on a <code
 8
 </pre></td><td class="rouge-code"><pre><span class="k">defmodule</span> <span class="no">SquareReducer</span> <span class="k">do</span>
   <span class="nv">@behaviour</span> <span class="no">Reducer</span>
-  <span class="k">def</span> <span class="n">reduce</span><span class="p">(</span><span class="no">nil</span><span class="p">,</span> <span class="n">action</span><span class="p">),</span> <span class="k">do</span><span class="p">:</span> <span class="n">reduce</span><span class="p">(</span><span class="m">2</span><span class="p">,</span> <span class="n">action</span><span class="p">)</span>
+  <span class="k">def</span> <span class="n">reduce</span><span class="p">(</span><span class="no">nil</span><span class="p">,</span> <span class="n">action</span><span class="p">),</span> <span class="k">do</span><span class="p">:</span> <span class="n">reduce</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">action</span><span class="p">)</span>
   <span class="k">def</span> <span class="n">reduce</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">),</span> <span class="k">do</span><span class="p">:</span> <span class="n">do_reduce</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">)</span>
 
-  <span class="k">defp</span> <span class="n">do_reduce</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="p">%{</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">INCREMENT"</span><span class="p">}),</span> <span class="k">do</span><span class="p">:</span> <span class="n">state</span> <span class="o">*</span> <span class="m">1</span>
+  <span class="k">defp</span> <span class="n">do_reduce</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="p">%{</span><span class="ss">type:</span> <span class="s2">"INCREMENT"</span><span class="p">}),</span> <span class="k">do</span><span class="p">:</span> <span class="n">state</span> <span class="o">*</span> <span class="mi">1</span>
   <span class="k">defp</span> <span class="n">do_reduce</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">_</span><span class="p">),</span> <span class="k">do</span><span class="p">:</span> <span class="n">state</span>
 <span class="k">end</span>
 </pre></td></tr></tbody></table></code></pre></div>
@@ -579,7 +579,7 @@ Let&rsquo;s start by implementing the <code>get_state</code> function on a <code
 4
 </pre></td><td class="rouge-code"><pre><span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">store</span><span class="p">}</span> <span class="o">=</span> <span class="no">Store</span><span class="o">.</span><span class="n">start_link</span><span class="p">(%{</span><span class="ss">count:</span> <span class="no">CountReducer</span><span class="p">,</span> <span class="ss">square:</span> <span class="no">SquareReducer</span><span class="p">})</span>
 
-<span class="no">Store</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="p">%{</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">INCREMENT"</span><span class="p">})</span>
+<span class="no">Store</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="p">%{</span><span class="ss">type:</span> <span class="s2">"INCREMENT"</span><span class="p">})</span>
 <span class="no">Store</span><span class="o">.</span><span class="n">get_state</span><span class="p">(</span><span class="n">store</span><span class="p">)</span>
 </pre></td></tr></tbody></table></code></pre></div>
 <p>SO COOL!!!</p>

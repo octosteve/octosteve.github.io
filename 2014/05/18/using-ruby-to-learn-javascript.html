@@ -87,7 +87,7 @@ Both are:</p>
 5
 6
 </pre></td><td class="rouge-code"><pre><span class="kd">var</span> <span class="nx">varTest</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
-  <span class="s1">'use strict'</span><span class="p">;</span>
+  <span class="dl">'</span><span class="s1">use strict</span><span class="dl">'</span><span class="p">;</span>
   <span class="kd">var</span> <span class="nx">totallyFine</span> <span class="o">=</span> <span class="mi">17</span><span class="p">;</span>
   <span class="nx">ohMy</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>
 <span class="p">}</span>
@@ -141,7 +141,7 @@ JavaScript also uses camelCase for its variables, vs Ruby&rsquo;s snake case.</p
   <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
 <span class="p">};</span>
 
-<span class="kd">var</span> <span class="nx">bob</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Student</span><span class="p">(</span><span class="s2">"Bob"</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">bob</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Student</span><span class="p">(</span><span class="dl">"</span><span class="s2">Bob</span><span class="dl">"</span><span class="p">);</span>
 <span class="nx">bob</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span> <span class="c1">// "Bob"</span>
 </pre></td></tr></tbody></table></code></pre></div>
 <p>The Constructor Function can take arguments like any other function.</p>
@@ -168,16 +168,16 @@ JavaScript also uses camelCase for its variables, vs Ruby&rsquo;s snake case.</p
 <span class="p">};</span>
 
 <span class="nx">Student</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">grade</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
-  <span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">==</span> <span class="s2">"Steven"</span><span class="p">){</span>
-    <span class="k">return</span> <span class="s2">"A"</span><span class="p">;</span>
+  <span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">==</span> <span class="dl">"</span><span class="s2">Steven</span><span class="dl">"</span><span class="p">){</span>
+    <span class="k">return</span> <span class="dl">"</span><span class="s2">A</span><span class="dl">"</span><span class="p">;</span>
   <span class="p">}</span><span class="k">else</span><span class="p">{</span>
-    <span class="k">return</span> <span class="s2">"F"</span><span class="p">;</span>
+    <span class="k">return</span> <span class="dl">"</span><span class="s2">F</span><span class="dl">"</span><span class="p">;</span>
   <span class="p">}</span>
 <span class="p">};</span>
 
-<span class="kd">var</span> <span class="nx">bob</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Student</span><span class="p">(</span><span class="s2">"Bob"</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">bob</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Student</span><span class="p">(</span><span class="dl">"</span><span class="s2">Bob</span><span class="dl">"</span><span class="p">);</span>
 <span class="nx">bob</span><span class="p">.</span><span class="nx">grade</span><span class="p">()</span> <span class="c1">// "F" sorry Crouton</span>
-<span class="kd">var</span> <span class="nx">steven</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Student</span><span class="p">(</span><span class="s2">"Steven"</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">steven</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Student</span><span class="p">(</span><span class="dl">"</span><span class="s2">Steven</span><span class="dl">"</span><span class="p">);</span>
 <span class="nx">steven</span><span class="p">.</span><span class="nx">grade</span><span class="p">()</span> <span class="c1">// "A" obviously</span>
 </pre></td></tr></tbody></table></code></pre></div>
 <p>Inside the Constructor Function and prototype methods you have access to this mysterious <code>this</code> thing. A new <code>this</code> is created whenever you call a function with the <code>new</code> keyword. By convention, Constructor Functions start with a capital letter.</p>
@@ -188,7 +188,7 @@ JavaScript also uses camelCase for its variables, vs Ruby&rsquo;s snake case.</p
 5
 6
 </pre></td><td class="rouge-code"><pre><span class="kd">var</span> <span class="nx">ThisOrThat</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">thang</span> <span class="o">=</span> <span class="s2">"This thang"</span><span class="p">;</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">thang</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">This thang</span><span class="dl">"</span><span class="p">;</span>
 <span class="p">}</span>
 
 <span class="kd">var</span> <span class="nx">thisThing</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ThisOrThat</span><span class="p">();</span>
@@ -205,9 +205,9 @@ JavaScript also uses camelCase for its variables, vs Ruby&rsquo;s snake case.</p
 8
 9
 </pre></td><td class="rouge-code"><pre><span class="kd">var</span> <span class="nx">myObject</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="na">value1</span><span class="p">:</span> <span class="s2">"I'm a value"</span><span class="p">,</span>
+  <span class="na">value1</span><span class="p">:</span> <span class="dl">"</span><span class="s2">I'm a value</span><span class="dl">"</span><span class="p">,</span>
   <span class="na">action</span><span class="p">:</span> <span class="kd">function</span><span class="p">(){</span>
-    <span class="k">return</span> <span class="s2">"Live Action! "</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">value1</span> <span class="p">;</span>
+    <span class="k">return</span> <span class="dl">"</span><span class="s2">Live Action! </span><span class="dl">"</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">value1</span> <span class="p">;</span>
   <span class="p">}</span>
 <span class="p">}</span>
 
@@ -273,7 +273,7 @@ JavaScript also uses camelCase for its variables, vs Ruby&rsquo;s snake case.</p
 2
 3
 </pre></td><td class="rouge-code"><pre><span class="kd">var</span> <span class="nx">myObject</span> <span class="o">=</span> <span class="p">{};</span>
-<span class="nx">myObject</span><span class="p">.</span><span class="nx">value1</span> <span class="o">=</span> <span class="s2">"I'm a value"</span><span class="p">;</span>
+<span class="nx">myObject</span><span class="p">.</span><span class="nx">value1</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">I'm a value</span><span class="dl">"</span><span class="p">;</span>
 <span class="nx">myObject</span><span class="p">.</span><span class="nx">value1</span><span class="p">;</span>
 </pre></td></tr></tbody></table></code></pre></div>
 <p>In Ruby, it would break.</p>
@@ -313,12 +313,12 @@ JavaScript also uses camelCase for its variables, vs Ruby&rsquo;s snake case.</p
 8
 </pre></td><td class="rouge-code"><pre><span class="kd">var</span> <span class="nx">poppaFunction</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">poppa</span><span class="p">){</span>
   <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">){</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'Hello, '</span> <span class="o">+</span> <span class="nx">poppa</span> <span class="o">+</span> <span class="s2">"! "</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">);</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">Hello, </span><span class="dl">'</span> <span class="o">+</span> <span class="nx">poppa</span> <span class="o">+</span> <span class="dl">"</span><span class="s2">! </span><span class="dl">"</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">);</span>
   <span class="p">}</span>
 <span class="p">}</span>
 
-<span class="kd">var</span> <span class="nx">babyFunction</span> <span class="o">=</span> <span class="nx">poppaFunction</span><span class="p">(</span><span class="s2">"Big Papa"</span><span class="p">);</span>
-<span class="nx">babyFunction</span><span class="p">(</span><span class="s2">"Have a great night!"</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">babyFunction</span> <span class="o">=</span> <span class="nx">poppaFunction</span><span class="p">(</span><span class="dl">"</span><span class="s2">Big Papa</span><span class="dl">"</span><span class="p">);</span>
+<span class="nx">babyFunction</span><span class="p">(</span><span class="dl">"</span><span class="s2">Have a great night!</span><span class="dl">"</span><span class="p">);</span>
 </pre></td></tr></tbody></table></code></pre></div>
 <p>and the same in Ruby</p>
 <div class="highlight"><pre class="highlight ruby"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
@@ -388,7 +388,7 @@ JavaScript also uses camelCase for its variables, vs Ruby&rsquo;s snake case.</p
 7
 8
 </pre></td><td class="rouge-code"><pre><span class="kd">var</span> <span class="nx">myFunction</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="s2">"A value"</span><span class="p">;</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">A value</span><span class="dl">"</span><span class="p">;</span>
   <span class="k">return</span> <span class="k">this</span>
 <span class="p">};</span>
 
@@ -407,8 +407,8 @@ JavaScript also uses camelCase for its variables, vs Ruby&rsquo;s snake case.</p
 6
 7
 </pre></td><td class="rouge-code"><pre><span class="kd">var</span> <span class="nx">myFunction</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
-  <span class="s1">'use strict'</span><span class="p">;</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="s2">"A value"</span><span class="p">;</span>
+  <span class="dl">'</span><span class="s1">use strict</span><span class="dl">'</span><span class="p">;</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">A value</span><span class="dl">"</span><span class="p">;</span>
   <span class="k">return</span> <span class="k">this</span>
 <span class="p">};</span>
 
@@ -527,9 +527,9 @@ JavaScript also uses camelCase for its variables, vs Ruby&rsquo;s snake case.</p
 2
 3
 4
-</pre></td><td class="rouge-code"><pre><span class="mi">0</span> <span class="o">==</span> <span class="s1">''</span> <span class="c1">// true</span>
-<span class="kc">false</span> <span class="o">==</span> <span class="s1">'false'</span> <span class="c1">// false</span>
-<span class="kc">false</span> <span class="o">==</span> <span class="s1">'0'</span> <span class="c1">// true</span>
+</pre></td><td class="rouge-code"><pre><span class="mi">0</span> <span class="o">==</span> <span class="dl">''</span> <span class="c1">// true</span>
+<span class="kc">false</span> <span class="o">==</span> <span class="dl">'</span><span class="s1">false</span><span class="dl">'</span> <span class="c1">// false</span>
+<span class="kc">false</span> <span class="o">==</span> <span class="dl">'</span><span class="s1">0</span><span class="dl">'</span> <span class="c1">// true</span>
 <span class="kc">null</span> <span class="o">==</span> <span class="kc">undefined</span> <span class="c1">// true</span>
 </pre></td></tr></tbody></table></code></pre></div>
 <p><a href="https://www.destroyallsoftware.com/talks/wat">Wat</a>. The <code>==</code> in JavaScript tries to coerce or convert the things being compared to be the same type, which might sound helpful, but it&rsquo;s not. Use <code>===</code> and <code>!==</code> to ensure you&rsquo;re comparing type and value.</p>
@@ -537,9 +537,9 @@ JavaScript also uses camelCase for its variables, vs Ruby&rsquo;s snake case.</p
 2
 3
 4
-</pre></td><td class="rouge-code"><pre><span class="mi">0</span> <span class="o">===</span> <span class="s1">''</span> <span class="c1">// false</span>
-<span class="kc">false</span> <span class="o">===</span> <span class="s1">'false'</span> <span class="c1">// false</span>
-<span class="kc">false</span> <span class="o">===</span> <span class="s1">'0'</span> <span class="c1">// false</span>
+</pre></td><td class="rouge-code"><pre><span class="mi">0</span> <span class="o">===</span> <span class="dl">''</span> <span class="c1">// false</span>
+<span class="kc">false</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">false</span><span class="dl">'</span> <span class="c1">// false</span>
+<span class="kc">false</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">0</span><span class="dl">'</span> <span class="c1">// false</span>
 <span class="kc">null</span> <span class="o">===</span> <span class="kc">undefined</span> <span class="c1">// false as it should be!</span>
 </pre></td></tr></tbody></table></code></pre></div>
 <p>Learning your first programming language is hard. I hope I&rsquo;ve shown you that learning your second one, isn&rsquo;t that bad.</p>

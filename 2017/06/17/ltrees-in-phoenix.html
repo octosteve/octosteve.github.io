@@ -88,11 +88,11 @@ mix ecto.create
 7
 8
 </pre></td><td class="rouge-code"><pre><span class="c1">#...</span>
-<span class="n">scope</span> <span class="sd">"</span><span class="s2">/"</span><span class="p">,</span> <span class="no">ArticleTrackerHd</span><span class="o">.</span><span class="no">Web</span> <span class="k">do</span>
+<span class="n">scope</span> <span class="s2">"/"</span><span class="p">,</span> <span class="no">ArticleTrackerHd</span><span class="o">.</span><span class="no">Web</span> <span class="k">do</span>
   <span class="n">pipe_through</span> <span class="ss">:browser</span> <span class="c1"># Use the default browser stack</span>
 
-  <span class="n">get</span> <span class="sd">"</span><span class="s2">/"</span><span class="p">,</span> <span class="no">PageController</span><span class="p">,</span> <span class="ss">:index</span>
-  <span class="n">resources</span> <span class="sd">"</span><span class="s2">/articles"</span><span class="p">,</span> <span class="no">ArticleController</span> <span class="c1"># &lt;- New line</span>
+  <span class="n">get</span> <span class="s2">"/"</span><span class="p">,</span> <span class="no">PageController</span><span class="p">,</span> <span class="ss">:index</span>
+  <span class="n">resources</span> <span class="s2">"/articles"</span><span class="p">,</span> <span class="no">ArticleController</span> <span class="c1"># &lt;- New line</span>
 <span class="k">end</span>
 <span class="c1">#...</span>
 </pre></td></tr></tbody></table></code></pre></div>
@@ -120,7 +120,7 @@ mix ecto.create
   <span class="kn">use</span> <span class="no">Ecto</span><span class="o">.</span><span class="no">Migration</span>
 
   <span class="k">def</span> <span class="n">change</span> <span class="k">do</span>
-    <span class="n">execute</span> <span class="sd">"</span><span class="s2">CREATE EXTENSION ltree"</span> <span class="c1"># Enables Ltree action</span>
+    <span class="n">execute</span> <span class="s2">"CREATE EXTENSION ltree"</span> <span class="c1"># Enables Ltree action</span>
 
     <span class="n">create</span> <span class="n">table</span><span class="p">(</span><span class="ss">:content_management_articles</span><span class="p">)</span> <span class="k">do</span>
       <span class="n">add</span> <span class="ss">:title</span><span class="p">,</span> <span class="ss">:string</span>
@@ -129,7 +129,7 @@ mix ecto.create
 
       <span class="n">timestamps</span>
     <span class="k">end</span>
-    <span class="n">create</span> <span class="n">index</span><span class="p">(</span><span class="ss">:content_management_articles</span><span class="p">,</span> <span class="p">[</span><span class="ss">:categories</span><span class="p">],</span> <span class="ss">using:</span> <span class="sd">"</span><span class="s2">GIST"</span><span class="p">)</span> <span class="c1"># &lt;- Add indexing for fast lookups</span>
+    <span class="n">create</span> <span class="n">index</span><span class="p">(</span><span class="ss">:content_management_articles</span><span class="p">,</span> <span class="p">[</span><span class="ss">:categories</span><span class="p">],</span> <span class="ss">using:</span> <span class="s2">"GIST"</span><span class="p">)</span> <span class="c1"># &lt;- Add indexing for fast lookups</span>
 
   <span class="k">end</span>
 <span class="k">end</span>
@@ -187,26 +187,26 @@ iex(4)&gt; Repo.insert!(article)
     <span class="no">Keyword</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">opts</span><span class="p">,</span> <span class="ss">:decode_copy</span><span class="p">,</span> <span class="ss">:copy</span><span class="p">)</span>
   <span class="k">end</span>
 
-  <span class="k">def</span> <span class="n">matching</span><span class="p">(</span><span class="n">_state</span><span class="p">),</span> <span class="k">do</span><span class="p">:</span> <span class="p">[</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">ltree"</span><span class="p">]</span>
+  <span class="k">def</span> <span class="n">matching</span><span class="p">(</span><span class="n">_state</span><span class="p">),</span> <span class="k">do</span><span class="p">:</span> <span class="p">[</span><span class="ss">type:</span> <span class="s2">"ltree"</span><span class="p">]</span>
 
   <span class="k">def</span> <span class="n">format</span><span class="p">(</span><span class="n">_state</span><span class="p">),</span> <span class="k">do</span><span class="p">:</span> <span class="ss">:text</span>
 
   <span class="k">def</span> <span class="n">encode</span><span class="p">(</span><span class="n">_state</span><span class="p">)</span> <span class="k">do</span>
     <span class="kn">quote</span> <span class="k">do</span>
       <span class="n">bin</span> <span class="ow">when</span> <span class="n">is_binary</span><span class="p">(</span><span class="n">bin</span><span class="p">)</span> <span class="o">-&gt;</span>
-        <span class="p">[</span><span class="o">&lt;&lt;</span><span class="n">byte_size</span><span class="p">(</span><span class="n">bin</span><span class="p">)</span> <span class="p">::</span> <span class="n">signed</span><span class="o">-</span><span class="n">size</span><span class="p">(</span><span class="m">32</span><span class="p">)</span><span class="o">&gt;&gt;</span> <span class="o">|</span> <span class="n">bin</span><span class="p">]</span>
+        <span class="p">[</span><span class="o">&lt;&lt;</span><span class="n">byte_size</span><span class="p">(</span><span class="n">bin</span><span class="p">)</span> <span class="p">::</span> <span class="n">signed</span><span class="o">-</span><span class="n">size</span><span class="p">(</span><span class="mi">32</span><span class="p">)</span><span class="o">&gt;&gt;</span> <span class="o">|</span> <span class="n">bin</span><span class="p">]</span>
     <span class="k">end</span>
   <span class="k">end</span>
 
   <span class="k">def</span> <span class="n">decode</span><span class="p">(</span><span class="ss">:reference</span><span class="p">)</span> <span class="k">do</span>
     <span class="kn">quote</span> <span class="k">do</span>
-      <span class="o">&lt;&lt;</span><span class="n">len</span><span class="p">::</span><span class="n">signed</span><span class="o">-</span><span class="n">size</span><span class="p">(</span><span class="m">32</span><span class="p">),</span> <span class="n">bin</span><span class="p">::</span><span class="n">binary</span><span class="o">-</span><span class="n">size</span><span class="p">(</span><span class="n">len</span><span class="p">)</span><span class="o">&gt;&gt;</span> <span class="o">-&gt;</span>
+      <span class="o">&lt;&lt;</span><span class="n">len</span><span class="p">::</span><span class="n">signed</span><span class="o">-</span><span class="n">size</span><span class="p">(</span><span class="mi">32</span><span class="p">),</span> <span class="n">bin</span><span class="p">::</span><span class="n">binary</span><span class="o">-</span><span class="n">size</span><span class="p">(</span><span class="n">len</span><span class="p">)</span><span class="o">&gt;&gt;</span> <span class="o">-&gt;</span>
         <span class="n">bin</span>
     <span class="k">end</span>
   <span class="k">end</span>
   <span class="k">def</span> <span class="n">decode</span><span class="p">(</span><span class="ss">:copy</span><span class="p">)</span> <span class="k">do</span>
     <span class="kn">quote</span> <span class="k">do</span>
-      <span class="o">&lt;&lt;</span><span class="n">len</span><span class="p">::</span><span class="n">signed</span><span class="o">-</span><span class="n">size</span><span class="p">(</span><span class="m">32</span><span class="p">),</span> <span class="n">bin</span><span class="p">::</span><span class="n">binary</span><span class="o">-</span><span class="n">size</span><span class="p">(</span><span class="n">len</span><span class="p">)</span><span class="o">&gt;&gt;</span> <span class="o">-&gt;</span>
+      <span class="o">&lt;&lt;</span><span class="n">len</span><span class="p">::</span><span class="n">signed</span><span class="o">-</span><span class="n">size</span><span class="p">(</span><span class="mi">32</span><span class="p">),</span> <span class="n">bin</span><span class="p">::</span><span class="n">binary</span><span class="o">-</span><span class="n">size</span><span class="p">(</span><span class="n">len</span><span class="p">)</span><span class="o">&gt;&gt;</span> <span class="o">-&gt;</span>
         <span class="ss">:binary</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">bin</span><span class="p">)</span>
     <span class="k">end</span>
   <span class="k">end</span>
@@ -226,11 +226,11 @@ Format has 2 possible return values &ldquo;text&rdquo;, and &ldquo;binary&rdquo;
 8
 </pre></td><td class="rouge-code"><pre><span class="n">config</span> <span class="ss">:article_tracker_hd</span><span class="p">,</span> <span class="no">ArticleTrackerHd</span><span class="o">.</span><span class="no">Repo</span><span class="p">,</span>
   <span class="ss">adapter:</span> <span class="no">Ecto</span><span class="o">.</span><span class="no">Adapters</span><span class="o">.</span><span class="no">Postgres</span><span class="p">,</span>
-  <span class="ss">username:</span> <span class="sd">"</span><span class="s2">postgres"</span><span class="p">,</span>
-  <span class="ss">password:</span> <span class="sd">"</span><span class="s2">postgres"</span><span class="p">,</span>
-  <span class="ss">database:</span> <span class="sd">"</span><span class="s2">article_tracker_hd_dev"</span><span class="p">,</span>
-  <span class="ss">hostname:</span> <span class="sd">"</span><span class="s2">localhost"</span><span class="p">,</span>
-  <span class="ss">pool_size:</span> <span class="m">10</span><span class="p">,</span>
+  <span class="ss">username:</span> <span class="s2">"postgres"</span><span class="p">,</span>
+  <span class="ss">password:</span> <span class="s2">"postgres"</span><span class="p">,</span>
+  <span class="ss">database:</span> <span class="s2">"article_tracker_hd_dev"</span><span class="p">,</span>
+  <span class="ss">hostname:</span> <span class="s2">"localhost"</span><span class="p">,</span>
+  <span class="ss">pool_size:</span> <span class="mi">10</span><span class="p">,</span>
   <span class="ss">types:</span> <span class="no">ArticleTrackerHd</span><span class="o">.</span><span class="no">Postgrex</span><span class="o">.</span><span class="no">Types</span>
 </pre></td></tr></tbody></table></code></pre></div>
 <p>Create <code>lib/postgrex/types.ex</code> and add this line.</p>
@@ -354,26 +354,26 @@ iex(18)&gt; Repo.all(query)
     <span class="no">Keyword</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">opts</span><span class="p">,</span> <span class="ss">:decode_copy</span><span class="p">,</span> <span class="ss">:copy</span><span class="p">)</span>
   <span class="k">end</span>
 
-  <span class="k">def</span> <span class="n">matching</span><span class="p">(</span><span class="n">_state</span><span class="p">),</span> <span class="k">do</span><span class="p">:</span> <span class="p">[</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">lquery"</span><span class="p">]</span>
+  <span class="k">def</span> <span class="n">matching</span><span class="p">(</span><span class="n">_state</span><span class="p">),</span> <span class="k">do</span><span class="p">:</span> <span class="p">[</span><span class="ss">type:</span> <span class="s2">"lquery"</span><span class="p">]</span>
 
   <span class="k">def</span> <span class="n">format</span><span class="p">(</span><span class="n">_state</span><span class="p">),</span> <span class="k">do</span><span class="p">:</span> <span class="ss">:text</span>
 
   <span class="k">def</span> <span class="n">encode</span><span class="p">(</span><span class="n">_state</span><span class="p">)</span> <span class="k">do</span>
     <span class="kn">quote</span> <span class="k">do</span>
       <span class="n">bin</span> <span class="ow">when</span> <span class="n">is_binary</span><span class="p">(</span><span class="n">bin</span><span class="p">)</span> <span class="o">-&gt;</span>
-        <span class="p">[</span><span class="o">&lt;&lt;</span><span class="n">byte_size</span><span class="p">(</span><span class="n">bin</span><span class="p">)</span> <span class="p">::</span> <span class="n">signed</span><span class="o">-</span><span class="n">size</span><span class="p">(</span><span class="m">32</span><span class="p">)</span><span class="o">&gt;&gt;</span> <span class="o">|</span> <span class="n">bin</span><span class="p">]</span>
+        <span class="p">[</span><span class="o">&lt;&lt;</span><span class="n">byte_size</span><span class="p">(</span><span class="n">bin</span><span class="p">)</span> <span class="p">::</span> <span class="n">signed</span><span class="o">-</span><span class="n">size</span><span class="p">(</span><span class="mi">32</span><span class="p">)</span><span class="o">&gt;&gt;</span> <span class="o">|</span> <span class="n">bin</span><span class="p">]</span>
     <span class="k">end</span>
   <span class="k">end</span>
 
   <span class="k">def</span> <span class="n">decode</span><span class="p">(</span><span class="ss">:reference</span><span class="p">)</span> <span class="k">do</span>
     <span class="kn">quote</span> <span class="k">do</span>
-      <span class="o">&lt;&lt;</span><span class="n">len</span><span class="p">::</span><span class="n">signed</span><span class="o">-</span><span class="n">size</span><span class="p">(</span><span class="m">32</span><span class="p">),</span> <span class="n">bin</span><span class="p">::</span><span class="n">binary</span><span class="o">-</span><span class="n">size</span><span class="p">(</span><span class="n">len</span><span class="p">)</span><span class="o">&gt;&gt;</span> <span class="o">-&gt;</span>
+      <span class="o">&lt;&lt;</span><span class="n">len</span><span class="p">::</span><span class="n">signed</span><span class="o">-</span><span class="n">size</span><span class="p">(</span><span class="mi">32</span><span class="p">),</span> <span class="n">bin</span><span class="p">::</span><span class="n">binary</span><span class="o">-</span><span class="n">size</span><span class="p">(</span><span class="n">len</span><span class="p">)</span><span class="o">&gt;&gt;</span> <span class="o">-&gt;</span>
         <span class="n">bin</span>
     <span class="k">end</span>
   <span class="k">end</span>
   <span class="k">def</span> <span class="n">decode</span><span class="p">(</span><span class="ss">:copy</span><span class="p">)</span> <span class="k">do</span>
     <span class="kn">quote</span> <span class="k">do</span>
-      <span class="o">&lt;&lt;</span><span class="n">len</span><span class="p">::</span><span class="n">signed</span><span class="o">-</span><span class="n">size</span><span class="p">(</span><span class="m">32</span><span class="p">),</span> <span class="n">bin</span><span class="p">::</span><span class="n">binary</span><span class="o">-</span><span class="n">size</span><span class="p">(</span><span class="n">len</span><span class="p">)</span><span class="o">&gt;&gt;</span> <span class="o">-&gt;</span>
+      <span class="o">&lt;&lt;</span><span class="n">len</span><span class="p">::</span><span class="n">signed</span><span class="o">-</span><span class="n">size</span><span class="p">(</span><span class="mi">32</span><span class="p">),</span> <span class="n">bin</span><span class="p">::</span><span class="n">binary</span><span class="o">-</span><span class="n">size</span><span class="p">(</span><span class="n">len</span><span class="p">)</span><span class="o">&gt;&gt;</span> <span class="o">-&gt;</span>
         <span class="ss">:binary</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">bin</span><span class="p">)</span>
     <span class="k">end</span>
   <span class="k">end</span>

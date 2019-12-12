@@ -50,7 +50,7 @@ This post will be broken up into 3 sections.</p>
 2
 3
 </pre></td><td class="rouge-code"><pre><span class="nb">cd </span>assets
-npm install <span class="nt">--save</span> xterm
+npm <span class="nb">install</span> <span class="nt">--save</span> xterm
 <span class="nb">cd</span> ..
 </pre></td></tr></tbody></table></code></pre></div>
 <p>Then edit <code>brunch-config.js</code> to load the styles for the plugin. Without this&hellip; it&rsquo;s just a <code>textarea</code>.</p>
@@ -68,7 +68,7 @@ npm install <span class="nt">--save</span> xterm
 <span class="nx">npm</span><span class="p">:</span> <span class="p">{</span>
  <span class="nl">enabled</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
  <span class="nx">styles</span><span class="p">:</span> <span class="p">{</span>
-   <span class="s2">"xterm"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"dist/xterm.css"</span><span class="p">],</span>
+   <span class="dl">"</span><span class="s2">xterm</span><span class="dl">"</span><span class="p">:</span> <span class="p">[</span><span class="dl">"</span><span class="s2">dist/xterm.css</span><span class="dl">"</span><span class="p">],</span>
  <span class="p">}</span>
 <span class="p">}</span>
 <span class="c1">// ...</span>
@@ -88,14 +88,14 @@ npm install <span class="nt">--save</span> xterm
 6
 7
 8
-</pre></td><td class="rouge-code"><pre><span class="k">import</span> <span class="nx">Terminal</span> <span class="k">from</span> <span class="s1">'xterm'</span>
+</pre></td><td class="rouge-code"><pre><span class="k">import</span> <span class="nx">Terminal</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">xterm</span><span class="dl">'</span>
 
 <span class="kd">let</span> <span class="nx">term</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Terminal</span><span class="p">({</span>
   <span class="na">cursorBlink</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
 <span class="p">})</span>
 
-<span class="nx">term</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">'terminal-container'</span><span class="p">))</span>
-<span class="nx">term</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">'data'</span><span class="p">,</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">))</span>
+<span class="nx">term</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">terminal-container</span><span class="dl">'</span><span class="p">))</span>
+<span class="nx">term</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="dl">'</span><span class="s1">data</span><span class="dl">'</span><span class="p">,</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">))</span>
 </pre></td></tr></tbody></table></code></pre></div>
 <p>That last bit will console.log every character you type. Off to a great start!</p>
 
@@ -109,7 +109,7 @@ npm install <span class="nt">--save</span> xterm
 </pre></td></tr></tbody></table></code></pre></div>
 <p>Follow the instructions and but instead, add this to <code>user_socket.ex</code></p>
 <div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
-</pre></td><td class="rouge-code"><pre><span class="n">channel</span> <span class="sd">"</span><span class="s2">terminal:*"</span><span class="p">,</span> <span class="no">TerminalInYourBrowser</span><span class="o">.</span><span class="no">Web</span><span class="o">.</span><span class="no">TerminalChannel</span>
+</pre></td><td class="rouge-code"><pre><span class="n">channel</span> <span class="s2">"terminal:*"</span><span class="p">,</span> <span class="no">TerminalInYourBrowser</span><span class="o">.</span><span class="no">Web</span><span class="o">.</span><span class="no">TerminalChannel</span>
 </pre></td></tr></tbody></table></code></pre></div>
 <p>Let&rsquo;s clean up the <code>TerminalChannel</code> module to only include a <code>join/3</code> function allows anyone to join.</p>
 <div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
@@ -122,7 +122,7 @@ npm install <span class="nt">--save</span> xterm
 </pre></td><td class="rouge-code"><pre><span class="k">defmodule</span> <span class="no">TerminalInYourBrowser</span><span class="o">.</span><span class="no">Web</span><span class="o">.</span><span class="no">TerminalChannel</span> <span class="k">do</span>
   <span class="kn">use</span> <span class="no">TerminalInYourBrowser</span><span class="o">.</span><span class="no">Web</span><span class="p">,</span> <span class="ss">:channel</span>
 
-  <span class="k">def</span> <span class="n">join</span><span class="p">(</span><span class="sd">"</span><span class="s2">terminal:"</span> <span class="o">&lt;&gt;</span> <span class="n">id</span><span class="p">,</span> <span class="n">payload</span><span class="p">,</span> <span class="n">socket</span><span class="p">)</span> <span class="k">do</span>
+  <span class="k">def</span> <span class="n">join</span><span class="p">(</span><span class="s2">"terminal:"</span> <span class="o">&lt;&gt;</span> <span class="n">id</span><span class="p">,</span> <span class="n">payload</span><span class="p">,</span> <span class="n">socket</span><span class="p">)</span> <span class="k">do</span>
     <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">socket</span><span class="p">}</span>
   <span class="k">end</span>
 <span class="k">end</span>
@@ -134,8 +134,8 @@ npm install <span class="nt">--save</span> xterm
 2
 3
 4
-</pre></td><td class="rouge-code"><pre><span class="k">def</span> <span class="n">handle_in</span><span class="p">(</span><span class="sd">"</span><span class="s2">input"</span><span class="p">,</span> <span class="p">%{</span><span class="sd">"</span><span class="s2">input"</span> <span class="o">=&gt;</span> <span class="n">input</span><span class="p">},</span> <span class="n">socket</span><span class="p">)</span> <span class="k">do</span>
-  <span class="n">push</span><span class="p">(</span><span class="n">socket</span><span class="p">,</span> <span class="sd">"</span><span class="s2">output"</span><span class="p">,</span> <span class="p">%{</span><span class="ss">output:</span> <span class="n">input</span><span class="p">})</span>
+</pre></td><td class="rouge-code"><pre><span class="k">def</span> <span class="n">handle_in</span><span class="p">(</span><span class="s2">"input"</span><span class="p">,</span> <span class="p">%{</span><span class="s2">"input"</span> <span class="o">=&gt;</span> <span class="n">input</span><span class="p">},</span> <span class="n">socket</span><span class="p">)</span> <span class="k">do</span>
+  <span class="n">push</span><span class="p">(</span><span class="n">socket</span><span class="p">,</span> <span class="s2">"output"</span><span class="p">,</span> <span class="p">%{</span><span class="ss">output:</span> <span class="n">input</span><span class="p">})</span>
   <span class="p">{</span><span class="ss">:noreply</span><span class="p">,</span> <span class="n">socket</span><span class="p">}</span>
 <span class="k">end</span>
 </pre></td></tr></tbody></table></code></pre></div>
@@ -149,9 +149,9 @@ npm install <span class="nt">--save</span> xterm
 5
 6
 7
-</pre></td><td class="rouge-code"><pre><span class="k">import</span> <span class="p">{</span><span class="nx">Socket</span><span class="p">}</span> <span class="k">from</span> <span class="s2">"phoenix"</span>                  
+</pre></td><td class="rouge-code"><pre><span class="k">import</span> <span class="p">{</span><span class="nx">Socket</span><span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">phoenix</span><span class="dl">"</span>                  
 
-<span class="kd">let</span> <span class="nx">socket</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Socket</span><span class="p">(</span><span class="s2">"/socket"</span><span class="p">,</span> <span class="p">{})</span>
+<span class="kd">let</span> <span class="nx">socket</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Socket</span><span class="p">(</span><span class="dl">"</span><span class="s2">/socket</span><span class="dl">"</span><span class="p">,</span> <span class="p">{})</span>
 
 <span class="nx">socket</span><span class="p">.</span><span class="nx">connect</span><span class="p">()</span>                                
 
@@ -162,9 +162,9 @@ npm install <span class="nt">--save</span> xterm
 2
 3
 4
-</pre></td><td class="rouge-code"><pre><span class="k">import</span> <span class="nx">socket</span> <span class="k">from</span> <span class="s1">'./socket'</span>                   
+</pre></td><td class="rouge-code"><pre><span class="k">import</span> <span class="nx">socket</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./socket</span><span class="dl">'</span>                   
 
-<span class="kd">let</span> <span class="nx">channel</span> <span class="o">=</span> <span class="nx">socket</span><span class="p">.</span><span class="nx">channel</span><span class="p">(</span><span class="s2">"terminal:1"</span><span class="p">,</span> <span class="p">{})</span>
+<span class="kd">let</span> <span class="nx">channel</span> <span class="o">=</span> <span class="nx">socket</span><span class="p">.</span><span class="nx">channel</span><span class="p">(</span><span class="dl">"</span><span class="s2">terminal:1</span><span class="dl">"</span><span class="p">,</span> <span class="p">{})</span>
 <span class="nx">channel</span><span class="p">.</span><span class="nx">join</span><span class="p">()</span>
 </pre></td></tr></tbody></table></code></pre></div>
 <p>With this, we&rsquo;re connected to our server! Refresh the page and checkout the logs.</p>
@@ -194,20 +194,20 @@ npm install <span class="nt">--save</span> xterm
 12
 13
 14
-</pre></td><td class="rouge-code"><pre><span class="k">import</span> <span class="nx">Terminal</span> <span class="k">from</span> <span class="s1">'xterm'</span>
-<span class="k">import</span> <span class="nx">socket</span> <span class="k">from</span> <span class="s1">'./socket'</span>
+</pre></td><td class="rouge-code"><pre><span class="k">import</span> <span class="nx">Terminal</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">xterm</span><span class="dl">'</span>
+<span class="k">import</span> <span class="nx">socket</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./socket</span><span class="dl">'</span>
 
-<span class="kd">let</span> <span class="nx">channel</span> <span class="o">=</span> <span class="nx">socket</span><span class="p">.</span><span class="nx">channel</span><span class="p">(</span><span class="s2">"terminal:1"</span><span class="p">,</span> <span class="p">{})</span>
+<span class="kd">let</span> <span class="nx">channel</span> <span class="o">=</span> <span class="nx">socket</span><span class="p">.</span><span class="nx">channel</span><span class="p">(</span><span class="dl">"</span><span class="s2">terminal:1</span><span class="dl">"</span><span class="p">,</span> <span class="p">{})</span>
 <span class="nx">channel</span><span class="p">.</span><span class="nx">join</span><span class="p">()</span>
-<span class="nx">channel</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">'output'</span><span class="p">,</span> <span class="p">({</span><span class="nx">output</span><span class="p">})</span> <span class="o">=&gt;</span> <span class="nx">term</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="nx">output</span><span class="p">))</span> <span class="c1">// From the Channel</span>
+<span class="nx">channel</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="dl">'</span><span class="s1">output</span><span class="dl">'</span><span class="p">,</span> <span class="p">({</span><span class="nx">output</span><span class="p">})</span> <span class="o">=&gt;</span> <span class="nx">term</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="nx">output</span><span class="p">))</span> <span class="c1">// From the Channel</span>
 
 <span class="kd">let</span> <span class="nx">term</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Terminal</span><span class="p">({</span>
   <span class="na">cursorBlink</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
 <span class="p">})</span>
 
 
-<span class="nx">term</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">'terminal-container'</span><span class="p">))</span>
-<span class="nx">term</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">'data'</span><span class="p">,</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">channel</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="s1">'input'</span><span class="p">,</span> <span class="p">{</span><span class="na">input</span><span class="p">:</span> <span class="nx">data</span><span class="p">}))</span> <span class="c1">// To the Channel</span>
+<span class="nx">term</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">terminal-container</span><span class="dl">'</span><span class="p">))</span>
+<span class="nx">term</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="dl">'</span><span class="s1">data</span><span class="dl">'</span><span class="p">,</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">channel</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="dl">'</span><span class="s1">input</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span><span class="na">input</span><span class="p">:</span> <span class="nx">data</span><span class="p">}))</span> <span class="c1">// To the Channel</span>
 </pre></td></tr></tbody></table></code></pre></div>
 <p>Lines where we send IO back and forth are marked in comments. Look! Our terminal&hellip; just returns what we typed. Not super exciting. Up next, we&rsquo;ll be delving into the bowels of Unix, and learning how to interact with external processes.</p>
 
@@ -227,17 +227,17 @@ npm install <span class="nt">--save</span> xterm
 11
 12
 13
-</pre></td><td class="rouge-code"><pre><span class="n">iex</span><span class="p">(</span><span class="m">1</span><span class="p">)</span><span class="o">&gt;</span> <span class="n">port</span> <span class="o">=</span> <span class="no">Port</span><span class="o">.</span><span class="n">open</span><span class="p">({</span><span class="ss">:spawn</span><span class="p">,</span> <span class="sd">"</span><span class="s2">$SHELL"</span><span class="p">},</span> <span class="p">[])</span>
+</pre></td><td class="rouge-code"><pre><span class="n">iex</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">&gt;</span> <span class="n">port</span> <span class="o">=</span> <span class="no">Port</span><span class="o">.</span><span class="n">open</span><span class="p">({</span><span class="ss">:spawn</span><span class="p">,</span> <span class="s2">"$SHELL"</span><span class="p">},</span> <span class="p">[])</span>
 <span class="c1">#Port&lt;0.1355&gt;</span>
-<span class="n">iex</span><span class="p">(</span><span class="m">2</span><span class="p">)</span><span class="o">&gt;</span> <span class="no">Port</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="n">port</span><span class="p">,</span> <span class="sd">"</span><span class="s2">ls\n"</span><span class="p">)</span>              
+<span class="n">iex</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">&gt;</span> <span class="no">Port</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="n">port</span><span class="p">,</span> <span class="s2">"ls</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>              
 <span class="no">true</span>
-<span class="n">iex</span><span class="p">(</span><span class="m">3</span><span class="p">)</span><span class="o">&gt;</span> <span class="n">flush</span><span class="p">()</span>
+<span class="n">iex</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">&gt;</span> <span class="n">flush</span><span class="p">()</span>
 <span class="p">{</span><span class="c1">#Port&lt;0.1355&gt;,</span>
- <span class="p">{</span><span class="ss">:data</span><span class="p">,</span> <span class="s1">'assets\n_build\nconfig\ndeps\nlib\nmix.exs\nmix.lock\npriv\nREADME.md\ntest\n'</span><span class="p">}}</span>
+ <span class="p">{</span><span class="ss">:data</span><span class="p">,</span> <span class="s1">'assets</span><span class="se">\n</span><span class="s1">_build</span><span class="se">\n</span><span class="s1">config</span><span class="se">\n</span><span class="s1">deps</span><span class="se">\n</span><span class="s1">lib</span><span class="se">\n</span><span class="s1">mix.exs</span><span class="se">\n</span><span class="s1">mix.lock</span><span class="se">\n</span><span class="s1">priv</span><span class="se">\n</span><span class="s1">README.md</span><span class="se">\n</span><span class="s1">test</span><span class="se">\n</span><span class="s1">'</span><span class="p">}}</span>
 <span class="ss">:ok</span>
-<span class="n">iex</span><span class="p">(</span><span class="m">4</span><span class="p">)</span><span class="o">&gt;</span> <span class="no">Port</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="n">port</span><span class="p">,</span> <span class="sd">"</span><span class="s2">l"</span><span class="p">)</span>   
+<span class="n">iex</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="o">&gt;</span> <span class="no">Port</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="n">port</span><span class="p">,</span> <span class="s2">"l"</span><span class="p">)</span>   
 <span class="no">true</span>
-<span class="n">iex</span><span class="p">(</span><span class="m">5</span><span class="p">)</span><span class="o">&gt;</span> <span class="n">flush</span><span class="p">()</span>
+<span class="n">iex</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">&gt;</span> <span class="n">flush</span><span class="p">()</span>
 <span class="c1"># no echo</span>
 <span class="ss">:ok</span>
 </pre></td></tr></tbody></table></code></pre></div>
@@ -255,7 +255,7 @@ npm install <span class="nt">--save</span> xterm
 9
 10
 11
-</pre></td><td class="rouge-code"><pre><span class="nv">$ </span>stty <span class="nt">--all</span>
+</pre></td><td class="rouge-code"><pre><span class="nv">$ </span><span class="nb">stty</span> <span class="nt">--all</span>
 speed 38400 baud<span class="p">;</span> rows 23<span class="p">;</span> columns 96<span class="p">;</span> line <span class="o">=</span> 0<span class="p">;</span>
 intr <span class="o">=</span> ^C<span class="p">;</span> quit <span class="o">=</span> ^<span class="se">\;</span> erase <span class="o">=</span> ^?<span class="p">;</span> <span class="nb">kill</span> <span class="o">=</span> ^U<span class="p">;</span> eof <span class="o">=</span> ^D<span class="p">;</span> eol <span class="o">=</span> M-^?<span class="p">;</span> eol2 <span class="o">=</span> M-^?<span class="p">;</span> swtch <span class="o">=</span> M-^?<span class="p">;</span>
 start <span class="o">=</span> ^Q<span class="p">;</span> stop <span class="o">=</span> ^S<span class="p">;</span> susp <span class="o">=</span> ^Z<span class="p">;</span> rprnt <span class="o">=</span> ^R<span class="p">;</span> werase <span class="o">=</span> ^W<span class="p">;</span> lnext <span class="o">=</span> ^V<span class="p">;</span> discard <span class="o">=</span> ^O<span class="p">;</span>
@@ -273,7 +273,7 @@ isig icanon iexten <span class="nb">echo </span>echoe echok <span class="nt">-ec
 3
 </pre></td><td class="rouge-code"><pre>iex<span class="o">(</span>6<span class="o">)&gt;</span> Port.command<span class="o">(</span>port, <span class="s2">"stty echo</span><span class="se">\n</span><span class="s2">"</span><span class="o">)</span>
 <span class="nb">true
-</span>iex<span class="o">(</span>7<span class="o">)&gt;</span> stty: <span class="s1">'standard input'</span>: Inappropriate ioctl <span class="k">for </span>device
+</span>iex<span class="o">(</span>7<span class="o">)&gt;</span> <span class="nb">stty</span>: <span class="s1">'standard input'</span>: Inappropriate ioctl <span class="k">for </span>device
 </pre></td></tr></tbody></table></code></pre></div>
 <p>Womp. This error is essentially telling us our port isn&rsquo;t a pty. To get around this, we&rsquo;re going to bring in a library that &lsquo;provides significantly better control over OS processes than built-in <code>erlang:open_port/3</code> command&rsquo;. It also has pty support. The library we&rsquo;re talking about is <code>erlexec</code>.</p>
 
@@ -293,13 +293,13 @@ isig icanon iexten <span class="nb">echo </span>echoe echok <span class="nt">-ec
 9
 10
 </pre></td><td class="rouge-code"><pre><span class="k">defp</span> <span class="n">deps</span> <span class="k">do</span>
-  <span class="p">[{</span><span class="ss">:phoenix</span><span class="p">,</span> <span class="sd">"</span><span class="s2">~&gt; 1.3.0-rc"</span><span class="p">},</span>
-   <span class="p">{</span><span class="ss">:phoenix_pubsub</span><span class="p">,</span> <span class="sd">"</span><span class="s2">~&gt; 1.0"</span><span class="p">},</span>
-   <span class="p">{</span><span class="ss">:phoenix_html</span><span class="p">,</span> <span class="sd">"</span><span class="s2">~&gt; 2.6"</span><span class="p">},</span>
-   <span class="p">{</span><span class="ss">:phoenix_live_reload</span><span class="p">,</span> <span class="sd">"</span><span class="s2">~&gt; 1.0"</span><span class="p">,</span> <span class="ss">only:</span> <span class="ss">:dev</span><span class="p">},</span>
-   <span class="p">{</span><span class="ss">:gettext</span><span class="p">,</span> <span class="sd">"</span><span class="s2">~&gt; 0.11"</span><span class="p">},</span>
-   <span class="p">{</span><span class="ss">:cowboy</span><span class="p">,</span> <span class="sd">"</span><span class="s2">~&gt; 1.0"</span><span class="p">},</span>
-   <span class="p">{</span><span class="ss">:erlexec</span><span class="p">,</span> <span class="sd">"</span><span class="s2">~&gt; 1.7"</span><span class="p">},</span>
+  <span class="p">[{</span><span class="ss">:phoenix</span><span class="p">,</span> <span class="s2">"~&gt; 1.3.0-rc"</span><span class="p">},</span>
+   <span class="p">{</span><span class="ss">:phoenix_pubsub</span><span class="p">,</span> <span class="s2">"~&gt; 1.0"</span><span class="p">},</span>
+   <span class="p">{</span><span class="ss">:phoenix_html</span><span class="p">,</span> <span class="s2">"~&gt; 2.6"</span><span class="p">},</span>
+   <span class="p">{</span><span class="ss">:phoenix_live_reload</span><span class="p">,</span> <span class="s2">"~&gt; 1.0"</span><span class="p">,</span> <span class="ss">only:</span> <span class="ss">:dev</span><span class="p">},</span>
+   <span class="p">{</span><span class="ss">:gettext</span><span class="p">,</span> <span class="s2">"~&gt; 0.11"</span><span class="p">},</span>
+   <span class="p">{</span><span class="ss">:cowboy</span><span class="p">,</span> <span class="s2">"~&gt; 1.0"</span><span class="p">},</span>
+   <span class="p">{</span><span class="ss">:erlexec</span><span class="p">,</span> <span class="s2">"~&gt; 1.7"</span><span class="p">},</span>
   <span class="p">]</span>
 <span class="k">end</span>
 </pre></td></tr></tbody></table></code></pre></div>
@@ -312,11 +312,11 @@ isig icanon iexten <span class="nb">echo </span>echoe echok <span class="nt">-ec
 4
 5
 6
-</pre></td><td class="rouge-code"><pre><span class="n">iex</span><span class="p">(</span><span class="m">1</span><span class="p">)</span><span class="o">&gt;</span> <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">pid</span><span class="p">,</span> <span class="n">_os_pid</span><span class="p">}</span> <span class="o">=</span> <span class="ss">:exec</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="s1">'$SHELL'</span><span class="p">,</span> <span class="p">[</span><span class="ss">:stdin</span><span class="p">,</span> <span class="ss">:stdout</span><span class="p">,</span> <span class="ss">:stderr</span><span class="p">,</span> <span class="ss">:pty</span><span class="p">])</span>
-<span class="n">iex</span><span class="p">(</span><span class="m">2</span><span class="p">)</span><span class="o">&gt;</span> <span class="ss">:exec</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="sd">"</span><span class="s2">l"</span><span class="p">)</span>                                                    
-<span class="n">iex</span><span class="p">(</span><span class="m">3</span><span class="p">)</span><span class="o">&gt;</span> <span class="n">flush</span><span class="p">()</span>
-<span class="p">{</span><span class="ss">:stdout</span><span class="p">,</span> <span class="m">10721</span><span class="p">,</span>
- <span class="sd">"</span><span class="s2">\e]0;stevennunez@TashiDor: ~/code/blog_code/terminal_in_your_browser\astevennunez@TashiDor:~/code/blog_code/terminal_in_your_browser$ "</span><span class="p">}</span>
+</pre></td><td class="rouge-code"><pre><span class="n">iex</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">&gt;</span> <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">pid</span><span class="p">,</span> <span class="n">_os_pid</span><span class="p">}</span> <span class="o">=</span> <span class="ss">:exec</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="s1">'$SHELL'</span><span class="p">,</span> <span class="p">[</span><span class="ss">:stdin</span><span class="p">,</span> <span class="ss">:stdout</span><span class="p">,</span> <span class="ss">:stderr</span><span class="p">,</span> <span class="ss">:pty</span><span class="p">])</span>
+<span class="n">iex</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">&gt;</span> <span class="ss">:exec</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="s2">"l"</span><span class="p">)</span>                                                    
+<span class="n">iex</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">&gt;</span> <span class="n">flush</span><span class="p">()</span>
+<span class="p">{</span><span class="ss">:stdout</span><span class="p">,</span> <span class="mi">10721</span><span class="p">,</span>
+ <span class="s2">"</span><span class="se">\e</span><span class="s2">]0;stevennunez@TashiDor: ~/code/blog_code/terminal_in_your_browser</span><span class="se">\a</span><span class="s2">stevennunez@TashiDor:~/code/blog_code/terminal_in_your_browser$ "</span><span class="p">}</span>
 
 </pre></td></tr></tbody></table></code></pre></div>
 <p>We start our default shell with the <code>:stdin</code> option so it accepts input from use via <code>:exec.send/2</code>. <code>:stdout</code> and <code>:stderr</code> make it so the calling process receives output in a tagged tuple starting with <code>:stdout</code> and <code>:stderr</code>.
@@ -329,12 +329,12 @@ Notice that the only message we&rsquo;ve received so far is our terminal prompt.
 4
 5
 6
-</pre></td><td class="rouge-code"><pre><span class="n">iex</span><span class="p">(</span><span class="m">4</span><span class="p">)</span><span class="o">&gt;</span> <span class="ss">:exec</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="sd">"</span><span class="s2">s\n"</span><span class="p">)</span>
-<span class="n">iex</span><span class="p">(</span><span class="m">5</span><span class="p">)</span><span class="o">&gt;</span> <span class="n">flush</span><span class="p">()</span>
-<span class="p">{</span><span class="ss">:stdout</span><span class="p">,</span> <span class="m">10721</span><span class="p">,</span>
- <span class="sd">"</span><span class="s2">\e[0m\e[01;34massets\e[0m  \e[01;34m_build\e[0m  \e[01;34mconfig\e[0m  \e[01;34mdeps\e[0m  \e[01;34mlib\e[0m  mix.exs  mix.lock  \e[01;34mpriv\e[0m  README.md  \e[01;34mtest\e[0m\r\n"</span><span class="p">}</span>
-<span class="p">{</span><span class="ss">:stdout</span><span class="p">,</span> <span class="m">10721</span><span class="p">,</span>
- <span class="sd">"</span><span class="s2">\e]0;stevennunez@TashiDor: ~/code/blog_code/terminal_in_your_browser\astevennunez@TashiDor:~/code/blog_code/terminal_in_your_browser$ "</span><span class="p">}</span>
+</pre></td><td class="rouge-code"><pre><span class="n">iex</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="o">&gt;</span> <span class="ss">:exec</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="s2">"s</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+<span class="n">iex</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">&gt;</span> <span class="n">flush</span><span class="p">()</span>
+<span class="p">{</span><span class="ss">:stdout</span><span class="p">,</span> <span class="mi">10721</span><span class="p">,</span>
+ <span class="s2">"</span><span class="se">\e</span><span class="s2">[0m</span><span class="se">\e</span><span class="s2">[01;34massets</span><span class="se">\e</span><span class="s2">[0m  </span><span class="se">\e</span><span class="s2">[01;34m_build</span><span class="se">\e</span><span class="s2">[0m  </span><span class="se">\e</span><span class="s2">[01;34mconfig</span><span class="se">\e</span><span class="s2">[0m  </span><span class="se">\e</span><span class="s2">[01;34mdeps</span><span class="se">\e</span><span class="s2">[0m  </span><span class="se">\e</span><span class="s2">[01;34mlib</span><span class="se">\e</span><span class="s2">[0m  mix.exs  mix.lock  </span><span class="se">\e</span><span class="s2">[01;34mpriv</span><span class="se">\e</span><span class="s2">[0m  README.md  </span><span class="se">\e</span><span class="s2">[01;34mtest</span><span class="se">\e</span><span class="s2">[0m</span><span class="se">\r\n</span><span class="s2">"</span><span class="p">}</span>
+<span class="p">{</span><span class="ss">:stdout</span><span class="p">,</span> <span class="mi">10721</span><span class="p">,</span>
+ <span class="s2">"</span><span class="se">\e</span><span class="s2">]0;stevennunez@TashiDor: ~/code/blog_code/terminal_in_your_browser</span><span class="se">\a</span><span class="s2">stevennunez@TashiDor:~/code/blog_code/terminal_in_your_browser$ "</span><span class="p">}</span>
 </pre></td></tr></tbody></table></code></pre></div>
 <p>Here we get a file list. The wacky <code>\e[om\e</code> characters are for formatting in the terminal program. All <code>xterm.js</code> compatible!</p>
 
@@ -348,14 +348,14 @@ Notice that the only message we&rsquo;ve received so far is our terminal prompt.
 7
 8
 9
-</pre></td><td class="rouge-code"><pre><span class="n">iex</span><span class="p">(</span><span class="m">6</span><span class="p">)</span><span class="o">&gt;</span> <span class="ss">:exec</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="sd">"</span><span class="s2">stty echo\n"</span><span class="p">)</span>
-<span class="n">iex</span><span class="p">(</span><span class="m">7</span><span class="p">)</span><span class="o">&gt;</span> <span class="ss">:exec</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="sd">"</span><span class="s2">l"</span><span class="p">)</span>          
-<span class="n">iex</span><span class="p">(</span><span class="m">8</span><span class="p">)</span><span class="o">&gt;</span> <span class="ss">:exec</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="sd">"</span><span class="s2">s"</span><span class="p">)</span>
-<span class="n">iex</span><span class="p">(</span><span class="m">9</span><span class="p">)</span><span class="o">&gt;</span> <span class="n">flush</span><span class="p">()</span>
-<span class="p">{</span><span class="ss">:stdout</span><span class="p">,</span> <span class="m">10721</span><span class="p">,</span>
- <span class="sd">"</span><span class="s2">\e]0;stevennunez@TashiDor: ~/code/blog_code/terminal_in_your_browser\astevennunez@TashiDor:~/code/blog_code/terminal_in_your_browser$ "</span><span class="p">}</span>
-<span class="p">{</span><span class="ss">:stdout</span><span class="p">,</span> <span class="m">10721</span><span class="p">,</span> <span class="sd">"</span><span class="s2">l"</span><span class="p">}</span>
-<span class="p">{</span><span class="ss">:stdout</span><span class="p">,</span> <span class="m">10721</span><span class="p">,</span> <span class="sd">"</span><span class="s2">s"</span><span class="p">}</span>
+</pre></td><td class="rouge-code"><pre><span class="n">iex</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span><span class="o">&gt;</span> <span class="ss">:exec</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="s2">"stty echo</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+<span class="n">iex</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span><span class="o">&gt;</span> <span class="ss">:exec</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="s2">"l"</span><span class="p">)</span>          
+<span class="n">iex</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span><span class="o">&gt;</span> <span class="ss">:exec</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="s2">"s"</span><span class="p">)</span>
+<span class="n">iex</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span><span class="o">&gt;</span> <span class="n">flush</span><span class="p">()</span>
+<span class="p">{</span><span class="ss">:stdout</span><span class="p">,</span> <span class="mi">10721</span><span class="p">,</span>
+ <span class="s2">"</span><span class="se">\e</span><span class="s2">]0;stevennunez@TashiDor: ~/code/blog_code/terminal_in_your_browser</span><span class="se">\a</span><span class="s2">stevennunez@TashiDor:~/code/blog_code/terminal_in_your_browser$ "</span><span class="p">}</span>
+<span class="p">{</span><span class="ss">:stdout</span><span class="p">,</span> <span class="mi">10721</span><span class="p">,</span> <span class="s2">"l"</span><span class="p">}</span>
+<span class="p">{</span><span class="ss">:stdout</span><span class="p">,</span> <span class="mi">10721</span><span class="p">,</span> <span class="s2">"s"</span><span class="p">}</span>
 
 </pre></td></tr></tbody></table></code></pre></div>
 <p>ECHO!</p>
@@ -425,7 +425,7 @@ Notice that the only message we&rsquo;ve received so far is our terminal prompt.
   <span class="c1">#... start_link omitted</span>
   <span class="k">def</span> <span class="n">init</span><span class="p">(</span><span class="n">output_pid</span><span class="p">)</span> <span class="k">do</span>
     <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">shell</span><span class="p">,</span> <span class="n">_os_pid</span><span class="p">}</span> <span class="o">=</span> <span class="ss">:exec</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="s1">'$SHELL'</span><span class="p">,</span> <span class="p">[</span><span class="ss">:stdin</span><span class="p">,</span> <span class="ss">:stdout</span><span class="p">,</span> <span class="ss">:stderr</span><span class="p">,</span> <span class="ss">:pty</span><span class="p">])</span>
-    <span class="ss">:exec</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">shell</span><span class="p">,</span> <span class="sd">"</span><span class="s2">stty echo\n"</span><span class="p">)</span>
+    <span class="ss">:exec</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">shell</span><span class="p">,</span> <span class="s2">"stty echo</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="p">%{</span>
       <span class="ss">output_pid:</span> <span class="n">output_pid</span><span class="p">,</span>
@@ -519,18 +519,18 @@ Notice that the only message we&rsquo;ve received so far is our terminal prompt.
 </pre></td><td class="rouge-code"><pre><span class="k">defmodule</span> <span class="no">TerminalInYourBrowser</span><span class="o">.</span><span class="no">Web</span><span class="o">.</span><span class="no">TerminalChannel</span> <span class="k">do</span>
   <span class="kn">use</span> <span class="no">TerminalInYourBrowser</span><span class="o">.</span><span class="no">Web</span><span class="p">,</span> <span class="ss">:channel</span>
 
-  <span class="k">def</span> <span class="n">join</span><span class="p">(</span><span class="sd">"</span><span class="s2">terminal:"</span> <span class="o">&lt;&gt;</span> <span class="n">id</span><span class="p">,</span> <span class="n">payload</span><span class="p">,</span> <span class="n">socket</span><span class="p">)</span> <span class="k">do</span>
+  <span class="k">def</span> <span class="n">join</span><span class="p">(</span><span class="s2">"terminal:"</span> <span class="o">&lt;&gt;</span> <span class="n">id</span><span class="p">,</span> <span class="n">payload</span><span class="p">,</span> <span class="n">socket</span><span class="p">)</span> <span class="k">do</span>
     <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">terminal</span><span class="p">}</span> <span class="o">=</span> <span class="no">Terminal</span><span class="o">.</span><span class="n">start_link</span><span class="p">(</span><span class="n">self</span><span class="p">())</span>
     <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">assign</span><span class="p">(</span><span class="n">socket</span><span class="p">,</span> <span class="ss">:terminal</span><span class="p">,</span> <span class="n">terminal</span><span class="p">)}</span>
   <span class="k">end</span>
 
-  <span class="k">def</span> <span class="n">handle_in</span><span class="p">(</span><span class="sd">"</span><span class="s2">input"</span><span class="p">,</span> <span class="p">%{</span><span class="sd">"</span><span class="s2">input"</span> <span class="o">=&gt;</span> <span class="n">input</span><span class="p">},</span> <span class="n">socket</span><span class="p">)</span> <span class="k">do</span>
+  <span class="k">def</span> <span class="n">handle_in</span><span class="p">(</span><span class="s2">"input"</span><span class="p">,</span> <span class="p">%{</span><span class="s2">"input"</span> <span class="o">=&gt;</span> <span class="n">input</span><span class="p">},</span> <span class="n">socket</span><span class="p">)</span> <span class="k">do</span>
     <span class="no">Terminal</span><span class="o">.</span><span class="n">send_input</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">assigns</span><span class="p">[</span><span class="ss">:terminal</span><span class="p">],</span> <span class="n">input</span><span class="p">)</span>
     <span class="p">{</span><span class="ss">:noreply</span><span class="p">,</span> <span class="n">socket</span><span class="p">}</span>
 <span class="n">u</span> <span class="k">end</span>
 
   <span class="k">def</span> <span class="n">handle_info</span><span class="p">({</span><span class="ss">:output</span><span class="p">,</span> <span class="n">output</span><span class="p">},</span> <span class="n">socket</span><span class="p">)</span> <span class="k">do</span>
-    <span class="n">push</span><span class="p">(</span><span class="n">socket</span><span class="p">,</span> <span class="sd">"</span><span class="s2">output"</span><span class="p">,</span> <span class="p">%{</span><span class="ss">output:</span> <span class="n">output</span><span class="p">})</span>
+    <span class="n">push</span><span class="p">(</span><span class="n">socket</span><span class="p">,</span> <span class="s2">"output"</span><span class="p">,</span> <span class="p">%{</span><span class="ss">output:</span> <span class="n">output</span><span class="p">})</span>
     <span class="p">{</span><span class="ss">:noreply</span><span class="p">,</span> <span class="n">socket</span><span class="p">}</span>
   <span class="k">end</span>
 <span class="k">end</span>

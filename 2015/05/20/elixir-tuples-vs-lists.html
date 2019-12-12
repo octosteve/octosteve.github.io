@@ -32,20 +32,20 @@
 <div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
-</pre></td><td class="rouge-code"><pre><span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="sd">"</span><span class="s2">Steven"</span><span class="p">,</span> <span class="sd">"</span><span class="s2">Kelly"</span><span class="p">,</span> <span class="sd">"</span><span class="s2">Michael"</span><span class="p">]</span>
-<span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="sd">"</span><span class="s2">Telly"</span><span class="p">]</span> <span class="o">++</span> <span class="n">names</span>
+</pre></td><td class="rouge-code"><pre><span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Steven"</span><span class="p">,</span> <span class="s2">"Kelly"</span><span class="p">,</span> <span class="s2">"Michael"</span><span class="p">]</span>
+<span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Telly"</span><span class="p">]</span> <span class="o">++</span> <span class="n">names</span>
 <span class="n">names</span> <span class="c1"># =&gt; ["Telly", "Steven", "Kelly", "Michael"]</span>
 </pre></td></tr></tbody></table></code></pre></div>
 <p>Elixir is giving us a new copy of the array. How it got this might be a bit confusing though. For starters, this is how Elixir stored that original <code>names</code> list.</p>
 <div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
-</pre></td><td class="rouge-code"><pre><span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="sd">"</span><span class="s2">Steven"</span> <span class="o">|</span> <span class="p">[</span><span class="sd">"</span><span class="s2">Kelly"</span> <span class="o">|</span> <span class="p">[</span><span class="sd">"</span><span class="s2">Michael"</span><span class="p">]]]</span>
+</pre></td><td class="rouge-code"><pre><span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Steven"</span> <span class="o">|</span> <span class="p">[</span><span class="s2">"Kelly"</span> <span class="o">|</span> <span class="p">[</span><span class="s2">"Michael"</span><span class="p">]]]</span>
 </pre></td></tr></tbody></table></code></pre></div>
 <p>It stores it as a linked list, with an existing list nested inside of a new list. Elixir has some ways of pattern matching this list by breaking it into the list&rsquo;s <code>head</code> and <code>tail</code>.</p>
 
 <p>The <code>head</code> is the first element, while the <code>tail</code> is&hellip; the rest.</p>
 <div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
-</pre></td><td class="rouge-code"><pre><span class="p">[</span><span class="n">head</span><span class="o">|</span> <span class="n">tail</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="sd">"</span><span class="s2">Steven"</span> <span class="o">|</span> <span class="p">[</span><span class="sd">"</span><span class="s2">Kelly"</span> <span class="o">|</span> <span class="p">[</span><span class="sd">"</span><span class="s2">Michael"</span><span class="o">|</span> <span class="p">[]]]]</span>
+</pre></td><td class="rouge-code"><pre><span class="p">[</span><span class="n">head</span><span class="o">|</span> <span class="n">tail</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Steven"</span> <span class="o">|</span> <span class="p">[</span><span class="s2">"Kelly"</span> <span class="o">|</span> <span class="p">[</span><span class="s2">"Michael"</span><span class="o">|</span> <span class="p">[]]]]</span>
 <span class="n">head</span> <span class="c1">#=&gt; "Steven"</span>
 </pre></td></tr></tbody></table></code></pre></div>
 <p>When we added <code>&quot;Telly&quot;</code> to the list, we were creating a NEW list made up of &ldquo;Telly&rdquo; being the head, and the original list being the tail.</p>
@@ -54,8 +54,8 @@
 3
 4
 5
-</pre></td><td class="rouge-code"><pre><span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="sd">"</span><span class="s2">Steven"</span><span class="p">,</span> <span class="sd">"</span><span class="s2">Kelly"</span><span class="p">,</span> <span class="sd">"</span><span class="s2">Michael"</span><span class="p">]</span>
-<span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="sd">"</span><span class="s2">Telly"</span><span class="p">]</span> <span class="o">++</span> <span class="n">names</span>
+</pre></td><td class="rouge-code"><pre><span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Steven"</span><span class="p">,</span> <span class="s2">"Kelly"</span><span class="p">,</span> <span class="s2">"Michael"</span><span class="p">]</span>
+<span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Telly"</span><span class="p">]</span> <span class="o">++</span> <span class="n">names</span>
 <span class="n">names</span> <span class="c1"># =&gt; ["Telly", "Steven", "Kelly", "Michael"]</span>
 <span class="c1"># or</span>
 <span class="c1"># ["Telly"| ["Steven", "Kelly", "Michael"]]</span>
@@ -69,8 +69,8 @@
 <p>Tuples are Elixir&rsquo;s other way of storing a list of stuff.</p>
 <div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
-</pre></td><td class="rouge-code"><pre><span class="n">names</span> <span class="o">=</span> <span class="p">{</span><span class="sd">"</span><span class="s2">Steven"</span><span class="p">,</span> <span class="sd">"</span><span class="s2">Kelly"</span><span class="p">,</span> <span class="sd">"</span><span class="s2">Michael"</span><span class="p">}</span>
-<span class="n">names</span> <span class="o">=</span> <span class="no">Tuple</span><span class="o">.</span><span class="n">insert_at</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="sd">"</span><span class="s2">Telly"</span><span class="p">)</span> <span class="c1">#=&gt; {"Telly", "Steven", "Kelly", "Michael"}</span>
+</pre></td><td class="rouge-code"><pre><span class="n">names</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"Steven"</span><span class="p">,</span> <span class="s2">"Kelly"</span><span class="p">,</span> <span class="s2">"Michael"</span><span class="p">}</span>
+<span class="n">names</span> <span class="o">=</span> <span class="no">Tuple</span><span class="o">.</span><span class="n">insert_at</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"Telly"</span><span class="p">)</span> <span class="c1">#=&gt; {"Telly", "Steven", "Kelly", "Michael"}</span>
 </pre></td></tr></tbody></table></code></pre></div>
 <h3>So they&rsquo;re the same&hellip;?</h3>
 

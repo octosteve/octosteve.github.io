@@ -44,7 +44,7 @@
 3
 4
 </pre></td><td class="rouge-code"><pre><span class="n">pid</span> <span class="o">=</span> <span class="n">spawn</span><span class="p">(</span><span class="k">fn</span> <span class="o">-&gt;</span>
-  <span class="no">IO</span><span class="o">.</span><span class="n">puts</span><span class="p">(</span><span class="sd">"</span><span class="s2">I run in a different process)"</span><span class="p">)</span>
+  <span class="no">IO</span><span class="o">.</span><span class="n">puts</span><span class="p">(</span><span class="s2">"I run in a different process)"</span><span class="p">)</span>
   <span class="no">IO</span><span class="o">.</span><span class="n">inspect</span><span class="p">(</span><span class="n">self</span><span class="p">)</span>
 <span class="k">end</span><span class="p">)</span>
 </pre></td></tr></tbody></table></code></pre></div>
@@ -89,8 +89,8 @@ Process.alive?(pid) # =&gt; true
 7
 </pre></td><td class="rouge-code"><pre><span class="n">pid</span> <span class="o">=</span> <span class="n">spawn</span><span class="p">(</span><span class="k">fn</span> <span class="o">-&gt;</span>
   <span class="k">receive</span> <span class="k">do</span>
-    <span class="p">{</span><span class="ss">:help</span><span class="p">}</span> <span class="o">-&gt;</span> <span class="no">IO</span><span class="o">.</span><span class="n">puts</span> <span class="sd">"</span><span class="s2">Helping!"</span>
-    <span class="n">_</span> <span class="o">-&gt;</span> <span class="no">IO</span><span class="o">.</span><span class="n">puts</span> <span class="sd">"</span><span class="s2">Don't know what to do with that"</span>
+    <span class="p">{</span><span class="ss">:help</span><span class="p">}</span> <span class="o">-&gt;</span> <span class="no">IO</span><span class="o">.</span><span class="n">puts</span> <span class="s2">"Helping!"</span>
+    <span class="n">_</span> <span class="o">-&gt;</span> <span class="no">IO</span><span class="o">.</span><span class="n">puts</span> <span class="s2">"Don't know what to do with that"</span>
   <span class="k">end</span>
 <span class="k">end</span><span class="p">)</span>
 <span class="n">send</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="ss">:beef</span><span class="p">)</span> <span class="c1"># prints "Don't know what to do with that"</span>
@@ -124,7 +124,7 @@ send(pid, {:help}) # prints &quot;Helping!&quot;
 
 <p>When working with modules, you can spawn processes in a couple of ways. We used <code>MFA</code> which stands for Module/Function/Arguments, but we could have done it this way.</p>
 <div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
-</pre></td><td class="rouge-code"><pre><span class="n">spawn</span><span class="p">(</span><span class="o">&amp;</span><span class="no">Help</span><span class="o">.</span><span class="k">loop</span><span class="o">/</span><span class="m">0</span><span class="p">)</span>
+</pre></td><td class="rouge-code"><pre><span class="n">spawn</span><span class="p">(</span><span class="o">&amp;</span><span class="no">Help</span><span class="o">.</span><span class="k">loop</span><span class="o">/</span><span class="mi">0</span><span class="p">)</span>
 </pre></td></tr></tbody></table></code></pre></div>
 <p>Both work fine.</p>
 
@@ -150,9 +150,9 @@ send(pid, {:help}) # prints &quot;Helping!&quot;
   <span class="k">def</span> <span class="k">loop</span> <span class="k">do</span>
     <span class="k">receive</span> <span class="k">do</span>
       <span class="p">{</span><span class="ss">:help</span><span class="p">,</span> <span class="n">help_seeker</span><span class="p">}</span> <span class="o">-&gt;</span>
-        <span class="n">send</span><span class="p">(</span><span class="n">help_seeker</span><span class="p">,</span> <span class="p">{</span><span class="ss">:reponse</span><span class="p">,</span> <span class="sd">"</span><span class="s2">Helping!"</span><span class="p">})</span>
+        <span class="n">send</span><span class="p">(</span><span class="n">help_seeker</span><span class="p">,</span> <span class="p">{</span><span class="ss">:reponse</span><span class="p">,</span> <span class="s2">"Helping!"</span><span class="p">})</span>
       <span class="n">_</span> <span class="o">-&gt;</span>
-        <span class="no">IO</span><span class="o">.</span><span class="n">puts</span> <span class="sd">"</span><span class="s2">Don't know what to do with that"</span>
+        <span class="no">IO</span><span class="o">.</span><span class="n">puts</span> <span class="s2">"Don't know what to do with that"</span>
     <span class="k">end</span>
     <span class="k">loop</span>
   <span class="k">end</span>

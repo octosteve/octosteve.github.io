@@ -34,7 +34,7 @@
 3
 4
 </pre></td><td class="rouge-code"><pre><span class="c1">// fake</span>
-<span class="nx">Dir</span><span class="p">.</span><span class="nx">watch</span><span class="p">(</span><span class="s1">'configs/'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">changedFile</span><span class="p">){</span>
+<span class="nx">Dir</span><span class="p">.</span><span class="nx">watch</span><span class="p">(</span><span class="dl">'</span><span class="s1">configs/</span><span class="dl">'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">changedFile</span><span class="p">){</span>
   <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">`</span><span class="p">${</span><span class="nx">changedFile</span><span class="p">}</span><span class="s2"> was updated`</span><span class="p">);</span>
 <span class="p">})</span>
 </pre></td></tr></tbody></table></code></pre></div>
@@ -49,13 +49,13 @@
 8
 9
 </pre></td><td class="rouge-code"><pre><span class="c1"># Starting the process</span>
-<span class="ss">:fs</span><span class="o">.</span><span class="n">start_link</span><span class="p">(</span><span class="ss">:my_watcher</span><span class="p">,</span> <span class="no">Path</span><span class="o">.</span><span class="n">absname</span><span class="p">(</span><span class="sd">"</span><span class="s2">config"</span><span class="p">))</span>
+<span class="ss">:fs</span><span class="o">.</span><span class="n">start_link</span><span class="p">(</span><span class="ss">:my_watcher</span><span class="p">,</span> <span class="no">Path</span><span class="o">.</span><span class="n">absname</span><span class="p">(</span><span class="s2">"config"</span><span class="p">))</span>
 <span class="c1"># Subscribing `self` to receive events.</span>
 <span class="ss">:fs</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="ss">:my_watcher</span><span class="p">)</span>
 
 <span class="k">receive</span> <span class="k">do</span>
   <span class="p">{</span><span class="n">_watcher_process</span><span class="p">,</span> <span class="p">{</span><span class="ss">:fs</span><span class="p">,</span> <span class="ss">:file_event</span><span class="p">},</span> <span class="p">{</span><span class="n">changedFile</span><span class="p">,</span> <span class="n">_type</span><span class="p">}}</span> <span class="o">-&gt;</span>
-   <span class="no">IO</span><span class="o">.</span><span class="n">puts</span><span class="p">(</span><span class="sd">"</span><span class="si">#{</span><span class="n">changedFile</span><span class="si">}</span><span class="s2"> was updated"</span><span class="p">)</span>
+   <span class="no">IO</span><span class="o">.</span><span class="n">puts</span><span class="p">(</span><span class="s2">"</span><span class="si">#{</span><span class="n">changedFile</span><span class="si">}</span><span class="s2"> was updated"</span><span class="p">)</span>
 <span class="k">end</span>
 </pre></td></tr></tbody></table></code></pre></div>
 <h2>Getting Started and the FS library</h2>
@@ -72,7 +72,7 @@
 5
 </pre></td><td class="rouge-code"><pre><span class="c1">#...</span>
 <span class="k">defp</span> <span class="n">deps</span> <span class="k">do</span>
-  <span class="p">[{</span><span class="ss">:fs</span><span class="p">,</span> <span class="ss">github:</span> <span class="sd">"</span><span class="s2">synrc/fs"</span><span class="p">}]</span>
+  <span class="p">[{</span><span class="ss">:fs</span><span class="p">,</span> <span class="ss">github:</span> <span class="s2">"synrc/fs"</span><span class="p">}]</span>
 <span class="k">end</span>
 <span class="c1">#...</span>
 </pre></td></tr></tbody></table></code></pre></div>
@@ -92,7 +92,7 @@
 3
 4
 5
-</pre></td><td class="rouge-code"><pre><span class="ss">:fs</span><span class="o">.</span><span class="n">start_link</span><span class="p">(</span><span class="ss">:my_watcher</span><span class="p">,</span> <span class="no">Path</span><span class="o">.</span><span class="n">absname</span><span class="p">(</span><span class="sd">"</span><span class="s2">config"</span><span class="p">))</span>
+</pre></td><td class="rouge-code"><pre><span class="ss">:fs</span><span class="o">.</span><span class="n">start_link</span><span class="p">(</span><span class="ss">:my_watcher</span><span class="p">,</span> <span class="no">Path</span><span class="o">.</span><span class="n">absname</span><span class="p">(</span><span class="s2">"config"</span><span class="p">))</span>
 <span class="ss">:fs</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="ss">:my_watcher</span><span class="p">)</span>
 <span class="n">flush</span>
 <span class="c1"># {#PID&lt;0.129.0&gt;, {:fs, :file_event},</span>
@@ -109,11 +109,11 @@
 4
 5
 6
-</pre></td><td class="rouge-code"><pre><span class="ss">:fs</span><span class="o">.</span><span class="n">start_link</span><span class="p">(</span><span class="ss">:my_watcher</span><span class="p">,</span> <span class="no">Path</span><span class="o">.</span><span class="n">absname</span><span class="p">(</span><span class="sd">"</span><span class="s2">config"</span><span class="p">))</span>
+</pre></td><td class="rouge-code"><pre><span class="ss">:fs</span><span class="o">.</span><span class="n">start_link</span><span class="p">(</span><span class="ss">:my_watcher</span><span class="p">,</span> <span class="no">Path</span><span class="o">.</span><span class="n">absname</span><span class="p">(</span><span class="s2">"config"</span><span class="p">))</span>
 <span class="ss">:fs</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="ss">:my_watcher</span><span class="p">)</span>
 <span class="k">receive</span> <span class="k">do</span>
   <span class="p">{</span><span class="n">_watcher_process</span><span class="p">,</span> <span class="p">{</span><span class="ss">:fs</span><span class="p">,</span> <span class="ss">:file_event</span><span class="p">},</span> <span class="p">{</span><span class="n">changedFile</span><span class="p">,</span> <span class="n">_type</span><span class="p">}}</span> <span class="o">-&gt;</span>
-   <span class="no">IO</span><span class="o">.</span><span class="n">puts</span><span class="p">(</span><span class="sd">"</span><span class="si">#{</span><span class="n">changedFile</span><span class="si">}</span><span class="s2"> was updated"</span><span class="p">)</span>
+   <span class="no">IO</span><span class="o">.</span><span class="n">puts</span><span class="p">(</span><span class="s2">"</span><span class="si">#{</span><span class="n">changedFile</span><span class="si">}</span><span class="s2"> was updated"</span><span class="p">)</span>
 <span class="k">end</span>
 </pre></td></tr></tbody></table></code></pre></div>
 <h3>Conclusion</h3>
