@@ -50,14 +50,17 @@ worry about it. We&rsquo;re going to treat this like regular XML.</p>
 
 <h3>Plug Parsers</h3>
 
-<p>Crack open your <code>endpoint.ex</code> file and you should see something like this:
-<code>elixir
-  plug Plug.Parsers,
-    parsers: [:urlencoded, :multipart, :json],
-    pass: [&quot;*/*&quot;],
-    json_decoder: Phoenix.json_library()
-</code>
-Under the covers, Plug comes with a few modules to handle json, multipart and url encoded requests.
+<p>Crack open your <code>endpoint.ex</code> file and you should see something like this:</p>
+<div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td><td class="rouge-code"><pre>  <span class="n">plug</span> <span class="no">Plug</span><span class="o">.</span><span class="no">Parsers</span><span class="p">,</span>
+    <span class="ss">parsers:</span> <span class="p">[</span><span class="ss">:urlencoded</span><span class="p">,</span> <span class="ss">:multipart</span><span class="p">,</span> <span class="ss">:json</span><span class="p">],</span>
+    <span class="ss">pass:</span> <span class="p">[</span><span class="s2">"*/*"</span><span class="p">],</span>
+    <span class="ss">json_decoder:</span> <span class="no">Phoenix</span><span class="o">.</span><span class="n">json_library</span><span class="p">()</span>
+</pre></td></tr></tbody></table></code></pre></div>
+<p>Under the covers, Plug comes with a few modules to handle json, multipart and url encoded requests.
 You can take a look at the code for <code>urlencoded</code>&lsquo;s parser
 <a href="https://github.com/elixir-plug/plug/blob/65986ad32f9aaae3be50dc80cbdd19b326578da7/lib/plug/parsers/urlencoded.ex">here</a>.
 Every parser needs 2 functions. an <code>init/1</code> function for compiled configuration, and a <code>parse/5</code> function.
@@ -67,19 +70,26 @@ if it <em>can</em> parse this kind of request, or <code>{:next, conn}</code> if 
 <p>One parser that&rsquo;s missing is an XML parser! No worries. We can handle all of our processing of the Outbound Message in the
 parser leaving our controller to code to deal with our nice, cleanly parsed data.</p>
 
-<p>Let&rsquo;s make a new Parser.
-<code>elixir
-defmodule SFDCWebhookParser do
-  def init(opts), do: opts
-  def parse(conn, &quot;text&quot;, &quot;xml&quot;, _headers, opts) do
-    {:ok, body, conn} = Plug.Conn.read_body(conn, opts)
-    notifications = extract_from_webhook(body)
-    {:ok, %{notifications: notifications}, conn}
-  end
-  def parse(conn, _type, _subtype, _headers, _opts), do: {:next, conn}
-end
-</code></p>
-
+<p>Let&rsquo;s make a new Parser.</p>
+<div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre></td><td class="rouge-code"><pre><span class="k">defmodule</span> <span class="no">SFDCWebhookParser</span> <span class="k">do</span>
+  <span class="k">def</span> <span class="n">init</span><span class="p">(</span><span class="n">opts</span><span class="p">),</span> <span class="k">do</span><span class="p">:</span> <span class="n">opts</span>
+  <span class="k">def</span> <span class="n">parse</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="s2">"text"</span><span class="p">,</span> <span class="s2">"xml"</span><span class="p">,</span> <span class="n">_headers</span><span class="p">,</span> <span class="n">opts</span><span class="p">)</span> <span class="k">do</span>
+    <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">body</span><span class="p">,</span> <span class="n">conn</span><span class="p">}</span> <span class="o">=</span> <span class="no">Plug</span><span class="o">.</span><span class="no">Conn</span><span class="o">.</span><span class="n">read_body</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">opts</span><span class="p">)</span>
+    <span class="n">notifications</span> <span class="o">=</span> <span class="n">extract_from_webhook</span><span class="p">(</span><span class="n">body</span><span class="p">)</span>
+    <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="p">%{</span><span class="ss">notifications:</span> <span class="n">notifications</span><span class="p">},</span> <span class="n">conn</span><span class="p">}</span>
+  <span class="k">end</span>
+  <span class="k">def</span> <span class="n">parse</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">_type</span><span class="p">,</span> <span class="n">_subtype</span><span class="p">,</span> <span class="n">_headers</span><span class="p">,</span> <span class="n">_opts</span><span class="p">),</span> <span class="k">do</span><span class="p">:</span> <span class="p">{</span><span class="ss">:next</span><span class="p">,</span> <span class="n">conn</span><span class="p">}</span>
+<span class="k">end</span>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>Here we have a parser that responds to messages with a content type of &ldquo;text/xml&rdquo; since we&rsquo;re getting a SOAP message. 
 We call <code>Plug.Conn.read_body/2</code> in order to load request body. Then we pass it into our (as yet to be written) <code>extract_from_webhook/1</code> function.
 In order to work on that&hellip; we&rsquo;ll need to dive into parsing XML with <a href="https://hexdocs.pm/sweet_xml/SweetXml.html">SweetXml</a>.</p>
@@ -87,32 +97,47 @@ In order to work on that&hellip; we&rsquo;ll need to dive into parsing XML with 
 <h3>SweetXml</h3>
 
 <p>For this next bit, we&rsquo;re going to need to talk about <a href="https://www.w3schools.com/xml/xpath_intro.asp">XPath</a>. XPath is a way of 
-traversing nodes in a tree. Take this HTML for instance:
-<code>elixir
-html = &quot;&quot;&quot;
+traversing nodes in a tree. Take this HTML for instance:</p>
+<div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre></td><td class="rouge-code"><pre><span class="n">html</span> <span class="o">=</span> <span class="sd">"""
 &lt;div&gt;
-  &lt;ul edible=&quot;no&quot;&gt;
+  &lt;ul edible="no"&gt;
     &lt;li&gt;One fish&lt;/li&gt;
     &lt;li&gt;Two Fish&lt;/li&gt;
     &lt;li&gt;Red Fish&lt;/li&gt;
     &lt;li&gt;Blue Fish&lt;/li&gt;
   &lt;/ul&gt;
 &lt;/div&gt;
-&quot;&quot;&quot;
-</code></p>
-
-<p>Now we can use <code>SweetXml</code> to extract out some data from this markup and put in in a map for us.
-<code>elixir
-import SweetXml
-html
-|&gt; xpath(
-~x&quot;//ul&quot;, # From the root, find a ul node
- edible: ~x&quot;@edible&quot;, # From that node, read its `edible` attribute
- items: ~x&quot;./li/text()&quot;l # Also from that node, find any li nodes and return their text. The `l` informs it we want a list back.
-)
-%{edible: &#39;no&#39;, items: [&#39;One fish&#39;, &#39;Two Fish&#39;, &#39;Red Fish&#39;, &#39;Blue Fish&#39;]}
-</code>
-With this, we have enough to get data out of our Webhook.</p>
+"""</span>
+</pre></td></tr></tbody></table></code></pre></div>
+<p>Now we can use <code>SweetXml</code> to extract out some data from this markup and put in in a map for us.</p>
+<div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+</pre></td><td class="rouge-code"><pre><span class="kn">import</span> <span class="no">SweetXml</span>
+<span class="n">html</span>
+<span class="o">|&gt;</span> <span class="n">xpath</span><span class="p">(</span>
+<span class="sx">~x"//ul"</span><span class="p">,</span> <span class="c1"># From the root, find a ul node</span>
+ <span class="ss">edible:</span> <span class="sx">~x"@edible"</span><span class="p">,</span> <span class="c1"># From that node, read its `edible` attribute</span>
+ <span class="ss">items:</span> <span class="sx">~x"./li/text()"</span><span class="n">l</span> <span class="c1"># Also from that node, find any li nodes and return their text. The `l` informs it we want a list back.</span>
+<span class="p">)</span>
+<span class="p">%{</span><span class="ss">edible:</span> <span class="s1">'no'</span><span class="p">,</span> <span class="ss">items:</span> <span class="p">[</span><span class="s1">'One fish'</span><span class="p">,</span> <span class="s1">'Two Fish'</span><span class="p">,</span> <span class="s1">'Red Fish'</span><span class="p">,</span> <span class="s1">'Blue Fish'</span><span class="p">]}</span>
+</pre></td></tr></tbody></table></code></pre></div>
+<p>With this, we have enough to get data out of our Webhook.</p>
 
 <h3>Notification Message</h3>
 
@@ -274,42 +299,72 @@ nodes.</p>
 <span class="p">)</span>
 <span class="k">end</span>
 </pre></td></tr></tbody></table></code></pre></div>
-<p>This will return the following as params:
-<code>elixir
-[
-  %{
-    account_id: &#39;0015w00002BFDeLAAX&#39;,
-    amount: &#39;45000.0&#39;,
-    close_date: &#39;2020-07-11&#39;,
-    contact_id: &#39;0035w000035gg9GAAQ&#39;,
-    created_by_id: &#39;0055w00000BhqR0AAJ&#39;,
-    created_date: &#39;2020-05-08T13:40:22.000Z&#39;,
-    fiscal_quarter: &#39;3&#39;,
-    fiscal_year: &#39;2020&#39;,
-    follow_up: &#39;false&#39;,
-    has_open_activity: &#39;false&#39;,
-    has_opportunity_line_item: &#39;false&#39;,
-    has_overdue_task: &#39;false&#39;,
-    is_closed: &#39;false&#39;,
-    is_deleted: &#39;false&#39;,
-    is_won: &#39;false&#39;,
-    last_modified: &#39;0055w00000BhqR0AAJ&#39;,
-    last_modified_date: &#39;2020-05-09T03:04:32.000Z&#39;,
-    last_reference_date: &#39;2020-05-09T03:06:37.000Z&#39;,
-    last_viewed_date: &#39;2020-05-09T03:06:37.000Z&#39;,
-    lead_source: &#39;External Referral&#39;,
-    message_id: &#39;04l5w00005286hAAAQ&#39;,
-    name: &#39;Backpackers, Inc. (Sample)&#39;,
-    object_id: &#39;0065w000023STAmAAO&#39;,
-    owner_id: &#39;0055w00000BhqR0AAJ&#39;,
-    probability: &#39;80.0&#39;,
-    stage_name: &#39;Negotiation/Review&#39;,
-    system_modstamp: &#39;2020-05-09T03:04:32.000Z&#39;,
-    type: &#39;sf:Opportunity&#39;
-  }
-]
-</code></p>
-
+<p>This will return the following as params:</p>
+<div class="highlight"><pre class="highlight elixir"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+</pre></td><td class="rouge-code"><pre><span class="p">[</span>
+  <span class="p">%{</span>
+    <span class="ss">account_id:</span> <span class="s1">'0015w00002BFDeLAAX'</span><span class="p">,</span>
+    <span class="ss">amount:</span> <span class="s1">'45000.0'</span><span class="p">,</span>
+    <span class="ss">close_date:</span> <span class="s1">'2020-07-11'</span><span class="p">,</span>
+    <span class="ss">contact_id:</span> <span class="s1">'0035w000035gg9GAAQ'</span><span class="p">,</span>
+    <span class="ss">created_by_id:</span> <span class="s1">'0055w00000BhqR0AAJ'</span><span class="p">,</span>
+    <span class="ss">created_date:</span> <span class="s1">'2020-05-08T13:40:22.000Z'</span><span class="p">,</span>
+    <span class="ss">fiscal_quarter:</span> <span class="s1">'3'</span><span class="p">,</span>
+    <span class="ss">fiscal_year:</span> <span class="s1">'2020'</span><span class="p">,</span>
+    <span class="ss">follow_up:</span> <span class="s1">'false'</span><span class="p">,</span>
+    <span class="ss">has_open_activity:</span> <span class="s1">'false'</span><span class="p">,</span>
+    <span class="ss">has_opportunity_line_item:</span> <span class="s1">'false'</span><span class="p">,</span>
+    <span class="ss">has_overdue_task:</span> <span class="s1">'false'</span><span class="p">,</span>
+    <span class="ss">is_closed:</span> <span class="s1">'false'</span><span class="p">,</span>
+    <span class="ss">is_deleted:</span> <span class="s1">'false'</span><span class="p">,</span>
+    <span class="ss">is_won:</span> <span class="s1">'false'</span><span class="p">,</span>
+    <span class="ss">last_modified:</span> <span class="s1">'0055w00000BhqR0AAJ'</span><span class="p">,</span>
+    <span class="ss">last_modified_date:</span> <span class="s1">'2020-05-09T03:04:32.000Z'</span><span class="p">,</span>
+    <span class="ss">last_reference_date:</span> <span class="s1">'2020-05-09T03:06:37.000Z'</span><span class="p">,</span>
+    <span class="ss">last_viewed_date:</span> <span class="s1">'2020-05-09T03:06:37.000Z'</span><span class="p">,</span>
+    <span class="ss">lead_source:</span> <span class="s1">'External Referral'</span><span class="p">,</span>
+    <span class="ss">message_id:</span> <span class="s1">'04l5w00005286hAAAQ'</span><span class="p">,</span>
+    <span class="ss">name:</span> <span class="s1">'Backpackers, Inc. (Sample)'</span><span class="p">,</span>
+    <span class="ss">object_id:</span> <span class="s1">'0065w000023STAmAAO'</span><span class="p">,</span>
+    <span class="ss">owner_id:</span> <span class="s1">'0055w00000BhqR0AAJ'</span><span class="p">,</span>
+    <span class="ss">probability:</span> <span class="s1">'80.0'</span><span class="p">,</span>
+    <span class="ss">stage_name:</span> <span class="s1">'Negotiation/Review'</span><span class="p">,</span>
+    <span class="ss">system_modstamp:</span> <span class="s1">'2020-05-09T03:04:32.000Z'</span><span class="p">,</span>
+    <span class="ss">type:</span> <span class="s1">'sf:Opportunity'</span>
+  <span class="p">}</span>
+<span class="p">]</span>
+</pre></td></tr></tbody></table></code></pre></div>
 <p>Woot! Now that map will be passed in <code>params</code> to your controller actions. There&rsquo;s one more thing we need to make Salesforce happy.</p>
 
 <h3>The response.</h3>

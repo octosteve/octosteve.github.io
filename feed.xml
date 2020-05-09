@@ -14,7 +14,7 @@
     <link rel="alternate" href="http://blog.url.com/2020/05/09/salesforce-outbound-messages-and-phoenix.html"/>
     <id>http://blog.url.com/2020/05/09/salesforce-outbound-messages-and-phoenix.html</id>
     <published>2020-05-09T02:11:00Z</published>
-    <updated>2020-05-09T01:05:38-04:00</updated>
+    <updated>2020-05-09T14:49:25-04:00</updated>
     <author>
       <name>Article Author</name>
     </author>
@@ -42,14 +42,17 @@ worry about it. We&amp;rsquo;re going to treat this like regular XML.&lt;/p&gt;
 
 &lt;h3&gt;Plug Parsers&lt;/h3&gt;
 
-&lt;p&gt;Crack open your &lt;code&gt;endpoint.ex&lt;/code&gt; file and you should see something like this:
-&lt;code&gt;elixir
-  plug Plug.Parsers,
-    parsers: [:urlencoded, :multipart, :json],
-    pass: [&amp;quot;*/*&amp;quot;],
-    json_decoder: Phoenix.json_library()
-&lt;/code&gt;
-Under the covers, Plug comes with a few modules to handle json, multipart and url encoded requests.
+&lt;p&gt;Crack open your &lt;code&gt;endpoint.ex&lt;/code&gt; file and you should see something like this:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4
+&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;  &lt;span class="n"&gt;plug&lt;/span&gt; &lt;span class="no"&gt;Plug&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Parsers&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="ss"&gt;parsers:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="ss"&gt;:urlencoded&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:multipart&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:json&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;
+    &lt;span class="ss"&gt;pass:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;"*/*"&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;
+    &lt;span class="ss"&gt;json_decoder:&lt;/span&gt; &lt;span class="no"&gt;Phoenix&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;json_library&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Under the covers, Plug comes with a few modules to handle json, multipart and url encoded requests.
 You can take a look at the code for &lt;code&gt;urlencoded&lt;/code&gt;&amp;lsquo;s parser
 &lt;a href="https://github.com/elixir-plug/plug/blob/65986ad32f9aaae3be50dc80cbdd19b326578da7/lib/plug/parsers/urlencoded.ex"&gt;here&lt;/a&gt;.
 Every parser needs 2 functions. an &lt;code&gt;init/1&lt;/code&gt; function for compiled configuration, and a &lt;code&gt;parse/5&lt;/code&gt; function.
@@ -59,19 +62,26 @@ if it &lt;em&gt;can&lt;/em&gt; parse this kind of request, or &lt;code&gt;{:next
 &lt;p&gt;One parser that&amp;rsquo;s missing is an XML parser! No worries. We can handle all of our processing of the Outbound Message in the
 parser leaving our controller to code to deal with our nice, cleanly parsed data.&lt;/p&gt;
 
-&lt;p&gt;Let&amp;rsquo;s make a new Parser.
-&lt;code&gt;elixir
-defmodule SFDCWebhookParser do
-  def init(opts), do: opts
-  def parse(conn, &amp;quot;text&amp;quot;, &amp;quot;xml&amp;quot;, _headers, opts) do
-    {:ok, body, conn} = Plug.Conn.read_body(conn, opts)
-    notifications = extract_from_webhook(body)
-    {:ok, %{notifications: notifications}, conn}
-  end
-  def parse(conn, _type, _subtype, _headers, _opts), do: {:next, conn}
-end
-&lt;/code&gt;&lt;/p&gt;
-
+&lt;p&gt;Let&amp;rsquo;s make a new Parser.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4
+5
+6
+7
+8
+9
+&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="k"&gt;defmodule&lt;/span&gt; &lt;span class="no"&gt;SFDCWebhookParser&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;init&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;opts&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;opts&lt;/span&gt;
+  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;parse&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;conn&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;"text"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;"xml"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_headers&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;opts&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+    &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:ok&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;body&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;conn&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="no"&gt;Plug&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Conn&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;read_body&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;conn&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;opts&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;notifications&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;extract_from_webhook&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;body&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:ok&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="ss"&gt;notifications:&lt;/span&gt; &lt;span class="n"&gt;notifications&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="n"&gt;conn&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+  &lt;span class="k"&gt;end&lt;/span&gt;
+  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;parse&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;conn&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_type&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_subtype&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_headers&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_opts&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:next&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;conn&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Here we have a parser that responds to messages with a content type of &amp;ldquo;text/xml&amp;rdquo; since we&amp;rsquo;re getting a SOAP message. 
 We call &lt;code&gt;Plug.Conn.read_body/2&lt;/code&gt; in order to load request body. Then we pass it into our (as yet to be written) &lt;code&gt;extract_from_webhook/1&lt;/code&gt; function.
 In order to work on that&amp;hellip; we&amp;rsquo;ll need to dive into parsing XML with &lt;a href="https://hexdocs.pm/sweet_xml/SweetXml.html"&gt;SweetXml&lt;/a&gt;.&lt;/p&gt;
@@ -79,32 +89,47 @@ In order to work on that&amp;hellip; we&amp;rsquo;ll need to dive into parsing X
 &lt;h3&gt;SweetXml&lt;/h3&gt;
 
 &lt;p&gt;For this next bit, we&amp;rsquo;re going to need to talk about &lt;a href="https://www.w3schools.com/xml/xpath_intro.asp"&gt;XPath&lt;/a&gt;. XPath is a way of 
-traversing nodes in a tree. Take this HTML for instance:
-&lt;code&gt;elixir
-html = &amp;quot;&amp;quot;&amp;quot;
+traversing nodes in a tree. Take this HTML for instance:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="n"&gt;html&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="sd"&gt;"""
 &amp;lt;div&amp;gt;
-  &amp;lt;ul edible=&amp;quot;no&amp;quot;&amp;gt;
+  &amp;lt;ul edible="no"&amp;gt;
     &amp;lt;li&amp;gt;One fish&amp;lt;/li&amp;gt;
     &amp;lt;li&amp;gt;Two Fish&amp;lt;/li&amp;gt;
     &amp;lt;li&amp;gt;Red Fish&amp;lt;/li&amp;gt;
     &amp;lt;li&amp;gt;Blue Fish&amp;lt;/li&amp;gt;
   &amp;lt;/ul&amp;gt;
 &amp;lt;/div&amp;gt;
-&amp;quot;&amp;quot;&amp;quot;
-&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;Now we can use &lt;code&gt;SweetXml&lt;/code&gt; to extract out some data from this markup and put in in a map for us.
-&lt;code&gt;elixir
-import SweetXml
-html
-|&amp;gt; xpath(
-~x&amp;quot;//ul&amp;quot;, # From the root, find a ul node
- edible: ~x&amp;quot;@edible&amp;quot;, # From that node, read its `edible` attribute
- items: ~x&amp;quot;./li/text()&amp;quot;l # Also from that node, find any li nodes and return their text. The `l` informs it we want a list back.
-)
-%{edible: &amp;#39;no&amp;#39;, items: [&amp;#39;One fish&amp;#39;, &amp;#39;Two Fish&amp;#39;, &amp;#39;Red Fish&amp;#39;, &amp;#39;Blue Fish&amp;#39;]}
-&lt;/code&gt;
-With this, we have enough to get data out of our Webhook.&lt;/p&gt;
+"""&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Now we can use &lt;code&gt;SweetXml&lt;/code&gt; to extract out some data from this markup and put in in a map for us.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4
+5
+6
+7
+8
+&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="no"&gt;SweetXml&lt;/span&gt;
+&lt;span class="n"&gt;html&lt;/span&gt;
+&lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;xpath&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+&lt;span class="sx"&gt;~x"//ul"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="c1"&gt;# From the root, find a ul node&lt;/span&gt;
+ &lt;span class="ss"&gt;edible:&lt;/span&gt; &lt;span class="sx"&gt;~x"@edible"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="c1"&gt;# From that node, read its `edible` attribute&lt;/span&gt;
+ &lt;span class="ss"&gt;items:&lt;/span&gt; &lt;span class="sx"&gt;~x"./li/text()"&lt;/span&gt;&lt;span class="n"&gt;l&lt;/span&gt; &lt;span class="c1"&gt;# Also from that node, find any li nodes and return their text. The `l` informs it we want a list back.&lt;/span&gt;
+&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="ss"&gt;edible:&lt;/span&gt; &lt;span class="s1"&gt;'no'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;items:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'One fish'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'Two Fish'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'Red Fish'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'Blue Fish'&lt;/span&gt;&lt;span class="p"&gt;]}&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;With this, we have enough to get data out of our Webhook.&lt;/p&gt;
 
 &lt;h3&gt;Notification Message&lt;/h3&gt;
 
@@ -266,42 +291,72 @@ nodes.&lt;/p&gt;
 &lt;span class="p"&gt;)&lt;/span&gt;
 &lt;span class="k"&gt;end&lt;/span&gt;
 &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;This will return the following as params:
-&lt;code&gt;elixir
-[
-  %{
-    account_id: &amp;#39;0015w00002BFDeLAAX&amp;#39;,
-    amount: &amp;#39;45000.0&amp;#39;,
-    close_date: &amp;#39;2020-07-11&amp;#39;,
-    contact_id: &amp;#39;0035w000035gg9GAAQ&amp;#39;,
-    created_by_id: &amp;#39;0055w00000BhqR0AAJ&amp;#39;,
-    created_date: &amp;#39;2020-05-08T13:40:22.000Z&amp;#39;,
-    fiscal_quarter: &amp;#39;3&amp;#39;,
-    fiscal_year: &amp;#39;2020&amp;#39;,
-    follow_up: &amp;#39;false&amp;#39;,
-    has_open_activity: &amp;#39;false&amp;#39;,
-    has_opportunity_line_item: &amp;#39;false&amp;#39;,
-    has_overdue_task: &amp;#39;false&amp;#39;,
-    is_closed: &amp;#39;false&amp;#39;,
-    is_deleted: &amp;#39;false&amp;#39;,
-    is_won: &amp;#39;false&amp;#39;,
-    last_modified: &amp;#39;0055w00000BhqR0AAJ&amp;#39;,
-    last_modified_date: &amp;#39;2020-05-09T03:04:32.000Z&amp;#39;,
-    last_reference_date: &amp;#39;2020-05-09T03:06:37.000Z&amp;#39;,
-    last_viewed_date: &amp;#39;2020-05-09T03:06:37.000Z&amp;#39;,
-    lead_source: &amp;#39;External Referral&amp;#39;,
-    message_id: &amp;#39;04l5w00005286hAAAQ&amp;#39;,
-    name: &amp;#39;Backpackers, Inc. (Sample)&amp;#39;,
-    object_id: &amp;#39;0065w000023STAmAAO&amp;#39;,
-    owner_id: &amp;#39;0055w00000BhqR0AAJ&amp;#39;,
-    probability: &amp;#39;80.0&amp;#39;,
-    stage_name: &amp;#39;Negotiation/Review&amp;#39;,
-    system_modstamp: &amp;#39;2020-05-09T03:04:32.000Z&amp;#39;,
-    type: &amp;#39;sf:Opportunity&amp;#39;
-  }
-]
-&lt;/code&gt;&lt;/p&gt;
-
+&lt;p&gt;This will return the following as params:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="p"&gt;[&lt;/span&gt;
+  &lt;span class="p"&gt;%{&lt;/span&gt;
+    &lt;span class="ss"&gt;account_id:&lt;/span&gt; &lt;span class="s1"&gt;'0015w00002BFDeLAAX'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="ss"&gt;amount:&lt;/span&gt; &lt;span class="s1"&gt;'45000.0'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="ss"&gt;close_date:&lt;/span&gt; &lt;span class="s1"&gt;'2020-07-11'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="ss"&gt;contact_id:&lt;/span&gt; &lt;span class="s1"&gt;'0035w000035gg9GAAQ'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="ss"&gt;created_by_id:&lt;/span&gt; &lt;span class="s1"&gt;'0055w00000BhqR0AAJ'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="ss"&gt;created_date:&lt;/span&gt; &lt;span class="s1"&gt;'2020-05-08T13:40:22.000Z'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="ss"&gt;fiscal_quarter:&lt;/span&gt; &lt;span class="s1"&gt;'3'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="ss"&gt;fiscal_year:&lt;/span&gt; &lt;span class="s1"&gt;'2020'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="ss"&gt;follow_up:&lt;/span&gt; &lt;span class="s1"&gt;'false'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="ss"&gt;has_open_activity:&lt;/span&gt; &lt;span class="s1"&gt;'false'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="ss"&gt;has_opportunity_line_item:&lt;/span&gt; &lt;span class="s1"&gt;'false'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="ss"&gt;has_overdue_task:&lt;/span&gt; &lt;span class="s1"&gt;'false'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="ss"&gt;is_closed:&lt;/span&gt; &lt;span class="s1"&gt;'false'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="ss"&gt;is_deleted:&lt;/span&gt; &lt;span class="s1"&gt;'false'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="ss"&gt;is_won:&lt;/span&gt; &lt;span class="s1"&gt;'false'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="ss"&gt;last_modified:&lt;/span&gt; &lt;span class="s1"&gt;'0055w00000BhqR0AAJ'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="ss"&gt;last_modified_date:&lt;/span&gt; &lt;span class="s1"&gt;'2020-05-09T03:04:32.000Z'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="ss"&gt;last_reference_date:&lt;/span&gt; &lt;span class="s1"&gt;'2020-05-09T03:06:37.000Z'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="ss"&gt;last_viewed_date:&lt;/span&gt; &lt;span class="s1"&gt;'2020-05-09T03:06:37.000Z'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="ss"&gt;lead_source:&lt;/span&gt; &lt;span class="s1"&gt;'External Referral'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="ss"&gt;message_id:&lt;/span&gt; &lt;span class="s1"&gt;'04l5w00005286hAAAQ'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="ss"&gt;name:&lt;/span&gt; &lt;span class="s1"&gt;'Backpackers, Inc. (Sample)'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="ss"&gt;object_id:&lt;/span&gt; &lt;span class="s1"&gt;'0065w000023STAmAAO'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="ss"&gt;owner_id:&lt;/span&gt; &lt;span class="s1"&gt;'0055w00000BhqR0AAJ'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="ss"&gt;probability:&lt;/span&gt; &lt;span class="s1"&gt;'80.0'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="ss"&gt;stage_name:&lt;/span&gt; &lt;span class="s1"&gt;'Negotiation/Review'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="ss"&gt;system_modstamp:&lt;/span&gt; &lt;span class="s1"&gt;'2020-05-09T03:04:32.000Z'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="ss"&gt;type:&lt;/span&gt; &lt;span class="s1"&gt;'sf:Opportunity'&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Woot! Now that map will be passed in &lt;code&gt;params&lt;/code&gt; to your controller actions. There&amp;rsquo;s one more thing we need to make Salesforce happy.&lt;/p&gt;
 
 &lt;h3&gt;The response.&lt;/h3&gt;
