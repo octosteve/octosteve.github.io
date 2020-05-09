@@ -24,6 +24,7 @@ worry about it. We're going to treat this like regular XML.
 
 ### Plug Parsers
 Crack open your `endpoint.ex` file and you should see something like this:
+
 ```elixir
   plug Plug.Parsers,
     parsers: [:urlencoded, :multipart, :json],
@@ -41,6 +42,7 @@ One parser that's missing is an XML parser! No worries. We can handle all of our
 parser leaving our controller to code to deal with our nice, cleanly parsed data.
 
 Let's make a new Parser.
+
 ```elixir
 defmodule SFDCWebhookParser do
   def init(opts), do: opts
@@ -60,6 +62,7 @@ In order to work on that... we'll need to dive into parsing XML with [SweetXml](
 ### SweetXml
 For this next bit, we're going to need to talk about [XPath](https://www.w3schools.com/xml/xpath_intro.asp). XPath is a way of 
 traversing nodes in a tree. Take this HTML for instance:
+
 ```elixir
 html = """
 <div>
@@ -74,6 +77,7 @@ html = """
 ```
 
 Now we can use `SweetXml` to extract out some data from this markup and put in in a map for us.
+
 ```elixir
 import SweetXml
 html
@@ -174,6 +178,7 @@ def extract_from_webhook(body) do
 end
 ```
 This will return the following as params:
+
 ```elixir
 [
   %{
