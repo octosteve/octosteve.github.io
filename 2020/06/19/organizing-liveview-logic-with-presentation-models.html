@@ -1,0 +1,126 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta http-equiv='X-UA-Compatible' content='IE=edge;chrome=1'/>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hostile Developer - Organizing LiveView Logic with Presentation Models</title>
+  <link href="/favicon.ico" rel="icon" type="image/ico" />
+  <link href="/stylesheets/application.css" rel="stylesheet" type="text/css" />
+  <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/feed.xml" />
+</head>
+<body>
+<div id="container">
+  <section id="header">
+  <header>
+<a href="/">        <h1 class="brand"><span class="hostile">Hostile</span> Developer</h1>
+        <h4 class="tag-line">I am Steven. Hear me Rant.</h4>
+</a>  </header>
+
+  <section class='social'>
+    <a href="http://twitter.com/_StevenNunez/" target="_blank"><i class="fa fa-twitter"></i></a>
+    <a href="https://github.com/StevenNunez/" target="_blank"><i class="fa fa-github"></i></a>
+  </section>
+</section>
+
+
+  <main id='article' role="main">
+    <h1 class="article-title"><a href="/2020/06/19/organizing-liveview-logic-with-presentation-models.html">Organizing LiveView Logic with Presentation Models</a></h1>
+    <p>I&rsquo;ve been really enjoying Phoenix LiveView! Working on smart interfaces is super easy and just works. It&rsquo;s really incredible.</p>
+
+<p>I&rsquo;ve been going through the <a href="https://pragmaticstudio.com/phoenix-liveview">PragmaticStudio LiveView course</a> and have been LOVING IT. If you just hearing about it, SIGN UP NOW (well maybe after reading this post&hellip;). You&rsquo;ll thank me. It&rsquo;s really well done and is the best way to get your head around the awesomeness of LiveView.</p>
+
+<p>They build a series of UI patterns in LiveView to show you how simple it is to add seemingly complex interactions into a Phoenix app. In one module, the implement search. Having been a teacher in a previous life I know that sometimes you have to keep things simple at the cost of implementing better patterns. One such example is <a href="https://github.com/pragmaticstudio/live_view_studio/blob/0420ed745e71f931d17d70e32f5be1b72cfa1495/lib/live_view_studio_web/live/search_live.ex">this LiveView</a>.</p>
+
+<p>There&rsquo;s nothing <em>wrong</em> with their code. It works! But I think it suffers from tutorial-itis, where it&rsquo;s enough to prove a point, but not what you would actually ship.</p>
+
+<h2>Thinking in Layers</h2>
+
+<p>LiveViews suffer from the same neck snapping, eye darting issues as GenServers. With a GenServer you define a client API, then a server API. Check the client API for the arguments passed in. Did we pattern match on the client side? Look for <code>handle_*</code> to see what it does, and how it handles errors. Also, testing complex logic in GenServers is less than great. But that&rsquo;s fine! We have a way to deal with this by decoupling our <a href="https://pragprog.com/titles/jgotp/">Boundary Layer</a> from our core business logic, breaking them into nice, pure functions we can easily test.</p>
+
+<p>LiveViews are a bit different though. The data we want to isolate isn&rsquo;t really part of our <em>core</em> business logic. In fact, in most cases, it exists to deliver a single experience in your app.</p>
+
+<p>Let&rsquo;s take a look at the code example. It stores a few pieces of state that get manipulated over the course of the page&rsquo;s life.
+<script src="https://gist.github.com/StevenNunez/f384871008825b16bc09819267f28721.js"></script>
+In the example, the <code>LiveViewStudio.Stores</code> module runs our search and is very much part of our <em>core</em> business logic. This might be some code that gets optimized and used in several places in our app in a number of contexts. The results from our search will be stored in <code>stores</code>. Our LiveView can potentially act on the data it got back from the data store, further decorating it in preparation to render it. Along with <code>zip</code> and <code>loading</code>, this specific interpretation of <code>stores</code> would never be used outside of this view. Why does this matter?</p>
+
+<h2>Separation of concerns and testing</h2>
+
+<p>The more complex our transformations get, the more state we have to hold at different points of this page&rsquo;s life in response to user actions or other process&rsquo; messages, the more we&rsquo;d benefit from separating out a functional core.</p>
+
+<p>Now I know that LiveView has <a href="https://hexdocs.pm/phoenix_live_view/Phoenix.LiveViewTest.html">great ways</a> of mimicking clicks, and changes from your front-end, as well as a way to send messages to that process to simulate internal messages, but we still want to keep our Boundary Layer small, and extract our logic into small testable modules.</p>
+
+<p>A quick note before we move on&hellip; I know this is going to be a LOT of code for solving a relatively small problem. I think this pattern will come in handy when you&rsquo;re dealing with apps that take advantage of <code>live_action</code> and have a single LiveView render several subcomponents. For now&hellip; Go with me.</p>
+
+<h2>Extracting the Module</h2>
+
+<p><a href="https://martinfowler.com/eaaDev/PresentationModel.html">Presentation Model</a></p>
+
+<blockquote>
+<p>Represent the state and behavior of the presentation independently of the GUI controls used in the interface - Martin Fowler</p>
+</blockquote>
+
+<p>We&rsquo;re going to extract the state for this component, and encapsulate the logic a bit. We showed the state, but what&rsquo;s this thing do?
+Users are presented a search box, where, the request takes 2 seconds to complete. Between submission and bringing up results, a <code>loading</code> icon appears.
+The flow looks something like:
+1. Send query to LiveView
+2. LiveView sets a loading state, sends self message to actually RUN the query, and returns the new <code>loading</code> state.
+3. Query finishes asynchronously, updates state with results, clears the loading state and returns that to the view.</p>
+
+<p>Let&rsquo;s start out with some tests:</p>
+
+<script src="https://gist.github.com/StevenNunez/03c6e76849653104ec97f2b777f0e67b.js"></script>
+
+<p>Our module expects to receive a function that takes one argument. Note we&rsquo;ve broken up the flow between preparing the query (storing it) and actually executing it.
+OK, on to the code.</p>
+
+<script src="https://gist.github.com/StevenNunez/c347f9339e48142c922b994ce0991b31.js"></script>
+
+<p>OK, so this is a lot of code, compared to what the final result I linked to earlier but let&rsquo;s think about what we&rsquo;ve won. There are clearly 3 things this module can do. Each of those things has a clear pipeline describing what it means to execute it. And best of all, it&rsquo;s all pure! We don&rsquo;t have to simulate clicks, or mess with input fields. We can test plain old values. Adding a new feature to this and verifying it works with automated tests is trivial. Imagine how you would add the ability to ensure a zip code is only numbers? Or that they&rsquo;re 5 characters long?</p>
+
+<h2>Updating the LiveView</h2>
+
+<p>We&rsquo;re going to take a look at what the <code>SearchLive</code> LiveView would look like using this Presentation Model.</p>
+
+<script src="https://gist.github.com/StevenNunez/0e7db950bfcfd93743cdbe1199042b60.js"></script>
+
+<p>SO NICE! Our live view is solely responsible for making sure the right parts of our Presentation Model module get called and use it to render state. Notice how we&rsquo;re using <code>@presentation_model.x</code>. If you&rsquo;re wondering, there&rsquo;s no hit to performance using this! LiveView does a diff on the server before sending the change over the wire. If there&rsquo;s no change, it doesn&rsquo;t send anything. And what&rsquo;s best is that to test the LiveView, you only have to test a couple of cases for success and failure, as opposed to every detail and edge case of the view logic.
+This is kind of great.</p>
+
+<h2>Wrap up</h2>
+
+<p>LiveView is awesome, and with the right patterns we can ensure our fancy UIs have equally fancy tests. You can build really complex logic that you will KNOW works. Thanks for reading. Happy Clacking.</p>
+
+    <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'hostiledeveloper'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+  </main>
+
+ <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-48123503-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+ <em>Copyright &copy; 2020 Steven Nu&ntilde;ez - HostileDeveloper</em>
+
+</div>
+</body>
+</html>
