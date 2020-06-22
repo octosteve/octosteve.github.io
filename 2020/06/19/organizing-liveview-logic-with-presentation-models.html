@@ -61,8 +61,11 @@ In the example, the <code>LiveViewStudio.Stores</code> module runs our search an
 </blockquote>
 
 <p>We&rsquo;re going to extract the state for this component, and encapsulate the logic a bit. We showed the state, but what&rsquo;s this thing do?
-Users are presented a search box, where, the request takes 2 seconds to complete. Between submission and bringing up results, a <code>loading</code> icon appears.
-The flow looks something like:
+Users are presented a search box, where, the request takes 2 seconds to complete. Between submission and bringing up results, a <code>loading</code> icon appears.</p>
+
+<p><iframe src="https://giphy.com/embed/fA1JrSOgltr5VoPvGK" width="480" height="352" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a href="https://giphy.com/gifs/fA1JrSOgltr5VoPvGK">via GIPHY</a></p></p>
+
+<p>The flow looks something like:
 1. Send query to LiveView
 2. LiveView sets a loading state, sends self message to actually RUN the query, and returns the new <code>loading</code> state.
 3. Query finishes asynchronously, updates state with results, clears the loading state and returns that to the view.</p>
