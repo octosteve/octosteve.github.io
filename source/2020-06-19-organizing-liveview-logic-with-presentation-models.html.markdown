@@ -34,6 +34,9 @@ A quick note before we move on... I know this is going to be a LOT of code for s
 
 We're going to extract the state for this component, and encapsulate the logic a bit. We showed the state, but what's this thing do?
 Users are presented a search box, where, the request takes 2 seconds to complete. Between submission and bringing up results, a `loading` icon appears.
+
+<iframe src="https://giphy.com/embed/fA1JrSOgltr5VoPvGK" width="480" height="352" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a href="https://giphy.com/gifs/fA1JrSOgltr5VoPvGK">via GIPHY</a></p>
+
 The flow looks something like:
 1. Send query to LiveView
 2. LiveView sets a loading state, sends self message to actually RUN the query, and returns the new `loading` state.
