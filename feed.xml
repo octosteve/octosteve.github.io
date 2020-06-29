@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title>Blog Name</title>
-  <subtitle>Blog subtitle</subtitle>
-  <id>http://blog.url.com/</id>
-  <link href="http://blog.url.com/"/>
-  <link href="http://blog.url.com/feed.xml" rel="self"/>
+  <title>Hostile Developer</title>
+  <subtitle>I am Steven, hear me rant.</subtitle>
+  <id>https://hostiledeveloper.com/</id>
+  <link href="https://hostiledeveloper.com/"/>
+  <link href="https://hostiledeveloper.com/feed.xml" rel="self"/>
   <updated>2020-06-19T17:31:00Z</updated>
   <author>
-    <name>Blog Author</name>
+    <name>Steven Nunez</name>
   </author>
   <entry>
     <title>Organizing LiveView Logic with Presentation Models</title>
-    <link rel="alternate" href="http://blog.url.com/2020/06/19/organizing-liveview-logic-with-presentation-models.html"/>
-    <id>http://blog.url.com/2020/06/19/organizing-liveview-logic-with-presentation-models.html</id>
+    <link rel="alternate" href="https://hostiledeveloper.com/2020/06/19/organizing-liveview-logic-with-presentation-models.html"/>
+    <id>https://hostiledeveloper.com/2020/06/19/organizing-liveview-logic-with-presentation-models.html</id>
     <published>2020-06-19T17:31:00Z</published>
     <updated>2020-06-22T10:22:49-04:00</updated>
     <author>
@@ -89,8 +89,8 @@ This is kind of great.&lt;/p&gt;
   </entry>
   <entry>
     <title>Salesforce Outbound messages and Phoenix</title>
-    <link rel="alternate" href="http://blog.url.com/2020/05/09/salesforce-outbound-messages-and-phoenix.html"/>
-    <id>http://blog.url.com/2020/05/09/salesforce-outbound-messages-and-phoenix.html</id>
+    <link rel="alternate" href="https://hostiledeveloper.com/2020/05/09/salesforce-outbound-messages-and-phoenix.html"/>
+    <id>https://hostiledeveloper.com/2020/05/09/salesforce-outbound-messages-and-phoenix.html</id>
     <published>2020-05-09T02:11:00Z</published>
     <updated>2020-06-19T13:28:26-04:00</updated>
     <author>
@@ -499,8 +499,8 @@ response to acknowledge the message.&lt;/p&gt;
   </entry>
   <entry>
     <title>Filtering through subqueries in ActiveRecord</title>
-    <link rel="alternate" href="http://blog.url.com/2019/12/12/filtering-through-subqueries-in-activerecord.html"/>
-    <id>http://blog.url.com/2019/12/12/filtering-through-subqueries-in-activerecord.html</id>
+    <link rel="alternate" href="https://hostiledeveloper.com/2019/12/12/filtering-through-subqueries-in-activerecord.html"/>
+    <id>https://hostiledeveloper.com/2019/12/12/filtering-through-subqueries-in-activerecord.html</id>
     <published>2019-12-12T01:49:00Z</published>
     <updated>2020-06-19T13:28:26-04:00</updated>
     <author>
@@ -815,8 +815,8 @@ If only 1 of our tags match, then we&amp;rsquo;ll get a row that describes the c
   </entry>
   <entry>
     <title>LTrees in Phoenix</title>
-    <link rel="alternate" href="http://blog.url.com/2017/06/17/ltrees-in-phoenix.html"/>
-    <id>http://blog.url.com/2017/06/17/ltrees-in-phoenix.html</id>
+    <link rel="alternate" href="https://hostiledeveloper.com/2017/06/17/ltrees-in-phoenix.html"/>
+    <id>https://hostiledeveloper.com/2017/06/17/ltrees-in-phoenix.html</id>
     <published>2017-06-17T16:38:00Z</published>
     <updated>2020-06-19T13:28:26-04:00</updated>
     <author>
@@ -1212,8 +1212,8 @@ iex(6)&amp;gt; Repo.all(query)
   </entry>
   <entry>
     <title>Something Useless - Terminal in your browser</title>
-    <link rel="alternate" href="http://blog.url.com/2017/05/02/something-useless-terminal-in-your-browser.html"/>
-    <id>http://blog.url.com/2017/05/02/something-useless-terminal-in-your-browser.html</id>
+    <link rel="alternate" href="https://hostiledeveloper.com/2017/05/02/something-useless-terminal-in-your-browser.html"/>
+    <id>https://hostiledeveloper.com/2017/05/02/something-useless-terminal-in-your-browser.html</id>
     <published>2017-05-02T13:40:00Z</published>
     <updated>2020-06-19T13:28:26-04:00</updated>
     <author>
@@ -1747,8 +1747,8 @@ Notice that the only message we&amp;rsquo;ve received so far is our terminal pro
   </entry>
   <entry>
     <title>Something Useless - Redux Implemented in Elixir</title>
-    <link rel="alternate" href="http://blog.url.com/2017/04/18/something-useless-redux-implemented-in-elixir.html"/>
-    <id>http://blog.url.com/2017/04/18/something-useless-redux-implemented-in-elixir.html</id>
+    <link rel="alternate" href="https://hostiledeveloper.com/2017/04/18/something-useless-redux-implemented-in-elixir.html"/>
+    <id>https://hostiledeveloper.com/2017/04/18/something-useless-redux-implemented-in-elixir.html</id>
     <published>2017-04-18T15:38:00Z</published>
     <updated>2020-06-19T13:28:26-04:00</updated>
     <author>
