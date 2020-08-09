@@ -14,15 +14,15 @@
     <link rel="alternate" href="https://hostiledeveloper.com/2020/08/09/connection-pools-and-rabbitmq.html"/>
     <id>https://hostiledeveloper.com/2020/08/09/connection-pools-and-rabbitmq.html</id>
     <published>2020-08-09T02:04:00Z</published>
-    <updated>2020-08-08T22:12:29-04:00</updated>
+    <updated>2020-08-09T00:32:14-04:00</updated>
     <author>
       <name>Article Author</name>
     </author>
-    <content type="html">&lt;p&gt;In this post, we&amp;rsquo;re going to go over connection pools how to use ex&lt;em&gt;rabbit&lt;/em&gt;pool to manage our connections and channels.&lt;/p&gt;
+    <content type="html">&lt;p&gt;In this post, we&amp;rsquo;re going to go over connection pools how to use ex_rabbit_pool to manage our connections and channels.&lt;/p&gt;
 
 &lt;h2&gt;Connection Pools&lt;/h2&gt;
 
-&lt;p&gt;If you&amp;rsquo;ve used Ecto, you&amp;rsquo;ve used connection pools. Connection pools allow you to allocate a number of connections to a service and allow processes in your system to use connections to work concurrently. In the case of Ecto, when you make a query, one of the available connections is checked out, used to make the query and return results. When it&amp;rsquo;s done, it goes back in the pool.&lt;/p&gt;
+&lt;p&gt;If you&amp;rsquo;ve used Ecto, you&amp;rsquo;ve used connection pools. Connection pools allow you to allocate a number of connections to a service and allow processes in your system to use connections to do work concurrently. In the case of Ecto, when you make a query, one of the available connections is checked out, used to make the query and return results. When it&amp;rsquo;s done, it goes back in the pool.&lt;/p&gt;
 
 &lt;p&gt;With RabbitMQ ideally you&amp;rsquo;re going to have &lt;a href="https://www.cloudamqp.com/blog/2018-01-19-part4-rabbitmq-13-common-errors.html"&gt;1 connection per resource&lt;/a&gt;. One connection for publishing, and one connection for consuming. When we use connection pools with Rabbit, we&amp;rsquo;re &lt;em&gt;really&lt;/em&gt; going to be configuring a &lt;strong&gt;channel pool&lt;/strong&gt;.&lt;/p&gt;
 
@@ -33,6 +33,8 @@
 
 &lt;p&gt;Photo by Marcos Nieto on Unsplash&lt;/p&gt;
 
+&lt;p&gt;These slackers aren&amp;rsquo;t very inspiring.&lt;/p&gt;
+
 &lt;p&gt;Channels allow you to multiplex a single TCP connection. Since connections are pretty heavy (costing the server about 100KB), channels give us a way find the resource sweet spot. The &lt;a href="https://www.rabbitmq.com/channels.html#resource-usage"&gt;Channels guide&lt;/a&gt; notes that pooling should be used when managing your own channels becomes a pain but why not go for broke from the jump?&lt;/p&gt;
 
 &lt;h2&gt;Getting Started&lt;/h2&gt;
@@ -41,7 +43,7 @@
 
 &lt;script src="https://gist.github.com/StevenNunez/6d1a15f7a45572c9a39cbcf94e33cdae.js"&gt;&lt;/script&gt;
 
-&lt;p&gt;Open up &lt;code&gt;mix.exs&lt;/code&gt; and add &lt;a href="https://github.com/esl/ex_rabbit_pool"&gt;ex&lt;em&gt;rabbit&lt;/em&gt;pool&lt;/a&gt;, then run &lt;code&gt;mix deps.get&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Open up &lt;code&gt;mix.exs&lt;/code&gt; and add &lt;a href="https://github.com/esl/ex_rabbit_pool"&gt;ex_rabbit_pool&lt;/a&gt;, then run &lt;code&gt;mix deps.get&lt;/code&gt;&lt;/p&gt;
 
 &lt;script src="https://gist.github.com/StevenNunez/82cb9836bc4a7d1648cf46e62509341f.js"&gt;&lt;/script&gt;
 
@@ -49,15 +51,30 @@
 
 &lt;script src="https://gist.github.com/StevenNunez/fcf9706108409911248a133ebd6a9320.js"&gt;&lt;/script&gt;
 
-&lt;p&gt;A whole-lotta code I think it&amp;rsquo;s kind of nice. Let&amp;rsquo;s take a look at the code.
-1. If you&amp;rsquo;ve worked with &lt;a href="https://github.com/devinus/poolboy"&gt;Poolboy&lt;/a&gt; before, this syntax should look familiar.
-We&amp;rsquo;re configuring 1 &lt;code&gt;ExRabbitPool.Worker.RabbitConnection&lt;/code&gt; process to be checkout-able. These configs go straight to Poolboy.
-2. These rabbit configs get passed in to the worker when it&amp;rsquo;s checked out.
-3. You&amp;rsquo;ve been using these sweet &lt;code&gt;child_spec/1&lt;/code&gt; functions since Elixir 1.5! They let you define what it means to &lt;em&gt;start&lt;/em&gt; your server.
-Here, we&amp;rsquo;re doing a little&amp;hellip; but with a lot of code. &lt;code&gt;id&lt;/code&gt; is what your Supervisor will use to track your process. &lt;code&gt;start&lt;/code&gt;, well, that&amp;rsquo;s how you start the dang thing. Notice we&amp;rsquo;re just delegating to &lt;code&gt;ExRabbitPool.PoolSupervisor.start_link/2&lt;/code&gt;. That second argument is the name you can use to reference this process.
-Add this to &lt;code&gt;application.ex&lt;/code&gt;
+&lt;p&gt;A whole-lotta code I think it&amp;rsquo;s kind of nice. Let&amp;rsquo;s take a look at the code.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;If you&amp;rsquo;ve worked with &lt;a href="https://github.com/devinus/poolboy"&gt;Poolboy&lt;/a&gt; before, this syntax should look familiar.
+We&amp;rsquo;re configuring 1 &lt;code&gt;ExRabbitPool.Worker.RabbitConnection&lt;/code&gt; process to be checkout-able. These configs go straight to Poolboy.&lt;/li&gt;
+&lt;li&gt;These rabbit configs get passed in to the worker when it&amp;rsquo;s checked out.&lt;/li&gt;
+&lt;li&gt;You&amp;rsquo;ve been using these sweet &lt;code&gt;child_spec/1&lt;/code&gt; functions since Elixir 1.5! They let you define what it means to &lt;em&gt;start&lt;/em&gt; your server.
+Here, we&amp;rsquo;re doing a little&amp;hellip; but with a lot of code. &lt;code&gt;id&lt;/code&gt; is what your Supervisor will use to track your process. &lt;code&gt;start&lt;/code&gt;, well, that&amp;rsquo;s how you start the dang thing. Notice we&amp;rsquo;re just delegating to &lt;code&gt;ExRabbitPool.PoolSupervisor.start_link/2&lt;/code&gt;. That second argument is the name you can use to reference this process.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Add this to &lt;code&gt;application.ex&lt;/code&gt;
 &lt;script src="https://gist.github.com/StevenNunez/8318539fd3d5e82cd1a7ca97b1f41436.js"&gt;&lt;/script&gt;
-The &lt;code&gt;ExRabbitPool.RabbitMQ&lt;/code&gt; module &lt;a href="https://github.com/esl/ex_rabbit_pool/blob/master/lib/clients/rabbitmq.ex"&gt;delegate all of it&amp;rsquo;s calls&lt;/a&gt; to the underlying
+Pop open observer and take a look at our process.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="https://imgur.com/cnWlTDU"&gt;&lt;img width="100%" src="https://i.imgur.com/cnWlTDU.png" title="source: imgur.com" /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;And you&amp;rsquo;ll see 1 connection and 2 channels. Just what we want!&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="https://imgur.com/tPwPhop"&gt;&lt;img src="https://i.imgur.com/tPwPhop.png" title="source: imgur.com" /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s create a publisher the publishes to a &lt;code&gt;what_should_we_do&lt;/code&gt; exchange with a payload of &amp;ldquo;Pool Time!&amp;rdquo;
+&lt;script src="https://gist.github.com/StevenNunez/f19d7a058ae5350feb0e936383f8f584.js"&gt;&lt;/script&gt;&lt;/p&gt;
+
+&lt;p&gt;The &lt;code&gt;ExRabbitPool.RabbitMQ&lt;/code&gt; module &lt;a href="https://github.com/esl/ex_rabbit_pool/blob/master/lib/clients/rabbitmq.ex"&gt;delegates all of it&amp;rsquo;s calls&lt;/a&gt; to the underlying
 &lt;a href="https://github.com/pma/amqp"&gt;amqp&lt;/a&gt; library, but we&amp;rsquo;ll use this to support any
 changes they may make in the future. Don&amp;rsquo;t worry about declaring the exchange multiple
 times. The only time this will cause a problem is if you call it with different configurations
@@ -66,70 +83,57 @@ on subsequent calls.&lt;/p&gt;
 &lt;p&gt;In &lt;code&gt;iex&lt;/code&gt; run &lt;code&gt;Pooler.PoolTimePublisher.publish&lt;/code&gt;, then open the rabbit console to see
 your new exchange!&lt;/p&gt;
 
-&lt;blockquote class="imgur-embed-pub" lang="en" data-id="iczQAPS"&gt;&lt;a href="https://imgur.com/iczQAPS"&gt;View post on imgur.com&lt;/a&gt;&lt;/blockquote&gt;&lt;script async src="//s.imgur.com/min/embed.js" charset="utf-8"&gt;&lt;/script&gt;
+&lt;p&gt;&lt;a href="https://imgur.com/iczQAPS"&gt;&lt;img src="https://i.imgur.com/iczQAPS.png" title="source: imgur.com" /&gt;&lt;/a&gt;&lt;/p&gt;
 
-## Consumers
-Peanut butter has Yeli, Publishers have consumers. We&amp;rsquo;re going to take a different approach to consumers, instead using a provided macro that hides all of the
-fetching and returning stuff the `ExRabbitPool.with_channel/2` function was doing for you.
+&lt;h2&gt;Consumers&lt;/h2&gt;
 
-First, we need a new pool.
-### Consumer Pool
-Very similar to the Publisher Pool, except we&amp;rsquo;re going to bump the channels to 5. This is something we&amp;rsquo;d tweak over time, with a good signal being that your consumers occasionally crash because they can&amp;rsquo;t get a channel. This could be due to consumers taking a long time to finish a request, or having more concurrent work than you have channels. In any event, this is something you&amp;rsquo;ll have to tweak for your environment.
+&lt;p&gt;Peanut butter has Jelly, Publishers have consumers. We&amp;rsquo;re going to take a different approach to consumers, instead using a provided macro that hides all of the
+fetching and returning stuff the &lt;code&gt;ExRabbitPool.with_channel/2&lt;/code&gt; function was doing for you.&lt;/p&gt;
 
+&lt;p&gt;First, we need a new pool.&lt;/p&gt;
 
-&lt;script src="https://gist.github.com/StevenNunez/f19d7a058ae5350feb0e936383f8f584.js"&gt;&lt;/script&gt;
-The `ExRabbitPool.RabbitMQ` module [delegate all of it&amp;rsquo;s calls](https://github.com/esl/ex_rabbit_pool/blob/master/lib/clients/rabbitmq.ex) to the underlying
-[amqp](https://github.com/pma/amqp) library, but we&amp;rsquo;ll use this to support any
-changes they may make in the future. Don&amp;rsquo;t worry about declaring the exchange multiple
-times. The only time this will cause a problem is if you call it with different configurations
-on subsequent calls.
+&lt;h3&gt;Consumer Pool&lt;/h3&gt;
 
-In `iex` run `Pooler.PoolTimePublisher.publish`, then open the rabbit console to see
-your new exchange!
-
-
-## Consumers
-Peanut butter has Yeli, Publishers have consumers. We&amp;rsquo;re going to take a different approach to consumers, instead using a provided macro that hides all of the
-fetching and returning stuff the `ExRabbitPool.with_channel/2` function was doing for you.
-
-First, we need a new pool.
-### Consumer Pool
-Very similar to the Publisher Pool, except we&amp;rsquo;re going to bump the channels to 5. This is something we&amp;rsquo;d tweak over time, with a good signal being that your consumers occasionally crash because they can&amp;rsquo;t get a channel. This could be due to consumers taking a long time to finish a request, or having more concurrent work than you have channels. In any event, this is something you&amp;rsquo;ll have to tweak for your environment.
-
+&lt;p&gt;Very similar to the Publisher Pool, except we&amp;rsquo;re going to bump the channels to 5. This is something we&amp;rsquo;d tweak over time, with a good signal being that your consumers occasionally crash because they can&amp;rsquo;t get a channel. This could be due to consumers taking a long time to finish a request, or having more concurrent work than you have channels. In any event, this is something you&amp;rsquo;ll have to tweak for your environment.&lt;/p&gt;
 
 &lt;script src="https://gist.github.com/StevenNunez/ce73de390dc416f17e22ba2bf258a7ae.js"&gt;&lt;/script&gt;
-Same as before except with a higher channel count. Be sure to update `application.ex`
+
+&lt;p&gt;Same as before except with a higher channel count. Be sure to update &lt;code&gt;application.ex&lt;/code&gt;&lt;/p&gt;
 
 &lt;script src="https://gist.github.com/StevenNunez/a999e4089dc034d27786adc104ba19b5.js"&gt;&lt;/script&gt;
-On to our Consumer. We&amp;rsquo;re going to create a queue that consumes messages from
-the exchange. We&amp;rsquo;re going to use a named durable queue to allow us to stop consumers
-and not lose messages.
+
+&lt;p&gt;On to our Consumer.
+The best APIs offer nice abstractions but let you reach into the internals when needed. We&amp;rsquo;ll see how in a bit.
+We&amp;rsquo;re going to create a queue that consumes messages from
+our exchange. We&amp;rsquo;re going to use a named durable queue to allow us to stop consumers
+and not lose messages.&lt;/p&gt;
 
 &lt;script src="https://gist.github.com/StevenNunez/816d77c74b0850c985fd76a8ae5de357.js"&gt;&lt;/script&gt;
 
-You can see we started it correctly if you pop open observer.
-&lt;blockquote class="imgur-embed-pub" lang="en" data-id="cnWlTDU"&gt;
-&lt;a href="https://imgur.com/cnWlTDU"&gt;View post on imgur.com&lt;/a&gt;
-&lt;/blockquote&gt;
+&lt;p&gt;A lot going is on here but let&amp;rsquo;s take a look.&lt;/p&gt;
 
-&lt;script async src="//s.imgur.com/min/embed.js" charset="utf-8"&gt;&lt;/script&gt;
+&lt;ol&gt;
+&lt;li&gt;We&amp;rsquo;re defining our &lt;code&gt;child_spec/1&lt;/code&gt; that passes in the consumer pool we defined and a queue.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;setup_channel/2&lt;/code&gt; is one of the defined hooks that let us setup any additional connections and bindings prior to consuming messages on the queue. As previously mentioned, don&amp;rsquo;t worry about redeclaring the exchange, and the queue for that matter. You&amp;rsquo;ll only get an issue if you try to change its properties.&lt;/li&gt;
+&lt;li&gt;This is where the money is 💰💰💰. &lt;code&gt;basic_deliver/3&lt;/code&gt; gets called when a message makes its way to our queue. We&amp;rsquo;re on the hook for returning &lt;code&gt;:ok&lt;/code&gt; or &lt;code&gt;{:stop, reason}&lt;/code&gt; to kill the server.&lt;/li&gt;
+&lt;/ol&gt;
 
-&lt;p&gt;And in Rabbit, you can see we have 1 connection and 2 channels. JOY!
-&lt;blockquote class="imgur-embed-pub" lang="en" data-id="tPwPhop"&gt;
-&lt;a href="https://imgur.com/tPwPhop"&gt;View post on imgur.com&lt;/a&gt;
-&lt;/blockquote&gt;
-&lt;script async src="//s.imgur.com/min/embed.js" charset="utf-8"&gt;&lt;/script&gt;&lt;/p&gt;
+&lt;p&gt;The other callbacks defined are &lt;code&gt;basic_consume_ok/2&lt;/code&gt;, triggered when a consumer successfully joins, and
+kbasic&lt;em&gt;cancel/3&lt;code&gt;&lt;/code&gt;basic&lt;/em&gt;cancel_ok/2` for handling cancellation events.&lt;/p&gt;
 
-&lt;h2&gt;Test Drive&lt;/h2&gt;
-
-&lt;p&gt;Let&amp;rsquo;s see how you work with this thing. Let&amp;rsquo;s publish a message that says &amp;ldquo;Pool Time!&amp;rdquo; on to the &lt;code&gt;what_should_we_do&lt;/code&gt; exchange.&lt;/p&gt;
+&lt;p&gt;Don&amp;rsquo;t forget to update &lt;code&gt;application.ex&lt;/code&gt;&lt;/p&gt;
 
 &lt;script src="https://gist.github.com/StevenNunez/7a29ab01e5986873c732168518713368.js"&gt;&lt;/script&gt;
 
+&lt;h2&gt;Test Drive&lt;/h2&gt;
+
+&lt;p&gt;Let&amp;rsquo;s see how you work with this thing. Let&amp;rsquo;s publish a message that says &amp;ldquo;Pool Time!&amp;rdquo; on to the &lt;code&gt;what\_should\_we\_do&lt;/code&gt; exchange.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="https://imgur.com/OhIVclm"&gt;&lt;img src="https://i.imgur.com/OhIVclm.png" title="source: imgur.com" /&gt;&lt;/a&gt;&lt;/p&gt;
+
 &lt;p&gt;Start firing off those messages with &lt;code&gt;Pooler.PoolTimePublisher.publish/0&lt;/code&gt;.&lt;/p&gt;
 
-&lt;p&gt;&lt;blockquote class="imgur-embed-pub" lang="en" data-id="OhIVclm"&gt;&lt;a href="https://imgur.com/OhIVclm"&gt;View post on imgur.com&lt;/a&gt;&lt;/blockquote&gt;&lt;script async src="//s.imgur.com/min/embed.js" charset="utf-8"&gt;&lt;/script&gt;
-SUCH POWER!!&lt;/p&gt;
+&lt;p&gt;SUCH POWER!!&lt;/p&gt;
 
 &lt;h2&gt;Why bother&lt;/h2&gt;
 
@@ -137,13 +141,21 @@ SUCH POWER!!&lt;/p&gt;
 handshakes. Failure. If you were managing channels and connections on your own, you&amp;rsquo;d have to write a slew of other processes to
 free up resources when you failed. Or you&amp;rsquo;d have to set up separate monitors to clean up after your GenServers. With
 &lt;code&gt;ExRabbitPool&lt;/code&gt; you keep things in a clean expected state. Let&amp;rsquo;s update our consumer to raise an exception like an
-underslept teenager.&lt;/p&gt;
+underslept teenager. We&amp;rsquo;re going to change the restart strategy to &lt;code&gt;:temporary&lt;/code&gt; to not bring down the world,.&lt;/p&gt;
 
 &lt;script src="https://gist.github.com/StevenNunez/fa6109cd145231b5b980fac2e8da89db.js"&gt;&lt;/script&gt;
 
-&lt;p&gt;On to our Consumer. We&amp;rsquo;re going to create a queue that consumes messages from
-the exchange. We&amp;rsquo;re going to use a named durable queue to allow us to stop consumers
-and not lose messages.&lt;/p&gt;
+&lt;p&gt;Go ahead and publish some messages. Sure it crashes, but look at your stats.&lt;/p&gt;
+
+&lt;p&gt;Rabbit is holding on to your message until you get can get your act together.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="https://imgur.com/EnLDYSG"&gt;&lt;img src="https://i.imgur.com/EnLDYSG.png" title="source: imgur.com" /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&amp;hellip; and your channels are ready to field new requests.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="https://imgur.com/xIjvVdl"&gt;&lt;img src="https://i.imgur.com/xIjvVdl.png" title="source: imgur.com" /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;That&amp;rsquo;s all for today. Thanks for reading.&lt;/p&gt;
 </content>
   </entry>
   <entry>
