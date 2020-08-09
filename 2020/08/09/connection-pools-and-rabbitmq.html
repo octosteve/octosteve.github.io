@@ -1,0 +1,188 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta http-equiv='X-UA-Compatible' content='IE=edge;chrome=1'/>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hostile Developer - Connection Pools and RabbitMQ</title>
+  <link href="/favicon.ico" rel="icon" type="image/ico" />
+  <link href="/stylesheets/application.css" rel="stylesheet" type="text/css" />
+  <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/feed.xml" />
+</head>
+<body>
+<div id="container">
+  <section id="header">
+  <header>
+<a href="/">        <h1 class="brand"><span class="hostile">Hostile</span> Developer</h1>
+        <h4 class="tag-line">I am Steven. Hear me Rant.</h4>
+</a>  </header>
+
+  <section class='social'>
+    <a href="http://twitter.com/_StevenNunez/" target="_blank"><i class="fa fa-twitter"></i></a>
+    <a href="https://github.com/StevenNunez/" target="_blank"><i class="fa fa-github"></i></a>
+  </section>
+</section>
+
+
+  <main id='article' role="main">
+    <h1 class="article-title"><a href="/2020/08/09/connection-pools-and-rabbitmq.html">Connection Pools and RabbitMQ</a></h1>
+    <p>In this post, we&rsquo;re going to go over connection pools how to use ex<em>rabbit</em>pool to manage our connections and channels.</p>
+
+<h2>Connection Pools</h2>
+
+<p>If you&rsquo;ve used Ecto, you&rsquo;ve used connection pools. Connection pools allow you to allocate a number of connections to a service and allow processes in your system to use connections to work concurrently. In the case of Ecto, when you make a query, one of the available connections is checked out, used to make the query and return results. When it&rsquo;s done, it goes back in the pool.</p>
+
+<p>With RabbitMQ ideally you&rsquo;re going to have <a href="https://www.cloudamqp.com/blog/2018-01-19-part4-rabbitmq-13-common-errors.html">1 connection per resource</a>. One connection for publishing, and one connection for consuming. When we use connection pools with Rabbit, we&rsquo;re <em>really</em> going to be configuring a <strong>channel pool</strong>.</p>
+
+<h2>Connections and Channels</h2>
+
+<p>Think of a connection as a tunnel, and a channel as a bunch of runners that go through the tunnel.
+<img alt="Download?force=true&amp;w=640" src="https://unsplash.com/photos/3fzYRVQu_3c/download?force=true&amp;w=640" /></p>
+
+<p>Photo by Marcos Nieto on Unsplash</p>
+
+<p>Channels allow you to multiplex a single TCP connection. Since connections are pretty heavy (costing the server about 100KB), channels give us a way find the resource sweet spot. The <a href="https://www.rabbitmq.com/channels.html#resource-usage">Channels guide</a> notes that pooling should be used when managing your own channels becomes a pain but why not go for broke from the jump?</p>
+
+<h2>Getting Started</h2>
+
+<p>Let&rsquo;s start with a project:</p>
+
+<script src="https://gist.github.com/StevenNunez/6d1a15f7a45572c9a39cbcf94e33cdae.js"></script>
+
+<p>Open up <code>mix.exs</code> and add <a href="https://github.com/esl/ex_rabbit_pool">ex<em>rabbit</em>pool</a>, then run <code>mix deps.get</code></p>
+
+<script src="https://gist.github.com/StevenNunez/82cb9836bc4a7d1648cf46e62509341f.js"></script>
+
+<p>Great! Let&rsquo;s start out with the easier of the 2. The publishing pool. Again, we&rsquo;re going for a SINGLE connection but multiple channels. Since publishers don&rsquo;t block, we can keep the count pretty low. Let&rsquo;s start out with 2 channels.</p>
+
+<script src="https://gist.github.com/StevenNunez/fcf9706108409911248a133ebd6a9320.js"></script>
+
+<p>A whole-lotta code I think it&rsquo;s kind of nice. Let&rsquo;s take a look at the code.
+1. If you&rsquo;ve worked with <a href="https://github.com/devinus/poolboy">Poolboy</a> before, this syntax should look familiar.
+We&rsquo;re configuring 1 <code>ExRabbitPool.Worker.RabbitConnection</code> process to be checkout-able. These configs go straight to Poolboy.
+2. These rabbit configs get passed in to the worker when it&rsquo;s checked out.
+3. You&rsquo;ve been using these sweet <code>child_spec/1</code> functions since Elixir 1.5! They let you define what it means to <em>start</em> your server.
+Here, we&rsquo;re doing a little&hellip; but with a lot of code. <code>id</code> is what your Supervisor will use to track your process. <code>start</code>, well, that&rsquo;s how you start the dang thing. Notice we&rsquo;re just delegating to <code>ExRabbitPool.PoolSupervisor.start_link/2</code>. That second argument is the name you can use to reference this process.
+Add this to <code>application.ex</code>
+<script src="https://gist.github.com/StevenNunez/8318539fd3d5e82cd1a7ca97b1f41436.js"></script>
+The <code>ExRabbitPool.RabbitMQ</code> module <a href="https://github.com/esl/ex_rabbit_pool/blob/master/lib/clients/rabbitmq.ex">delegate all of it&rsquo;s calls</a> to the underlying
+<a href="https://github.com/pma/amqp">amqp</a> library, but we&rsquo;ll use this to support any
+changes they may make in the future. Don&rsquo;t worry about declaring the exchange multiple
+times. The only time this will cause a problem is if you call it with different configurations
+on subsequent calls.</p>
+
+<p>In <code>iex</code> run <code>Pooler.PoolTimePublisher.publish</code>, then open the rabbit console to see
+your new exchange!</p>
+
+<blockquote class="imgur-embed-pub" lang="en" data-id="iczQAPS"><a href="https://imgur.com/iczQAPS">View post on imgur.com</a></blockquote><script async src="//s.imgur.com/min/embed.js" charset="utf-8"></script>
+
+## Consumers
+Peanut butter has Yeli, Publishers have consumers. We&rsquo;re going to take a different approach to consumers, instead using a provided macro that hides all of the
+fetching and returning stuff the `ExRabbitPool.with_channel/2` function was doing for you.
+
+First, we need a new pool.
+### Consumer Pool
+Very similar to the Publisher Pool, except we&rsquo;re going to bump the channels to 5. This is something we&rsquo;d tweak over time, with a good signal being that your consumers occasionally crash because they can&rsquo;t get a channel. This could be due to consumers taking a long time to finish a request, or having more concurrent work than you have channels. In any event, this is something you&rsquo;ll have to tweak for your environment.
+
+
+<script src="https://gist.github.com/StevenNunez/f19d7a058ae5350feb0e936383f8f584.js"></script>
+The `ExRabbitPool.RabbitMQ` module [delegate all of it&rsquo;s calls](https://github.com/esl/ex_rabbit_pool/blob/master/lib/clients/rabbitmq.ex) to the underlying
+[amqp](https://github.com/pma/amqp) library, but we&rsquo;ll use this to support any
+changes they may make in the future. Don&rsquo;t worry about declaring the exchange multiple
+times. The only time this will cause a problem is if you call it with different configurations
+on subsequent calls.
+
+In `iex` run `Pooler.PoolTimePublisher.publish`, then open the rabbit console to see
+your new exchange!
+
+
+## Consumers
+Peanut butter has Yeli, Publishers have consumers. We&rsquo;re going to take a different approach to consumers, instead using a provided macro that hides all of the
+fetching and returning stuff the `ExRabbitPool.with_channel/2` function was doing for you.
+
+First, we need a new pool.
+### Consumer Pool
+Very similar to the Publisher Pool, except we&rsquo;re going to bump the channels to 5. This is something we&rsquo;d tweak over time, with a good signal being that your consumers occasionally crash because they can&rsquo;t get a channel. This could be due to consumers taking a long time to finish a request, or having more concurrent work than you have channels. In any event, this is something you&rsquo;ll have to tweak for your environment.
+
+
+<script src="https://gist.github.com/StevenNunez/ce73de390dc416f17e22ba2bf258a7ae.js"></script>
+Same as before except with a higher channel count. Be sure to update `application.ex`
+
+<script src="https://gist.github.com/StevenNunez/a999e4089dc034d27786adc104ba19b5.js"></script>
+On to our Consumer. We&rsquo;re going to create a queue that consumes messages from
+the exchange. We&rsquo;re going to use a named durable queue to allow us to stop consumers
+and not lose messages.
+
+<script src="https://gist.github.com/StevenNunez/816d77c74b0850c985fd76a8ae5de357.js"></script>
+
+You can see we started it correctly if you pop open observer.
+<blockquote class="imgur-embed-pub" lang="en" data-id="cnWlTDU">
+<a href="https://imgur.com/cnWlTDU">View post on imgur.com</a>
+</blockquote>
+
+<script async src="//s.imgur.com/min/embed.js" charset="utf-8"></script>
+
+<p>And in Rabbit, you can see we have 1 connection and 2 channels. JOY!
+<blockquote class="imgur-embed-pub" lang="en" data-id="tPwPhop">
+<a href="https://imgur.com/tPwPhop">View post on imgur.com</a>
+</blockquote>
+<script async src="//s.imgur.com/min/embed.js" charset="utf-8"></script></p>
+
+<h2>Test Drive</h2>
+
+<p>Let&rsquo;s see how you work with this thing. Let&rsquo;s publish a message that says &ldquo;Pool Time!&rdquo; on to the <code>what_should_we_do</code> exchange.</p>
+
+<script src="https://gist.github.com/StevenNunez/7a29ab01e5986873c732168518713368.js"></script>
+
+<p>Start firing off those messages with <code>Pooler.PoolTimePublisher.publish/0</code>.</p>
+
+<p><blockquote class="imgur-embed-pub" lang="en" data-id="OhIVclm"><a href="https://imgur.com/OhIVclm">View post on imgur.com</a></blockquote><script async src="//s.imgur.com/min/embed.js" charset="utf-8"></script>
+SUCH POWER!!</p>
+
+<h2>Why bother</h2>
+
+<p>This might seem like a big lift, but there&rsquo;s one big benefit to not having to manage your own channel
+handshakes. Failure. If you were managing channels and connections on your own, you&rsquo;d have to write a slew of other processes to
+free up resources when you failed. Or you&rsquo;d have to set up separate monitors to clean up after your GenServers. With
+<code>ExRabbitPool</code> you keep things in a clean expected state. Let&rsquo;s update our consumer to raise an exception like an
+underslept teenager.</p>
+
+<script src="https://gist.github.com/StevenNunez/fa6109cd145231b5b980fac2e8da89db.js"></script>
+
+<p>On to our Consumer. We&rsquo;re going to create a queue that consumes messages from
+the exchange. We&rsquo;re going to use a named durable queue to allow us to stop consumers
+and not lose messages.</p>
+
+    <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'hostiledeveloper'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+  </main>
+
+ <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-48123503-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+ <em>Copyright &copy; 2020 Steven Nu&ntilde;ez - HostileDeveloper</em>
+
+</div>
+</body>
+</html>
