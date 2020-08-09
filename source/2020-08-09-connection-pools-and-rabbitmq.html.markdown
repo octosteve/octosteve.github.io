@@ -4,11 +4,12 @@ date: 2020-08-09 02:04 UTC
 tags: elixir, rabbitmq
 ---
 
-In this post, we're going to go over connection pools how to use ex\_rabbit\_pool to manage our connections and channels.
+In this post, we're going to go over connection pools how to use ex\_rabbit\_pool to manage connections and channels.
+These concepts will be covered further in my [course at ElixirConf](https://2020.elixirconf.com/trainers/4/course).
 
 ## Connection Pools
 
-If you've used Ecto, you've used connection pools. Connection pools allow you to allocate a number of connections to a service and allow processes in your system to use connections to do work concurrently. In the case of Ecto, when you make a query, one of the available connections is checked out, used to make the query and return results. When it's done, it goes back in the pool.
+If you've used Ecto, you've used connection pools. Connection pools allow you to allocate a number of connections to a service and allow processes in your system to use those connections to do work concurrently. In the case of Ecto, when you make a query, one of the available connections is checked out, used to make the query and return results. When it's done, it goes back in the pool.
 
 With RabbitMQ ideally you're going to have [1 connection per resource](https://www.cloudamqp.com/blog/2018-01-19-part4-rabbitmq-13-common-errors.html). One connection for publishing, and one connection for consuming. When we use connection pools with Rabbit, we're _really_ going to be configuring a **channel pool**.
 
@@ -20,7 +21,7 @@ Photo by Marcos Nieto on Unsplash
 
 These slackers aren't very inspiring.
 
-Channels allow you to multiplex a single TCP connection. Since connections are pretty heavy (costing the server about 100KB), channels give us a way find the resource sweet spot. The [Channels guide](https://www.rabbitmq.com/channels.html#resource-usage) notes that pooling should be used when managing your own channels becomes a pain but why not go for broke from the jump?
+Channels allow you to multiplex over a single TCP connection. Since connections are pretty heavy (costing the server about 100KB), channels give us a way find the resource sweet spot. The [Channels guide](https://www.rabbitmq.com/channels.html#resource-usage) notes that pooling should be used when managing your own channels becomes a pain but why not go for broke from the jump?
 
 ## Getting Started
 Let's start with a project:
@@ -32,22 +33,21 @@ Open up `mix.exs` and add [ex\_rabbit\_pool](https://github.com/esl/ex_rabbit_po
 Great! Let's start out with the easier of the 2. The publishing pool. Again, we're going for a SINGLE connection but multiple channels. Since publishers don't block, we can keep the count pretty low. Let's start out with 2 channels.
 
 <script src="https://gist.github.com/StevenNunez/fcf9706108409911248a133ebd6a9320.js"></script>
-A whole-lotta code I think it's kind of nice. Let's take a look at the code.
+A whole-lotta code. Let's jump right in:
 
 1. If you've worked with [Poolboy](https://github.com/devinus/poolboy) before, this syntax should look familiar.
 We're configuring 1 `ExRabbitPool.Worker.RabbitConnection` process to be checkout-able. These configs go straight to Poolboy.
 2. These rabbit configs get passed in to the worker when it's checked out.
 3. You've been using these sweet `child_spec/1` functions since Elixir 1.5! They let you define what it means to _start_ your server.
-Here, we're doing a little... but with a lot of code. `id` is what your Supervisor will use to track your process. `start`, well, that's how you start the dang thing. Notice we're just delegating to `ExRabbitPool.PoolSupervisor.start_link/2`. That second argument is the name you can use to reference this process.
+Here, we're doing a little... but with a lot of code. `id` is what your Supervisor will use to track your process. `start`, well, that's how you start the dang thing. Notice we're just delegating to `ExRabbitPool.PoolSupervisor.start_link/2`. That second argument to the Pool Supervisor's `start_link` is the name you can use to reference this process.
 
 Add this to `application.ex`
 <script src="https://gist.github.com/StevenNunez/8318539fd3d5e82cd1a7ca97b1f41436.js"></script>
-Pop open observer and take a look at our process.
-
+Run `iex -S mix` and you'll see this in observer.
 
 <a href="https://imgur.com/cnWlTDU"><img width="100%" src="https://i.imgur.com/cnWlTDU.png" title="source: imgur.com" /></a>
 
-And you'll see 1 connection and 2 channels. Just what we want!
+Open the Rabbit Console and you'll see 1 connection and 2 channels. Just what we want!
 
 <a href="https://imgur.com/tPwPhop"><img src="https://i.imgur.com/tPwPhop.png" title="source: imgur.com" /></a>
 
@@ -90,7 +90,7 @@ and not lose messages.
 A lot going is on here but let's take a look.
 
 1. We're defining our `child_spec/1` that passes in the consumer pool we defined and a queue.
-2. `setup_channel/2` is one of the defined hooks that let us setup any additional connections and bindings prior to consuming messages on the queue. As previously mentioned, don't worry about redeclaring the exchange, and the queue for that matter. You'll only get an issue if you try to change its properties.
+2. `setup_channel/2` is one of the defined hooks that let us setup any additional connections and bindings prior to consuming messages on the queue. As previously mentioned, don't worry about redeclaring the exchange, or the queue for that matter. You'll only get an issue if you try to change its properties.
 3. This is where the money is 💰💰💰. `basic_deliver/3` gets called when a message makes its way to our queue. We're on the hook for returning `:ok` or `{:stop, reason}` to kill the server.
 
 The other callbacks defined are `basic_consume_ok/2`, triggered when a consumer successfully joins, and
@@ -101,12 +101,11 @@ Don't forget to update `application.ex`
 <script src="https://gist.github.com/StevenNunez/7a29ab01e5986873c732168518713368.js"></script>
 
 ## Test Drive
-Let's see how you work with this thing. Let's publish a message that says "Pool Time!" on to the `what\_should\_we\_do` exchange.
-
-<a href="https://imgur.com/OhIVclm"><img src="https://i.imgur.com/OhIVclm.png" title="source: imgur.com" /></a>
+Let's see how you work with this thing. Let's publish a message that says "Pool Time!" on to the `what_should_we_do` exchange.
 
 Start firing off those messages with `Pooler.PoolTimePublisher.publish/0`.
 
+<a href="https://imgur.com/OhIVclm"><img src="https://i.imgur.com/OhIVclm.png" title="source: imgur.com" /></a>
 
 SUCH POWER!!
 
@@ -114,7 +113,7 @@ SUCH POWER!!
 This might seem like a big lift, but there's one big benefit to not having to manage your own channel
 handshakes. Failure. If you were managing channels and connections on your own, you'd have to write a slew of other processes to
 free up resources when you failed. Or you'd have to set up separate monitors to clean up after your GenServers. With
-`ExRabbitPool` you keep things in a clean expected state. Let's update our consumer to raise an exception like an
+`ExRabbitPool` you keep things in a clean, expected state. Let's update our consumer to raise an exception like an
 underslept teenager. We're going to change the restart strategy to `:temporary` to not bring down the world,.
 
 <script src="https://gist.github.com/StevenNunez/fa6109cd145231b5b980fac2e8da89db.js"></script>
