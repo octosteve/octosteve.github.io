@@ -51,7 +51,7 @@ Open the Rabbit Console and you'll see 1 connection and 2 channels. Just what we
 
 <a href="https://imgur.com/tPwPhop"><img src="https://i.imgur.com/tPwPhop.png" title="source: imgur.com" /></a>
 
-Let's create a publisher the publishes to a `what_should_we_do` exchange with a payload of "Pool Time!"
+Let's create a publisher that publishes to a `what_should_we_do` exchange with a payload of "Pool Time!"
 <script src="https://gist.github.com/StevenNunez/f19d7a058ae5350feb0e936383f8f584.js"></script>
 
 The `ExRabbitPool.RabbitMQ` module [delegates all of it's calls](https://github.com/esl/ex_rabbit_pool/blob/master/lib/clients/rabbitmq.ex) to the underlying
@@ -67,7 +67,7 @@ your new exchange!
 
 
 ## Consumers
-Peanut butter has Jelly, Publishers have consumers. We're going to take a different approach to consumers, instead using a provided macro that hides all of the
+Peanut butter has Jelly, Publishers have consumers. We're going to take a different approach for consumers, instead using a provided macro that hides all of the
 fetching and returning stuff the `ExRabbitPool.with_channel/2` function was doing for you.
 
 First, we need a new pool.
