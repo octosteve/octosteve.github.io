@@ -14,15 +14,16 @@
     <link rel="alternate" href="https://hostiledeveloper.com/2020/08/09/connection-pools-and-rabbitmq.html"/>
     <id>https://hostiledeveloper.com/2020/08/09/connection-pools-and-rabbitmq.html</id>
     <published>2020-08-09T02:04:00Z</published>
-    <updated>2020-08-09T00:32:14-04:00</updated>
+    <updated>2020-08-09T00:52:27-04:00</updated>
     <author>
       <name>Article Author</name>
     </author>
-    <content type="html">&lt;p&gt;In this post, we&amp;rsquo;re going to go over connection pools how to use ex_rabbit_pool to manage our connections and channels.&lt;/p&gt;
+    <content type="html">&lt;p&gt;In this post, we&amp;rsquo;re going to go over connection pools how to use ex_rabbit_pool to manage connections and channels.
+These concepts will be covered further in my &lt;a href="https://2020.elixirconf.com/trainers/4/course"&gt;course at ElixirConf&lt;/a&gt;.&lt;/p&gt;
 
 &lt;h2&gt;Connection Pools&lt;/h2&gt;
 
-&lt;p&gt;If you&amp;rsquo;ve used Ecto, you&amp;rsquo;ve used connection pools. Connection pools allow you to allocate a number of connections to a service and allow processes in your system to use connections to do work concurrently. In the case of Ecto, when you make a query, one of the available connections is checked out, used to make the query and return results. When it&amp;rsquo;s done, it goes back in the pool.&lt;/p&gt;
+&lt;p&gt;If you&amp;rsquo;ve used Ecto, you&amp;rsquo;ve used connection pools. Connection pools allow you to allocate a number of connections to a service and allow processes in your system to use those connections to do work concurrently. In the case of Ecto, when you make a query, one of the available connections is checked out, used to make the query and return results. When it&amp;rsquo;s done, it goes back in the pool.&lt;/p&gt;
 
 &lt;p&gt;With RabbitMQ ideally you&amp;rsquo;re going to have &lt;a href="https://www.cloudamqp.com/blog/2018-01-19-part4-rabbitmq-13-common-errors.html"&gt;1 connection per resource&lt;/a&gt;. One connection for publishing, and one connection for consuming. When we use connection pools with Rabbit, we&amp;rsquo;re &lt;em&gt;really&lt;/em&gt; going to be configuring a &lt;strong&gt;channel pool&lt;/strong&gt;.&lt;/p&gt;
 
@@ -35,7 +36,7 @@
 
 &lt;p&gt;These slackers aren&amp;rsquo;t very inspiring.&lt;/p&gt;
 
-&lt;p&gt;Channels allow you to multiplex a single TCP connection. Since connections are pretty heavy (costing the server about 100KB), channels give us a way find the resource sweet spot. The &lt;a href="https://www.rabbitmq.com/channels.html#resource-usage"&gt;Channels guide&lt;/a&gt; notes that pooling should be used when managing your own channels becomes a pain but why not go for broke from the jump?&lt;/p&gt;
+&lt;p&gt;Channels allow you to multiplex over a single TCP connection. Since connections are pretty heavy (costing the server about 100KB), channels give us a way find the resource sweet spot. The &lt;a href="https://www.rabbitmq.com/channels.html#resource-usage"&gt;Channels guide&lt;/a&gt; notes that pooling should be used when managing your own channels becomes a pain but why not go for broke from the jump?&lt;/p&gt;
 
 &lt;h2&gt;Getting Started&lt;/h2&gt;
 
@@ -51,23 +52,23 @@
 
 &lt;script src="https://gist.github.com/StevenNunez/fcf9706108409911248a133ebd6a9320.js"&gt;&lt;/script&gt;
 
-&lt;p&gt;A whole-lotta code I think it&amp;rsquo;s kind of nice. Let&amp;rsquo;s take a look at the code.&lt;/p&gt;
+&lt;p&gt;A whole-lotta code. Let&amp;rsquo;s jump right in:&lt;/p&gt;
 
 &lt;ol&gt;
 &lt;li&gt;If you&amp;rsquo;ve worked with &lt;a href="https://github.com/devinus/poolboy"&gt;Poolboy&lt;/a&gt; before, this syntax should look familiar.
 We&amp;rsquo;re configuring 1 &lt;code&gt;ExRabbitPool.Worker.RabbitConnection&lt;/code&gt; process to be checkout-able. These configs go straight to Poolboy.&lt;/li&gt;
 &lt;li&gt;These rabbit configs get passed in to the worker when it&amp;rsquo;s checked out.&lt;/li&gt;
 &lt;li&gt;You&amp;rsquo;ve been using these sweet &lt;code&gt;child_spec/1&lt;/code&gt; functions since Elixir 1.5! They let you define what it means to &lt;em&gt;start&lt;/em&gt; your server.
-Here, we&amp;rsquo;re doing a little&amp;hellip; but with a lot of code. &lt;code&gt;id&lt;/code&gt; is what your Supervisor will use to track your process. &lt;code&gt;start&lt;/code&gt;, well, that&amp;rsquo;s how you start the dang thing. Notice we&amp;rsquo;re just delegating to &lt;code&gt;ExRabbitPool.PoolSupervisor.start_link/2&lt;/code&gt;. That second argument is the name you can use to reference this process.&lt;/li&gt;
+Here, we&amp;rsquo;re doing a little&amp;hellip; but with a lot of code. &lt;code&gt;id&lt;/code&gt; is what your Supervisor will use to track your process. &lt;code&gt;start&lt;/code&gt;, well, that&amp;rsquo;s how you start the dang thing. Notice we&amp;rsquo;re just delegating to &lt;code&gt;ExRabbitPool.PoolSupervisor.start_link/2&lt;/code&gt;. That second argument to the Pool Supervisor&amp;rsquo;s &lt;code&gt;start_link&lt;/code&gt; is the name you can use to reference this process.&lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;p&gt;Add this to &lt;code&gt;application.ex&lt;/code&gt;
 &lt;script src="https://gist.github.com/StevenNunez/8318539fd3d5e82cd1a7ca97b1f41436.js"&gt;&lt;/script&gt;
-Pop open observer and take a look at our process.&lt;/p&gt;
+Run &lt;code&gt;iex -S mix&lt;/code&gt; and you&amp;rsquo;ll see this in observer.&lt;/p&gt;
 
 &lt;p&gt;&lt;a href="https://imgur.com/cnWlTDU"&gt;&lt;img width="100%" src="https://i.imgur.com/cnWlTDU.png" title="source: imgur.com" /&gt;&lt;/a&gt;&lt;/p&gt;
 
-&lt;p&gt;And you&amp;rsquo;ll see 1 connection and 2 channels. Just what we want!&lt;/p&gt;
+&lt;p&gt;Open the Rabbit Console and you&amp;rsquo;ll see 1 connection and 2 channels. Just what we want!&lt;/p&gt;
 
 &lt;p&gt;&lt;a href="https://imgur.com/tPwPhop"&gt;&lt;img src="https://i.imgur.com/tPwPhop.png" title="source: imgur.com" /&gt;&lt;/a&gt;&lt;/p&gt;
 
@@ -114,7 +115,7 @@ and not lose messages.&lt;/p&gt;
 
 &lt;ol&gt;
 &lt;li&gt;We&amp;rsquo;re defining our &lt;code&gt;child_spec/1&lt;/code&gt; that passes in the consumer pool we defined and a queue.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;setup_channel/2&lt;/code&gt; is one of the defined hooks that let us setup any additional connections and bindings prior to consuming messages on the queue. As previously mentioned, don&amp;rsquo;t worry about redeclaring the exchange, and the queue for that matter. You&amp;rsquo;ll only get an issue if you try to change its properties.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;setup_channel/2&lt;/code&gt; is one of the defined hooks that let us setup any additional connections and bindings prior to consuming messages on the queue. As previously mentioned, don&amp;rsquo;t worry about redeclaring the exchange, or the queue for that matter. You&amp;rsquo;ll only get an issue if you try to change its properties.&lt;/li&gt;
 &lt;li&gt;This is where the money is 💰💰💰. &lt;code&gt;basic_deliver/3&lt;/code&gt; gets called when a message makes its way to our queue. We&amp;rsquo;re on the hook for returning &lt;code&gt;:ok&lt;/code&gt; or &lt;code&gt;{:stop, reason}&lt;/code&gt; to kill the server.&lt;/li&gt;
 &lt;/ol&gt;
 
@@ -127,11 +128,11 @@ kbasic&lt;em&gt;cancel/3&lt;code&gt;&lt;/code&gt;basic&lt;/em&gt;cancel_ok/2` fo
 
 &lt;h2&gt;Test Drive&lt;/h2&gt;
 
-&lt;p&gt;Let&amp;rsquo;s see how you work with this thing. Let&amp;rsquo;s publish a message that says &amp;ldquo;Pool Time!&amp;rdquo; on to the &lt;code&gt;what\_should\_we\_do&lt;/code&gt; exchange.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href="https://imgur.com/OhIVclm"&gt;&lt;img src="https://i.imgur.com/OhIVclm.png" title="source: imgur.com" /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Let&amp;rsquo;s see how you work with this thing. Let&amp;rsquo;s publish a message that says &amp;ldquo;Pool Time!&amp;rdquo; on to the &lt;code&gt;what_should_we_do&lt;/code&gt; exchange.&lt;/p&gt;
 
 &lt;p&gt;Start firing off those messages with &lt;code&gt;Pooler.PoolTimePublisher.publish/0&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="https://imgur.com/OhIVclm"&gt;&lt;img src="https://i.imgur.com/OhIVclm.png" title="source: imgur.com" /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;SUCH POWER!!&lt;/p&gt;
 
@@ -140,7 +141,7 @@ kbasic&lt;em&gt;cancel/3&lt;code&gt;&lt;/code&gt;basic&lt;/em&gt;cancel_ok/2` fo
 &lt;p&gt;This might seem like a big lift, but there&amp;rsquo;s one big benefit to not having to manage your own channel
 handshakes. Failure. If you were managing channels and connections on your own, you&amp;rsquo;d have to write a slew of other processes to
 free up resources when you failed. Or you&amp;rsquo;d have to set up separate monitors to clean up after your GenServers. With
-&lt;code&gt;ExRabbitPool&lt;/code&gt; you keep things in a clean expected state. Let&amp;rsquo;s update our consumer to raise an exception like an
+&lt;code&gt;ExRabbitPool&lt;/code&gt; you keep things in a clean, expected state. Let&amp;rsquo;s update our consumer to raise an exception like an
 underslept teenager. We&amp;rsquo;re going to change the restart strategy to &lt;code&gt;:temporary&lt;/code&gt; to not bring down the world,.&lt;/p&gt;
 
 &lt;script src="https://gist.github.com/StevenNunez/fa6109cd145231b5b980fac2e8da89db.js"&gt;&lt;/script&gt;
