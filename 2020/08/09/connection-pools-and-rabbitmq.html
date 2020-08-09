@@ -80,7 +80,7 @@ Run <code>iex -S mix</code> and you&rsquo;ll see this in observer.</p>
 
 <p><a href="https://imgur.com/tPwPhop"><img src="https://i.imgur.com/tPwPhop.png" title="source: imgur.com" /></a></p>
 
-<p>Let&rsquo;s create a publisher the publishes to a <code>what_should_we_do</code> exchange with a payload of &ldquo;Pool Time!&rdquo;
+<p>Let&rsquo;s create a publisher that publishes to a <code>what_should_we_do</code> exchange with a payload of &ldquo;Pool Time!&rdquo;
 <script src="https://gist.github.com/StevenNunez/f19d7a058ae5350feb0e936383f8f584.js"></script></p>
 
 <p>The <code>ExRabbitPool.RabbitMQ</code> module <a href="https://github.com/esl/ex_rabbit_pool/blob/master/lib/clients/rabbitmq.ex">delegates all of it&rsquo;s calls</a> to the underlying
@@ -96,7 +96,7 @@ your new exchange!</p>
 
 <h2>Consumers</h2>
 
-<p>Peanut butter has Jelly, Publishers have consumers. We&rsquo;re going to take a different approach to consumers, instead using a provided macro that hides all of the
+<p>Peanut butter has Jelly, Publishers have consumers. We&rsquo;re going to take a different approach for consumers, instead using a provided macro that hides all of the
 fetching and returning stuff the <code>ExRabbitPool.with_channel/2</code> function was doing for you.</p>
 
 <p>First, we need a new pool.</p>

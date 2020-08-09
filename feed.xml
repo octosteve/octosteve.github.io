@@ -14,7 +14,7 @@
     <link rel="alternate" href="https://hostiledeveloper.com/2020/08/09/connection-pools-and-rabbitmq.html"/>
     <id>https://hostiledeveloper.com/2020/08/09/connection-pools-and-rabbitmq.html</id>
     <published>2020-08-09T02:04:00Z</published>
-    <updated>2020-08-09T00:52:27-04:00</updated>
+    <updated>2020-08-09T10:38:08-04:00</updated>
     <author>
       <name>Article Author</name>
     </author>
@@ -72,7 +72,7 @@ Run &lt;code&gt;iex -S mix&lt;/code&gt; and you&amp;rsquo;ll see this in observe
 
 &lt;p&gt;&lt;a href="https://imgur.com/tPwPhop"&gt;&lt;img src="https://i.imgur.com/tPwPhop.png" title="source: imgur.com" /&gt;&lt;/a&gt;&lt;/p&gt;
 
-&lt;p&gt;Let&amp;rsquo;s create a publisher the publishes to a &lt;code&gt;what_should_we_do&lt;/code&gt; exchange with a payload of &amp;ldquo;Pool Time!&amp;rdquo;
+&lt;p&gt;Let&amp;rsquo;s create a publisher that publishes to a &lt;code&gt;what_should_we_do&lt;/code&gt; exchange with a payload of &amp;ldquo;Pool Time!&amp;rdquo;
 &lt;script src="https://gist.github.com/StevenNunez/f19d7a058ae5350feb0e936383f8f584.js"&gt;&lt;/script&gt;&lt;/p&gt;
 
 &lt;p&gt;The &lt;code&gt;ExRabbitPool.RabbitMQ&lt;/code&gt; module &lt;a href="https://github.com/esl/ex_rabbit_pool/blob/master/lib/clients/rabbitmq.ex"&gt;delegates all of it&amp;rsquo;s calls&lt;/a&gt; to the underlying
@@ -88,7 +88,7 @@ your new exchange!&lt;/p&gt;
 
 &lt;h2&gt;Consumers&lt;/h2&gt;
 
-&lt;p&gt;Peanut butter has Jelly, Publishers have consumers. We&amp;rsquo;re going to take a different approach to consumers, instead using a provided macro that hides all of the
+&lt;p&gt;Peanut butter has Jelly, Publishers have consumers. We&amp;rsquo;re going to take a different approach for consumers, instead using a provided macro that hides all of the
 fetching and returning stuff the &lt;code&gt;ExRabbitPool.with_channel/2&lt;/code&gt; function was doing for you.&lt;/p&gt;
 
 &lt;p&gt;First, we need a new pool.&lt;/p&gt;
