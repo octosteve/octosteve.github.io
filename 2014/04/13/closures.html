@@ -8,8 +8,14 @@
   <link href="/favicon.ico" rel="icon" type="image/ico" />
   <link href="/stylesheets/application.css" rel="stylesheet" type="text/css" />
   <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/feed.xml" />
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
 </head>
 <body>
+  <script>
+    document.addEventListener("DOMContentLoaded", function(event) {
+      mermaid.initialize({startOnLoad:true});
+    });
+  </script>
 <div id="container">
   <section id="header">
   <header>
