@@ -14,7 +14,7 @@
     <link rel="alternate" href="https://hostiledeveloper.com/2020/08/12/superb-supervisors-designing-for-failure.html"/>
     <id>https://hostiledeveloper.com/2020/08/12/superb-supervisors-designing-for-failure.html</id>
     <published>2020-08-12T04:19:00Z</published>
-    <updated>2020-08-12T00:32:44-04:00</updated>
+    <updated>2020-08-12T08:46:36-04:00</updated>
     <author>
       <name>Article Author</name>
     </author>
@@ -33,11 +33,15 @@ exactly to do it.&lt;/p&gt;
 
 &lt;p&gt;We&amp;rsquo;re going to design a system of RabbitMQ consumers that
 fail at the first sign of trouble. Do not pass go, do not
-collect 200 dollars.
-&lt;div&gt;
-&lt;img src="https://images.unsplash.com/photo-1544393569-eb1568319eef?ixlib=rb-1.2.1&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=400&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjEzNzc5N30" /&gt; &lt;div&gt; Photo by &lt;a href="https://unsplash.com/@nadineshaabana?utm_source=seance&amp;utm_medium=referral"&gt;Nadine Shaabana&lt;/a&gt; on &lt;a href="https://unsplash.com/?utm_source=seance&amp;utm_medium=referral"&gt;Unsplash&lt;/a&gt;&lt;/p&gt;
+collect 200 dollars.&lt;/p&gt;
 
-&lt;p&gt;You might be asking yourself, &amp;ldquo;Why would you build a
+&lt;div&gt;
+  &lt;img width="100%" src="https://images.unsplash.com/photo-1544393569-eb1568319eef?ixlib=rb-1.2.1&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=400&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjEzNzc5N30" /&gt;
+&lt;small&gt;Photo by &lt;a href="https://unsplash.com/@nadineshaabana?utm_source=seance&amp;utm_medium=referral"&gt;Nadine Shaabana&lt;/a&gt; on &lt;a href="https://unsplash.com/?utm_source=seance&amp;utm_medium=referral"&gt;Unsplash&lt;/a&gt;&lt;/small&gt;
+&lt;div&gt;
+
+
+You might be asking yourself, &amp;ldquo;Why would you build a
 crashing consumer?&amp;rdquo; These consumers listen on the wire to
 &amp;ldquo;Facts&amp;rdquo;. These Facts are non-negotiable. If you opt in for
 a message, you MUST integrate it. Failure to do so
@@ -50,16 +54,19 @@ prices, available discounts, and sales for an app that
 tries to run projections of monthly sales, you&amp;rsquo;d better
 alert someone if an inventory update fails to get consumed.
 Here&amp;rsquo;s what we&amp;rsquo;ll be building:
-&lt;div class='mermaid'&gt;
-  graph TD
-    Application &amp;ndash;&amp;gt; ConsumerGroup
-    ConsumerGroup &amp;ndash;&amp;gt; ConsumerSupervisor
-    ConsumerSupervisor &amp;ndash;&amp;gt; MushroomConsumer
-    ConsumerSupervisor &amp;ndash;&amp;gt; ToxicityConsumer
-    ConsumerGroup &amp;ndash;&amp;gt; ConsumerMonitor
-    ConsumerMonitor -.-MushroomConsumer
-    ConsumerMonitor -.-ToxicityConsumer
-&lt;/div&gt;&lt;/p&gt;
+
+
+
+&lt;div class="mermaid"&gt;
+graph TD
+Application --&gt; ConsumerGroup
+ConsumerGroup --&gt; ConsumerSupervisor
+ConsumerSupervisor --&gt; MushroomConsumer
+ConsumerSupervisor --&gt; ToxicityConsumer
+ConsumerGroup --&gt; ConsumerMonitor
+ConsumerMonitor -.-MushroomConsumer
+ConsumerMonitor -.-ToxicityConsumer
+&lt;/div&gt;
 
 &lt;p&gt;Let&amp;rsquo;s talk about what&amp;rsquo;s going on here. Our application
 starts a ConsumerGroup. This is a Supervisor that starts 2
@@ -67,8 +74,11 @@ complementary processes, a ConsumerSupervisor, responsible
 for starting our consumers, and a ConsumerMonitor. We want
 our consumer monitor to&amp;hellip; Monitor Consumers. At the first
 sign of danger, it will instruct the ConsumerSupervisor to
-stop the presses, and kill all of it&amp;rsquo;s children.
-&lt;div&gt; &lt;img src="https://i.imgur.com/RpagL6h.png" width="100%"/&gt; &lt;div&gt;&lt;/p&gt;
+stop the presses, and kill all of it&amp;rsquo;s children.&lt;/p&gt;
+
+&lt;p&gt;&lt;div&gt;
+&lt;img width="100%" src="https://i.imgur.com/RpagL6h.png" /&gt;
+&lt;div&gt;&lt;/p&gt;
 
 &lt;p&gt;After we&amp;rsquo;ve fixed the problem, we&amp;rsquo;ll bring everything back
 online. OK, let&amp;rsquo;s get started.&lt;/p&gt;
@@ -79,8 +89,11 @@ online. OK, let&amp;rsquo;s get started.&lt;/p&gt;
 a &lt;a href="https://hostiledeveloper.com/2020/08/09/connection-pools-and-rabbitmq.html"&gt;previous
 post&lt;/a&gt;
 I won&amp;rsquo;t go into too much detail here. After setting them
-up, our Supervison tree should look like this.
-&lt;div&gt; &lt;img src="https://i.imgur.com/CUPLoFj.png" width="100%"/&gt; &lt;div&gt;&lt;/p&gt;
+up, our Supervison tree should look like this.&lt;/p&gt;
+
+&lt;p&gt;&lt;div&gt;
+&lt;img width="100%" src="https://i.imgur.com/CUPLoFj.png" /&gt;
+&lt;div&gt;&lt;/p&gt;
 
 &lt;p&gt;Great, on to our supervisors.&lt;/p&gt;
 
@@ -110,24 +123,30 @@ consumers from potentially doing more damage. If it dies,
 let it die.&lt;/p&gt;
 
 &lt;p&gt;The &lt;code&gt;ToxicityConsumer&lt;/code&gt; looks pretty similar, except it has
-a different exchange and queue.
-&lt;script src="https://gist.github.com/StevenNunez/3b810cae5094d909d3227c17cefc5144.js"&gt;&lt;/script&gt;&lt;/p&gt;
+a different exchange and queue.&lt;/p&gt;
+
+&lt;script src="https://gist.github.com/StevenNunez/3b810cae5094d909d3227c17cefc5144.js"&gt;&lt;/script&gt;
 
 &lt;p&gt;On to the &lt;code&gt;ConsumerSupervisor&lt;/code&gt;. Since it&amp;rsquo;s supervising
 processes that have the &lt;code&gt;:temporary&lt;/code&gt; restart option, the
 strategy doesn&amp;rsquo;t really matter. We&amp;rsquo;re going to leave it
-with the default &lt;code&gt;:one_for_one&lt;/code&gt; strategy.
-&lt;script src="https://gist.github.com/StevenNunez/b20d803d25979e1944bef6a76fd834ff.js"&gt;&lt;/script&gt;&lt;/p&gt;
+with the default &lt;code&gt;:one_for_one&lt;/code&gt; strategy.&lt;/p&gt;
+
+&lt;script src="https://gist.github.com/StevenNunez/b20d803d25979e1944bef6a76fd834ff.js"&gt;&lt;/script&gt;
 
 &lt;p&gt;We&amp;rsquo;ve added a couple of additional functions that we need
 to support our &lt;code&gt;ConsumerMonitor&lt;/code&gt; process. The first one is
 a list of all of the pid&amp;rsquo;s this supervisor is managing. The
-second function terminates all of the children.
-&lt;div&gt; &lt;img src="https://i.imgur.com/fL89Fqv.png" /&gt; &lt;div&gt;&lt;/p&gt;
+second function terminates all of the children.&lt;/p&gt;
+
+&lt;p&gt;&lt;div&gt;
+&lt;img width="100%" src="https://i.imgur.com/fL89Fqv.png" /&gt;
+&lt;div&gt;&lt;/p&gt;
 
 &lt;p&gt;The &lt;code&gt;ConsumerMonitor&lt;/code&gt; will do well by its namesake but take
-a look at its restart option.
-&lt;script src="https://gist.github.com/StevenNunez/5ee793e6b707f601041ccdb787e69a72.js"&gt;&lt;/script&gt;&lt;/p&gt;
+a look at its restart option.&lt;/p&gt;
+
+&lt;script src="https://gist.github.com/StevenNunez/5ee793e6b707f601041ccdb787e69a72.js"&gt;&lt;/script&gt;
 
 &lt;p&gt;We&amp;rsquo;re setting it&amp;rsquo;s restart strategy to &lt;code&gt;:transient&lt;/code&gt;. Reason
 being, if this puppy dies for ANY other reason than what&amp;rsquo;s
@@ -152,16 +171,21 @@ consumers, but will allow us to &lt;em&gt;heal&lt;/em&gt; the system. More on
 that later.&lt;/p&gt;
 
 &lt;p&gt;Let&amp;rsquo;s add this to our application and take it out for a
-spin.
-&lt;script src="https://gist.github.com/StevenNunez/1e9b41eab6b66ee867cd1569a0e862e1.js"&gt;&lt;/script&gt;&lt;/p&gt;
+spin.&lt;/p&gt;
 
-&lt;p&gt;Let&amp;rsquo;s take a look at what this looks like in observer.
-&lt;div&gt; &lt;img src="https://i.imgur.com/pe27V20.gif" width="100%"/&gt; &lt;div&gt;&lt;/p&gt;
+&lt;script src="https://gist.github.com/StevenNunez/1e9b41eab6b66ee867cd1569a0e862e1.js"&gt;&lt;/script&gt;
+
+&lt;p&gt;Let&amp;rsquo;s take a look at what this looks like in observer.&lt;/p&gt;
+
+&lt;p&gt;&lt;div&gt;
+&lt;img width="100%" src="https://i.imgur.com/pe27V20.gif" /&gt;
+&lt;div&gt;&lt;/p&gt;
 
 &lt;h2&gt;Supervisors are awesome&lt;/h2&gt;
 
-&lt;p&gt;Our tree dies when it&amp;rsquo;s supposed, and comes back up in a fresh state when needed. LOVE IT!
-&lt;blockquote class="twitter-tweet"&gt;&lt;p lang="en" dir="ltr"&gt;That feeling when you configure the perfect supervision tree ❤️ &lt;a href="https://twitter.com/hashtag/myelixirstatus?src=hash&amp;amp;ref_src=twsrc%5Etfw"&gt;#myelixirstatus&lt;/a&gt; come see what I&amp;rsquo;m talking about over at &lt;a href="https://t.co/zaKaXqCwt5"&gt;https://t.co/zaKaXqCwt5&lt;/a&gt;&lt;/p&gt;&amp;mdash; Steven Nunez 🇩🇴🇺🇸🙅 (@&lt;em&gt;StevenNunez) &amp;lt;a href=&amp;ldquo;https://twitter.com/&lt;/em&gt;StevenNunez/status/1292215852469825539?ref_src=twsrc%5Etfw&amp;rdquo;&amp;gt;August 8, 2020&lt;/a&gt;&lt;/blockquote&gt; &lt;script async src="https://platform.twitter.com/widgets.js" charset="utf-8"&gt;&lt;/script&gt;&lt;/p&gt;
+&lt;p&gt;Our tree dies when it&amp;rsquo;s supposed, and comes back up in a fresh state when needed. LOVE IT!&lt;/p&gt;
+
+&lt;p&gt;&lt;blockquote class="twitter-tweet"&gt;&lt;p lang="en" dir="ltr"&gt;That feeling when you configure the perfect supervision tree ❤️ &lt;a href="https://twitter.com/hashtag/myelixirstatus?src=hash&amp;amp;ref_src=twsrc%5Etfw"&gt;#myelixirstatus&lt;/a&gt; come see what I&amp;rsquo;m talking about over at &lt;a href="https://t.co/zaKaXqCwt5"&gt;https://t.co/zaKaXqCwt5&lt;/a&gt;&lt;/p&gt;&amp;mdash; Steven Nunez 🇩🇴🇺🇸🙅 (@&lt;em&gt;StevenNunez) &amp;lt;a href=&amp;ldquo;https://twitter.com/&lt;/em&gt;StevenNunez/status/1292215852469825539?ref_src=twsrc%5Etfw&amp;rdquo;&amp;gt;August 8, 2020&lt;/a&gt;&lt;/blockquote&gt; &lt;script async src="https://platform.twitter.com/widgets.js" charset="utf-8"&gt;&lt;/script&gt;&lt;/p&gt;
 </content>
   </entry>
   <entry>
