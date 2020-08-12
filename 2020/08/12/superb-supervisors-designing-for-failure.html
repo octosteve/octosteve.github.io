@@ -1,0 +1,206 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta http-equiv='X-UA-Compatible' content='IE=edge;chrome=1'/>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hostile Developer - Superb Supervisors. Designing for Failure</title>
+  <link href="/favicon.ico" rel="icon" type="image/ico" />
+  <link href="/stylesheets/application.css" rel="stylesheet" type="text/css" />
+  <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/feed.xml" />
+</head>
+<body>
+<div id="container">
+  <section id="header">
+  <header>
+<a href="/">        <h1 class="brand"><span class="hostile">Hostile</span> Developer</h1>
+        <h4 class="tag-line">I am Steven. Hear me Rant.</h4>
+</a>  </header>
+
+  <section class='social'>
+    <a href="http://twitter.com/_StevenNunez/" target="_blank"><i class="fa fa-twitter"></i></a>
+    <a href="https://github.com/StevenNunez/" target="_blank"><i class="fa fa-github"></i></a>
+  </section>
+</section>
+
+
+  <main id='article' role="main">
+    <h1 class="article-title"><a href="/2020/08/12/superb-supervisors-designing-for-failure.html">Superb Supervisors. Designing for Failure</a></h1>
+    <p>Supervisors are &ldquo;have you tried turning it off and on
+again?&rdquo; turned into a programming strategy. We&rsquo;ve all made
+that trade off. Should I keep debugging what&rsquo;s wrong, or
+just reboot? Often, the reboot fixes it and we can just
+move on.</p>
+
+<p>But supervisors can also be used to design systems that go
+down and stay down. In this post we&rsquo;re going to talk about
+when we&rsquo;d want to design this kind of system and how
+exactly to do it.</p>
+
+<h2>The Problem</h2>
+
+<p>We&rsquo;re going to design a system of RabbitMQ consumers that
+fail at the first sign of trouble. Do not pass go, do not
+collect 200 dollars.
+<div> <img src="https://images.unsplash.com/photo-1544393569-eb1568319eef?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjEzNzc5N30" /> <div> Photo by <a href="https://unsplash.com/@nadineshaabana?utm_source=seance&utm_medium=referral">Nadine Shaabana</a> on <a href="https://unsplash.com/?utm_source=seance&utm_medium=referral">Unsplash</a></p>
+
+<p>You might be asking yourself, &ldquo;Why would you build a
+crashing consumer?&rdquo; These consumers listen on the wire to
+&ldquo;Facts&rdquo;. These Facts are non-negotiable. If you opt in for
+a message, you MUST integrate it. Failure to do so
+indicates you have issues with your underlying data. Your
+read models may be out of sync for instance. Continuing to
+consume message, even on DIFFERENT queues may lead to
+your system doing its job poorly. For instance, if you are
+consuming messages about an online store&rsquo;s inventory,
+prices, available discounts, and sales for an app that
+tries to run projections of monthly sales, you&rsquo;d better
+alert someone if an inventory update fails to get consumed.
+Here&rsquo;s what we&rsquo;ll be building:
+<div class='mermaid'></p>
+
+<p>graph TD
+Application &ndash;&gt; ConsumerGroup
+ConsumerGroup &ndash;&gt; ConsumerSupervisor
+ConsumerSupervisor &ndash;&gt; MushroomConsumer
+ConsumerSupervisor &ndash;&gt; ToxicityConsumer
+ConsumerGroup &ndash;&gt; ConsumerMonitor
+ConsumerMonitor -.-MushroomConsumer
+ConsumerMonitor -.-ToxicityConsumer
+</div></p>
+
+<p>Let&rsquo;s talk about what&rsquo;s going on here. Our application
+starts a ConsumerGroup. This is a Supervisor that starts 2
+complementary processes, a ConsumerSupervisor, responsible
+for starting our consumers, and a ConsumerMonitor. We want
+our consumer monitor to&hellip; Monitor Consumers. At the first
+sign of danger, it will instruct the ConsumerSupervisor to
+stop the presses, and kill all of it&rsquo;s children.
+<div> <img src="https://i.imgur.com/RpagL6h.png" /> <div></p>
+
+<p>After we&rsquo;ve fixed the problem, we&rsquo;ll bring everything back
+online. OK, let&rsquo;s get started.</p>
+
+<h2>Some Homework</h2>
+
+<p>Since we covered how to setup a Producer and Consumer Pools in
+a <a href="https://hostiledeveloper.com/2020/08/09/connection-pools-and-rabbitmq.html">previous
+post</a>
+I won&rsquo;t go into too much detail here. After setting them
+up, our Supervison tree should look like this.
+<div> <img src="https://i.imgur.com/CUPLoFj.png" /> <div></p>
+
+<p>Great, on to our supervisors.</p>
+
+<h2>Bottom Up</h2>
+
+<p>Let&rsquo;s start at the base of our Supervision tree, the
+Consumers. We&rsquo;re going to use ExRabbitPool&rsquo;s Consumer
+module to save us some boilerplate, and we&rsquo;ll customize our
+restart strategy to support our &ldquo;Burn the world&rdquo; approach.
+<script src="https://gist.github.com/StevenNunez/9d2f70621f8b780d05b51a9a1b9c78c5.js"></script></p>
+
+<p>The biggest difference here is we set the restart option
+to <code>:temporary</code>. Supervised processes can set 1 of 3
+restart option.
+1. <code>:permanent</code> (default): If it dies, bring it back to
+life no matter what.
+2. <code>:transient</code>: Only bring me back if I die under
+suspicious conditions. If I die with a &ldquo;normal&rdquo; reason,
+then it&rsquo;s fine. Get me nice flowers.
+3. <code>:temporary</code>: If I die at all, leave me dead.
+My friends, what are we if not temporary processes, trying
+to handle the right messages, lest we be killed by one
+destined for someone else?</p>
+
+<p><code>:temporary</code> works for us here since we want to stop
+consumers from potentially doing more damage. If it dies,
+let it die.</p>
+
+<p>The <code>ToxicityConsumer</code> looks pretty similar, except it has
+a different exchange and queue.
+<script src="https://gist.github.com/StevenNunez/3b810cae5094d909d3227c17cefc5144.js"></script></p>
+
+<p>On to the <code>ConsumerSupervisor</code>. Since it&rsquo;s supervising
+processes that have the <code>:temporary</code> restart option, the
+strategy doesn&rsquo;t really matter. We&rsquo;re going to leave it
+with the default <code>:one_for_one</code> strategy.
+<script src="https://gist.github.com/StevenNunez/b20d803d25979e1944bef6a76fd834ff.js"></script></p>
+
+<p>We&rsquo;ve added a couple of additional functions that we need
+to support our <code>ConsumerMonitor</code> process. The first one is
+a list of all of the pid&rsquo;s this supervisor is managing. The
+second function terminates all of the children.
+<div> <img src="https://i.imgur.com/fL89Fqv.png" /> <div></p>
+
+<p>The <code>ConsumerMonitor</code> will do well by its namesake but take
+a look at its restart option.
+<script src="https://gist.github.com/StevenNunez/5ee793e6b707f601041ccdb787e69a72.js"></script></p>
+
+<p>We&rsquo;re setting it&rsquo;s restart strategy to <code>:transient</code>. Reason
+being, if this puppy dies for ANY other reason than what&rsquo;s
+on line 21, I want it alive. Notice we pass in a supervisor
+as the argument to <code>start_link/1</code>.</p>
+
+<p>On start, we monitor each of the supervisor&rsquo;s pids and
+just wait&hellip; as soon as a process dies, we instruct the
+supervisor to execute order 66.
+<div> <img src="https://i.imgur.com/6lGqb8n.png" /> <div></p>
+
+<p>The <code>ConsumerGroupSupervisor</code> ties it all together. Pay
+special attention to the strategy option.
+<script src="https://gist.github.com/StevenNunez/1317e3e7d12dde6e9e698ed4e751f3ca.js"></script></p>
+
+<p>Supervisors get started sequentially. We <strong>completely</strong> start
+the <code>ConsumerSupervisor</code> before we start the
+<code>ConsumerMonitor</code>. The ensures the pids are started and
+ready to be monitored. The <code>:rest_for_one</code> strategy allows
+the monitor to fail and recover without disturbing the
+consumers, but will allow us to <em>heal</em> the system. More on
+that later.</p>
+
+<p>Let&rsquo;s add this to our application and take it out for a
+spin.
+<script src="https://gist.github.com/StevenNunez/1e9b41eab6b66ee867cd1569a0e862e1.js"></script></p>
+
+<p>Let&rsquo;s take a look at what this looks like in observer.
+<div> <img src="https://i.imgur.com/pe27V20.gif" /> <div></p>
+
+<h2>Supervisors are awesome</h2>
+
+<p>Our tree dies when it&rsquo;s supposed, and comes back up in a fresh state when needed. LOVE IT!
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">That feeling when you configure the perfect supervision tree ❤️ <a href="https://twitter.com/hashtag/myelixirstatus?src=hash&amp;ref_src=twsrc%5Etfw">#myelixirstatus</a> come see what I&rsquo;m talking about over at <a href="https://t.co/zaKaXqCwt5">https://t.co/zaKaXqCwt5</a></p>&mdash; Steven Nunez 🇩🇴🇺🇸🙅 (@<em>StevenNunez) &lt;a href=&ldquo;https://twitter.com/</em>StevenNunez/status/1292215852469825539?ref_src=twsrc%5Etfw&rdquo;&gt;August 8, 2020</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> </p>
+
+    <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'hostiledeveloper'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+  </main>
+
+ <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-48123503-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+ <em>Copyright &copy; 2020 Steven Nu&ntilde;ez - HostileDeveloper</em>
+
+</div>
+</body>
+</html>

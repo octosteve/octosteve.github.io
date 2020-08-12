@@ -5,10 +5,165 @@
   <id>https://hostiledeveloper.com/</id>
   <link href="https://hostiledeveloper.com/"/>
   <link href="https://hostiledeveloper.com/feed.xml" rel="self"/>
-  <updated>2020-08-09T02:04:00Z</updated>
+  <updated>2020-08-12T04:19:00Z</updated>
   <author>
     <name>Steven Nunez</name>
   </author>
+  <entry>
+    <title>Superb Supervisors. Designing for Failure</title>
+    <link rel="alternate" href="https://hostiledeveloper.com/2020/08/12/superb-supervisors-designing-for-failure.html"/>
+    <id>https://hostiledeveloper.com/2020/08/12/superb-supervisors-designing-for-failure.html</id>
+    <published>2020-08-12T04:19:00Z</published>
+    <updated>2020-08-12T00:19:56-04:00</updated>
+    <author>
+      <name>Article Author</name>
+    </author>
+    <content type="html">&lt;p&gt;Supervisors are &amp;ldquo;have you tried turning it off and on
+again?&amp;rdquo; turned into a programming strategy. We&amp;rsquo;ve all made
+that trade off. Should I keep debugging what&amp;rsquo;s wrong, or
+just reboot? Often, the reboot fixes it and we can just
+move on.&lt;/p&gt;
+
+&lt;p&gt;But supervisors can also be used to design systems that go
+down and stay down. In this post we&amp;rsquo;re going to talk about
+when we&amp;rsquo;d want to design this kind of system and how
+exactly to do it.&lt;/p&gt;
+
+&lt;h2&gt;The Problem&lt;/h2&gt;
+
+&lt;p&gt;We&amp;rsquo;re going to design a system of RabbitMQ consumers that
+fail at the first sign of trouble. Do not pass go, do not
+collect 200 dollars.
+&lt;div&gt; &lt;img src="https://images.unsplash.com/photo-1544393569-eb1568319eef?ixlib=rb-1.2.1&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=400&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjEzNzc5N30" /&gt; &lt;div&gt; Photo by &lt;a href="https://unsplash.com/@nadineshaabana?utm_source=seance&amp;utm_medium=referral"&gt;Nadine Shaabana&lt;/a&gt; on &lt;a href="https://unsplash.com/?utm_source=seance&amp;utm_medium=referral"&gt;Unsplash&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;You might be asking yourself, &amp;ldquo;Why would you build a
+crashing consumer?&amp;rdquo; These consumers listen on the wire to
+&amp;ldquo;Facts&amp;rdquo;. These Facts are non-negotiable. If you opt in for
+a message, you MUST integrate it. Failure to do so
+indicates you have issues with your underlying data. Your
+read models may be out of sync for instance. Continuing to
+consume message, even on DIFFERENT queues may lead to
+your system doing its job poorly. For instance, if you are
+consuming messages about an online store&amp;rsquo;s inventory,
+prices, available discounts, and sales for an app that
+tries to run projections of monthly sales, you&amp;rsquo;d better
+alert someone if an inventory update fails to get consumed.
+Here&amp;rsquo;s what we&amp;rsquo;ll be building:
+&lt;div class='mermaid'&gt;&lt;/p&gt;
+
+&lt;p&gt;graph TD
+Application &amp;ndash;&amp;gt; ConsumerGroup
+ConsumerGroup &amp;ndash;&amp;gt; ConsumerSupervisor
+ConsumerSupervisor &amp;ndash;&amp;gt; MushroomConsumer
+ConsumerSupervisor &amp;ndash;&amp;gt; ToxicityConsumer
+ConsumerGroup &amp;ndash;&amp;gt; ConsumerMonitor
+ConsumerMonitor -.-MushroomConsumer
+ConsumerMonitor -.-ToxicityConsumer
+&lt;/div&gt;&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s talk about what&amp;rsquo;s going on here. Our application
+starts a ConsumerGroup. This is a Supervisor that starts 2
+complementary processes, a ConsumerSupervisor, responsible
+for starting our consumers, and a ConsumerMonitor. We want
+our consumer monitor to&amp;hellip; Monitor Consumers. At the first
+sign of danger, it will instruct the ConsumerSupervisor to
+stop the presses, and kill all of it&amp;rsquo;s children.
+&lt;div&gt; &lt;img src="https://i.imgur.com/RpagL6h.png" /&gt; &lt;div&gt;&lt;/p&gt;
+
+&lt;p&gt;After we&amp;rsquo;ve fixed the problem, we&amp;rsquo;ll bring everything back
+online. OK, let&amp;rsquo;s get started.&lt;/p&gt;
+
+&lt;h2&gt;Some Homework&lt;/h2&gt;
+
+&lt;p&gt;Since we covered how to setup a Producer and Consumer Pools in
+a &lt;a href="https://hostiledeveloper.com/2020/08/09/connection-pools-and-rabbitmq.html"&gt;previous
+post&lt;/a&gt;
+I won&amp;rsquo;t go into too much detail here. After setting them
+up, our Supervison tree should look like this.
+&lt;div&gt; &lt;img src="https://i.imgur.com/CUPLoFj.png" /&gt; &lt;div&gt;&lt;/p&gt;
+
+&lt;p&gt;Great, on to our supervisors.&lt;/p&gt;
+
+&lt;h2&gt;Bottom Up&lt;/h2&gt;
+
+&lt;p&gt;Let&amp;rsquo;s start at the base of our Supervision tree, the
+Consumers. We&amp;rsquo;re going to use ExRabbitPool&amp;rsquo;s Consumer
+module to save us some boilerplate, and we&amp;rsquo;ll customize our
+restart strategy to support our &amp;ldquo;Burn the world&amp;rdquo; approach.
+&lt;script src="https://gist.github.com/StevenNunez/9d2f70621f8b780d05b51a9a1b9c78c5.js"&gt;&lt;/script&gt;&lt;/p&gt;
+
+&lt;p&gt;The biggest difference here is we set the restart option
+to &lt;code&gt;:temporary&lt;/code&gt;. Supervised processes can set 1 of 3
+restart option.
+1. &lt;code&gt;:permanent&lt;/code&gt; (default): If it dies, bring it back to
+life no matter what.
+2. &lt;code&gt;:transient&lt;/code&gt;: Only bring me back if I die under
+suspicious conditions. If I die with a &amp;ldquo;normal&amp;rdquo; reason,
+then it&amp;rsquo;s fine. Get me nice flowers.
+3. &lt;code&gt;:temporary&lt;/code&gt;: If I die at all, leave me dead.
+My friends, what are we if not temporary processes, trying
+to handle the right messages, lest we be killed by one
+destined for someone else?&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;:temporary&lt;/code&gt; works for us here since we want to stop
+consumers from potentially doing more damage. If it dies,
+let it die.&lt;/p&gt;
+
+&lt;p&gt;The &lt;code&gt;ToxicityConsumer&lt;/code&gt; looks pretty similar, except it has
+a different exchange and queue.
+&lt;script src="https://gist.github.com/StevenNunez/3b810cae5094d909d3227c17cefc5144.js"&gt;&lt;/script&gt;&lt;/p&gt;
+
+&lt;p&gt;On to the &lt;code&gt;ConsumerSupervisor&lt;/code&gt;. Since it&amp;rsquo;s supervising
+processes that have the &lt;code&gt;:temporary&lt;/code&gt; restart option, the
+strategy doesn&amp;rsquo;t really matter. We&amp;rsquo;re going to leave it
+with the default &lt;code&gt;:one_for_one&lt;/code&gt; strategy.
+&lt;script src="https://gist.github.com/StevenNunez/b20d803d25979e1944bef6a76fd834ff.js"&gt;&lt;/script&gt;&lt;/p&gt;
+
+&lt;p&gt;We&amp;rsquo;ve added a couple of additional functions that we need
+to support our &lt;code&gt;ConsumerMonitor&lt;/code&gt; process. The first one is
+a list of all of the pid&amp;rsquo;s this supervisor is managing. The
+second function terminates all of the children.
+&lt;div&gt; &lt;img src="https://i.imgur.com/fL89Fqv.png" /&gt; &lt;div&gt;&lt;/p&gt;
+
+&lt;p&gt;The &lt;code&gt;ConsumerMonitor&lt;/code&gt; will do well by its namesake but take
+a look at its restart option.
+&lt;script src="https://gist.github.com/StevenNunez/5ee793e6b707f601041ccdb787e69a72.js"&gt;&lt;/script&gt;&lt;/p&gt;
+
+&lt;p&gt;We&amp;rsquo;re setting it&amp;rsquo;s restart strategy to &lt;code&gt;:transient&lt;/code&gt;. Reason
+being, if this puppy dies for ANY other reason than what&amp;rsquo;s
+on line 21, I want it alive. Notice we pass in a supervisor
+as the argument to &lt;code&gt;start_link/1&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;On start, we monitor each of the supervisor&amp;rsquo;s pids and
+just wait&amp;hellip; as soon as a process dies, we instruct the
+supervisor to execute order 66.
+&lt;div&gt; &lt;img src="https://i.imgur.com/6lGqb8n.png" /&gt; &lt;div&gt;&lt;/p&gt;
+
+&lt;p&gt;The &lt;code&gt;ConsumerGroupSupervisor&lt;/code&gt; ties it all together. Pay
+special attention to the strategy option.
+&lt;script src="https://gist.github.com/StevenNunez/1317e3e7d12dde6e9e698ed4e751f3ca.js"&gt;&lt;/script&gt;&lt;/p&gt;
+
+&lt;p&gt;Supervisors get started sequentially. We &lt;strong&gt;completely&lt;/strong&gt; start
+the &lt;code&gt;ConsumerSupervisor&lt;/code&gt; before we start the
+&lt;code&gt;ConsumerMonitor&lt;/code&gt;. The ensures the pids are started and
+ready to be monitored. The &lt;code&gt;:rest_for_one&lt;/code&gt; strategy allows
+the monitor to fail and recover without disturbing the
+consumers, but will allow us to &lt;em&gt;heal&lt;/em&gt; the system. More on
+that later.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s add this to our application and take it out for a
+spin.
+&lt;script src="https://gist.github.com/StevenNunez/1e9b41eab6b66ee867cd1569a0e862e1.js"&gt;&lt;/script&gt;&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s take a look at what this looks like in observer.
+&lt;div&gt; &lt;img src="https://i.imgur.com/pe27V20.gif" /&gt; &lt;div&gt;&lt;/p&gt;
+
+&lt;h2&gt;Supervisors are awesome&lt;/h2&gt;
+
+&lt;p&gt;Our tree dies when it&amp;rsquo;s supposed, and comes back up in a fresh state when needed. LOVE IT!
+&lt;blockquote class="twitter-tweet"&gt;&lt;p lang="en" dir="ltr"&gt;That feeling when you configure the perfect supervision tree ❤️ &lt;a href="https://twitter.com/hashtag/myelixirstatus?src=hash&amp;amp;ref_src=twsrc%5Etfw"&gt;#myelixirstatus&lt;/a&gt; come see what I&amp;rsquo;m talking about over at &lt;a href="https://t.co/zaKaXqCwt5"&gt;https://t.co/zaKaXqCwt5&lt;/a&gt;&lt;/p&gt;&amp;mdash; Steven Nunez 🇩🇴🇺🇸🙅 (@&lt;em&gt;StevenNunez) &amp;lt;a href=&amp;ldquo;https://twitter.com/&lt;/em&gt;StevenNunez/status/1292215852469825539?ref_src=twsrc%5Etfw&amp;rdquo;&amp;gt;August 8, 2020&lt;/a&gt;&lt;/blockquote&gt; &lt;script async src="https://platform.twitter.com/widgets.js" charset="utf-8"&gt;&lt;/script&gt; &lt;/p&gt;
+</content>
+  </entry>
   <entry>
     <title>Connection Pools and RabbitMQ</title>
     <link rel="alternate" href="https://hostiledeveloper.com/2020/08/09/connection-pools-and-rabbitmq.html"/>
@@ -1358,541 +1513,6 @@ iex(6)&amp;gt; Repo.all(query)
 &lt;p&gt;&lt;a href="https://twitter.com/share" class="twitter-share-button" data-text="How to use Ltrees in Phoenix 1.3. for hierarchical data" data-via="_StevenNunez" data-size="large"&gt;Tweet&lt;/a&gt;&lt;/p&gt;
 
 &lt;script&gt;!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');&lt;/script&gt;
-</content>
-  </entry>
-  <entry>
-    <title>Something Useless - Terminal in your browser</title>
-    <link rel="alternate" href="https://hostiledeveloper.com/2017/05/02/something-useless-terminal-in-your-browser.html"/>
-    <id>https://hostiledeveloper.com/2017/05/02/something-useless-terminal-in-your-browser.html</id>
-    <published>2017-05-02T13:40:00Z</published>
-    <updated>2020-06-19T13:28:26-04:00</updated>
-    <author>
-      <name>Article Author</name>
-    </author>
-    <content type="html">&lt;p&gt;In today&amp;rsquo;s installment of Something Useless, we&amp;rsquo;re going to build a terminal in your browser with Phoenix!
-This post will be broken up into 3 sections.&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Setting up Phoenix and Channels&lt;/li&gt;
-&lt;li&gt;Creating a GenServer to act as a proxy for our Shell&lt;/li&gt;
-&lt;li&gt;Tying it all together&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2&gt;Getting Started&lt;/h2&gt;
-
-&lt;p&gt;Create a new Phoenix Application. We&amp;rsquo;ll be using Phoenix 1.3.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre class="highlight shell"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
-2
-3
-&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;mix phx.new terminal_in_your_browser &lt;span class="nt"&gt;--no-ecto&lt;/span&gt;
-&lt;span class="c"&gt;# Install all your dependencies&lt;/span&gt;
-&lt;span class="nb"&gt;cd &lt;/span&gt;terminal_in_your_browser
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;Let&amp;rsquo;s start by getting the terminal on the page. Start by adding the &lt;code&gt;xterm&lt;/code&gt; package.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre class="highlight shell"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
-2
-3
-&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="nb"&gt;cd &lt;/span&gt;assets
-npm &lt;span class="nb"&gt;install&lt;/span&gt; &lt;span class="nt"&gt;--save&lt;/span&gt; xterm
-&lt;span class="nb"&gt;cd&lt;/span&gt; ..
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;Then edit &lt;code&gt;brunch-config.js&lt;/code&gt; to load the styles for the plugin. Without this&amp;hellip; it&amp;rsquo;s just a &lt;code&gt;textarea&lt;/code&gt;.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
-2
-3
-4
-5
-6
-7
-8
-9
-&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="c1"&gt;// brunch-config.js&lt;/span&gt;
-&lt;span class="c1"&gt;// ...&lt;/span&gt;
-&lt;span class="nx"&gt;npm&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
- &lt;span class="nl"&gt;enabled&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
- &lt;span class="nx"&gt;styles&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
-   &lt;span class="dl"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;xterm&lt;/span&gt;&lt;span class="dl"&gt;"&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="dl"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;dist/xterm.css&lt;/span&gt;&lt;span class="dl"&gt;"&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;
- &lt;span class="p"&gt;}&lt;/span&gt;
-&lt;span class="p"&gt;}&lt;/span&gt;
-&lt;span class="c1"&gt;// ...&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;Clear out &lt;code&gt;page/index.html.eex&lt;/code&gt; and insert a &lt;code&gt;div&lt;/code&gt; with an id of &lt;code&gt;terminal-container&lt;/code&gt;.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre class="highlight html"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
-2
-&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="c"&gt;&amp;lt;!-- lib/terminal_in_your_browser/web/templates/page/index.html.eex --&amp;gt;&lt;/span&gt;
-&lt;span class="nt"&gt;&amp;lt;div&lt;/span&gt; &lt;span class="na"&gt;id=&lt;/span&gt;&lt;span class="s"&gt;"terminal-container"&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&amp;lt;/div&amp;gt;&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;Finally, in &lt;code&gt;assets/js/app.js&lt;/code&gt; load &lt;code&gt;xterm&lt;/code&gt; and load it on the page:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
-2
-3
-4
-5
-6
-7
-8
-&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="k"&gt;import&lt;/span&gt; &lt;span class="nx"&gt;Terminal&lt;/span&gt; &lt;span class="k"&gt;from&lt;/span&gt; &lt;span class="dl"&gt;'&lt;/span&gt;&lt;span class="s1"&gt;xterm&lt;/span&gt;&lt;span class="dl"&gt;'&lt;/span&gt;
-
-&lt;span class="kd"&gt;let&lt;/span&gt; &lt;span class="nx"&gt;term&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="nx"&gt;Terminal&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;
-  &lt;span class="na"&gt;cursorBlink&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-&lt;span class="p"&gt;})&lt;/span&gt;
-
-&lt;span class="nx"&gt;term&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;open&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;document&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;getElementById&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="dl"&gt;'&lt;/span&gt;&lt;span class="s1"&gt;terminal-container&lt;/span&gt;&lt;span class="dl"&gt;'&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
-&lt;span class="nx"&gt;term&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;on&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="dl"&gt;'&lt;/span&gt;&lt;span class="s1"&gt;data&lt;/span&gt;&lt;span class="dl"&gt;'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;data&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="nx"&gt;console&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;log&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;data&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;That last bit will console.log every character you type. Off to a great start!&lt;/p&gt;
-
-&lt;h2&gt;Flipping Channels&lt;/h2&gt;
-
-&lt;p&gt;Now we get to work with some Channels!&lt;/p&gt;
-
-&lt;p&gt;Let&amp;rsquo;s create the Terminal Channel. We&amp;rsquo;ll use to receive input from our &lt;code&gt;xterm&lt;/code&gt; box in the browser.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre class="highlight shell"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
-&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;mix phx.gen.channel Terminal
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;Follow the instructions and but instead, add this to &lt;code&gt;user_socket.ex&lt;/code&gt;&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
-&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="n"&gt;channel&lt;/span&gt; &lt;span class="s2"&gt;"terminal:*"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="no"&gt;TerminalInYourBrowser&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Web&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;TerminalChannel&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;Let&amp;rsquo;s clean up the &lt;code&gt;TerminalChannel&lt;/code&gt; module to only include a &lt;code&gt;join/3&lt;/code&gt; function allows anyone to join.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
-2
-3
-4
-5
-6
-7
-&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="k"&gt;defmodule&lt;/span&gt; &lt;span class="no"&gt;TerminalInYourBrowser&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Web&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;TerminalChannel&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-  &lt;span class="kn"&gt;use&lt;/span&gt; &lt;span class="no"&gt;TerminalInYourBrowser&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Web&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:channel&lt;/span&gt;
-
-  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;join&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;"terminal:"&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;id&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;payload&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;socket&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-    &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:ok&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;socket&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
-  &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;The fun part. Let&amp;rsquo;s echo everything you type back to you from the channel.&lt;/p&gt;
-
-&lt;p&gt;In the channel add this:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
-2
-3
-4
-&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;handle_in&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;"input"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="s2"&gt;"input"&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;input&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="n"&gt;socket&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-  &lt;span class="n"&gt;push&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;socket&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;"output"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="ss"&gt;output:&lt;/span&gt; &lt;span class="n"&gt;input&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt;
-  &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:noreply&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;socket&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
-&lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;We push the input back to the client with an event named &lt;code&gt;output&lt;/code&gt;. Our current code doesn&amp;rsquo;t know how to handle this but it will soon. The &lt;code&gt;{:noreply, socket}&lt;/code&gt; just tells phoenix not to reply to the sender, and preserves the socket to this process.&lt;/p&gt;
-
-&lt;p&gt;Next up. let&amp;rsquo;s edit the &lt;code&gt;socket.js&lt;/code&gt; file Phoenix provides us:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
-2
-3
-4
-5
-6
-7
-&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="k"&gt;import&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="nx"&gt;Socket&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="k"&gt;from&lt;/span&gt; &lt;span class="dl"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;phoenix&lt;/span&gt;&lt;span class="dl"&gt;"&lt;/span&gt;                  
-
-&lt;span class="kd"&gt;let&lt;/span&gt; &lt;span class="nx"&gt;socket&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="nx"&gt;Socket&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="dl"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;/socket&lt;/span&gt;&lt;span class="dl"&gt;"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{})&lt;/span&gt;
-
-&lt;span class="nx"&gt;socket&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;connect&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;                                
-
-&lt;span class="k"&gt;export&lt;/span&gt; &lt;span class="k"&gt;default&lt;/span&gt; &lt;span class="nx"&gt;socket&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;Initialize a socket, connect, and export. Super simple. We&amp;rsquo;ll use this socket in &lt;code&gt;app.js&lt;/code&gt;. Add this near the top of the file.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
-2
-3
-4
-&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="k"&gt;import&lt;/span&gt; &lt;span class="nx"&gt;socket&lt;/span&gt; &lt;span class="k"&gt;from&lt;/span&gt; &lt;span class="dl"&gt;'&lt;/span&gt;&lt;span class="s1"&gt;./socket&lt;/span&gt;&lt;span class="dl"&gt;'&lt;/span&gt;                   
-
-&lt;span class="kd"&gt;let&lt;/span&gt; &lt;span class="nx"&gt;channel&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;socket&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;channel&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="dl"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;terminal:1&lt;/span&gt;&lt;span class="dl"&gt;"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{})&lt;/span&gt;
-&lt;span class="nx"&gt;channel&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;join&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;With this, we&amp;rsquo;re connected to our server! Refresh the page and checkout the logs.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre class="highlight shell"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
-2
-3
-4
-&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="o"&gt;[&lt;/span&gt;info] JOIN &lt;span class="s2"&gt;"terminal:1"&lt;/span&gt; to TerminalInYourBrowser.Web.TerminalChannel
-  Transport:  Phoenix.Transports.WebSocket
-  Parameters: %&lt;span class="o"&gt;{}&lt;/span&gt;
-&lt;span class="o"&gt;[&lt;/span&gt;info] Replied terminal:1 :ok
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;NICE! Let&amp;rsquo;s wrap this leg of the trip up by sending all terminal input to our channel, then respond to the &lt;code&gt;output&lt;/code&gt; event we send from the channel.&lt;/p&gt;
-
-&lt;p&gt;In the end, your &lt;code&gt;app.js&lt;/code&gt; should look like this:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="k"&gt;import&lt;/span&gt; &lt;span class="nx"&gt;Terminal&lt;/span&gt; &lt;span class="k"&gt;from&lt;/span&gt; &lt;span class="dl"&gt;'&lt;/span&gt;&lt;span class="s1"&gt;xterm&lt;/span&gt;&lt;span class="dl"&gt;'&lt;/span&gt;
-&lt;span class="k"&gt;import&lt;/span&gt; &lt;span class="nx"&gt;socket&lt;/span&gt; &lt;span class="k"&gt;from&lt;/span&gt; &lt;span class="dl"&gt;'&lt;/span&gt;&lt;span class="s1"&gt;./socket&lt;/span&gt;&lt;span class="dl"&gt;'&lt;/span&gt;
-
-&lt;span class="kd"&gt;let&lt;/span&gt; &lt;span class="nx"&gt;channel&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;socket&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;channel&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="dl"&gt;"&lt;/span&gt;&lt;span class="s2"&gt;terminal:1&lt;/span&gt;&lt;span class="dl"&gt;"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{})&lt;/span&gt;
-&lt;span class="nx"&gt;channel&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;join&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
-&lt;span class="nx"&gt;channel&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;on&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="dl"&gt;'&lt;/span&gt;&lt;span class="s1"&gt;output&lt;/span&gt;&lt;span class="dl"&gt;'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;({&lt;/span&gt;&lt;span class="nx"&gt;output&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="nx"&gt;term&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;write&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;output&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="c1"&gt;// From the Channel&lt;/span&gt;
-
-&lt;span class="kd"&gt;let&lt;/span&gt; &lt;span class="nx"&gt;term&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="nx"&gt;Terminal&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;
-  &lt;span class="na"&gt;cursorBlink&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-&lt;span class="p"&gt;})&lt;/span&gt;
-
-
-&lt;span class="nx"&gt;term&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;open&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;document&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;getElementById&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="dl"&gt;'&lt;/span&gt;&lt;span class="s1"&gt;terminal-container&lt;/span&gt;&lt;span class="dl"&gt;'&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
-&lt;span class="nx"&gt;term&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;on&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="dl"&gt;'&lt;/span&gt;&lt;span class="s1"&gt;data&lt;/span&gt;&lt;span class="dl"&gt;'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;data&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="nx"&gt;channel&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;push&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="dl"&gt;'&lt;/span&gt;&lt;span class="s1"&gt;input&lt;/span&gt;&lt;span class="dl"&gt;'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="na"&gt;input&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;data&lt;/span&gt;&lt;span class="p"&gt;}))&lt;/span&gt; &lt;span class="c1"&gt;// To the Channel&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;Lines where we send IO back and forth are marked in comments. Look! Our terminal&amp;hellip; just returns what we typed. Not super exciting. Up next, we&amp;rsquo;ll be delving into the bowels of Unix, and learning how to interact with external processes.&lt;/p&gt;
-
-&lt;h2&gt;Ports, ptys, AKA why did I choose to write about this?!&lt;/h2&gt;
-
-&lt;p&gt;Erlang comes with a built in way to communicate with external programs called &lt;code&gt;Ports&lt;/code&gt;. With a port you can spawn a process like a shell, or a ruby script and communicate via IO. I can send it messages with &lt;code&gt;Port.command/2&lt;/code&gt;, and receive formatted responses in the calling process. This has some limitations for our purposes. We need a terminal that sends back an echo when we type. As you saw, our terminal doesn&amp;rsquo;t actually put anything in the box UNLESS we send it. We &lt;em&gt;could&lt;/em&gt; write this ourselves but why. *nix has us covered. If you dig a bit deeper, you figure out that the reason it doesn&amp;rsquo;t echo your input is because it&amp;rsquo;s not a PTY. Let&amp;rsquo;s look at an example. In &lt;code&gt;iex&lt;/code&gt; type the following:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="n"&gt;iex&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;port&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="no"&gt;Port&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;open&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;&lt;span class="ss"&gt;:spawn&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;"$SHELL"&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="p"&gt;[])&lt;/span&gt;
-&lt;span class="c1"&gt;#Port&amp;lt;0.1355&amp;gt;&lt;/span&gt;
-&lt;span class="n"&gt;iex&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="no"&gt;Port&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;command&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;port&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;"ls&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s2"&gt;"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;              
-&lt;span class="no"&gt;true&lt;/span&gt;
-&lt;span class="n"&gt;iex&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;flush&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
-&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="c1"&gt;#Port&amp;lt;0.1355&amp;gt;,&lt;/span&gt;
- &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:data&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'assets&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s1"&gt;_build&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s1"&gt;config&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s1"&gt;deps&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s1"&gt;lib&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s1"&gt;mix.exs&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s1"&gt;mix.lock&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s1"&gt;priv&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s1"&gt;README.md&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s1"&gt;test&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s1"&gt;'&lt;/span&gt;&lt;span class="p"&gt;}}&lt;/span&gt;
-&lt;span class="ss"&gt;:ok&lt;/span&gt;
-&lt;span class="n"&gt;iex&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="no"&gt;Port&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;command&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;port&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;"l"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;   
-&lt;span class="no"&gt;true&lt;/span&gt;
-&lt;span class="n"&gt;iex&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;flush&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
-&lt;span class="c1"&gt;# no echo&lt;/span&gt;
-&lt;span class="ss"&gt;:ok&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;It might be hard to see, but when we flush on &lt;code&gt;3&lt;/code&gt; we get back the response we see the port sent us a message. On &lt;code&gt;5&lt;/code&gt;, no joy, no echo which we need to make our terminal work. Also, we don&amp;rsquo;t get our lovely prompt.&lt;/p&gt;
-
-&lt;p&gt;The thing that causes the terminal to echo are the settings of the &lt;code&gt;stty&lt;/code&gt; command. You can see your current settings by typing in &lt;code&gt;stty --all&lt;/code&gt;. Mine look like this:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre class="highlight shell"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;&lt;span class="nb"&gt;stty&lt;/span&gt; &lt;span class="nt"&gt;--all&lt;/span&gt;
-speed 38400 baud&lt;span class="p"&gt;;&lt;/span&gt; rows 23&lt;span class="p"&gt;;&lt;/span&gt; columns 96&lt;span class="p"&gt;;&lt;/span&gt; line &lt;span class="o"&gt;=&lt;/span&gt; 0&lt;span class="p"&gt;;&lt;/span&gt;
-intr &lt;span class="o"&gt;=&lt;/span&gt; ^C&lt;span class="p"&gt;;&lt;/span&gt; quit &lt;span class="o"&gt;=&lt;/span&gt; ^&lt;span class="se"&gt;\;&lt;/span&gt; erase &lt;span class="o"&gt;=&lt;/span&gt; ^?&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nb"&gt;kill&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; ^U&lt;span class="p"&gt;;&lt;/span&gt; eof &lt;span class="o"&gt;=&lt;/span&gt; ^D&lt;span class="p"&gt;;&lt;/span&gt; eol &lt;span class="o"&gt;=&lt;/span&gt; M-^?&lt;span class="p"&gt;;&lt;/span&gt; eol2 &lt;span class="o"&gt;=&lt;/span&gt; M-^?&lt;span class="p"&gt;;&lt;/span&gt; swtch &lt;span class="o"&gt;=&lt;/span&gt; M-^?&lt;span class="p"&gt;;&lt;/span&gt;
-start &lt;span class="o"&gt;=&lt;/span&gt; ^Q&lt;span class="p"&gt;;&lt;/span&gt; stop &lt;span class="o"&gt;=&lt;/span&gt; ^S&lt;span class="p"&gt;;&lt;/span&gt; susp &lt;span class="o"&gt;=&lt;/span&gt; ^Z&lt;span class="p"&gt;;&lt;/span&gt; rprnt &lt;span class="o"&gt;=&lt;/span&gt; ^R&lt;span class="p"&gt;;&lt;/span&gt; werase &lt;span class="o"&gt;=&lt;/span&gt; ^W&lt;span class="p"&gt;;&lt;/span&gt; lnext &lt;span class="o"&gt;=&lt;/span&gt; ^V&lt;span class="p"&gt;;&lt;/span&gt; discard &lt;span class="o"&gt;=&lt;/span&gt; ^O&lt;span class="p"&gt;;&lt;/span&gt;
-min &lt;span class="o"&gt;=&lt;/span&gt; 1&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nb"&gt;time&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; 0&lt;span class="p"&gt;;&lt;/span&gt;
-&lt;span class="nt"&gt;-parenb&lt;/span&gt; &lt;span class="nt"&gt;-parodd&lt;/span&gt; &lt;span class="nt"&gt;-cmspar&lt;/span&gt; cs8 hupcl &lt;span class="nt"&gt;-cstopb&lt;/span&gt; cread &lt;span class="nt"&gt;-clocal&lt;/span&gt; &lt;span class="nt"&gt;-crtscts&lt;/span&gt;
-&lt;span class="nt"&gt;-ignbrk&lt;/span&gt; brkint &lt;span class="nt"&gt;-ignpar&lt;/span&gt; &lt;span class="nt"&gt;-parmrk&lt;/span&gt; &lt;span class="nt"&gt;-inpck&lt;/span&gt; &lt;span class="nt"&gt;-istrip&lt;/span&gt; &lt;span class="nt"&gt;-inlcr&lt;/span&gt; &lt;span class="nt"&gt;-igncr&lt;/span&gt; icrnl ixon &lt;span class="nt"&gt;-ixoff&lt;/span&gt; &lt;span class="nt"&gt;-iuclc&lt;/span&gt; ixany
-imaxbel iutf8
-opost &lt;span class="nt"&gt;-olcuc&lt;/span&gt; &lt;span class="nt"&gt;-ocrnl&lt;/span&gt; onlcr &lt;span class="nt"&gt;-onocr&lt;/span&gt; &lt;span class="nt"&gt;-onlret&lt;/span&gt; &lt;span class="nt"&gt;-ofill&lt;/span&gt; &lt;span class="nt"&gt;-ofdel&lt;/span&gt; nl0 cr0 tab0 bs0 vt0 ff0
-isig icanon iexten &lt;span class="nb"&gt;echo &lt;/span&gt;echoe echok &lt;span class="nt"&gt;-echonl&lt;/span&gt; &lt;span class="nt"&gt;-noflsh&lt;/span&gt; &lt;span class="nt"&gt;-xcase&lt;/span&gt; &lt;span class="nt"&gt;-tostop&lt;/span&gt; &lt;span class="nt"&gt;-echoprt&lt;/span&gt; echoctl echoke
-&lt;span class="nt"&gt;-flusho&lt;/span&gt; &lt;span class="nt"&gt;-extproc&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;If you run &lt;code&gt;stty -echo&lt;/code&gt; you&amp;rsquo;ll see it turns your echo off! Sadly, running &lt;code&gt;stty echo&lt;/code&gt; on our port doesn&amp;rsquo;t make it echo. Instead, we get a weird error:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre class="highlight shell"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
-2
-3
-&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;iex&lt;span class="o"&gt;(&lt;/span&gt;6&lt;span class="o"&gt;)&amp;gt;&lt;/span&gt; Port.command&lt;span class="o"&gt;(&lt;/span&gt;port, &lt;span class="s2"&gt;"stty echo&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s2"&gt;"&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
-&lt;span class="nb"&gt;true
-&lt;/span&gt;iex&lt;span class="o"&gt;(&lt;/span&gt;7&lt;span class="o"&gt;)&amp;gt;&lt;/span&gt; &lt;span class="nb"&gt;stty&lt;/span&gt;: &lt;span class="s1"&gt;'standard input'&lt;/span&gt;: Inappropriate ioctl &lt;span class="k"&gt;for &lt;/span&gt;device
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;Womp. This error is essentially telling us our port isn&amp;rsquo;t a pty. To get around this, we&amp;rsquo;re going to bring in a library that &amp;lsquo;provides significantly better control over OS processes than built-in &lt;code&gt;erlang:open_port/3&lt;/code&gt; command&amp;rsquo;. It also has pty support. The library we&amp;rsquo;re talking about is &lt;code&gt;erlexec&lt;/code&gt;.&lt;/p&gt;
-
-&lt;h2&gt;erlexec&lt;/h2&gt;
-
-&lt;p&gt;With &lt;code&gt;erlexec&lt;/code&gt;, we&amp;rsquo;ll be able to get around this pesky pty issue, and turn on our terminal echo. Let&amp;rsquo;s get it setup.&lt;/p&gt;
-
-&lt;p&gt;In our &lt;code&gt;mix.exs&lt;/code&gt;, let&amp;rsquo;s add the latest version of &lt;code&gt;erlexec&lt;/code&gt;. Your deps should look like this.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="k"&gt;defp&lt;/span&gt; &lt;span class="n"&gt;deps&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-  &lt;span class="p"&gt;[{&lt;/span&gt;&lt;span class="ss"&gt;:phoenix&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;"~&amp;gt; 1.3.0-rc"&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt;
-   &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:phoenix_pubsub&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;"~&amp;gt; 1.0"&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt;
-   &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:phoenix_html&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;"~&amp;gt; 2.6"&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt;
-   &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:phoenix_live_reload&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;"~&amp;gt; 1.0"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;only:&lt;/span&gt; &lt;span class="ss"&gt;:dev&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt;
-   &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:gettext&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;"~&amp;gt; 0.11"&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt;
-   &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:cowboy&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;"~&amp;gt; 1.0"&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt;
-   &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:erlexec&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;"~&amp;gt; 1.7"&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt;
-  &lt;span class="p"&gt;]&lt;/span&gt;
-&lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;If you&amp;rsquo;re running elixir &amp;gt;= 1.4, you won&amp;rsquo;t need to start the application. If you aren&amp;rsquo;t, make sure you add &lt;code&gt;:erlexec&lt;/code&gt; to your application list.&lt;/p&gt;
-
-&lt;p&gt;Run &lt;code&gt;mix deps.get&lt;/code&gt;, then run &lt;code&gt;iex -S mix&lt;/code&gt; to try it out.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
-2
-3
-4
-5
-6
-&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="n"&gt;iex&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:ok&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;pid&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_os_pid&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="ss"&gt;:exec&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;run&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'$SHELL'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="ss"&gt;:stdin&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:stdout&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:stderr&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:pty&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
-&lt;span class="n"&gt;iex&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="ss"&gt;:exec&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;send&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pid&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;"l"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;                                                    
-&lt;span class="n"&gt;iex&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;flush&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
-&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:stdout&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;10721&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
- &lt;span class="s2"&gt;"&lt;/span&gt;&lt;span class="se"&gt;\e&lt;/span&gt;&lt;span class="s2"&gt;]0;stevennunez@TashiDor: ~/code/blog_code/terminal_in_your_browser&lt;/span&gt;&lt;span class="se"&gt;\a&lt;/span&gt;&lt;span class="s2"&gt;stevennunez@TashiDor:~/code/blog_code/terminal_in_your_browser$ "&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
-
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;We start our default shell with the &lt;code&gt;:stdin&lt;/code&gt; option so it accepts input from use via &lt;code&gt;:exec.send/2&lt;/code&gt;. &lt;code&gt;:stdout&lt;/code&gt; and &lt;code&gt;:stderr&lt;/code&gt; make it so the calling process receives output in a tagged tuple starting with &lt;code&gt;:stdout&lt;/code&gt; and &lt;code&gt;:stderr&lt;/code&gt;.
-Notice that the only message we&amp;rsquo;ve received so far is our terminal prompt. Also note that we&amp;rsquo;re not getting an echo from the &lt;code&gt;l&lt;/code&gt; we sent in.&lt;/p&gt;
-
-&lt;p&gt;Next, we&amp;rsquo;ll finish up the &lt;code&gt;ls\n&lt;/code&gt; command by passing in the rest.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
-2
-3
-4
-5
-6
-&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="n"&gt;iex&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="ss"&gt;:exec&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;send&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pid&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;"s&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s2"&gt;"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="n"&gt;iex&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;flush&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
-&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:stdout&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;10721&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
- &lt;span class="s2"&gt;"&lt;/span&gt;&lt;span class="se"&gt;\e&lt;/span&gt;&lt;span class="s2"&gt;[0m&lt;/span&gt;&lt;span class="se"&gt;\e&lt;/span&gt;&lt;span class="s2"&gt;[01;34massets&lt;/span&gt;&lt;span class="se"&gt;\e&lt;/span&gt;&lt;span class="s2"&gt;[0m  &lt;/span&gt;&lt;span class="se"&gt;\e&lt;/span&gt;&lt;span class="s2"&gt;[01;34m_build&lt;/span&gt;&lt;span class="se"&gt;\e&lt;/span&gt;&lt;span class="s2"&gt;[0m  &lt;/span&gt;&lt;span class="se"&gt;\e&lt;/span&gt;&lt;span class="s2"&gt;[01;34mconfig&lt;/span&gt;&lt;span class="se"&gt;\e&lt;/span&gt;&lt;span class="s2"&gt;[0m  &lt;/span&gt;&lt;span class="se"&gt;\e&lt;/span&gt;&lt;span class="s2"&gt;[01;34mdeps&lt;/span&gt;&lt;span class="se"&gt;\e&lt;/span&gt;&lt;span class="s2"&gt;[0m  &lt;/span&gt;&lt;span class="se"&gt;\e&lt;/span&gt;&lt;span class="s2"&gt;[01;34mlib&lt;/span&gt;&lt;span class="se"&gt;\e&lt;/span&gt;&lt;span class="s2"&gt;[0m  mix.exs  mix.lock  &lt;/span&gt;&lt;span class="se"&gt;\e&lt;/span&gt;&lt;span class="s2"&gt;[01;34mpriv&lt;/span&gt;&lt;span class="se"&gt;\e&lt;/span&gt;&lt;span class="s2"&gt;[0m  README.md  &lt;/span&gt;&lt;span class="se"&gt;\e&lt;/span&gt;&lt;span class="s2"&gt;[01;34mtest&lt;/span&gt;&lt;span class="se"&gt;\e&lt;/span&gt;&lt;span class="s2"&gt;[0m&lt;/span&gt;&lt;span class="se"&gt;\r\n&lt;/span&gt;&lt;span class="s2"&gt;"&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
-&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:stdout&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;10721&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
- &lt;span class="s2"&gt;"&lt;/span&gt;&lt;span class="se"&gt;\e&lt;/span&gt;&lt;span class="s2"&gt;]0;stevennunez@TashiDor: ~/code/blog_code/terminal_in_your_browser&lt;/span&gt;&lt;span class="se"&gt;\a&lt;/span&gt;&lt;span class="s2"&gt;stevennunez@TashiDor:~/code/blog_code/terminal_in_your_browser$ "&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;Here we get a file list. The wacky &lt;code&gt;\e[om\e&lt;/code&gt; characters are for formatting in the terminal program. All &lt;code&gt;xterm.js&lt;/code&gt; compatible!&lt;/p&gt;
-
-&lt;p&gt;Let&amp;rsquo;s try turning on the echo via &lt;code&gt;stty&lt;/code&gt; settings.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
-2
-3
-4
-5
-6
-7
-8
-9
-&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="n"&gt;iex&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;6&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="ss"&gt;:exec&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;send&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pid&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;"stty echo&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s2"&gt;"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="n"&gt;iex&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;7&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="ss"&gt;:exec&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;send&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pid&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;"l"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;          
-&lt;span class="n"&gt;iex&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;8&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="ss"&gt;:exec&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;send&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pid&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;"s"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="n"&gt;iex&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;9&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;flush&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
-&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:stdout&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;10721&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
- &lt;span class="s2"&gt;"&lt;/span&gt;&lt;span class="se"&gt;\e&lt;/span&gt;&lt;span class="s2"&gt;]0;stevennunez@TashiDor: ~/code/blog_code/terminal_in_your_browser&lt;/span&gt;&lt;span class="se"&gt;\a&lt;/span&gt;&lt;span class="s2"&gt;stevennunez@TashiDor:~/code/blog_code/terminal_in_your_browser$ "&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
-&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:stdout&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;10721&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;"l"&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
-&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:stdout&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;10721&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;"s"&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
-
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;ECHO!&lt;/p&gt;
-
-&lt;p&gt;A couple of things to note:&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;code&gt;{:ok, pid, _os_pid} = :exec.run(&amp;#39;$SHELL&amp;#39;, [:stdin, :stdout, :stderr, :pty])&lt;/code&gt;. Note the single quotes. This &lt;strong&gt;has&lt;/strong&gt; to be an Erlang String or Elixir Charlist, which is in single quotes.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;:exec.send(pid, &amp;quot;ls\n&amp;quot;)&lt;/code&gt; Double quotes when you &lt;code&gt;:exec.send&lt;/code&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h2&gt;GenServer time&lt;/h2&gt;
-
-&lt;p&gt;Let&amp;rsquo;s wrap all of this in a &lt;code&gt;GenServer&lt;/code&gt;. The server will have a way to receive input as well as a way to notify a process (our socket process) when there&amp;rsquo;s something to output.&lt;/p&gt;
-
-&lt;p&gt;Step 1: Make a module named &lt;code&gt;Terminal&lt;/code&gt; that uses &lt;code&gt;GenServer&lt;/code&gt;&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
-2
-3
-4
-&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="k"&gt;defmodule&lt;/span&gt; &lt;span class="no"&gt;Terminal&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-  &lt;span class="kn"&gt;use&lt;/span&gt; &lt;span class="no"&gt;GenServer&lt;/span&gt;
-
-&lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;Step 2: Create &lt;code&gt;start_link/1&lt;/code&gt; and the &lt;code&gt;init/1&lt;/code&gt; callback to receive and store the output_pid:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="k"&gt;defmodule&lt;/span&gt; &lt;span class="no"&gt;Terminal&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-  &lt;span class="kn"&gt;use&lt;/span&gt; &lt;span class="no"&gt;GenServer&lt;/span&gt;
-
-  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;start_link&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;output_pid&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-    &lt;span class="no"&gt;GenServer&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;start_link&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;__MODULE__&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;output_pid&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-  &lt;span class="k"&gt;end&lt;/span&gt;
-
-  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;init&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;output_pid&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-    &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:ok&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="ss"&gt;output_pid:&lt;/span&gt; &lt;span class="n"&gt;output_pid&lt;/span&gt;&lt;span class="p"&gt;}}&lt;/span&gt;
-  &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;Step 3: In the &lt;code&gt;init/1&lt;/code&gt; callback, start a pty shell and set it up to echo on input:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="k"&gt;defmodule&lt;/span&gt; &lt;span class="no"&gt;Terminal&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-  &lt;span class="kn"&gt;use&lt;/span&gt; &lt;span class="no"&gt;GenServer&lt;/span&gt;
-  &lt;span class="c1"&gt;#... start_link omitted&lt;/span&gt;
-  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;init&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;output_pid&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-    &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:ok&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;shell&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_os_pid&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="ss"&gt;:exec&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;run&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'$SHELL'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="ss"&gt;:stdin&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:stdout&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:stderr&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:pty&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
-    &lt;span class="ss"&gt;:exec&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;send&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;shell&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;"stty echo&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s2"&gt;"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-
-    &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:ok&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;%{&lt;/span&gt;
-      &lt;span class="ss"&gt;output_pid:&lt;/span&gt; &lt;span class="n"&gt;output_pid&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-      &lt;span class="ss"&gt;shell:&lt;/span&gt; &lt;span class="n"&gt;shell&lt;/span&gt;
-      &lt;span class="p"&gt;}&lt;/span&gt;
-    &lt;span class="p"&gt;}&lt;/span&gt;
-  &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;Step 4: Take input and send it to the shell pid:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="k"&gt;defmodule&lt;/span&gt; &lt;span class="no"&gt;Terminal&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-  &lt;span class="kn"&gt;use&lt;/span&gt; &lt;span class="no"&gt;GenServer&lt;/span&gt;
-  &lt;span class="c1"&gt;#... previous code omitted&lt;/span&gt;
-
-  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;send_input&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;terminal&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;input&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-    &lt;span class="no"&gt;GenServer&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;cast&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;terminal&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:input&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;input&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt;
-  &lt;span class="k"&gt;end&lt;/span&gt;
-
-  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;handle_cast&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;&lt;span class="ss"&gt;:input&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;input&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="ss"&gt;shell:&lt;/span&gt; &lt;span class="n"&gt;shell&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-    &lt;span class="ss"&gt;:exec&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;send&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;shell&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;input&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-    &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:noreply&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
-  &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;Step 5: Handle output your &lt;code&gt;GenServer&lt;/code&gt; receives as a message:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="k"&gt;defmodule&lt;/span&gt; &lt;span class="no"&gt;Terminal&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-  &lt;span class="kn"&gt;use&lt;/span&gt; &lt;span class="no"&gt;GenServer&lt;/span&gt;
-  &lt;span class="c1"&gt;#... previous code omitted&lt;/span&gt;
-
-  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;handle_info&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;&lt;span class="ss"&gt;:stdout&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_os_pid&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;output&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="ss"&gt;output_pid:&lt;/span&gt; &lt;span class="n"&gt;output_pid&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-    &lt;span class="n"&gt;send&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;output_pid&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:output&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;output&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt;
-    &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:noreply&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
-  &lt;span class="k"&gt;end&lt;/span&gt;
-
-  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;handle_info&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;&lt;span class="ss"&gt;:stderr&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_os_pir&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;output&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="ss"&gt;output_pid:&lt;/span&gt; &lt;span class="n"&gt;output_pid&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-    &lt;span class="n"&gt;send&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;output_pid&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:output&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;output&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt;
-    &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:noreply&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
-  &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;And that&amp;rsquo;s it for our &lt;code&gt;GenServer&lt;/code&gt;! You&amp;rsquo;ll notice we send a message to our &lt;code&gt;output_pid&lt;/code&gt;. How do we handle that? Let&amp;rsquo;s jump back to the socket.&lt;/p&gt;
-
-&lt;h2&gt;TerminalChannel part 2&lt;/h2&gt;
-
-&lt;p&gt;Let&amp;rsquo;s dive in.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="k"&gt;defmodule&lt;/span&gt; &lt;span class="no"&gt;TerminalInYourBrowser&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Web&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;TerminalChannel&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-  &lt;span class="kn"&gt;use&lt;/span&gt; &lt;span class="no"&gt;TerminalInYourBrowser&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Web&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:channel&lt;/span&gt;
-
-  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;join&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;"terminal:"&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;id&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;payload&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;socket&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-    &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:ok&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;terminal&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="no"&gt;Terminal&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;start_link&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;self&lt;/span&gt;&lt;span class="p"&gt;())&lt;/span&gt;
-    &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:ok&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;assign&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;socket&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:terminal&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;terminal&lt;/span&gt;&lt;span class="p"&gt;)}&lt;/span&gt;
-  &lt;span class="k"&gt;end&lt;/span&gt;
-
-  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;handle_in&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;"input"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="s2"&gt;"input"&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;input&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="n"&gt;socket&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-    &lt;span class="no"&gt;Terminal&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;send_input&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;socket&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;assigns&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="ss"&gt;:terminal&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="n"&gt;input&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-    &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:noreply&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;socket&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
-&lt;span class="n"&gt;u&lt;/span&gt; &lt;span class="k"&gt;end&lt;/span&gt;
-
-  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;handle_info&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;&lt;span class="ss"&gt;:output&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;output&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="n"&gt;socket&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-    &lt;span class="n"&gt;push&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;socket&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;"output"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="ss"&gt;output:&lt;/span&gt; &lt;span class="n"&gt;output&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt;
-    &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:noreply&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;socket&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
-  &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;When you join, we create a new terminal process. We pass in &lt;code&gt;self()&lt;/code&gt; as the &lt;code&gt;output_pid&lt;/code&gt;. We then add the terminal pid to the socket&amp;rsquo;s state. Then we wait&amp;hellip; When we get that &lt;code&gt;input&lt;/code&gt; message from the browser terminal, we send it to the terminal process. Here&amp;rsquo;s the cool part:&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Channels are just &lt;code&gt;GenServer&lt;/code&gt;s so they respond to out of band messages with &lt;code&gt;handle_info&lt;/code&gt;.&lt;/strong&gt;
- Whoop!&lt;/p&gt;
-
-&lt;p&gt;And just like that, we&amp;rsquo;ve got a terminal in our browser!
-&lt;img src="http://i.imgur.com/DXhsL3W.gif" width="100%" /&gt;&lt;/p&gt;
-
-&lt;h2&gt;Wrap up&lt;/h2&gt;
-
-&lt;p&gt;The &lt;code&gt;erlexec&lt;/code&gt; library is really powerful. With options to send &lt;code&gt;stdout|stderr&lt;/code&gt; to different processes, the way we set this up could have been really different.&lt;/p&gt;
-
-&lt;p&gt;If there&amp;rsquo;s anything you want to hear more about, leave it in the comments below. I&amp;rsquo;m always looking for ways to contribute.&lt;/p&gt;
-
-&lt;p&gt;Thanks!&lt;/p&gt;
 </content>
   </entry>
 </feed>
