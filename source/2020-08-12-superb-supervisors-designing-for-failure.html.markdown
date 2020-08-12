@@ -19,8 +19,13 @@ exactly to do it.
 We're going to design a system of RabbitMQ consumers that
 fail at the first sign of trouble. Do not pass go, do not
 collect 200 dollars.
+
+
 <div>
-<img src="https://images.unsplash.com/photo-1544393569-eb1568319eef?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjEzNzc5N30" /> <div> Photo by <a href="https://unsplash.com/@nadineshaabana?utm_source=seance&utm_medium=referral">Nadine Shaabana</a> on <a href="https://unsplash.com/?utm_source=seance&utm_medium=referral">Unsplash</a>
+  <img width="100%" src="https://images.unsplash.com/photo-1544393569-eb1568319eef?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjEzNzc5N30" />
+<small>Photo by <a href="https://unsplash.com/@nadineshaabana?utm_source=seance&utm_medium=referral">Nadine Shaabana</a> on <a href="https://unsplash.com/?utm_source=seance&utm_medium=referral">Unsplash</a></small>
+<div>
+
 
 You might be asking yourself, "Why would you build a
 crashing consumer?" These consumers listen on the wire to
@@ -35,15 +40,18 @@ prices, available discounts, and sales for an app that
 tries to run projections of monthly sales, you'd better
 alert someone if an inventory update fails to get consumed.
 Here's what we'll be building:
-<div class='mermaid'>
-  graph TD
-    Application --> ConsumerGroup
-    ConsumerGroup --> ConsumerSupervisor
-    ConsumerSupervisor --> MushroomConsumer
-    ConsumerSupervisor --> ToxicityConsumer
-    ConsumerGroup --> ConsumerMonitor
-    ConsumerMonitor -.-MushroomConsumer
-    ConsumerMonitor -.-ToxicityConsumer
+
+
+
+<div class="mermaid">
+graph TD
+Application \--> ConsumerGroup
+ConsumerGroup \--> ConsumerSupervisor
+ConsumerSupervisor \--> MushroomConsumer
+ConsumerSupervisor \--> ToxicityConsumer
+ConsumerGroup \--> ConsumerMonitor
+ConsumerMonitor -.-MushroomConsumer
+ConsumerMonitor -.-ToxicityConsumer
 </div>
 
 Let's talk about what's going on here. Our application
@@ -53,7 +61,12 @@ for starting our consumers, and a ConsumerMonitor. We want
 our consumer monitor to... Monitor Consumers. At the first
 sign of danger, it will instruct the ConsumerSupervisor to
 stop the presses, and kill all of it's children.
-<div> <img src="https://i.imgur.com/RpagL6h.png" width="100%"/> <div>
+
+
+
+<div>
+<img width="100%" src="https://i.imgur.com/RpagL6h.png" />
+<div>
 
 After we've fixed the problem, we'll bring everything back
 online. OK, let's get started.
@@ -64,7 +77,12 @@ a [previous
 post](https://hostiledeveloper.com/2020/08/09/connection-pools-and-rabbitmq.html)
 I won't go into too much detail here. After setting them
 up, our Supervison tree should look like this.
-<div> <img src="https://i.imgur.com/CUPLoFj.png" width="100%"/> <div>
+
+
+
+<div>
+<img width="100%" src="https://i.imgur.com/CUPLoFj.png" />
+<div>
 
 Great, on to our supervisors.
 ## Bottom Up
@@ -93,22 +111,30 @@ let it die.
 
 The `ToxicityConsumer` looks pretty similar, except it has
 a different exchange and queue.
+
 <script src="https://gist.github.com/StevenNunez/3b810cae5094d909d3227c17cefc5144.js"></script>
 
 On to the `ConsumerSupervisor`. Since it's supervising
 processes that have the `:temporary` restart option, the
 strategy doesn't really matter. We're going to leave it
 with the default `:one_for_one` strategy.
+
 <script src="https://gist.github.com/StevenNunez/b20d803d25979e1944bef6a76fd834ff.js"></script>
 
 We've added a couple of additional functions that we need
 to support our `ConsumerMonitor` process. The first one is
 a list of all of the pid's this supervisor is managing. The
 second function terminates all of the children.
-<div> <img src="https://i.imgur.com/fL89Fqv.png" /> <div>
+
+
+<div>
+<img width="100%" src="https://i.imgur.com/fL89Fqv.png" />
+<div>
 
 The `ConsumerMonitor` will do well by its namesake but take
 a look at its restart option.
+
+
 <script src="https://gist.github.com/StevenNunez/5ee793e6b707f601041ccdb787e69a72.js"></script>
 
 We're setting it's restart strategy to `:transient`. Reason
@@ -135,11 +161,19 @@ that later.
 
 Let's add this to our application and take it out for a
 spin.
+
+
 <script src="https://gist.github.com/StevenNunez/1e9b41eab6b66ee867cd1569a0e862e1.js"></script>
 
 Let's take a look at what this looks like in observer.
-<div> <img src="https://i.imgur.com/pe27V20.gif" width="100%"/> <div>
+
+
+
+<div>
+<img width="100%" src="https://i.imgur.com/pe27V20.gif" />
+<div>
 
 ## Supervisors are awesome
 Our tree dies when it's supposed, and comes back up in a fresh state when needed. LOVE IT!
+
 <blockquote class="twitter-tweet"><p lang="en" dir="ltr">That feeling when you configure the perfect supervision tree ❤️ <a href="https://twitter.com/hashtag/myelixirstatus?src=hash&amp;ref_src=twsrc%5Etfw">#myelixirstatus</a> come see what I&#39;m talking about over at <a href="https://t.co/zaKaXqCwt5">https://t.co/zaKaXqCwt5</a></p>&mdash; Steven Nunez 🇩🇴🇺🇸🙅 (@_StevenNunez) <a href="https://twitter.com/_StevenNunez/status/1292215852469825539?ref_src=twsrc%5Etfw">August 8, 2020</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
