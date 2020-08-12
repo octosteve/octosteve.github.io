@@ -19,7 +19,8 @@ exactly to do it.
 We're going to design a system of RabbitMQ consumers that
 fail at the first sign of trouble. Do not pass go, do not
 collect 200 dollars.
-<div> <img src="https://images.unsplash.com/photo-1544393569-eb1568319eef?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjEzNzc5N30" /> <div> Photo by <a href="https://unsplash.com/@nadineshaabana?utm_source=seance&utm_medium=referral">Nadine Shaabana</a> on <a href="https://unsplash.com/?utm_source=seance&utm_medium=referral">Unsplash</a>
+<div>
+<img src="https://images.unsplash.com/photo-1544393569-eb1568319eef?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjEzNzc5N30" /> <div> Photo by <a href="https://unsplash.com/@nadineshaabana?utm_source=seance&utm_medium=referral">Nadine Shaabana</a> on <a href="https://unsplash.com/?utm_source=seance&utm_medium=referral">Unsplash</a>
 
 You might be asking yourself, "Why would you build a
 crashing consumer?" These consumers listen on the wire to
@@ -35,15 +36,14 @@ tries to run projections of monthly sales, you'd better
 alert someone if an inventory update fails to get consumed.
 Here's what we'll be building:
 <div class='mermaid'>
-
-graph TD
-Application --> ConsumerGroup
-ConsumerGroup --> ConsumerSupervisor
-ConsumerSupervisor --> MushroomConsumer
-ConsumerSupervisor --> ToxicityConsumer
-ConsumerGroup --> ConsumerMonitor
-ConsumerMonitor -.-MushroomConsumer
-ConsumerMonitor -.-ToxicityConsumer
+  graph TD
+    Application --> ConsumerGroup
+    ConsumerGroup --> ConsumerSupervisor
+    ConsumerSupervisor --> MushroomConsumer
+    ConsumerSupervisor --> ToxicityConsumer
+    ConsumerGroup --> ConsumerMonitor
+    ConsumerMonitor -.-MushroomConsumer
+    ConsumerMonitor -.-ToxicityConsumer
 </div>
 
 Let's talk about what's going on here. Our application
@@ -53,7 +53,7 @@ for starting our consumers, and a ConsumerMonitor. We want
 our consumer monitor to... Monitor Consumers. At the first
 sign of danger, it will instruct the ConsumerSupervisor to
 stop the presses, and kill all of it's children.
-<div> <img src="https://i.imgur.com/RpagL6h.png" /> <div>
+<div> <img src="https://i.imgur.com/RpagL6h.png" width="100%"/> <div>
 
 After we've fixed the problem, we'll bring everything back
 online. OK, let's get started.
@@ -64,7 +64,7 @@ a [previous
 post](https://hostiledeveloper.com/2020/08/09/connection-pools-and-rabbitmq.html)
 I won't go into too much detail here. After setting them
 up, our Supervison tree should look like this.
-<div> <img src="https://i.imgur.com/CUPLoFj.png" /> <div>
+<div> <img src="https://i.imgur.com/CUPLoFj.png" width="100%"/> <div>
 
 Great, on to our supervisors.
 ## Bottom Up
@@ -119,7 +119,7 @@ as the argument to `start_link/1`.
 On start, we monitor each of the supervisor's pids and
 just wait... as soon as a process dies, we instruct the
 supervisor to execute order 66.
-<div> <img src="https://i.imgur.com/6lGqb8n.png" /> <div>
+<div> <img src="https://i.imgur.com/6lGqb8n.png" width="100%"/> <div>
 
 The `ConsumerGroupSupervisor` ties it all together. Pay
 special attention to the strategy option.
@@ -138,8 +138,8 @@ spin.
 <script src="https://gist.github.com/StevenNunez/1e9b41eab6b66ee867cd1569a0e862e1.js"></script>
 
 Let's take a look at what this looks like in observer.
-<div> <img src="https://i.imgur.com/pe27V20.gif" /> <div>
+<div> <img src="https://i.imgur.com/pe27V20.gif" width="100%"/> <div>
 
 ## Supervisors are awesome
 Our tree dies when it's supposed, and comes back up in a fresh state when needed. LOVE IT!
-<blockquote class="twitter-tweet"><p lang="en" dir="ltr">That feeling when you configure the perfect supervision tree ❤️ <a href="https://twitter.com/hashtag/myelixirstatus?src=hash&amp;ref_src=twsrc%5Etfw">#myelixirstatus</a> come see what I&#39;m talking about over at <a href="https://t.co/zaKaXqCwt5">https://t.co/zaKaXqCwt5</a></p>&mdash; Steven Nunez 🇩🇴🇺🇸🙅 (@_StevenNunez) <a href="https://twitter.com/_StevenNunez/status/1292215852469825539?ref_src=twsrc%5Etfw">August 8, 2020</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> 
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">That feeling when you configure the perfect supervision tree ❤️ <a href="https://twitter.com/hashtag/myelixirstatus?src=hash&amp;ref_src=twsrc%5Etfw">#myelixirstatus</a> come see what I&#39;m talking about over at <a href="https://t.co/zaKaXqCwt5">https://t.co/zaKaXqCwt5</a></p>&mdash; Steven Nunez 🇩🇴🇺🇸🙅 (@_StevenNunez) <a href="https://twitter.com/_StevenNunez/status/1292215852469825539?ref_src=twsrc%5Etfw">August 8, 2020</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>

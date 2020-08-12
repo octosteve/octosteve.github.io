@@ -8,8 +8,14 @@
   <%= favicon_tag 'favicon.ico' %>
   <%= stylesheet_link_tag 'application' %>
   <%= feed_tag :atom, "#{blog.options.prefix.to_s}/feed.xml", title: "Atom Feed" %>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
 </head>
 <body>
+  <script>
+    document.addEventListener("DOMContentLoaded", function(event) {
+      mermaid.initialize({startOnLoad:true});
+    });
+  </script>
 <div id="container">
   <%= partial 'header' %>
 
