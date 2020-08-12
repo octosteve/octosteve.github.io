@@ -66,11 +66,11 @@ alert someone if an inventory update fails to get consumed.
 Here&rsquo;s what we&rsquo;ll be building:
 <div class='mermaid'>
   graph TD
-    Application &ndash;&gt; ConsumerGroup
-    ConsumerGroup &ndash;&gt; ConsumerSupervisor
-    ConsumerSupervisor &ndash;&gt; MushroomConsumer
-    ConsumerSupervisor &ndash;&gt; ToxicityConsumer
-    ConsumerGroup &ndash;&gt; ConsumerMonitor
+    Application --> ConsumerGroup 
+    ConsumerGroup --> ConsumerSupervisor
+    ConsumerSupervisor --> MushroomConsumer
+    ConsumerSupervisor --> ToxicityConsumer 
+    ConsumerGroup --> ConsumerMonitor
     ConsumerMonitor -.-MushroomConsumer
     ConsumerMonitor -.-ToxicityConsumer
 </div></p>
