@@ -339,7 +339,7 @@ disk and is rerun based on some trigger, say a record was
 inserted into a specific table. Why would you want this?
 What do you lose? If your queries are slow, Materialized
 Views get you a wicked fast response since it's reading a
-cached value. What you lose is your data make lag a bit
+cached value. What you lose is your data might lag a bit
 depending on how expensive the query is. Setup is a little
 different, but the concept is the same.
 
