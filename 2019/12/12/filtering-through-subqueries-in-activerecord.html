@@ -36,7 +36,7 @@
 
 <h2>Course Tracker</h2>
 
-<p>Code can be found <a href="https://github.com/StevenNunez/course_tracker">Here</a>. The domain is pretty straight forward. For our purposes, let&rsquo;s focus on the Courses.</p>
+<p>Code can be found <a href="https://github.com/octosteve/course_tracker">Here</a>. The domain is pretty straight forward. For our purposes, let&rsquo;s focus on the Courses.</p>
 
 <p>A Course has many <code>ratings</code>. One query we&rsquo;re interested in is finding a course with a minimum average rating.</p>
 
@@ -64,7 +64,7 @@
 
 <p>Our next filtering task was to find courses matching a list of tags. This one is tricky since we want to only return courses that match ALL the tags.</p>
 
-<p>Our <a href="https://github.com/StevenNunez/course_tracker/blob/master/db/seeds.rb#L25">seed data</a> shows that we have a few courses that are tagged as &ldquo;Fun&rdquo;, but only one that is also tagged as &ldquo;Food&rdquo;</p>
+<p>Our <a href="https://github.com/octosteve/course_tracker/blob/master/db/seeds.rb#L25">seed data</a> shows that we have a few courses that are tagged as &ldquo;Fun&rdquo;, but only one that is also tagged as &ldquo;Food&rdquo;</p>
 
 <p>What would this look like in SQL if we were looking for &ldquo;Fun&rdquo; and &ldquo;Food&rdquo;?</p>
 <div class="highlight"><pre class="highlight sql"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1

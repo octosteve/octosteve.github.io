@@ -14,7 +14,7 @@
     <link rel="alternate" href="https://hostiledeveloper.com/2020/08/13/phoenix-contexts-and-crossing-boundaries.html"/>
     <id>https://hostiledeveloper.com/2020/08/13/phoenix-contexts-and-crossing-boundaries.html</id>
     <published>2020-08-13T03:45:00Z</published>
-    <updated>2020-08-13T10:18:44-04:00</updated>
+    <updated>2020-09-04T13:57:38-04:00</updated>
     <author>
       <name>Article Author</name>
     </author>
@@ -209,20 +209,20 @@ erDiagram
 a Github and Slack account if you want. This is what the
 Account Schema Looks like.&lt;/p&gt;
 
-&lt;script src="https://gist.github.com/StevenNunez/13fd0ffdaf8cab02030b43ff2d618e4f.js"&gt;&lt;/script&gt;
+&lt;script src="https://gist.github.com/octosteve/13fd0ffdaf8cab02030b43ff2d618e4f.js"&gt;&lt;/script&gt;
 
 &lt;p&gt;Here&amp;rsquo;s SlackAccount&lt;/p&gt;
 
-&lt;script src="https://gist.github.com/StevenNunez/5151a3c18ca9895520b514e08758166f.js"&gt;&lt;/script&gt;
+&lt;script src="https://gist.github.com/octosteve/5151a3c18ca9895520b514e08758166f.js"&gt;&lt;/script&gt;
 
 &lt;p&gt;And GithubAccount&lt;/p&gt;
 
-&lt;script src="https://gist.github.com/StevenNunez/3136237f9864024dc607b01739d4a8df.js"&gt;&lt;/script&gt;
+&lt;script src="https://gist.github.com/octosteve/3136237f9864024dc607b01739d4a8df.js"&gt;&lt;/script&gt;
 
 &lt;p&gt;Let&amp;rsquo;s add a top level &lt;code&gt;get/1&lt;/code&gt; function to our context that
 fetches WAY too much data.&lt;/p&gt;
 
-&lt;script src="https://gist.github.com/StevenNunez/4723cb5640e7ab75a22a151b345ffda2.js"&gt;&lt;/script&gt;
+&lt;script src="https://gist.github.com/octosteve/4723cb5640e7ab75a22a151b345ffda2.js"&gt;&lt;/script&gt;
 
 &lt;p&gt;So&amp;hellip; Even looking at this, we&amp;rsquo;re probably going to have to
 do a lot of work to make this data useful. Checkout what
@@ -255,7 +255,7 @@ SQL TIME&lt;/p&gt;
 of the tables and join them, ensuring we always return an
 account if it exists, even if it&amp;rsquo;s incomplete.&lt;/p&gt;
 
-&lt;script src="https://gist.github.com/StevenNunez/e50c8c0c996ae15bf9b011a4e26f2738.js"&gt;&lt;/script&gt;
+&lt;script src="https://gist.github.com/octosteve/e50c8c0c996ae15bf9b011a4e26f2738.js"&gt;&lt;/script&gt;
 
 &lt;p&gt;We&amp;rsquo;re using &lt;code&gt;LEFT OUTER JOIN&lt;/code&gt;s to prevent filtering out
 accounts that don&amp;rsquo;t have github  or slack accounts linked.&lt;/p&gt;
@@ -273,7 +273,7 @@ slack_account.&lt;/p&gt;
 
 &lt;p&gt;Here&amp;rsquo;s the view:&lt;/p&gt;
 
-&lt;script src="https://gist.github.com/StevenNunez/893bf8928ca0d8a73badd4547e296b9f.js"&gt;&lt;/script&gt;
+&lt;script src="https://gist.github.com/octosteve/893bf8928ca0d8a73badd4547e296b9f.js"&gt;&lt;/script&gt;
 
 &lt;p&gt;That&amp;rsquo;s it! Now if you run a query against &lt;code&gt;students&lt;/code&gt;,
 you&amp;rsquo;ll get this.&lt;/p&gt;
@@ -311,7 +311,7 @@ letting us run an insert.
 Let&amp;rsquo;s generate the Student Schema and run a query. Then
 we&amp;rsquo;ll try to insert a record.&lt;/p&gt;
 
-&lt;script src="https://gist.github.com/StevenNunez/41eb1ab7cf228895c3f4b75289a78c43.js"&gt;&lt;/script&gt;
+&lt;script src="https://gist.github.com/octosteve/41eb1ab7cf228895c3f4b75289a78c43.js"&gt;&lt;/script&gt;
 
 &lt;p&gt;Let&amp;rsquo;s take it for a spin.&lt;/p&gt;
 
@@ -358,7 +358,7 @@ different, but the concept is the same.&lt;/p&gt;
     <link rel="alternate" href="https://hostiledeveloper.com/2020/08/12/superb-supervisors-designing-for-failure.html"/>
     <id>https://hostiledeveloper.com/2020/08/12/superb-supervisors-designing-for-failure.html</id>
     <published>2020-08-12T04:19:00Z</published>
-    <updated>2020-08-12T08:51:46-04:00</updated>
+    <updated>2020-09-04T13:57:38-04:00</updated>
     <author>
       <name>Article Author</name>
     </author>
@@ -447,7 +447,7 @@ up, our Supervison tree should look like this.&lt;/p&gt;
 Consumers. We&amp;rsquo;re going to use ExRabbitPool&amp;rsquo;s Consumer
 module to save us some boilerplate, and we&amp;rsquo;ll customize our
 restart strategy to support our &amp;ldquo;Burn the world&amp;rdquo; approach.
-&lt;script src="https://gist.github.com/StevenNunez/9d2f70621f8b780d05b51a9a1b9c78c5.js"&gt;&lt;/script&gt;&lt;/p&gt;
+&lt;script src="https://gist.github.com/octosteve/9d2f70621f8b780d05b51a9a1b9c78c5.js"&gt;&lt;/script&gt;&lt;/p&gt;
 
 &lt;p&gt;The biggest difference here is we set the restart option
 to &lt;code&gt;:temporary&lt;/code&gt;. Supervised processes can set 1 of 3
@@ -469,14 +469,14 @@ let it die.&lt;/p&gt;
 &lt;p&gt;The &lt;code&gt;ToxicityConsumer&lt;/code&gt; looks pretty similar, except it has
 a different exchange and queue.&lt;/p&gt;
 
-&lt;script src="https://gist.github.com/StevenNunez/3b810cae5094d909d3227c17cefc5144.js"&gt;&lt;/script&gt;
+&lt;script src="https://gist.github.com/octosteve/3b810cae5094d909d3227c17cefc5144.js"&gt;&lt;/script&gt;
 
 &lt;p&gt;On to the &lt;code&gt;ConsumerSupervisor&lt;/code&gt;. Since it&amp;rsquo;s supervising
 processes that have the &lt;code&gt;:temporary&lt;/code&gt; restart option, the
 strategy doesn&amp;rsquo;t really matter. We&amp;rsquo;re going to leave it
 with the default &lt;code&gt;:one_for_one&lt;/code&gt; strategy.&lt;/p&gt;
 
-&lt;script src="https://gist.github.com/StevenNunez/b20d803d25979e1944bef6a76fd834ff.js"&gt;&lt;/script&gt;
+&lt;script src="https://gist.github.com/octosteve/b20d803d25979e1944bef6a76fd834ff.js"&gt;&lt;/script&gt;
 
 &lt;p&gt;We&amp;rsquo;ve added a couple of additional functions that we need
 to support our &lt;code&gt;ConsumerMonitor&lt;/code&gt; process. The first one is
@@ -490,7 +490,7 @@ second function terminates all of the children.&lt;/p&gt;
 &lt;p&gt;The &lt;code&gt;ConsumerMonitor&lt;/code&gt; will do well by its namesake but take
 a look at its restart option.&lt;/p&gt;
 
-&lt;script src="https://gist.github.com/StevenNunez/5ee793e6b707f601041ccdb787e69a72.js"&gt;&lt;/script&gt;
+&lt;script src="https://gist.github.com/octosteve/5ee793e6b707f601041ccdb787e69a72.js"&gt;&lt;/script&gt;
 
 &lt;p&gt;We&amp;rsquo;re setting it&amp;rsquo;s restart strategy to &lt;code&gt;:transient&lt;/code&gt;. Reason
 being, if this puppy dies for ANY other reason than what&amp;rsquo;s
@@ -504,7 +504,7 @@ supervisor to execute order 66.
 
 &lt;p&gt;The &lt;code&gt;ConsumerGroupSupervisor&lt;/code&gt; ties it all together. Pay
 special attention to the strategy option.
-&lt;script src="https://gist.github.com/StevenNunez/1317e3e7d12dde6e9e698ed4e751f3ca.js"&gt;&lt;/script&gt;&lt;/p&gt;
+&lt;script src="https://gist.github.com/octosteve/1317e3e7d12dde6e9e698ed4e751f3ca.js"&gt;&lt;/script&gt;&lt;/p&gt;
 
 &lt;p&gt;Supervisors get started sequentially. We &lt;strong&gt;completely&lt;/strong&gt; start
 the &lt;code&gt;ConsumerSupervisor&lt;/code&gt; before we start the
@@ -517,7 +517,7 @@ that later.&lt;/p&gt;
 &lt;p&gt;Let&amp;rsquo;s add this to our application and take it out for a
 spin.&lt;/p&gt;
 
-&lt;script src="https://gist.github.com/StevenNunez/1e9b41eab6b66ee867cd1569a0e862e1.js"&gt;&lt;/script&gt;
+&lt;script src="https://gist.github.com/octosteve/1e9b41eab6b66ee867cd1569a0e862e1.js"&gt;&lt;/script&gt;
 
 &lt;p&gt;Let&amp;rsquo;s take a look at what this looks like in observer.&lt;/p&gt;
 
@@ -537,7 +537,7 @@ spin.&lt;/p&gt;
     <link rel="alternate" href="https://hostiledeveloper.com/2020/08/09/connection-pools-and-rabbitmq.html"/>
     <id>https://hostiledeveloper.com/2020/08/09/connection-pools-and-rabbitmq.html</id>
     <published>2020-08-09T02:04:00Z</published>
-    <updated>2020-08-09T10:38:08-04:00</updated>
+    <updated>2020-09-04T13:57:38-04:00</updated>
     <author>
       <name>Article Author</name>
     </author>
@@ -565,15 +565,15 @@ These concepts will be covered further in my &lt;a href="https://2020.elixirconf
 
 &lt;p&gt;Let&amp;rsquo;s start with a project:&lt;/p&gt;
 
-&lt;script src="https://gist.github.com/StevenNunez/6d1a15f7a45572c9a39cbcf94e33cdae.js"&gt;&lt;/script&gt;
+&lt;script src="https://gist.github.com/octosteve/6d1a15f7a45572c9a39cbcf94e33cdae.js"&gt;&lt;/script&gt;
 
 &lt;p&gt;Open up &lt;code&gt;mix.exs&lt;/code&gt; and add &lt;a href="https://github.com/esl/ex_rabbit_pool"&gt;ex_rabbit_pool&lt;/a&gt;, then run &lt;code&gt;mix deps.get&lt;/code&gt;&lt;/p&gt;
 
-&lt;script src="https://gist.github.com/StevenNunez/82cb9836bc4a7d1648cf46e62509341f.js"&gt;&lt;/script&gt;
+&lt;script src="https://gist.github.com/octosteve/82cb9836bc4a7d1648cf46e62509341f.js"&gt;&lt;/script&gt;
 
 &lt;p&gt;Great! Let&amp;rsquo;s start out with the easier of the 2. The publishing pool. Again, we&amp;rsquo;re going for a SINGLE connection but multiple channels. Since publishers don&amp;rsquo;t block, we can keep the count pretty low. Let&amp;rsquo;s start out with 2 channels.&lt;/p&gt;
 
-&lt;script src="https://gist.github.com/StevenNunez/fcf9706108409911248a133ebd6a9320.js"&gt;&lt;/script&gt;
+&lt;script src="https://gist.github.com/octosteve/fcf9706108409911248a133ebd6a9320.js"&gt;&lt;/script&gt;
 
 &lt;p&gt;A whole-lotta code. Let&amp;rsquo;s jump right in:&lt;/p&gt;
 
@@ -586,7 +586,7 @@ Here, we&amp;rsquo;re doing a little&amp;hellip; but with a lot of code. &lt;cod
 &lt;/ol&gt;
 
 &lt;p&gt;Add this to &lt;code&gt;application.ex&lt;/code&gt;
-&lt;script src="https://gist.github.com/StevenNunez/8318539fd3d5e82cd1a7ca97b1f41436.js"&gt;&lt;/script&gt;
+&lt;script src="https://gist.github.com/octosteve/8318539fd3d5e82cd1a7ca97b1f41436.js"&gt;&lt;/script&gt;
 Run &lt;code&gt;iex -S mix&lt;/code&gt; and you&amp;rsquo;ll see this in observer.&lt;/p&gt;
 
 &lt;p&gt;&lt;a href="https://imgur.com/cnWlTDU"&gt;&lt;img width="100%" src="https://i.imgur.com/cnWlTDU.png" title="source: imgur.com" /&gt;&lt;/a&gt;&lt;/p&gt;
@@ -596,7 +596,7 @@ Run &lt;code&gt;iex -S mix&lt;/code&gt; and you&amp;rsquo;ll see this in observe
 &lt;p&gt;&lt;a href="https://imgur.com/tPwPhop"&gt;&lt;img src="https://i.imgur.com/tPwPhop.png" title="source: imgur.com" /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Let&amp;rsquo;s create a publisher that publishes to a &lt;code&gt;what_should_we_do&lt;/code&gt; exchange with a payload of &amp;ldquo;Pool Time!&amp;rdquo;
-&lt;script src="https://gist.github.com/StevenNunez/f19d7a058ae5350feb0e936383f8f584.js"&gt;&lt;/script&gt;&lt;/p&gt;
+&lt;script src="https://gist.github.com/octosteve/f19d7a058ae5350feb0e936383f8f584.js"&gt;&lt;/script&gt;&lt;/p&gt;
 
 &lt;p&gt;The &lt;code&gt;ExRabbitPool.RabbitMQ&lt;/code&gt; module &lt;a href="https://github.com/esl/ex_rabbit_pool/blob/master/lib/clients/rabbitmq.ex"&gt;delegates all of it&amp;rsquo;s calls&lt;/a&gt; to the underlying
 &lt;a href="https://github.com/pma/amqp"&gt;amqp&lt;/a&gt; library, but we&amp;rsquo;ll use this to support any
@@ -620,11 +620,11 @@ fetching and returning stuff the &lt;code&gt;ExRabbitPool.with_channel/2&lt;/cod
 
 &lt;p&gt;Very similar to the Publisher Pool, except we&amp;rsquo;re going to bump the channels to 5. This is something we&amp;rsquo;d tweak over time, with a good signal being that your consumers occasionally crash because they can&amp;rsquo;t get a channel. This could be due to consumers taking a long time to finish a request, or having more concurrent work than you have channels. In any event, this is something you&amp;rsquo;ll have to tweak for your environment.&lt;/p&gt;
 
-&lt;script src="https://gist.github.com/StevenNunez/ce73de390dc416f17e22ba2bf258a7ae.js"&gt;&lt;/script&gt;
+&lt;script src="https://gist.github.com/octosteve/ce73de390dc416f17e22ba2bf258a7ae.js"&gt;&lt;/script&gt;
 
 &lt;p&gt;Same as before except with a higher channel count. Be sure to update &lt;code&gt;application.ex&lt;/code&gt;&lt;/p&gt;
 
-&lt;script src="https://gist.github.com/StevenNunez/a999e4089dc034d27786adc104ba19b5.js"&gt;&lt;/script&gt;
+&lt;script src="https://gist.github.com/octosteve/a999e4089dc034d27786adc104ba19b5.js"&gt;&lt;/script&gt;
 
 &lt;p&gt;On to our Consumer.
 The best APIs offer nice abstractions but let you reach into the internals when needed. We&amp;rsquo;ll see how in a bit.
@@ -632,7 +632,7 @@ We&amp;rsquo;re going to create a queue that consumes messages from
 our exchange. We&amp;rsquo;re going to use a named durable queue to allow us to stop consumers
 and not lose messages.&lt;/p&gt;
 
-&lt;script src="https://gist.github.com/StevenNunez/816d77c74b0850c985fd76a8ae5de357.js"&gt;&lt;/script&gt;
+&lt;script src="https://gist.github.com/octosteve/816d77c74b0850c985fd76a8ae5de357.js"&gt;&lt;/script&gt;
 
 &lt;p&gt;A lot going is on here but let&amp;rsquo;s take a look.&lt;/p&gt;
 
@@ -647,7 +647,7 @@ kbasic&lt;em&gt;cancel/3&lt;code&gt;&lt;/code&gt;basic&lt;/em&gt;cancel_ok/2` fo
 
 &lt;p&gt;Don&amp;rsquo;t forget to update &lt;code&gt;application.ex&lt;/code&gt;&lt;/p&gt;
 
-&lt;script src="https://gist.github.com/StevenNunez/7a29ab01e5986873c732168518713368.js"&gt;&lt;/script&gt;
+&lt;script src="https://gist.github.com/octosteve/7a29ab01e5986873c732168518713368.js"&gt;&lt;/script&gt;
 
 &lt;h2&gt;Test Drive&lt;/h2&gt;
 
@@ -667,7 +667,7 @@ free up resources when you failed. Or you&amp;rsquo;d have to set up separate mo
 &lt;code&gt;ExRabbitPool&lt;/code&gt; you keep things in a clean, expected state. Let&amp;rsquo;s update our consumer to raise an exception like an
 underslept teenager. We&amp;rsquo;re going to change the restart strategy to &lt;code&gt;:temporary&lt;/code&gt; to not bring down the world,.&lt;/p&gt;
 
-&lt;script src="https://gist.github.com/StevenNunez/fa6109cd145231b5b980fac2e8da89db.js"&gt;&lt;/script&gt;
+&lt;script src="https://gist.github.com/octosteve/fa6109cd145231b5b980fac2e8da89db.js"&gt;&lt;/script&gt;
 
 &lt;p&gt;Go ahead and publish some messages. Sure it crashes, but look at your stats.&lt;/p&gt;
 
@@ -687,7 +687,7 @@ underslept teenager. We&amp;rsquo;re going to change the restart strategy to &lt
     <link rel="alternate" href="https://hostiledeveloper.com/2020/06/19/organizing-liveview-logic-with-presentation-models.html"/>
     <id>https://hostiledeveloper.com/2020/06/19/organizing-liveview-logic-with-presentation-models.html</id>
     <published>2020-06-19T17:31:00Z</published>
-    <updated>2020-06-22T10:22:49-04:00</updated>
+    <updated>2020-09-04T13:57:51-04:00</updated>
     <author>
       <name>Article Author</name>
     </author>
@@ -706,7 +706,7 @@ underslept teenager. We&amp;rsquo;re going to change the restart strategy to &lt
 &lt;p&gt;LiveViews are a bit different though. The data we want to isolate isn&amp;rsquo;t really part of our &lt;em&gt;core&lt;/em&gt; business logic. In fact, in most cases, it exists to deliver a single experience in your app.&lt;/p&gt;
 
 &lt;p&gt;Let&amp;rsquo;s take a look at the code example. It stores a few pieces of state that get manipulated over the course of the page&amp;rsquo;s life.
-&lt;script src="https://gist.github.com/StevenNunez/f384871008825b16bc09819267f28721.js"&gt;&lt;/script&gt;
+&lt;script src="https://gist.github.com/octosteve/f384871008825b16bc09819267f28721.js"&gt;&lt;/script&gt;
 In the example, the &lt;code&gt;LiveViewStudio.Stores&lt;/code&gt; module runs our search and is very much part of our &lt;em&gt;core&lt;/em&gt; business logic. This might be some code that gets optimized and used in several places in our app in a number of contexts. The results from our search will be stored in &lt;code&gt;stores&lt;/code&gt;. Our LiveView can potentially act on the data it got back from the data store, further decorating it in preparation to render it. Along with &lt;code&gt;zip&lt;/code&gt; and &lt;code&gt;loading&lt;/code&gt;, this specific interpretation of &lt;code&gt;stores&lt;/code&gt; would never be used outside of this view. Why does this matter?&lt;/p&gt;
 
 &lt;h2&gt;Separation of concerns and testing&lt;/h2&gt;
@@ -728,7 +728,10 @@ In the example, the &lt;code&gt;LiveViewStudio.Stores&lt;/code&gt; module runs o
 &lt;p&gt;We&amp;rsquo;re going to extract the state for this component, and encapsulate the logic a bit. We showed the state, but what&amp;rsquo;s this thing do?
 Users are presented a search box, where, the request takes 2 seconds to complete. Between submission and bringing up results, a &lt;code&gt;loading&lt;/code&gt; icon appears.&lt;/p&gt;
 
-&lt;p&gt;&lt;iframe src="https://giphy.com/embed/fA1JrSOgltr5VoPvGK" width="480" height="352" frameBorder="0" class="giphy-embed" allowFullScreen&gt;&lt;/iframe&gt;&lt;p&gt;&lt;a href="https://giphy.com/gifs/fA1JrSOgltr5VoPvGK"&gt;via GIPHY&lt;/a&gt;&lt;/p&gt;&lt;/p&gt;
+&lt;div&gt;
+&lt;iframe src="https://giphy.com/embed/fA1JrSOgltr5VoPvGK" width="480" height="352" frameBorder="0" class="giphy-embed" allowFullScreen&gt;&lt;/iframe&gt;&lt;p&gt;&lt;a href="https://giphy.com/gifs/fA1JrSOgltr5VoPvGK"&gt;via GIPHY&lt;/a&gt;&lt;/p&gt;
+
+&lt;/div&gt;
 
 &lt;p&gt;The flow looks something like:
 1. Send query to LiveView
@@ -737,12 +740,12 @@ Users are presented a search box, where, the request takes 2 seconds to complete
 
 &lt;p&gt;Let&amp;rsquo;s start out with some tests:&lt;/p&gt;
 
-&lt;script src="https://gist.github.com/StevenNunez/03c6e76849653104ec97f2b777f0e67b.js"&gt;&lt;/script&gt;
+&lt;script src="https://gist.github.com/octosteve/03c6e76849653104ec97f2b777f0e67b.js"&gt;&lt;/script&gt;
 
 &lt;p&gt;Our module expects to receive a function that takes one argument. Note we&amp;rsquo;ve broken up the flow between preparing the query (storing it) and actually executing it.
 OK, on to the code.&lt;/p&gt;
 
-&lt;script src="https://gist.github.com/StevenNunez/c347f9339e48142c922b994ce0991b31.js"&gt;&lt;/script&gt;
+&lt;script src="https://gist.github.com/octosteve/c347f9339e48142c922b994ce0991b31.js"&gt;&lt;/script&gt;
 
 &lt;p&gt;OK, so this is a lot of code, compared to what the final result I linked to earlier but let&amp;rsquo;s think about what we&amp;rsquo;ve won. There are clearly 3 things this module can do. Each of those things has a clear pipeline describing what it means to execute it. And best of all, it&amp;rsquo;s all pure! We don&amp;rsquo;t have to simulate clicks, or mess with input fields. We can test plain old values. Adding a new feature to this and verifying it works with automated tests is trivial. Imagine how you would add the ability to ensure a zip code is only numbers? Or that they&amp;rsquo;re 5 characters long?&lt;/p&gt;
 
@@ -750,7 +753,7 @@ OK, on to the code.&lt;/p&gt;
 
 &lt;p&gt;We&amp;rsquo;re going to take a look at what the &lt;code&gt;SearchLive&lt;/code&gt; LiveView would look like using this Presentation Model.&lt;/p&gt;
 
-&lt;script src="https://gist.github.com/StevenNunez/0e7db950bfcfd93743cdbe1199042b60.js"&gt;&lt;/script&gt;
+&lt;script src="https://gist.github.com/octosteve/0e7db950bfcfd93743cdbe1199042b60.js"&gt;&lt;/script&gt;
 
 &lt;p&gt;SO NICE! Our live view is solely responsible for making sure the right parts of our Presentation Model module get called and use it to render state. Notice how we&amp;rsquo;re using &lt;code&gt;@presentation_model.x&lt;/code&gt;. If you&amp;rsquo;re wondering, there&amp;rsquo;s no hit to performance using this! LiveView does a diff on the server before sending the change over the wire. If there&amp;rsquo;s no change, it doesn&amp;rsquo;t send anything. And what&amp;rsquo;s best is that to test the LiveView, you only have to test a couple of cases for success and failure, as opposed to every detail and edge case of the view logic.
 This is kind of great.&lt;/p&gt;
@@ -1175,7 +1178,7 @@ response to acknowledge the message.&lt;/p&gt;
     <link rel="alternate" href="https://hostiledeveloper.com/2019/12/12/filtering-through-subqueries-in-activerecord.html"/>
     <id>https://hostiledeveloper.com/2019/12/12/filtering-through-subqueries-in-activerecord.html</id>
     <published>2019-12-12T01:49:00Z</published>
-    <updated>2020-06-19T13:28:26-04:00</updated>
+    <updated>2020-09-04T13:57:38-04:00</updated>
     <author>
       <name>Article Author</name>
     </author>
@@ -1183,7 +1186,7 @@ response to acknowledge the message.&lt;/p&gt;
 
 &lt;h2&gt;Course Tracker&lt;/h2&gt;
 
-&lt;p&gt;Code can be found &lt;a href="https://github.com/StevenNunez/course_tracker"&gt;Here&lt;/a&gt;. The domain is pretty straight forward. For our purposes, let&amp;rsquo;s focus on the Courses.&lt;/p&gt;
+&lt;p&gt;Code can be found &lt;a href="https://github.com/octosteve/course_tracker"&gt;Here&lt;/a&gt;. The domain is pretty straight forward. For our purposes, let&amp;rsquo;s focus on the Courses.&lt;/p&gt;
 
 &lt;p&gt;A Course has many &lt;code&gt;ratings&lt;/code&gt;. One query we&amp;rsquo;re interested in is finding a course with a minimum average rating.&lt;/p&gt;
 
@@ -1211,7 +1214,7 @@ response to acknowledge the message.&lt;/p&gt;
 
 &lt;p&gt;Our next filtering task was to find courses matching a list of tags. This one is tricky since we want to only return courses that match ALL the tags.&lt;/p&gt;
 
-&lt;p&gt;Our &lt;a href="https://github.com/StevenNunez/course_tracker/blob/master/db/seeds.rb#L25"&gt;seed data&lt;/a&gt; shows that we have a few courses that are tagged as &amp;ldquo;Fun&amp;rdquo;, but only one that is also tagged as &amp;ldquo;Food&amp;rdquo;&lt;/p&gt;
+&lt;p&gt;Our &lt;a href="https://github.com/octosteve/course_tracker/blob/master/db/seeds.rb#L25"&gt;seed data&lt;/a&gt; shows that we have a few courses that are tagged as &amp;ldquo;Fun&amp;rdquo;, but only one that is also tagged as &amp;ldquo;Food&amp;rdquo;&lt;/p&gt;
 
 &lt;p&gt;What would this look like in SQL if we were looking for &amp;ldquo;Fun&amp;rdquo; and &amp;ldquo;Food&amp;rdquo;?&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre class="highlight sql"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1

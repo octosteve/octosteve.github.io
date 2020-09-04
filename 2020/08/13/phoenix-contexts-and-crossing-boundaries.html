@@ -223,20 +223,20 @@ erDiagram
 a Github and Slack account if you want. This is what the
 Account Schema Looks like.</p>
 
-<script src="https://gist.github.com/StevenNunez/13fd0ffdaf8cab02030b43ff2d618e4f.js"></script>
+<script src="https://gist.github.com/octosteve/13fd0ffdaf8cab02030b43ff2d618e4f.js"></script>
 
 <p>Here&rsquo;s SlackAccount</p>
 
-<script src="https://gist.github.com/StevenNunez/5151a3c18ca9895520b514e08758166f.js"></script>
+<script src="https://gist.github.com/octosteve/5151a3c18ca9895520b514e08758166f.js"></script>
 
 <p>And GithubAccount</p>
 
-<script src="https://gist.github.com/StevenNunez/3136237f9864024dc607b01739d4a8df.js"></script>
+<script src="https://gist.github.com/octosteve/3136237f9864024dc607b01739d4a8df.js"></script>
 
 <p>Let&rsquo;s add a top level <code>get/1</code> function to our context that
 fetches WAY too much data.</p>
 
-<script src="https://gist.github.com/StevenNunez/4723cb5640e7ab75a22a151b345ffda2.js"></script>
+<script src="https://gist.github.com/octosteve/4723cb5640e7ab75a22a151b345ffda2.js"></script>
 
 <p>So&hellip; Even looking at this, we&rsquo;re probably going to have to
 do a lot of work to make this data useful. Checkout what
@@ -269,7 +269,7 @@ SQL TIME</p>
 of the tables and join them, ensuring we always return an
 account if it exists, even if it&rsquo;s incomplete.</p>
 
-<script src="https://gist.github.com/StevenNunez/e50c8c0c996ae15bf9b011a4e26f2738.js"></script>
+<script src="https://gist.github.com/octosteve/e50c8c0c996ae15bf9b011a4e26f2738.js"></script>
 
 <p>We&rsquo;re using <code>LEFT OUTER JOIN</code>s to prevent filtering out
 accounts that don&rsquo;t have github  or slack accounts linked.</p>
@@ -287,7 +287,7 @@ slack_account.</p>
 
 <p>Here&rsquo;s the view:</p>
 
-<script src="https://gist.github.com/StevenNunez/893bf8928ca0d8a73badd4547e296b9f.js"></script>
+<script src="https://gist.github.com/octosteve/893bf8928ca0d8a73badd4547e296b9f.js"></script>
 
 <p>That&rsquo;s it! Now if you run a query against <code>students</code>,
 you&rsquo;ll get this.</p>
@@ -325,7 +325,7 @@ letting us run an insert.
 Let&rsquo;s generate the Student Schema and run a query. Then
 we&rsquo;ll try to insert a record.</p>
 
-<script src="https://gist.github.com/StevenNunez/41eb1ab7cf228895c3f4b75289a78c43.js"></script>
+<script src="https://gist.github.com/octosteve/41eb1ab7cf228895c3f4b75289a78c43.js"></script>
 
 <p>Let&rsquo;s take it for a spin.</p>
 

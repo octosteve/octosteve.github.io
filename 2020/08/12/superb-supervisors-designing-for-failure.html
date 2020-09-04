@@ -117,7 +117,7 @@ up, our Supervison tree should look like this.</p>
 Consumers. We&rsquo;re going to use ExRabbitPool&rsquo;s Consumer
 module to save us some boilerplate, and we&rsquo;ll customize our
 restart strategy to support our &ldquo;Burn the world&rdquo; approach.
-<script src="https://gist.github.com/StevenNunez/9d2f70621f8b780d05b51a9a1b9c78c5.js"></script></p>
+<script src="https://gist.github.com/octosteve/9d2f70621f8b780d05b51a9a1b9c78c5.js"></script></p>
 
 <p>The biggest difference here is we set the restart option
 to <code>:temporary</code>. Supervised processes can set 1 of 3
@@ -139,14 +139,14 @@ let it die.</p>
 <p>The <code>ToxicityConsumer</code> looks pretty similar, except it has
 a different exchange and queue.</p>
 
-<script src="https://gist.github.com/StevenNunez/3b810cae5094d909d3227c17cefc5144.js"></script>
+<script src="https://gist.github.com/octosteve/3b810cae5094d909d3227c17cefc5144.js"></script>
 
 <p>On to the <code>ConsumerSupervisor</code>. Since it&rsquo;s supervising
 processes that have the <code>:temporary</code> restart option, the
 strategy doesn&rsquo;t really matter. We&rsquo;re going to leave it
 with the default <code>:one_for_one</code> strategy.</p>
 
-<script src="https://gist.github.com/StevenNunez/b20d803d25979e1944bef6a76fd834ff.js"></script>
+<script src="https://gist.github.com/octosteve/b20d803d25979e1944bef6a76fd834ff.js"></script>
 
 <p>We&rsquo;ve added a couple of additional functions that we need
 to support our <code>ConsumerMonitor</code> process. The first one is
@@ -160,7 +160,7 @@ second function terminates all of the children.</p>
 <p>The <code>ConsumerMonitor</code> will do well by its namesake but take
 a look at its restart option.</p>
 
-<script src="https://gist.github.com/StevenNunez/5ee793e6b707f601041ccdb787e69a72.js"></script>
+<script src="https://gist.github.com/octosteve/5ee793e6b707f601041ccdb787e69a72.js"></script>
 
 <p>We&rsquo;re setting it&rsquo;s restart strategy to <code>:transient</code>. Reason
 being, if this puppy dies for ANY other reason than what&rsquo;s
@@ -174,7 +174,7 @@ supervisor to execute order 66.
 
 <p>The <code>ConsumerGroupSupervisor</code> ties it all together. Pay
 special attention to the strategy option.
-<script src="https://gist.github.com/StevenNunez/1317e3e7d12dde6e9e698ed4e751f3ca.js"></script></p>
+<script src="https://gist.github.com/octosteve/1317e3e7d12dde6e9e698ed4e751f3ca.js"></script></p>
 
 <p>Supervisors get started sequentially. We <strong>completely</strong> start
 the <code>ConsumerSupervisor</code> before we start the
@@ -187,7 +187,7 @@ that later.</p>
 <p>Let&rsquo;s add this to our application and take it out for a
 spin.</p>
 
-<script src="https://gist.github.com/StevenNunez/1e9b41eab6b66ee867cd1569a0e862e1.js"></script>
+<script src="https://gist.github.com/octosteve/1e9b41eab6b66ee867cd1569a0e862e1.js"></script>
 
 <p>Let&rsquo;s take a look at what this looks like in observer.</p>
 

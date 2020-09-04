@@ -56,15 +56,15 @@ These concepts will be covered further in my <a href="https://2020.elixirconf.co
 
 <p>Let&rsquo;s start with a project:</p>
 
-<script src="https://gist.github.com/StevenNunez/6d1a15f7a45572c9a39cbcf94e33cdae.js"></script>
+<script src="https://gist.github.com/octosteve/6d1a15f7a45572c9a39cbcf94e33cdae.js"></script>
 
 <p>Open up <code>mix.exs</code> and add <a href="https://github.com/esl/ex_rabbit_pool">ex_rabbit_pool</a>, then run <code>mix deps.get</code></p>
 
-<script src="https://gist.github.com/StevenNunez/82cb9836bc4a7d1648cf46e62509341f.js"></script>
+<script src="https://gist.github.com/octosteve/82cb9836bc4a7d1648cf46e62509341f.js"></script>
 
 <p>Great! Let&rsquo;s start out with the easier of the 2. The publishing pool. Again, we&rsquo;re going for a SINGLE connection but multiple channels. Since publishers don&rsquo;t block, we can keep the count pretty low. Let&rsquo;s start out with 2 channels.</p>
 
-<script src="https://gist.github.com/StevenNunez/fcf9706108409911248a133ebd6a9320.js"></script>
+<script src="https://gist.github.com/octosteve/fcf9706108409911248a133ebd6a9320.js"></script>
 
 <p>A whole-lotta code. Let&rsquo;s jump right in:</p>
 
@@ -77,7 +77,7 @@ Here, we&rsquo;re doing a little&hellip; but with a lot of code. <code>id</code>
 </ol>
 
 <p>Add this to <code>application.ex</code>
-<script src="https://gist.github.com/StevenNunez/8318539fd3d5e82cd1a7ca97b1f41436.js"></script>
+<script src="https://gist.github.com/octosteve/8318539fd3d5e82cd1a7ca97b1f41436.js"></script>
 Run <code>iex -S mix</code> and you&rsquo;ll see this in observer.</p>
 
 <p><a href="https://imgur.com/cnWlTDU"><img width="100%" src="https://i.imgur.com/cnWlTDU.png" title="source: imgur.com" /></a></p>
@@ -87,7 +87,7 @@ Run <code>iex -S mix</code> and you&rsquo;ll see this in observer.</p>
 <p><a href="https://imgur.com/tPwPhop"><img src="https://i.imgur.com/tPwPhop.png" title="source: imgur.com" /></a></p>
 
 <p>Let&rsquo;s create a publisher that publishes to a <code>what_should_we_do</code> exchange with a payload of &ldquo;Pool Time!&rdquo;
-<script src="https://gist.github.com/StevenNunez/f19d7a058ae5350feb0e936383f8f584.js"></script></p>
+<script src="https://gist.github.com/octosteve/f19d7a058ae5350feb0e936383f8f584.js"></script></p>
 
 <p>The <code>ExRabbitPool.RabbitMQ</code> module <a href="https://github.com/esl/ex_rabbit_pool/blob/master/lib/clients/rabbitmq.ex">delegates all of it&rsquo;s calls</a> to the underlying
 <a href="https://github.com/pma/amqp">amqp</a> library, but we&rsquo;ll use this to support any
@@ -111,11 +111,11 @@ fetching and returning stuff the <code>ExRabbitPool.with_channel/2</code> functi
 
 <p>Very similar to the Publisher Pool, except we&rsquo;re going to bump the channels to 5. This is something we&rsquo;d tweak over time, with a good signal being that your consumers occasionally crash because they can&rsquo;t get a channel. This could be due to consumers taking a long time to finish a request, or having more concurrent work than you have channels. In any event, this is something you&rsquo;ll have to tweak for your environment.</p>
 
-<script src="https://gist.github.com/StevenNunez/ce73de390dc416f17e22ba2bf258a7ae.js"></script>
+<script src="https://gist.github.com/octosteve/ce73de390dc416f17e22ba2bf258a7ae.js"></script>
 
 <p>Same as before except with a higher channel count. Be sure to update <code>application.ex</code></p>
 
-<script src="https://gist.github.com/StevenNunez/a999e4089dc034d27786adc104ba19b5.js"></script>
+<script src="https://gist.github.com/octosteve/a999e4089dc034d27786adc104ba19b5.js"></script>
 
 <p>On to our Consumer.
 The best APIs offer nice abstractions but let you reach into the internals when needed. We&rsquo;ll see how in a bit.
@@ -123,7 +123,7 @@ We&rsquo;re going to create a queue that consumes messages from
 our exchange. We&rsquo;re going to use a named durable queue to allow us to stop consumers
 and not lose messages.</p>
 
-<script src="https://gist.github.com/StevenNunez/816d77c74b0850c985fd76a8ae5de357.js"></script>
+<script src="https://gist.github.com/octosteve/816d77c74b0850c985fd76a8ae5de357.js"></script>
 
 <p>A lot going is on here but let&rsquo;s take a look.</p>
 
@@ -138,7 +138,7 @@ kbasic<em>cancel/3<code></code>basic</em>cancel_ok/2` for handling cancellation 
 
 <p>Don&rsquo;t forget to update <code>application.ex</code></p>
 
-<script src="https://gist.github.com/StevenNunez/7a29ab01e5986873c732168518713368.js"></script>
+<script src="https://gist.github.com/octosteve/7a29ab01e5986873c732168518713368.js"></script>
 
 <h2>Test Drive</h2>
 
@@ -158,7 +158,7 @@ free up resources when you failed. Or you&rsquo;d have to set up separate monito
 <code>ExRabbitPool</code> you keep things in a clean, expected state. Let&rsquo;s update our consumer to raise an exception like an
 underslept teenager. We&rsquo;re going to change the restart strategy to <code>:temporary</code> to not bring down the world,.</p>
 
-<script src="https://gist.github.com/StevenNunez/fa6109cd145231b5b980fac2e8da89db.js"></script>
+<script src="https://gist.github.com/octosteve/fa6109cd145231b5b980fac2e8da89db.js"></script>
 
 <p>Go ahead and publish some messages. Sure it crashes, but look at your stats.</p>
 
