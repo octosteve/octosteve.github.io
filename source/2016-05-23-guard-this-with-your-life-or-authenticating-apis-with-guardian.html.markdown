@@ -22,7 +22,7 @@ We'll be covering:
 * Identifying the logged in user
 
 ## The App
-We'll be expanding on our Article Tracker located [here](https://github.com/StevenNunez/article_tracker_hd/tree/authentication-blog-start).
+We'll be expanding on our Article Tracker located [here](https://github.com/octosteve/article_tracker_hd/tree/authentication-blog-start).
 
 ## Accounts
 
@@ -505,7 +505,7 @@ And now it's all associated.
 # Conclusion
 And that's it! If you're thinking, "MAN THAT WAS NUTS!", I agree. A lot of the documentation is hard to find. I'm hoping to see more posts from YOU dear reader. Together we can make working with Phoenix and Elixir awesome.
 
-I hope you find this useful when building Phoenix APIs! If you want to checkout the finished code, [checkout the repo](https://github.com/StevenNunez/article_tracker_hd/tree/authentication-blog-finish).
+I hope you find this useful when building Phoenix APIs! If you want to checkout the finished code, [checkout the repo](https://github.com/octosteve/article_tracker_hd/tree/authentication-blog-finish).
 
 Found this interesting? Be sure to share it!
 

@@ -25,7 +25,7 @@ We'll need a few routes:
 We'll also add Bootstrap since all websites need Bootstrap.
 
 ### Starter App
-I've set up a database and basic setup [here](https://github.com/StevenNunez/rack_no_rails). Other than `rack` being in the `Gemfile` there's nothing webby about this!
+I've set up a database and basic setup [here](https://github.com/octosteve/rack_no_rails). Other than `rack` being in the `Gemfile` there's nothing webby about this!
 
 
 ## Rackup!

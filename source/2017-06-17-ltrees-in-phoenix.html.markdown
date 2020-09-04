@@ -275,7 +275,7 @@ To be honest, I'm not exactly sure why we need to return a quoted expression, an
 
 We didn't use an [Ecto.Type](https://hexdocs.pm/ecto/Ecto.Type.html) annotation, so we're using a "String" as far as Ecto is concerned. If I had any addition conversion so it played nice with my domain, I'd do it there. For instance, making it so users can give you something like "Technology > Computers > Programming > Elixir" and have it converted over to "technology.computers.programming.elixir" would be in an Ecto.Type.
 
-Found this interesting? Be sure to share it! You can find the code for it [here](https://github.com/StevenNunez/article_tracker_hd)
+Found this interesting? Be sure to share it! You can find the code for it [here](https://github.com/octosteve/article_tracker_hd)
 
 <a href="https://twitter.com/share" class="twitter-share-button" data-text="How to use Ltrees in Phoenix 1.3. for hierarchical data" data-via="_StevenNunez" data-size="large">Tweet</a>
 

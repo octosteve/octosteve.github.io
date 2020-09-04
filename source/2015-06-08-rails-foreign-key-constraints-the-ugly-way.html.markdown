@@ -76,7 +76,7 @@ class CreateCourses < ActiveRecord::Migration
 end
 ```
 
-The rest of the source code, including the associations for all of this stuff can be found [here](https://github.com/StevenNunez/learn_stuff)
+The rest of the source code, including the associations for all of this stuff can be found [here](https://github.com/octosteve/learn_stuff)
 
 ### Meh
 

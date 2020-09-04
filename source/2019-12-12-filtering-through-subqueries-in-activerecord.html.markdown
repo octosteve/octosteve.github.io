@@ -6,7 +6,7 @@ tags: queries, rails, sql
 I had a requirement this week to implement some filtering logic. This post is a collection of my learnings. The domain has been changed a bit the concepts are the same.
 
 ## Course Tracker
-Code can be found [Here](https://github.com/StevenNunez/course_tracker). The domain is pretty straight forward. For our purposes, let's focus on the Courses.
+Code can be found [Here](https://github.com/octosteve/course_tracker). The domain is pretty straight forward. For our purposes, let's focus on the Courses.
 
 A Course has many `ratings`. One query we're interested in is finding a course with a minimum average rating.
 
@@ -32,7 +32,7 @@ RUBY I LOVE YOU ❤️ ❤️ ❤️. This returns 2 records. Both with an avera
 
 Our next filtering task was to find courses matching a list of tags. This one is tricky since we want to only return courses that match ALL the tags.
 
-Our [seed data](https://github.com/StevenNunez/course_tracker/blob/master/db/seeds.rb#L25) shows that we have a few courses that are tagged as "Fun", but only one that is also tagged as "Food"
+Our [seed data](https://github.com/octosteve/course_tracker/blob/master/db/seeds.rb#L25) shows that we have a few courses that are tagged as "Fun", but only one that is also tagged as "Food"
 
 What would this look like in SQL if we were looking for "Fun" and "Food"?
 

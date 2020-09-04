@@ -378,4 +378,4 @@ This bit of hacking really deepend my understanding of Redux, how combined reduc
 
 Want to see more of something mentioned here? Leave any ideas in the comments below.
 
-[Here's a gist with the code](https://gist.github.com/StevenNunez/cd955e1f1576397c01c528ba41a88730). Happy Clacking.
+[Here's a gist with the code](https://gist.github.com/octosteve/cd955e1f1576397c01c528ba41a88730). Happy Clacking.

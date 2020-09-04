@@ -90,7 +90,7 @@ Let's start at the base of our Supervision tree, the
 Consumers. We're going to use ExRabbitPool's Consumer
 module to save us some boilerplate, and we'll customize our
 restart strategy to support our "Burn the world" approach.
-<script src="https://gist.github.com/StevenNunez/9d2f70621f8b780d05b51a9a1b9c78c5.js"></script>
+<script src="https://gist.github.com/octosteve/9d2f70621f8b780d05b51a9a1b9c78c5.js"></script>
 
 The biggest difference here is we set the restart option
 to `:temporary`. Supervised processes can set 1 of 3
@@ -112,14 +112,14 @@ let it die.
 The `ToxicityConsumer` looks pretty similar, except it has
 a different exchange and queue.
 
-<script src="https://gist.github.com/StevenNunez/3b810cae5094d909d3227c17cefc5144.js"></script>
+<script src="https://gist.github.com/octosteve/3b810cae5094d909d3227c17cefc5144.js"></script>
 
 On to the `ConsumerSupervisor`. Since it's supervising
 processes that have the `:temporary` restart option, the
 strategy doesn't really matter. We're going to leave it
 with the default `:one_for_one` strategy.
 
-<script src="https://gist.github.com/StevenNunez/b20d803d25979e1944bef6a76fd834ff.js"></script>
+<script src="https://gist.github.com/octosteve/b20d803d25979e1944bef6a76fd834ff.js"></script>
 
 We've added a couple of additional functions that we need
 to support our `ConsumerMonitor` process. The first one is
@@ -135,7 +135,7 @@ The `ConsumerMonitor` will do well by its namesake but take
 a look at its restart option.
 
 
-<script src="https://gist.github.com/StevenNunez/5ee793e6b707f601041ccdb787e69a72.js"></script>
+<script src="https://gist.github.com/octosteve/5ee793e6b707f601041ccdb787e69a72.js"></script>
 
 We're setting it's restart strategy to `:transient`. Reason
 being, if this puppy dies for ANY other reason than what's
@@ -149,7 +149,7 @@ supervisor to execute order 66.
 
 The `ConsumerGroupSupervisor` ties it all together. Pay
 special attention to the strategy option.
-<script src="https://gist.github.com/StevenNunez/1317e3e7d12dde6e9e698ed4e751f3ca.js"></script>
+<script src="https://gist.github.com/octosteve/1317e3e7d12dde6e9e698ed4e751f3ca.js"></script>
 
 Supervisors get started sequentially. We __completely__ start
 the `ConsumerSupervisor` before we start the
@@ -163,7 +163,7 @@ Let's add this to our application and take it out for a
 spin.
 
 
-<script src="https://gist.github.com/StevenNunez/1e9b41eab6b66ee867cd1569a0e862e1.js"></script>
+<script src="https://gist.github.com/octosteve/1e9b41eab6b66ee867cd1569a0e862e1.js"></script>
 
 Let's take a look at what this looks like in observer.
 

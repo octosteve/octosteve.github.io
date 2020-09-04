@@ -204,23 +204,23 @@ a Github and Slack account if you want. This is what the
 Account Schema Looks like.
 
 
-<script src="https://gist.github.com/StevenNunez/13fd0ffdaf8cab02030b43ff2d618e4f.js"></script>
+<script src="https://gist.github.com/octosteve/13fd0ffdaf8cab02030b43ff2d618e4f.js"></script>
 
 Here's SlackAccount
 
 
-<script src="https://gist.github.com/StevenNunez/5151a3c18ca9895520b514e08758166f.js"></script>
+<script src="https://gist.github.com/octosteve/5151a3c18ca9895520b514e08758166f.js"></script>
 
 And GithubAccount
 
 
-<script src="https://gist.github.com/StevenNunez/3136237f9864024dc607b01739d4a8df.js"></script>
+<script src="https://gist.github.com/octosteve/3136237f9864024dc607b01739d4a8df.js"></script>
 
 Let's add a top level `get/1` function to our context that
 fetches WAY too much data.
 
 
-<script src="https://gist.github.com/StevenNunez/4723cb5640e7ab75a22a151b345ffda2.js"></script>
+<script src="https://gist.github.com/octosteve/4723cb5640e7ab75a22a151b345ffda2.js"></script>
 
 So... Even looking at this, we're probably going to have to
 do a lot of work to make this data useful. Checkout what
@@ -257,7 +257,7 @@ of the tables and join them, ensuring we always return an
 account if it exists, even if it's incomplete.
 
 
-<script src="https://gist.github.com/StevenNunez/e50c8c0c996ae15bf9b011a4e26f2738.js"></script>
+<script src="https://gist.github.com/octosteve/e50c8c0c996ae15bf9b011a4e26f2738.js"></script>
 
 We're using `LEFT OUTER JOIN`s to prevent filtering out
 accounts that don't have github  or slack accounts linked.
@@ -278,7 +278,7 @@ slack_account.
 Here's the view:
 
 
-<script src="https://gist.github.com/StevenNunez/893bf8928ca0d8a73badd4547e296b9f.js"></script>
+<script src="https://gist.github.com/octosteve/893bf8928ca0d8a73badd4547e296b9f.js"></script>
 
 That's it! Now if you run a query against `students`,
 you'll get this.
@@ -300,7 +300,7 @@ letting us run an insert.
 Let's generate the Student Schema and run a query. Then
 we'll try to insert a record.
 
-<script src="https://gist.github.com/StevenNunez/41eb1ab7cf228895c3f4b75289a78c43.js"></script>
+<script src="https://gist.github.com/octosteve/41eb1ab7cf228895c3f4b75289a78c43.js"></script>
 
 Let's take it for a spin.
 

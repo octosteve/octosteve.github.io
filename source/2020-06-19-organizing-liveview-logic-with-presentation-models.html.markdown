@@ -18,7 +18,7 @@ LiveViews suffer from the same neck snapping, eye darting issues as GenServers. 
 LiveViews are a bit different though. The data we want to isolate isn't really part of our _core_ business logic. In fact, in most cases, it exists to deliver a single experience in your app.
 
 Let's take a look at the code example. It stores a few pieces of state that get manipulated over the course of the page's life.
-<script src="https://gist.github.com/StevenNunez/f384871008825b16bc09819267f28721.js"></script>
+<script src="https://gist.github.com/octosteve/f384871008825b16bc09819267f28721.js"></script>
 In the example, the `LiveViewStudio.Stores` module runs our search and is very much part of our _core_ business logic. This might be some code that gets optimized and used in several places in our app in a number of contexts. The results from our search will be stored in `stores`. Our LiveView can potentially act on the data it got back from the data store, further decorating it in preparation to render it. Along with `zip` and `loading`, this specific interpretation of `stores` would never be used outside of this view. Why does this matter?
 
 ## Separation of concerns and testing
@@ -35,8 +35,10 @@ A quick note before we move on... I know this is going to be a LOT of code for s
 We're going to extract the state for this component, and encapsulate the logic a bit. We showed the state, but what's this thing do?
 Users are presented a search box, where, the request takes 2 seconds to complete. Between submission and bringing up results, a `loading` icon appears.
 
+<div>
 <iframe src="https://giphy.com/embed/fA1JrSOgltr5VoPvGK" width="480" height="352" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a href="https://giphy.com/gifs/fA1JrSOgltr5VoPvGK">via GIPHY</a></p>
 
+</div>
 The flow looks something like:
 1. Send query to LiveView
 2. LiveView sets a loading state, sends self message to actually RUN the query, and returns the new `loading` state.
@@ -44,11 +46,13 @@ The flow looks something like:
 
 Let's start out with some tests:
 
-<script src="https://gist.github.com/StevenNunez/03c6e76849653104ec97f2b777f0e67b.js"></script>
+<script src="https://gist.github.com/octosteve/03c6e76849653104ec97f2b777f0e67b.js"></script>
+
 Our module expects to receive a function that takes one argument. Note we've broken up the flow between preparing the query (storing it) and actually executing it.
 OK, on to the code.
 
-<script src="https://gist.github.com/StevenNunez/c347f9339e48142c922b994ce0991b31.js"></script>
+<script src="https://gist.github.com/octosteve/c347f9339e48142c922b994ce0991b31.js"></script>
+
 OK, so this is a lot of code, compared to what the final result I linked to earlier but let's think about what we've won. There are clearly 3 things this module can do. Each of those things has a clear pipeline describing what it means to execute it. And best of all, it's all pure! We don't have to simulate clicks, or mess with input fields. We can test plain old values. Adding a new feature to this and verifying it works with automated tests is trivial. Imagine how you would add the ability to ensure a zip code is only numbers? Or that they're 5 characters long?
 
 ## Updating the LiveView
@@ -56,10 +60,9 @@ We're going to take a look at what the `SearchLive` LiveView would look like usi
 
 
 
-<script src="https://gist.github.com/StevenNunez/0e7db950bfcfd93743cdbe1199042b60.js"></script>
+<script src="https://gist.github.com/octosteve/0e7db950bfcfd93743cdbe1199042b60.js"></script>
 SO NICE! Our live view is solely responsible for making sure the right parts of our Presentation Model module get called and use it to render state. Notice how we're using `@presentation_model.x`. If you're wondering, there's no hit to performance using this! LiveView does a diff on the server before sending the change over the wire. If there's no change, it doesn't send anything. And what's best is that to test the LiveView, you only have to test a couple of cases for success and failure, as opposed to every detail and edge case of the view logic.
 This is kind of great.
 
 ## Wrap up
 LiveView is awesome, and with the right patterns we can ensure our fancy UIs have equally fancy tests. You can build really complex logic that you will KNOW works. Thanks for reading. Happy Clacking.
-

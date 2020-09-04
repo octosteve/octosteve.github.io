@@ -39,7 +39,7 @@ Accept-Encoding: gzip, deflate, sdch
 Accept-Language: en-US,en;q=0.8,es-419;q=0.6,es;q=0.4
 ```
 
-If you want to try this your self, run [this](https://gist.github.com/StevenNunez/17487d85c5493fb4404e) script and visit `http://localhost:9292` in an incognito browser.
+If you want to try this your self, run [this](https://gist.github.com/octosteve/17487d85c5493fb4404e) script and visit `http://localhost:9292` in an incognito browser.
 
 Ok, so you get this and what are are you supposed to do with it? If you're working with a [Rack](https://www.digitalocean.com/community/tutorials/a-comparison-of-rack-web-servers-for-ruby-web-applications) Compliant web server, it's going to take this information and parse it into something your app can more easily work with: A Hash.
 
@@ -94,7 +94,7 @@ Run `rackup` and visit `http://localhost:9292`. You should see something like th
                      "rack.run_once" => false,
                    "rack.url_scheme" => "http",
                       "rack.hijack?" => true,
-                       "rack.hijack" => #<Proc:0x007fd48c8d0ac8@/Users/StevenNunez/.gem/ruby/2.2.2/gems/rack-1.6.4/lib/rack/lint.rb:525>,
+                       "rack.hijack" => #<Proc:0x007fd48c8d0ac8@/Users/octosteve/.gem/ruby/2.2.2/gems/rack-1.6.4/lib/rack/lint.rb:525>,
                     "rack.hijack_io" => nil,
                       "HTTP_VERSION" => "HTTP/1.1",
                       "REQUEST_PATH" => "/",

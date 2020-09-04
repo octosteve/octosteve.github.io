@@ -39,7 +39,7 @@ You would submit the messed up line, it would give you an error. Then you would 
 
 A lot of these things work in your editor of choice. A lot of developers use [Sublime Text](http://www.sublimetext.com/2). 
 
-Let's look at getting around a small ruby file. It's from my [slide_hero gem](https://github.com/StevenNunez/slide_hero). Don't worry too much about what it does.
+Let's look at getting around a small ruby file. It's from my [slide_hero gem](https://github.com/octosteve/slide_hero). Don't worry too much about what it does.
 
 ``` ruby
 module SlideHero                                                                   
