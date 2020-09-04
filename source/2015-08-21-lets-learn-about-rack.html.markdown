@@ -94,7 +94,7 @@ Run `rackup` and visit `http://localhost:9292`. You should see something like th
                      "rack.run_once" => false,
                    "rack.url_scheme" => "http",
                       "rack.hijack?" => true,
-                       "rack.hijack" => #<Proc:0x007fd48c8d0ac8@/Users/octosteve/.gem/ruby/2.2.2/gems/rack-1.6.4/lib/rack/lint.rb:525>,
+                       "rack.hijack" => #<Proc:0x007fd48c8d0ac8@/Users/StevenNunez/.gem/ruby/2.2.2/gems/rack-1.6.4/lib/rack/lint.rb:525>,
                     "rack.hijack_io" => nil,
                       "HTTP_VERSION" => "HTTP/1.1",
                       "REQUEST_PATH" => "/",
