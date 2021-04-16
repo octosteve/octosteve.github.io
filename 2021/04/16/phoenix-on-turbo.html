@@ -1,0 +1,406 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta http-equiv='X-UA-Compatible' content='IE=edge;chrome=1'/>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hostile Developer - Phoenix on Turbo</title>
+  <link href="/favicon.ico" rel="icon" type="image/ico" />
+  <link href="/stylesheets/application.css" rel="stylesheet" type="text/css" />
+  <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/feed.xml" />
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    document.addEventListener("DOMContentLoaded", function(event) {
+      mermaid.initialize({startOnLoad:true});
+    });
+  </script>
+<div id="container">
+  <section id="header">
+  <header>
+<a href="/">        <h1 class="brand"><span class="hostile">Hostile</span> Developer</h1>
+        <h4 class="tag-line">I am Steven. Hear me Rant.</h4>
+</a>  </header>
+
+  <section class='social'>
+    <a href="http://twitter.com/_StevenNunez/" target="_blank"><i class="fa fa-twitter"></i></a>
+    <a href="https://github.com/StevenNunez/" target="_blank"><i class="fa fa-github"></i></a>
+  </section>
+</section>
+
+
+  <main id='article' role="main">
+    <h1 class="article-title"><a href="/2021/04/16/phoenix-on-turbo.html">Phoenix on Turbo</a></h1>
+    <p>Ok, so there&rsquo;s a lot of excitement around <a href="https://hotwire.dev">Hotwire</a>,
+a way of building web apps by focusing on sending HTML Over the WIRE (get it!?).
+Hotwire and the supporting library Turbo came out of building <a href="https://hey.com">hey.com</a>, an email service. It was
+built to make Rails development snappier, and more dynamic. It also allows for an easy way to
+build mobile apps backed by your webapp.</p>
+
+<p>What&rsquo;s interesting is that it&rsquo;s not just limited to Rails. Since the whole idea is sending HTML
+down to the client, we can use our favorite server side language to generate that markup
+and join in on the fun.</p>
+
+<p>Now, when I say &ldquo;snappier and more dynamic&rdquo; you say LiveView. I get it. In this post, we&rsquo;ll discuss
+why this approach is a good way of getting high performance page rendering and better composibility
+out of your existing request/response app.</p>
+
+<p><div>
+  <img width="100%" src="https://images.unsplash.com/photo-1565052594002-8ee542c415bd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxMzc3OTd8MHwxfHNlYXJjaHwxfHxsaXZlJTIwd2lyZXxlbnwwfHx8fDE2MTgzNTQ5MjA&ixlib=rb-1.2.1&q=80&w=400" />
+<small>Photo by <a href="https://unsplash.com/@cwrhoads?utm_source=seance&utm_medium=referral">Chris Rhoads</a> on <a href="https://unsplash.com/?utm_source=seance&utm_medium=referral">Unsplash</a></small>
+<div></p>
+
+<h2>What is Turbo?</h2>
+
+<p>Turbo is made up of 3 components available in the <code>@hotwired/turbo</code> js library: Turbo Drive, Turbo Frames, and Turbo Streams.</p>
+
+<h3>Turbo Drive</h3>
+
+<p>Turbo Drive gives your pages a nice boost for &ldquo;free&rdquo;. It converts all of your http calls into XHR requests and replaces to body in line. If you think this sounds a lot like <a href="https://github.com/turbolinks/turbolinks">turbolinks</a>, you&rsquo;re right! Turbo Drive is the next generation of that concept.</p>
+
+<p>You&rsquo;ll notice I used <em>free</em> in quotes. Turbo Drive places state <em>in the browser</em>. From the <a href="https://turbo.hotwire.dev/handbook/building">Handbook</a>:</p>
+
+<blockquote>
+<p>Turbo is fast because it prevents the whole page from reloading when you follow a link or submit a form. Your application becomes a persistent, long-running process in the browser. This requires you to rethink the way you structure your JavaScript.</p>
+</blockquote>
+
+<p>As Phoenix developers you&rsquo;ll notice one key difference between this and LiveView. Where state lives. BOTH are long lived processes and require us to change parts of how we build applications. With Turbo Drive, you can&rsquo;t rely on a page to load and setup your event handlers/socket connections etc. You&rsquo;ve got to hook into the <code>turbo:load</code> event for setup and teardown. We&rsquo;ll see this in action when we talk about Turbo Streams over Channels.</p>
+
+<p>The cool thing about Turbo Drive is that there&rsquo;s no code other than adding <code>import * as Turbo from &quot;@hotwired/turbo&quot;</code> into your <code>app.js</code> file.</p>
+
+<h3>Turbo Frames</h3>
+
+<p>This is probably my favorite Turbo feature. FRAMES! Turbo
+Frames let you compose web pages from <em>several</em> endpoints,
+letting you reuse your already existing markup on different
+pages. This is huge! If you&rsquo;ve got existing code HTML
+endpoint, you can start to mix and match them using Turbo
+by just marking up your&hellip; markup. Also, async requests are
+a snap too. Just add an <code>src</code> attribute and it will it the
+endpoint and load the results in-line.</p>
+
+<h3>Turbo Streams</h3>
+
+<p>Turbo Streams allow you to send fragments of html via
+WebSockets/Server Side Events. You&rsquo;ll receive a fragment of
+html that, once you add it to the dom, will position itself
+relative to an anchor element and a directive. Sounds like
+a lot, and to be honest, it takes some work to get it wired
+up. While talking to the rest of my brain <a href="https://twitter.com/sm_debenedetto">Sophie
+DeBenedetto</a>, she
+called out that there&rsquo;s a lot of boilerplate to get this
+working with Phoenix Channels vs just using LiveView. I
+think one thing to keep in mind here is that Chris McCord
+worked his butt off to make LiveView feel seamless. I&rsquo;m
+sure we can abstract this away to make it just as nice.</p>
+
+<p>OK, let&rsquo;s build a thing.</p>
+
+<h2>Issue Tracker</h2>
+
+<p>We&rsquo;re going to be adding Turbo to a simple issues app. It&rsquo;s
+not tied to anything so really this is just a therapy app
+where your friends can comment on your issues. You can pull
+down the starter code
+<a href="https://github.com/octosteve/third_rail/tree/main">here</a>.
+As it stands, it&rsquo;s pretty unusable.</p>
+
+<p><div>
+<img width="100%" src="https://i.imgur.com/S2Hzahe.gif" />
+<div></p>
+
+<p>This is pretty standard scaffolding. You get to your first
+wart when you create a new comment. Issues and Comments are
+handled by 2 different controllers and require you to hit 2
+different routes.</p>
+
+<p>Let&rsquo;s add Turbo to see if we get any wins out of the box</p>
+
+<h3>Adding Turbo</h3>
+
+<p>Run <code>npm install --save @hotwired/turbo --prefix assets</code>
+at the root of your project. Then open up <code>app.js</code> and
+include this.</p>
+
+<script src="https://gist.github.com/octosteve/ebf92fc9c1d77965376efc9b9a05d4ba.js"></script>
+
+<p>Let&rsquo;s see what we get.</p>
+
+<p><div>
+<img width="100%" src="https://i.imgur.com/aW3Dpol.gif" />
+<div></p>
+
+<p>Still terrible&hellip; but it&rsquo;s <em>fast</em>. You can see that all
+requests to our backend were made via AJAX, with portions
+of our page&rsquo;s <code>&lt;body&gt;</code> being replaced in-line.</p>
+
+<p>Let&rsquo;s start moving towards making this&hellip; less terrible by
+using Turbo Frames</p>
+
+<h2>Showing Comments</h2>
+
+<p>As a thought experiment, let&rsquo;s think about <em>why</em> you&rsquo;d
+want to have 2 separate endpoints for issues and comments.</p>
+
+<ol>
+<li>If your authorization logic is complex enough, deciding which comments to render
+and how people can interact with
+them can become a pretty hairy bit of code. Keeping them
+separate allows your endpoint to focus on doing one thing
+well.</li>
+<li>Speed. The data I need to render an issue is minimal.
+Bringing in comments on that initial page load along with
+pagination logic can slow the page down significantly.</li>
+<li>None of these things are real for our stupid example,
+but leave a comment on when you&rsquo;ve seen this in the wild
+and why you did it!</li>
+</ol>
+
+<p>These reasons could be the best ones in the world, but no
+one cares because it&rsquo;s unusable. Let&rsquo;s fix that.</p>
+
+<p>Update the comments <code>index.html.eex</code> to
+look like this:</p>
+
+<script src="https://gist.github.com/octosteve/8ef815eaa4423ce54980f6e12cbcb8b5.js"></script>
+
+<p>And replace update the Issue&rsquo;s <code>show.html.eex</code> template to
+look like this.</p>
+
+<script src="https://gist.github.com/octosteve/55987ebabca10312bd81c8a0ff3c58a6.js"></script>
+
+<p><div>
+<img width="100%" src="https://i.imgur.com/yma3gOc.gif" />
+<div></p>
+
+<p>THIS IS COOL! Think of those <code>&lt;turbo-frame&gt;</code> elements as
+landing pads. Turbo uses those tags along with the <code>id</code> field
+to pick out sections of the response and
+replaces <em>just those portions in line</em>! Everything else is
+ignored.</p>
+
+<p>In our example, we&rsquo;re returning the <em>whole</em> page back; layout and all.
+We can prevent the layout from being rendered by looking for the
+the <code>turbo-frame</code> request header and only sending the relevant part of the page
+back.</p>
+
+<script src="https://gist.github.com/octosteve/7d996d49ec823a605f09f5c0f762aaed.js"></script>
+
+<p>Now you get back <em>just</em> the comments index, without the layout!</p>
+
+<p><div>
+<img width="100%" src="https://i.imgur.com/FuTMMU9.png" />
+<div></p>
+
+<p>This still kind of sucks though. What is this? the 90s? I
+want my page to load, and I want a spinner! For this to
+preload, all we need to do is change the issue&rsquo;s
+<code>show.html.eex</code> to this.</p>
+
+<script src="https://gist.github.com/octosteve/40f47dc410bb13165e842c3b4c6b8d17.js"></script>
+
+<p>Let&rsquo;s see what this buys us, then we&rsquo;ll go over the code.
+The takeaway from here is that we&rsquo;ve <em>only</em> added 5 lines
+of markup, a plug to make it a bit quicker. The plug was optional!</p>
+
+<p><div>
+<img width="100%" src="https://i.imgur.com/FFBbRL9.gif" />
+<div></p>
+
+<p>I think we&rsquo;re starting to get <em>less</em> terrible. GO TEAM.
+Let&rsquo;s move on to Streams.</p>
+
+<h3>Streams or Screams</h3>
+
+<p>So far, I&rsquo;ve been cheating a bit. If you take a look at our
+CommentController, I <a href="https://github.com/octosteve/third_rail/blob/c86f23193777723ab6c1fc72a2017c67fef42d8f/lib/third_rail_web/controllers/comment_controller.ex#L15-L18">redirect <em>back</em> to the issue</a>. This
+makes the page refresh, reload the comments and we&rsquo;re just about
+ready to accept our UX awards. Streams present us another
+opportunity to do something nice here. If we wrap our form in a <code>&lt;turbo-frame</code>&gt;, an accept header of
+<code>text/vnd.turbo-stream.html</code> is added to the request. If we send back a specially
+formatted response, along with a response content type, it integrates the response on the page.</p>
+
+<p>Let&rsquo;s modify our controller to check for this header, and send
+down a specially crafted message in response to a form
+submission.</p>
+
+<script src="https://gist.github.com/octosteve/21865b2d93b411ecb57c711e5843be86.js"></script>
+
+<p>Following along with the numbers.</p>
+
+<ol>
+<li>MORE PLUGS! Here we&rsquo;re going to added a value into
+<code>conn.assigns</code>.</li>
+<li> If we can handle a stream for the response we&hellip;</li>
+<li>add the <code>text/vnd.turbo-stream.html</code> content-type in the
+response. THIS IS CRITICAL! Had to reach out the the
+<em>great</em> <a href="https://twitter.com/jamie_gaskins">Jamie Gaskins</a>
+for help on this bit. THANKS!</li>
+<li>Finally we render a template that adds the magic bits
+for the comment to wind up in the right place on the DOM.</li>
+</ol>
+
+<p>Here&rsquo;s the template:</p>
+
+<script src="https://gist.github.com/octosteve/a195ab2e4ff955a6341d98e061d6cce5.js"></script>
+
+<p>From the <a href="https://turbo.hotwire.dev/handbook/streams">docs</a>
+you can see our <code>action</code> options are <code>append</code>, <code>prepend</code>, <code>replace</code>, <code>update</code>, and
+<code>delete</code>. They do what you expect. The <code>target</code> is the id
+of the element you&rsquo;re&hellip; well, targeting.</p>
+
+<p>One last bit is you have to wrap the form in a
+<code>&lt;turbo-frame&gt;</code>.</p>
+
+<script src="https://gist.github.com/octosteve/cb07d966ce06490dafdadbb414778978.js"></script>
+
+<p>Now we get this!</p>
+
+<p><div>
+<img width="100%" src="https://i.imgur.com/r9rckHd.gif" />
+<div></p>
+
+<p>Streams are a great feature, but we need to
+smooth this out if we want any real usage.</p>
+
+<p>There&rsquo;s one more bit of work we need to add to complete our
+Turbo Tour. Updated comments over channels.</p>
+
+<h3>Overview</h3>
+
+<p>Ok, so this is going to be a lot. We&rsquo;re going to join a channel
+tied to an issue&rsquo;s comments. If we visit a different issue,
+we&rsquo;ll need to disconnect from that channel and join the new channel.</p>
+
+<p>We&rsquo;ll update the <code>create_comment_for_issue</code> function in our <code>Core</code> module to emit a <code>new_comment</code> message with the <code>id</code>. In the channel,
+we&rsquo;ll look up the comment, and follow the Hotwire philosophy by sending down the HTML we want on the page.</p>
+
+<p>Oh, and we&rsquo;ll have to convert the string of markup into DOM elements and add them to the body.</p>
+
+<p>Like I said&hellip; a lot.</p>
+
+<p><div>
+  <img width="100%" src="https://images.unsplash.com/photo-1521075486433-bf4052bb37bc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxMzc3OTd8MHwxfHNlYXJjaHwyfHxkZXNwYWlyfGVufDB8fHx8MTYxODU5NDc5Mw&ixlib=rb-1.2.1&q=80&w=400" />
+<small>Photo by <a href="https://unsplash.com/@kaimantha?utm_source=seance&utm_medium=referral">Claudia Wolff</a> on <a href="https://unsplash.com/?utm_source=seance&utm_medium=referral">Unsplash</a></small>
+<div></p>
+
+<h3>Setting up Channels</h3>
+
+<p>Channels are kind of magic in that unlike with LiveView, we don&rsquo;t need to manually subscribe via PubSub, and write our own <code>handle_info</code> function to update state. If we <code>broadcast</code> a message to a topic matching the channel name, unless we intervene, that message will be sent down to the client. To be clear, by joining the <code>comment:issue:9</code> channel, we will receive <em>all</em> messages broadcast to the <code>comment:issue:9</code> topic.</p>
+
+<p>Let&rsquo;s run <code>mix phx.gen.channel Comment</code>, and add
+<code>channel &quot;comment:issue:*&quot;, ThirdRailWeb.CommentChannel</code>
+to <code>user_socket.ex</code>.</p>
+
+<p>Let&rsquo;s update the channel to look like this:</p>
+
+<script src="https://gist.github.com/octosteve/65641a4cd92c4653ea2f90e368a42df6.js"></script>
+
+<p>We don&rsquo;t have to do anything with <code>issue_id</code> on join, but
+that&rsquo;s where&hellip; security happens. We&rsquo;ll intercept the
+<code>new_comment</code> message, and instead of just broadcasting the
+<code>id</code> to the client, we&rsquo;ll convert it to the template we want on the page.</p>
+
+<p>A quick glance at the broadcasting code:</p>
+
+<script src="https://gist.github.com/octosteve/18f895978f0857486f488fa99c97f4ba.js"></script>
+
+<p>Now onto the client!</p>
+
+<h3>Setup and Teardown</h3>
+
+<p>Let&rsquo;s add a data element to the issue so we know which
+channel to connect to. Open up the issues <code>show.html.eex</code>
+file, and change the header to <code>&lt;h1 id=&quot;issue&quot; data-issue-id=&quot;&lt;%= @issue.id %&gt;&quot;&gt;Show
+Issue&lt;/h1&gt;</code>. This will give us a way of knowing we&rsquo;re on a
+page for a specific issue, <em>and</em> which issue it is.</p>
+
+<p>In the JavaScript, we&rsquo;ll</p>
+
+<ol>
+<li>Listen for the <code>turbo:load</code> event</li>
+<li>Disconnect from our channel, if we&rsquo;ve already connected</li>
+<li>See if we&rsquo;re on a page for an issue</li>
+<li>Connect to the comments channel for that issue.</li>
+<li>Respond to the <code>new_comment</code> message by appending it to
+the DOM. Turbo does the rest.</li>
+</ol>
+
+<script src="https://gist.github.com/octosteve/0c610b5bcbf4e3438bd783647dbff300.js"></script>
+
+<p>We&rsquo;ll listen for that <code>turbo:load</code> event, and try to
+disconnect. If the page we&rsquo;re on is an issue, we join that
+channel. Here&rsquo;s <code>disconnectChannel</code> and <code>joinChannel</code> along with the message handler.</p>
+
+<script src="https://gist.github.com/octosteve/142378b7a7c083242485e56546e41447.js"></script>
+
+<p>Let&rsquo;s see what that gets us.</p>
+
+<p><div>
+<img width="100%" src="https://i.imgur.com/ZMkqlL5.gif" />
+<div></p>
+
+<p>Yey? We&rsquo;re still inserting the <code>&lt;turbo-stream&gt;</code> response
+from the form. We can get rid of that to remove the
+duplicate comment. Revert it back to the previous version and
+let&rsquo;s take a look.</p>
+
+<p><div>
+<img width="100%" src="https://i.imgur.com/uhcaMYH.gif" />
+<div></p>
+
+<p>Voilà! We&rsquo;re getting messages from a websocket and adding
+them to the page! This also got us cross browser updates!</p>
+
+<p><div>
+<img width="100%" src="https://i.imgur.com/I9DUPOV.gif" />
+<div></p>
+
+<h1>Wrap</h1>
+
+<p>I really like how Turbo makes composing applications easy. I see
+this as an analog to using LiveView Components to compose a larger View.
+And the additional benefit of using your existing request/response endpoints is
+compelling.</p>
+
+<p>If you have a document based dashboard with some light interactivity, and
+you&rsquo;ve found yourself reaching for React, maybe give Turbo a try with some <a href="https://stimulus.hotwire.dev/">Stimulus</a> sprinkled in.</p>
+
+<p>Personally, I&rsquo;d see having to add high interactivity to a page in Phoenix as the time to reach for LiveView.</p>
+
+<p>Is Hotwire the future and is it worth adding it to your Phoenix apps? Leave a comment and let me know what you think.</p>
+
+    <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'hostiledeveloper'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+  </main>
+
+ <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-48123503-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+ <em>Copyright &copy; 2021 Steven Nu&ntilde;ez - HostileDeveloper</em>
+
+</div>
+</body>
+</html>
