@@ -57,7 +57,7 @@ out of your existing request/response app.</p>
 
 <h3>Turbo Drive</h3>
 
-<p>Turbo Drive gives your pages a nice boost for &ldquo;free&rdquo;. It converts all of your http calls into XHR requests and replaces to body in line. If you think this sounds a lot like <a href="https://github.com/turbolinks/turbolinks">turbolinks</a>, you&rsquo;re right! Turbo Drive is the next generation of that concept.</p>
+<p>Turbo Drive gives your pages a nice boost for &ldquo;free&rdquo;. It converts all of your http calls into XHR requests and replaces the body in line. If you think this sounds a lot like <a href="https://github.com/turbolinks/turbolinks">turbolinks</a>, you&rsquo;re right! Turbo Drive is the next generation of that concept.</p>
 
 <p>You&rsquo;ll notice I used <em>free</em> in quotes. Turbo Drive places state <em>in the browser</em>. From the <a href="https://turbo.hotwire.dev/handbook/building">Handbook</a>:</p>
 
@@ -74,17 +74,17 @@ out of your existing request/response app.</p>
 <p>This is probably my favorite Turbo feature. FRAMES! Turbo
 Frames let you compose web pages from <em>several</em> endpoints,
 letting you reuse your already existing markup on different
-pages. This is huge! If you&rsquo;ve got existing code HTML
+pages. This is huge! If you&rsquo;ve got an existing HTML
 endpoint, you can start to mix and match them using Turbo
 by just marking up your&hellip; markup. Also, async requests are
-a snap too. Just add an <code>src</code> attribute and it will it the
+a snap too. Just add an <code>src</code> attribute and it will it hit the
 endpoint and load the results in-line.</p>
 
 <h3>Turbo Streams</h3>
 
-<p>Turbo Streams allow you to send fragments of html via
+<p>Turbo Streams allow you to send fragments of HTML via
 WebSockets/Server Side Events. You&rsquo;ll receive a fragment of
-html that, once you add it to the dom, will position itself
+HTML that, once you add it to the DOM, will position itself
 relative to an anchor element and a directive. Sounds like
 a lot, and to be honest, it takes some work to get it wired
 up. While talking to the rest of my brain <a href="https://twitter.com/sm_debenedetto">Sophie
@@ -180,7 +180,7 @@ to pick out sections of the response and
 replaces <em>just those portions in line</em>! Everything else is
 ignored.</p>
 
-<p>In our example, we&rsquo;re returning the <em>whole</em> page back; layout and all.
+<p>In our example, we&rsquo;re returning the <em>whole</em> page back; layout and all when a user clicks <code>Show Comments</code> the link.
 We can prevent the layout from being rendered by looking for the
 the <code>turbo-frame</code> request header and only sending the relevant part of the page
 back.</p>
@@ -241,7 +241,9 @@ for help on this bit. THANKS!</li>
 for the comment to wind up in the right place on the DOM.</li>
 </ol>
 
-<p>Here&rsquo;s the template:</p>
+<p>We&rsquo;re going to modify the Comment&rsquo;s <code>index.html.eex</code> to return a new <code>turbo-frame</code> with an id of  <code>comment_list</code>.
+This isolates <em>just</em> the list of comments and excludes the header. We then add the fragment we&rsquo;d like inserted
+along with where we&rsquo;d add it.</p>
 
 <script src="https://gist.github.com/octosteve/a195ab2e4ff955a6341d98e061d6cce5.js"></script>
 
@@ -269,14 +271,15 @@ Turbo Tour. Updated comments over channels.</p>
 
 <h3>Overview</h3>
 
-<p>Ok, so this is going to be a lot. We&rsquo;re going to join a channel
-tied to an issue&rsquo;s comments. If we visit a different issue,
-we&rsquo;ll need to disconnect from that channel and join the new channel.</p>
+<p>Ok, so this is going to be a lot.</p>
 
-<p>We&rsquo;ll update the <code>create_comment_for_issue</code> function in our <code>Core</code> module to emit a <code>new_comment</code> message with the <code>id</code>. In the channel,
-we&rsquo;ll look up the comment, and follow the Hotwire philosophy by sending down the HTML we want on the page.</p>
-
-<p>Oh, and we&rsquo;ll have to convert the string of markup into DOM elements and add them to the body.</p>
+<ol>
+<li>We&rsquo;re going to join a channel tied to an issue&rsquo;s comments.</li>
+<li>When we visit a different issue, we&rsquo;ll need to disconnect from that channel and join a new channel.</li>
+<li>We&rsquo;ll update the <code>create_comment_for_issue</code> function in our <code>Core</code> module to emit a <code>new_comment</code> message with the <code>id</code>.</li>
+<li>In the channel, we&rsquo;ll look up the comment, and follow the Hotwire philosophy by sending down the HTML we want on the page.</li>
+<li>Oh, and we&rsquo;ll have to convert the string of markup into DOM elements and add them to the body on the client side.</li>
+</ol>
 
 <p>Like I said&hellip; a lot.</p>
 
@@ -300,7 +303,8 @@ to <code>user_socket.ex</code>.</p>
 <p>We don&rsquo;t have to do anything with <code>issue_id</code> on join, but
 that&rsquo;s where&hellip; security happens. We&rsquo;ll intercept the
 <code>new_comment</code> message, and instead of just broadcasting the
-<code>id</code> to the client, we&rsquo;ll convert it to the template we want on the page.</p>
+<code>id</code> to the client, we&rsquo;ll convert it to the template we want on the page.
+We need to intercept the message, otherwise only the <code>id</code> will be sent down to the client.</p>
 
 <p>A quick glance at the broadcasting code:</p>
 
@@ -334,6 +338,10 @@ disconnect. If the page we&rsquo;re on is an issue, we join that
 channel. Here&rsquo;s <code>disconnectChannel</code> and <code>joinChannel</code> along with the message handler.</p>
 
 <script src="https://gist.github.com/octosteve/142378b7a7c083242485e56546e41447.js"></script>
+
+<p>Here we have the supporting code.<code>disconnectChannel</code> leaves the channel if it exists, then nullifies our variable (Yey! global mutable state!). <code>joinChannel</code> is where we conenct to that new channel and setup a listener for new messages.</p>
+
+<p><code>addToBody</code> uses a <code>DOMParser</code> instance to convert strings to HTML. Then then addes it to the bottom of the document body.</p>
 
 <p>Let&rsquo;s see what that gets us.</p>
 
