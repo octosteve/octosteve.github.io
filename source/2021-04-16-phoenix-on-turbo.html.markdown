@@ -28,7 +28,7 @@ out of your existing request/response app.
 Turbo is made up of 3 components available in the `@hotwired/turbo` js library: Turbo Drive, Turbo Frames, and Turbo Streams.
 
 ### Turbo Drive
-Turbo Drive gives your pages a nice boost for "free". It converts all of your http calls into XHR requests and replaces to body in line. If you think this sounds a lot like [turbolinks](https://github.com/turbolinks/turbolinks), you're right! Turbo Drive is the next generation of that concept.
+Turbo Drive gives your pages a nice boost for "free". It converts all of your http calls into XHR requests and replaces the body in line. If you think this sounds a lot like [turbolinks](https://github.com/turbolinks/turbolinks), you're right! Turbo Drive is the next generation of that concept.
 
 You'll notice I used _free_ in quotes. Turbo Drive places state _in the browser_. From the [Handbook](https://turbo.hotwire.dev/handbook/building):
 > Turbo is fast because it prevents the whole page from reloading when you follow a link or submit a form. Your application becomes a persistent, long-running process in the browser. This requires you to rethink the way you structure your JavaScript.
@@ -41,16 +41,16 @@ The cool thing about Turbo Drive is that there's no code other than adding `impo
 This is probably my favorite Turbo feature. FRAMES! Turbo
 Frames let you compose web pages from _several_ endpoints,
 letting you reuse your already existing markup on different
-pages. This is huge! If you've got existing code HTML
+pages. This is huge! If you've got an existing HTML
 endpoint, you can start to mix and match them using Turbo
 by just marking up your... markup. Also, async requests are
-a snap too. Just add an `src` attribute and it will it the
+a snap too. Just add an `src` attribute and it will it hit the
 endpoint and load the results in-line.
 
 ### Turbo Streams
-Turbo Streams allow you to send fragments of html via
+Turbo Streams allow you to send fragments of HTML via
 WebSockets/Server Side Events. You'll receive a fragment of
-html that, once you add it to the dom, will position itself
+HTML that, once you add it to the DOM, will position itself
 relative to an anchor element and a directive. Sounds like
 a lot, and to be honest, it takes some work to get it wired
 up. While talking to the rest of my brain [Sophie
@@ -71,8 +71,6 @@ down the starter code
 [here](https://github.com/octosteve/third_rail/tree/main).
 As it stands, it's pretty unusable.
 
-
-
 <div>
 <img width="100%" src="https://i.imgur.com/S2Hzahe.gif" />
 <div>
@@ -88,7 +86,6 @@ Let's add Turbo to see if we get any wins out of the box
 Run `npm install --save @hotwired/turbo --prefix assets`
 at the root of your project. Then open up `app.js` and
 include this.
-
 
 <script src="https://gist.github.com/octosteve/ebf92fc9c1d77965376efc9b9a05d4ba.js"></script>
 
@@ -147,11 +144,10 @@ to pick out sections of the response and
 replaces _just those portions in line_! Everything else is
 ignored.
 
-In our example, we're returning the _whole_ page back; layout and all.
+In our example, we're returning the _whole_ page back; layout and all when a user clicks `Show Comments` the link.
 We can prevent the layout from being rendered by looking for the
 the `turbo-frame` request header and only sending the relevant part of the page
 back.
-
 
 <script src="https://gist.github.com/octosteve/7d996d49ec823a605f09f5c0f762aaed.js"></script>
 
@@ -210,8 +206,9 @@ for help on this bit. THANKS!
 4. Finally we render a template that adds the magic bits
 for the comment to wind up in the right place on the DOM.
 
-Here's the template:
-
+We're going to modify the Comment's `index.html.eex` to return a new `turbo-frame` with an id of  `comment_list`.
+This isolates _just_ the list of comments and excludes the header. We then add the fragment we'd like inserted
+along with where we'd add it.
 
 <script src="https://gist.github.com/octosteve/a195ab2e4ff955a6341d98e061d6cce5.js"></script>
 
@@ -241,14 +238,13 @@ There's one more bit of work we need to add to complete our
 Turbo Tour. Updated comments over channels.
 
 ### Overview
-Ok, so this is going to be a lot. We're going to join a channel
-tied to an issue's comments. If we visit a different issue,
-we'll need to disconnect from that channel and join the new channel.
+Ok, so this is going to be a lot.
 
-We'll update the `create_comment_for_issue` function in our `Core` module to emit a `new_comment` message with the `id`. In the channel,
-we'll look up the comment, and follow the Hotwire philosophy by sending down the HTML we want on the page.
-
-Oh, and we'll have to convert the string of markup into DOM elements and add them to the body.
+1. We're going to join a channel tied to an issue's comments.
+1. When we visit a different issue, we'll need to disconnect from that channel and join a new channel.
+1. We'll update the `create_comment_for_issue` function in our `Core` module to emit a `new_comment` message with the `id`.
+1. In the channel, we'll look up the comment, and follow the Hotwire philosophy by sending down the HTML we want on the page.
+1. Oh, and we'll have to convert the string of markup into DOM elements and add them to the body on the client side.
 
 Like I said... a lot.
 
@@ -276,6 +272,7 @@ We don't have to do anything with `issue_id` on join, but
 that's where... security happens. We'll intercept the
 `new_comment` message, and instead of just broadcasting the
 `id` to the client, we'll convert it to the template we want on the page.
+We need to intercept the message, otherwise only the `id` will be sent down to the client.
 
 A quick glance at the broadcasting code:
 
@@ -300,8 +297,6 @@ In the JavaScript, we'll
 5. Respond to the `new_comment` message by appending it to
 the DOM. Turbo does the rest.
 
-
-
 <script src="https://gist.github.com/octosteve/0c610b5bcbf4e3438bd783647dbff300.js"></script>
 
 We'll listen for that `turbo:load` event, and try to
@@ -310,6 +305,10 @@ channel. Here's `disconnectChannel` and `joinChannel` along with the message han
 
 
 <script src="https://gist.github.com/octosteve/142378b7a7c083242485e56546e41447.js"></script>
+
+Here we have the supporting code.`disconnectChannel` leaves the channel if it exists, then nullifies our variable (Yey! global mutable state!). `joinChannel` is where we conenct to that new channel and setup a listener for new messages.
+
+`addToBody` uses a `DOMParser` instance to convert strings to HTML. Then then addes it to the bottom of the document body.
 
 Let's see what that gets us.
 
