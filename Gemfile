@@ -1,21 +1,18 @@
-# If you have OpenSSL installed, we recommend updating
-# the following line to use "https"
 source 'https://rubygems.org'
-group "development" do
-  gem 'pry'
-end
 
-gem 'middleman', '~> 3.3.7'
-gem 'middleman-blog', '~> 3.5.3'
-gem "middleman-livereload"
-gem 'middleman-syntax'
-gem 'middleman-gh-pages'
+# Middleman Gems
+gem 'middleman', '~> 4.2'
+gem 'middleman-blog'
+gem 'middleman-autoprefixer', '~> 3.0'
+gem 'nokogiri'
+
+gem 'redcarpet', '~> 3.3', '>= 3.3.3'
 
 # For feed.xml.builder
-gem "builder", "~> 3.0"
+gem 'builder', '~> 3.0'
 
-gem 'font-awesome-sass', '~> 4.3.0'
+# Windows does not come with time zone data
+gem 'tzinfo-data', platforms: [:mswin, :mingw, :jruby, :x64_mingw]
 
-gem 'redcarpet'
-
-gem 'nokogiri'
+# For faster file watcher updates on Windows:
+gem 'wdm', '~> 0.1', platforms: [:mswin, :mingw, :x64_mingw]
